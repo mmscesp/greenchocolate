@@ -1,0 +1,80 @@
+[
+  {
+    "id": "1",
+    "title": "Guía Completa de Cannabis Medicinal en España 2024",
+    "slug": "guia-cannabis-medicinal-espana-2024",
+    "category": "Salud & Bienestar",
+    "heroImage": "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg",
+    "excerpt": "Todo lo que necesitas saber sobre el acceso legal al cannabis medicinal en España, desde la prescripción hasta los productos disponibles.",
+    "content": "El cannabis medicinal en España ha experimentado importantes avances legislativos en los últimos años...",
+    "publishedAt": "2024-01-15T10:00:00Z",
+    "author": "Dr. María González",
+    "readTime": 8,
+    "tags": ["cannabis medicinal", "legislación", "salud", "España"]
+  },
+  {
+    "id": "2", 
+    "title": "Los Mejores Eventos Cannabis de Madrid en 2024",
+    "slug": "mejores-eventos-cannabis-madrid-2024",
+    "category": "Eventos",
+    "heroImage": "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg",
+    "excerpt": "Descubre los eventos más importantes de la cultura cannabis en Madrid este año, desde conferencias hasta festivales de música.",
+    "content": "Madrid se consolida como epicentro de la cultura cannabis en España con una agenda repleta de eventos...",
+    "publishedAt": "2024-01-12T15:30:00Z",
+    "author": "Carlos Ruiz",
+    "readTime": 6,
+    "tags": ["eventos", "Madrid", "cultura cannabis", "festivales"]
+  },
+  {
+    "id": "3",
+    "title": "Cómo Elegir tu Primer Club Social de Cannabis",
+    "slug": "como-elegir-primer-club-cannabis",
+    "category": "Educación", 
+    "heroImage": "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg",
+    "excerpt": "Consejos esenciales para nuevos miembros: qué buscar, qué preguntar y cómo tomar la mejor decisión al elegir tu club.",
+    "content": "Elegir tu primer club social de cannabis puede parecer abrumador, pero con la información correcta...",
+    "publishedAt": "2024-01-10T09:00:00Z",
+    "author": "Ana López",
+    "readTime": 5,
+    "tags": ["principiantes", "clubs sociales", "consejos", "educación"]
+  },
+  {
+    "id": "4",
+    "title": "Variedades de Cannabis: Sativa vs Indica vs Híbridos",
+    "slug": "variedades-cannabis-sativa-indica-hibridos",
+    "category": "Educación",
+    "heroImage": "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg",
+    "excerpt": "Comprende las diferencias entre las principales variedades de cannabis y sus efectos para tomar decisiones informadas.",
+    "content": "La clasificación del cannabis en sativa, indica e híbridos es fundamental para entender...",
+    "publishedAt": "2024-01-08T11:15:00Z",
+    "author": "Jorge Mendez",
+    "readTime": 7,
+    "tags": ["variedades", "sativa", "indica", "educación", "efectos"]
+  },
+  {
+    "id": "5",
+    "title": "Arte y Cannabis: La Conexión Creativa",
+    "slug": "arte-cannabis-conexion-creativa",
+    "category": "Arte & Música",
+    "heroImage": "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg",
+    "excerpt": "Exploramos la relación histórica entre el cannabis y la creatividad artística, desde los grandes maestros hasta el arte contemporáneo.",
+    "content": "La relación entre cannabis y creatividad artística se remonta a siglos atrás...",
+    "publishedAt": "2024-01-05T14:20:00Z",
+    "author": "Isabella Torres",
+    "readTime": 9,
+    "tags": ["arte", "creatividad", "historia", "cultura"]
+  },
+  {
+    "id": "6",
+    "title": "Recetas Cannabis: Cocina Cannábica para Principiantes",
+    "slug": "recetas-cannabis-cocina-principiantes",
+    "category": "Gastronomía",
+    "heroImage": "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg",
+    "excerpt": "Aprende a cocinar con cannabis de forma segura y deliciosa con estas recetas básicas y consejos de dosificación.",
+    "content": "La cocina cannábica es un arte que requiere paciencia, precisión y conocimiento...",
+    "publishedAt": "2024-01-03T16:45:00Z",
+    "author": "Chef Roberto Sánchez",
+    "readTime": 12,
+    "tags": ["cocina", "recetas", "gastronomía", "dosificación"]
+  }
+]

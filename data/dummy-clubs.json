@@ -1,0 +1,289 @@
+[
+  {
+    "id": "1",
+    "name": "Green Harmony Madrid",
+    "slug": "green-harmony-madrid",
+    "isVerified": true,
+    "neighborhood": "Malasaña",
+    "images": [
+      "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg",
+      "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg",
+      "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg"
+    ],
+    "description": "Un espacio acogedor en el corazón de Malasaña donde la comunidad cannabis se reúne para compartir experiencias, conocimiento y momentos de relajación. Nuestro ambiente combina lo tradicional con lo moderno.",
+    "amenities": ["WiFi Gratis", "Zona Chill Out", "Juegos de Mesa", "Música en Vivo", "Snacks", "Bebidas"],
+    "vibeTags": ["Relajado", "Social", "Creativo"],
+    "openingHours": {
+      "monday": "16:00 - 00:00",
+      "tuesday": "16:00 - 00:00", 
+      "wednesday": "16:00 - 00:00",
+      "thursday": "16:00 - 02:00",
+      "friday": "16:00 - 02:00",
+      "saturday": "14:00 - 02:00",
+      "sunday": "14:00 - 00:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4245, "lng": -3.7038 },
+    "address": "Calle del Espíritu Santo, 15, Malasaña, Madrid",
+    "contactEmail": "info@greenharmony.es",
+    "phoneNumber": "+34 91 123 4567",
+    "website": "www.greenharmony.es",
+    "socialMedia": {
+      "instagram": "@greenharmonymadrid",
+      "facebook": "greenharmonymadrid"
+    },
+    "rating": 4.8,
+    "reviewCount": 142,
+    "priceRange": "$$",
+    "capacity": 85,
+    "foundedYear": 2019
+  },
+  {
+    "id": "2", 
+    "name": "Cannabis Culture Centro",
+    "slug": "cannabis-culture-centro",
+    "isVerified": true,
+    "neighborhood": "Centro",
+    "images": [
+      "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg",
+      "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg",
+      "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg"
+    ],
+    "description": "Ubicado en el centro histórico de Madrid, somos pioneros en educación cannábica y cultura responsable. Un espacio elegante que combina tradición y vanguardia.",
+    "amenities": ["WiFi Gratis", "Biblioteca Cannabis", "Talleres", "Arte Local", "Terraza", "Eventos Privados"],
+    "vibeTags": ["Educativo", "Cultural", "Íntimo"],
+    "openingHours": {
+      "monday": "15:00 - 23:00",
+      "tuesday": "15:00 - 23:00",
+      "wednesday": "15:00 - 23:00", 
+      "thursday": "15:00 - 01:00",
+      "friday": "15:00 - 01:00",
+      "saturday": "13:00 - 01:00",
+      "sunday": "13:00 - 23:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4168, "lng": -3.7038 },
+    "address": "Plaza Mayor, 8, Centro, Madrid",
+    "contactEmail": "hola@cannabisculture.es",
+    "phoneNumber": "+34 91 234 5678",
+    "socialMedia": {
+      "instagram": "@cannabisculturecentro"
+    },
+    "rating": 4.9,
+    "reviewCount": 203,
+    "priceRange": "$$$",
+    "capacity": 120,
+    "foundedYear": 2017
+  },
+  {
+    "id": "3",
+    "name": "Chill Zone Chueca",
+    "slug": "chill-zone-chueca", 
+    "isVerified": false,
+    "neighborhood": "Chueca",
+    "images": [
+      "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg",
+      "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg"
+    ],
+    "description": "El lugar perfecto para relajarse en Chueca. Ambiente distendido, música ambient y una comunidad diversa que valora la inclusión y el respeto mutuo.",
+    "amenities": ["Zona Chill Out", "PlayStation", "Snacks", "Bebidas", "WiFi Gratis"],
+    "vibeTags": ["Relajado", "Inclusivo", "Alternativo"],
+    "openingHours": {
+      "monday": "17:00 - 00:00",
+      "tuesday": "17:00 - 00:00",
+      "wednesday": "17:00 - 00:00",
+      "thursday": "17:00 - 01:00", 
+      "friday": "17:00 - 02:00",
+      "saturday": "15:00 - 02:00",
+      "sunday": "15:00 - 00:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4215, "lng": -3.6960 },
+    "address": "Calle de Hortaleza, 32, Chueca, Madrid",
+    "contactEmail": "info@chillzonechueca.com",
+    "phoneNumber": "+34 91 345 6789",
+    "rating": 4.5,
+    "reviewCount": 89,
+    "priceRange": "$",
+    "capacity": 60,
+    "foundedYear": 2020
+  },
+  {
+    "id": "4",
+    "name": "Latina Green Collective",
+    "slug": "latina-green-collective",
+    "isVerified": true,
+    "neighborhood": "La Latina", 
+    "images": [
+      "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg",
+      "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg",
+      "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg"
+    ],
+    "description": "En el barrio más castizo de Madrid, fusionamos tradición y modernidad. Un espacio donde la comunidad local se encuentra con la cultura cannabis contemporánea.",
+    "amenities": ["Terraza", "Juegos de Mesa", "Música en Vivo", "Snacks", "Arte Local", "Parking"],
+    "vibeTags": ["Social", "Festivo", "Gastronómico"],
+    "openingHours": {
+      "monday": "16:00 - 00:00",
+      "tuesday": "16:00 - 00:00",
+      "wednesday": "16:00 - 00:00",
+      "thursday": "16:00 - 01:00",
+      "friday": "16:00 - 02:00", 
+      "saturday": "14:00 - 02:00",
+      "sunday": "14:00 - 00:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4085, "lng": -3.7077 },
+    "address": "Calle de Toledo, 45, La Latina, Madrid",
+    "contactEmail": "colectivo@latinagreen.es",
+    "phoneNumber": "+34 91 456 7890",
+    "website": "www.latinagreen.es",
+    "socialMedia": {
+      "instagram": "@latinagreencollective",
+      "facebook": "latinagreencollective"
+    },
+    "rating": 4.7,
+    "reviewCount": 156,
+    "priceRange": "$$",
+    "capacity": 95,
+    "foundedYear": 2018
+  },
+  {
+    "id": "5",
+    "name": "Lavapies Cannabis Club",
+    "slug": "lavapies-cannabis-club",
+    "isVerified": true,
+    "neighborhood": "Lavapies",
+    "images": [
+      "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg",
+      "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg"
+    ],
+    "description": "En el multicultural Lavapiés, celebramos la diversidad y la cultura cannábica internacional. Un punto de encuentro para artistas, creativos y amantes de la cultura.",
+    "amenities": ["Arte Local", "Talleres", "Música en Vivo", "WiFi Gratis", "Zona Chill Out", "Eventos Privados"],
+    "vibeTags": ["Artístico", "Cultural", "Creativo"],
+    "openingHours": {
+      "monday": "15:00 - 23:00",
+      "tuesday": "15:00 - 23:00",
+      "wednesday": "15:00 - 23:00",
+      "thursday": "15:00 - 01:00",
+      "friday": "15:00 - 01:00",
+      "saturday": "13:00 - 01:00",
+      "sunday": "13:00 - 23:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4087, "lng": -3.7026 },
+    "address": "Calle del Ave María, 28, Lavapiés, Madrid",
+    "contactEmail": "info@lavapiescc.org",
+    "phoneNumber": "+34 91 567 8901",
+    "socialMedia": {
+      "instagram": "@lavapiescc"
+    },
+    "rating": 4.6,
+    "reviewCount": 134,
+    "priceRange": "$$",
+    "capacity": 75,
+    "foundedYear": 2019
+  },
+  {
+    "id": "6",
+    "name": "Salamanca Premium Club",
+    "slug": "salamanca-premium-club",
+    "isVerified": true,
+    "neighborhood": "Salamanca",
+    "images": [
+      "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg",
+      "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg"
+    ],
+    "description": "Elegancia y exclusividad en el barrio de Salamanca. Una experiencia premium para conocedores que buscan calidad, servicio excepcional y ambiente sofisticado.",
+    "amenities": ["Eventos Privados", "Parking", "Accesible", "Snacks", "Bebidas", "WiFi Gratis"],
+    "vibeTags": ["Íntimo", "Sofisticado", "Exclusivo"],
+    "openingHours": {
+      "monday": "17:00 - 00:00",
+      "tuesday": "17:00 - 00:00",
+      "wednesday": "17:00 - 00:00",
+      "thursday": "17:00 - 01:00",
+      "friday": "17:00 - 01:00",
+      "saturday": "16:00 - 01:00",
+      "sunday": "16:00 - 00:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4319, "lng": -3.6848 },
+    "address": "Calle de Serrano, 89, Salamanca, Madrid",
+    "contactEmail": "premium@salamancaclub.es",
+    "phoneNumber": "+34 91 678 9012",
+    "website": "www.salamancapremium.es",
+    "rating": 4.9,
+    "reviewCount": 87,
+    "priceRange": "$$$",
+    "capacity": 50,
+    "foundedYear": 2021
+  },
+  {
+    "id": "7",
+    "name": "Retiro Garden Club",
+    "slug": "retiro-garden-club",
+    "isVerified": false,
+    "neighborhood": "Retiro",
+    "images": [
+      "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg",
+      "https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg"
+    ],
+    "description": "Junto al pulmón verde de Madrid, ofrecemos un oasis de tranquilidad. Nuestro jardín interior y filosofía zen crean el ambiente perfecto para la relajación.",
+    "amenities": ["Terraza", "Zona Chill Out", "Talleres", "Biblioteca Cannabis", "Snacks"],
+    "vibeTags": ["Relajado", "Natural", "Meditativo"],
+    "openingHours": {
+      "monday": "16:00 - 23:00",
+      "tuesday": "16:00 - 23:00",
+      "wednesday": "16:00 - 23:00",
+      "thursday": "16:00 - 00:00",
+      "friday": "16:00 - 00:00",
+      "saturday": "14:00 - 00:00",
+      "sunday": "14:00 - 23:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4152, "lng": -3.6844 },
+    "address": "Calle de Alfonso XII, 15, Retiro, Madrid",
+    "contactEmail": "garden@retiroclub.es",
+    "phoneNumber": "+34 91 789 0123",
+    "rating": 4.4,
+    "reviewCount": 98,
+    "priceRange": "$$",
+    "capacity": 65,
+    "foundedYear": 2020
+  },
+  {
+    "id": "8",
+    "name": "Chamberí Social Hub",
+    "slug": "chamberi-social-hub",
+    "isVerified": true,
+    "neighborhood": "Chamberí",
+    "images": [
+      "https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg",
+      "https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg"
+    ],
+    "description": "El punto de encuentro social de Chamberí. Combinamos gaming, música y cannabis en un ambiente moderno y acogedor donde hacer nuevos amigos es fácil.",
+    "amenities": ["PlayStation", "Juegos de Mesa", "Música en Vivo", "WiFi Gratis", "Snacks", "Bebidas"],
+    "vibeTags": ["Social", "Deportivo", "Musical"],
+    "openingHours": {
+      "monday": "16:00 - 00:00",
+      "tuesday": "16:00 - 00:00",
+      "wednesday": "16:00 - 00:00",
+      "thursday": "16:00 - 01:00",
+      "friday": "16:00 - 02:00",
+      "saturday": "14:00 - 02:00",
+      "sunday": "14:00 - 00:00"
+    },
+    "allowsPreRegistration": true,
+    "coordinates": { "lat": 40.4378, "lng": -3.7044 },
+    "address": "Calle de Fuencarral, 123, Chamberí, Madrid",
+    "contactEmail": "hub@chamberisocial.com",
+    "phoneNumber": "+34 91 890 1234",
+    "socialMedia": {
+      "instagram": "@chamberisocialhub"
+    },
+    "rating": 4.6,
+    "reviewCount": 167,
+    "priceRange": "$",
+    "capacity": 90,
+    "foundedYear": 2019
+  }
+]

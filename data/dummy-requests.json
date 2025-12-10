@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "clubId": "1",
+    "userName": "Elena Martínez",
+    "email": "elena.martinez@email.com",
+    "phone": "+34 600 123 456",
+    "message": "Hola, soy nueva en Madrid y me gustaría formar parte de una comunidad cannabis responsable. Tengo experiencia previa en clubs de Barcelona.",
+    "status": "pending",
+    "submittedAt": "2024-01-20T10:30:00Z",
+    "age": 28,
+    "experience": "intermedio"
+  },
+  {
+    "id": "2",
+    "clubId": "1", 
+    "userName": "Miguel Rodríguez",
+    "email": "miguel.r@gmail.com",
+    "phone": "+34 611 234 567",
+    "message": "Me han recomendado vuestro club por el ambiente relajado. Busco un lugar para desconectar después del trabajo.",
+    "status": "approved",
+    "submittedAt": "2024-01-18T15:20:00Z",
+    "age": 35,
+    "experience": "principiante"
+  },
+  {
+    "id": "3",
+    "clubId": "2",
+    "userName": "Sofia García",
+    "email": "sofia.garcia@hotmail.com", 
+    "phone": "+34 622 345 678",
+    "message": "Interesada en los talleres educativos que ofrecéis. Soy estudiante de medicina y me fascina el cannabis medicinal.",
+    "status": "pending",
+    "submittedAt": "2024-01-19T09:15:00Z",
+    "age": 24,
+    "experience": "principiante"
+  },
+  {
+    "id": "4",
+    "clubId": "2",
+    "userName": "David López",
+    "email": "d.lopez@empresa.com",
+    "phone": "+34 633 456 789",
+    "message": "Profesional del sector buscando networking y eventos culturales relacionados con cannabis.",
+    "status": "approved",
+    "submittedAt": "2024-01-17T11:45:00Z",
+    "age": 42,
+    "experience": "experto"
+  },
+  {
+    "id": "5",
+    "clubId": "3",
+    "userName": "Laura Fernández",
+    "email": "laura.f@yahoo.es",
+    "phone": "+34 644 567 890",
+    "message": "Me encanta el ambiente inclusivo que promocionáis. Como miembro de la comunidad LGBTQ+, valoro mucho los espacios seguros.",
+    "status": "pending",
+    "submittedAt": "2024-01-21T14:10:00Z",
+    "age": 29,
+    "experience": "intermedio"
+  }
+]
