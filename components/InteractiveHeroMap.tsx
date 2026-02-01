@@ -274,7 +274,7 @@ export default function InteractiveHeroMap() {
               </div>
               <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="bg-gray-900 text-white text-xs rounded-lg px-2 py-1 whitespace-nowrap">
-                  "{user.review}" - {user.name}
+                  &quot;{user.review}&quot; - {user.name}
                 </div>
               </div>
             </div>

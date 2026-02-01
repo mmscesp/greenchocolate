@@ -411,3 +411,23 @@ html {
     transform: scale(1.1);
   }
 }
+
+/* Safe area insets for notched devices */
+.pt-safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Landscape mobile optimizations */
+@media (max-height: 600px) and (orientation: landscape) {
+  .pt-safe-top {
+    padding-top: 1rem;
+  }
+  
+  .pb-safe-bottom {
+    padding-bottom: 1rem;
+  }
+}
