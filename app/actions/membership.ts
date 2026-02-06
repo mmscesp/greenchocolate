@@ -157,39 +157,44 @@ export async function submitMembershipRequest(
  * Get User's Membership Requests
  */
 export async function getUserMembershipRequests(): Promise<MembershipRequestCard[]> {
-  const profile = await getCurrentProfile();
+  try {
+    const profile = await getCurrentProfile();
 
-  if (!profile) {
-    return [];
-  }
+    if (!profile) {
+      return [];
+    }
 
-  const requests = await prisma.membershipRequest.findMany({
-    where: { userId: profile.id },
-    include: {
-      club: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          images: true,
-          neighborhood: true,
+    const requests = await prisma.membershipRequest.findMany({
+      where: { userId: profile.id },
+      include: {
+        club: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            images: true,
+            neighborhood: true,
+          },
         },
       },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+      orderBy: { createdAt: 'desc' },
+    });
 
-  return requests.map((req: { id: string; status: string; message: string | null; createdAt: Date; club: { id: string; name: string; slug: string; images: string[]; neighborhood: string } }) => ({
-    id: req.id,
-    status: req.status,
-    message: req.message,
-    createdAt: req.createdAt.toISOString(),
-    clubId: req.club.id,
-    clubName: req.club.name,
-    clubSlug: req.club.slug,
-    clubImage: req.club.images[0] || null,
-    clubNeighborhood: req.club.neighborhood,
-  }));
+    return requests.map((req: { id: string; status: string; message: string | null; createdAt: Date; club: { id: string; name: string; slug: string; images: string[]; neighborhood: string } }) => ({
+      id: req.id,
+      status: req.status,
+      message: req.message,
+      createdAt: req.createdAt.toISOString(),
+      clubId: req.club.id,
+      clubName: req.club.name,
+      clubSlug: req.club.slug,
+      clubImage: req.club.images[0] || null,
+      clubNeighborhood: req.club.neighborhood,
+    }));
+  } catch (error) {
+    console.error('getUserMembershipRequests error:', error);
+    return [];
+  }
 }
 
 /**
@@ -247,37 +252,42 @@ export async function cancelMembershipRequest(
  * Get Club's Membership Requests (for Club Admin)
  */
 export async function getClubMembershipRequests(clubId: string) {
-  const profile = await getCurrentProfile();
+  try {
+    const profile = await getCurrentProfile();
 
-  if (!profile || profile.role !== 'CLUB_ADMIN') {
-    return [];
-  }
+    if (!profile || profile.role !== 'CLUB_ADMIN') {
+      return [];
+    }
 
-  const requests = await prisma.membershipRequest.findMany({
-    where: { clubId },
-    include: {
-      user: {
-        select: {
-          id: true,
-          displayName: true,
-          email: true,
-          avatarUrl: true,
+    const requests = await prisma.membershipRequest.findMany({
+      where: { clubId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            displayName: true,
+            email: true,
+            avatarUrl: true,
+          },
         },
       },
-    },
-    orderBy: [
-      { status: 'asc' }, // PENDING first
-      { createdAt: 'desc' },
-    ],
-  });
+      orderBy: [
+        { status: 'asc' }, // PENDING first
+        { createdAt: 'desc' },
+      ],
+    });
 
-  return requests.map((req) => ({
-    id: req.id,
-    status: req.status,
-    message: req.message,
-    createdAt: req.createdAt.toISOString(),
-    user: req.user,
-  }));
+    return requests.map((req) => ({
+      id: req.id,
+      status: req.status,
+      message: req.message,
+      createdAt: req.createdAt.toISOString(),
+      user: req.user,
+    }));
+  } catch (error) {
+    console.error('getClubMembershipRequests error:', error);
+    return [];
+  }
 }
 
 /**
@@ -289,11 +299,34 @@ export async function approveMembershipRequest(
 ): Promise<ActionState> {
   const profile = await getCurrentProfile();
 
-  if (!profile || (profile.role !== 'ADMIN' && profile.role !== 'CLUB_ADMIN')) {
+  if (!profile) {
     return {
       success: false,
       message: 'Unauthorized',
     };
+  }
+
+  // Fetch the request first to verify club ownership
+  const request = await prisma.membershipRequest.findUnique({
+    where: { id: requestId },
+    include: { club: true },
+  });
+
+  if (!request) {
+    return {
+      success: false,
+      message: 'Request not found',
+    };
+  }
+
+  // Authorization check: ADMIN can approve any, CLUB_ADMIN only their club
+  if (profile.role === 'CLUB_ADMIN') {
+    if (profile.managedClubId !== request.clubId) {
+      return {
+        success: false,
+        message: 'You can only approve requests for your own club',
+      };
+    }
   }
 
   try {
@@ -333,11 +366,34 @@ export async function rejectMembershipRequest(
 ): Promise<ActionState> {
   const profile = await getCurrentProfile();
 
-  if (!profile || (profile.role !== 'ADMIN' && profile.role !== 'CLUB_ADMIN')) {
+  if (!profile) {
     return {
       success: false,
       message: 'Unauthorized',
     };
+  }
+
+  // Fetch the request first to verify club ownership
+  const request = await prisma.membershipRequest.findUnique({
+    where: { id: requestId },
+    include: { club: true },
+  });
+
+  if (!request) {
+    return {
+      success: false,
+      message: 'Request not found',
+    };
+  }
+
+  // Authorization check: ADMIN can reject any, CLUB_ADMIN only their club
+  if (profile.role === 'CLUB_ADMIN') {
+    if (profile.managedClubId !== request.clubId) {
+      return {
+        success: false,
+        message: 'You can only reject requests for your own club',
+      };
+    }
   }
 
   try {

@@ -1,7 +1,7 @@
 // AES-256-GCM Encryption Service for PII Protection
 // Simplified for MVP: Single bundle encryption per user
 
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes, scryptSync } from 'crypto';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
@@ -15,9 +15,10 @@ function getMasterKey(): Buffer {
   if (!key) {
     throw new Error('APP_MASTER_KEY environment variable is not set');
   }
-  
-  // Derive a proper 32-byte key from the hex string
-  return scryptSync(key, 'salt', KEY_LENGTH);
+
+  // Derive a proper 32-byte key from the hex string with unique salt
+  const salt = process.env.ENCRYPTION_SALT || 'default-salt-change-in-production';
+  return scryptSync(key, salt, KEY_LENGTH);
 }
 
 /**
@@ -117,10 +118,10 @@ export class EncryptionService {
   }
 
   /**
-   * Simple hash for non-reversible data (e.g., consent metadata)
-   */
+    * Generate SHA-256 hash for non-reversible data (e.g., consent metadata)
+    */
   static hash(data: string): string {
-    return randomBytes(16).toString('hex');
+    return createHash('sha256').update(data).digest('hex');
   }
 }
 

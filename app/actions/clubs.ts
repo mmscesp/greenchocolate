@@ -4,6 +4,26 @@
 // Server Actions for fetching clubs
 
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
+import { z } from 'zod';
+
+// ==========================================
+// VALIDATION SCHEMAS
+// ==========================================
+
+const clubFiltersSchema = z.object({
+  citySlug: z.string().optional(),
+  neighborhood: z.string().optional(),
+  amenities: z.array(z.string()).optional(),
+  vibes: z.array(z.string()).optional(),
+  priceRange: z.array(z.string()).optional(),
+  isVerified: z.boolean().optional(),
+});
+
+const citySlugSchema = z.string().optional();
+const slugSchema = z.string().min(1);
+const limitSchema = z.number().int().min(1).max(100).optional();
+const idSchema = z.string().uuid();
 
 // ==========================================
 // TYPES
@@ -85,305 +105,321 @@ export interface ClubDetail extends ClubCard {
  * Get Clubs with Filters
  */
 export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
-  const where: Record<string, unknown> = {
-    isActive: true,
-    isVerified: filters?.isVerified ?? true,
-  };
+  try {
+    const validatedFilters = filters ? clubFiltersSchema.parse(filters) : undefined;
 
-  // City filter
-  if (filters?.citySlug) {
-    const city = await prisma.city.findUnique({
-      where: { slug: filters.citySlug },
-      select: { id: true },
-    });
-    if (city) {
-      where.cityId = city.id;
+    const where: Record<string, unknown> = {
+      isActive: true,
+      isVerified: validatedFilters?.isVerified ?? true,
+    };
+
+    // City filter
+    if (validatedFilters?.citySlug) {
+      const city = await prisma.city.findUnique({
+        where: { slug: validatedFilters.citySlug },
+        select: { id: true },
+      });
+      if (city) {
+        where.cityId = city.id;
+      }
     }
-  }
 
-  // Neighborhood filter
-  if (filters?.neighborhood) {
-    where.neighborhood = filters.neighborhood;
-  }
+    // Neighborhood filter
+    if (validatedFilters?.neighborhood) {
+      where.neighborhood = validatedFilters.neighborhood;
+    }
 
-  // Amenities filter
-  if (filters?.amenities && filters.amenities.length > 0) {
-    where.amenities = {
-      hasEvery: filters.amenities,
-    };
-  }
+    // Amenities filter
+    if (validatedFilters?.amenities && validatedFilters.amenities.length > 0) {
+      where.amenities = {
+        hasEvery: validatedFilters.amenities,
+      };
+    }
 
-  // Vibes filter
-  if (filters?.vibes && filters.vibes.length > 0) {
-    where.vibeTags = {
-      hasEvery: filters.vibes,
-    };
-  }
+    // Vibes filter
+    if (validatedFilters?.vibes && validatedFilters.vibes.length > 0) {
+      where.vibeTags = {
+        hasEvery: validatedFilters.vibes,
+      };
+    }
 
-  // Price range filter
-  if (filters?.priceRange && filters.priceRange.length > 0) {
-    where.priceRange = { in: filters.priceRange };
-  }
+    // Price range filter
+    if (validatedFilters?.priceRange && validatedFilters.priceRange.length > 0) {
+      where.priceRange = { in: validatedFilters.priceRange };
+    }
 
-  const clubs = await prisma.club.findMany({
-    where,
-    include: {
-      city: {
-        select: { name: true, slug: true },
+    const clubs = await prisma.club.findMany({
+      where,
+      include: {
+        city: {
+          select: { name: true, slug: true },
+        },
       },
-    },
-    orderBy: { name: 'asc' },
-  });
+      orderBy: { name: 'asc' },
+    });
 
-  return clubs.map((club: ClubWithCity) => ({
-    id: club.id,
-    name: club.name,
-    slug: club.slug,
-    shortDescription: club.shortDescription,
-    neighborhood: club.neighborhood,
-    cityName: club.city.name,
-    citySlug: club.city.slug,
-    images: club.images,
-    logoUrl: club.logoUrl,
-    rating: null,
-    reviewCount: null,
-    priceRange: club.priceRange,
-    amenities: club.amenities,
-    vibeTags: club.vibeTags,
-    isVerified: club.isVerified,
-    description: club.description,
-    capacity: club.capacity,
-    foundedYear: club.foundedYear,
-  }));
+    return clubs.map((club: ClubWithCity) => ({
+      id: club.id,
+      name: club.name,
+      slug: club.slug,
+      shortDescription: club.shortDescription,
+      neighborhood: club.neighborhood,
+      cityName: club.city.name,
+      citySlug: club.city.slug,
+      images: club.images,
+      logoUrl: club.logoUrl,
+      rating: null,
+      reviewCount: null,
+      priceRange: club.priceRange,
+      amenities: club.amenities,
+      vibeTags: club.vibeTags,
+      isVerified: club.isVerified,
+      description: club.description,
+      capacity: club.capacity,
+      foundedYear: club.foundedYear,
+    }));
+  } catch (error) {
+    console.error('getClubs error:', error);
+    return [];
+  }
 }
 
 /**
  * Get Club by Slug
  */
 export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
-  const club = await prisma.club.findUnique({
-    where: { slug, isActive: true },
-    include: {
-      city: {
-        select: { name: true, slug: true },
+  try {
+    const validatedSlug = slugSchema.parse(slug);
+    const club = await prisma.club.findUnique({
+      where: { slug: validatedSlug, isActive: true },
+      include: {
+        city: {
+          select: { name: true, slug: true },
+        },
       },
-    },
-  });
+    });
 
-  if (!club) {
+    if (!club) {
+      return null;
+    }
+
+    return {
+      id: club.id,
+      name: club.name,
+      slug: club.slug,
+      shortDescription: club.shortDescription,
+      neighborhood: club.neighborhood,
+      cityName: club.city.name,
+      citySlug: club.city.slug,
+      images: club.images,
+      logoUrl: club.logoUrl,
+      rating: null,
+      reviewCount: null,
+      priceRange: club.priceRange,
+      amenities: club.amenities,
+      vibeTags: club.vibeTags,
+      isVerified: club.isVerified,
+      description: club.description,
+      addressDisplay: club.addressDisplay,
+      coordinates: club.coordinates as { lat: number; lng: number },
+      contactEmail: club.contactEmail,
+      phoneNumber: club.phoneNumber,
+      website: club.website,
+      socialMedia: club.socialMedia as Record<string, string> | null,
+      openingHours: club.openingHours as Record<string, string>,
+      capacity: club.capacity,
+      foundedYear: club.foundedYear,
+    };
+  } catch (error) {
+    console.error('getClubBySlug error:', error);
     return null;
   }
-
-  return {
-    id: club.id,
-    name: club.name,
-    slug: club.slug,
-    shortDescription: club.shortDescription,
-    neighborhood: club.neighborhood,
-    cityName: club.city.name,
-    citySlug: club.city.slug,
-    images: club.images,
-    logoUrl: club.logoUrl,
-    rating: null,
-    reviewCount: null,
-    priceRange: club.priceRange,
-    amenities: club.amenities,
-    vibeTags: club.vibeTags,
-    isVerified: club.isVerified,
-    description: club.description,
-    addressDisplay: club.addressDisplay,
-    coordinates: club.coordinates as { lat: number; lng: number },
-    contactEmail: club.contactEmail,
-    phoneNumber: club.phoneNumber,
-    website: club.website,
-    socialMedia: club.socialMedia as Record<string, string> | null,
-    openingHours: club.openingHours as Record<string, string>,
-    capacity: club.capacity,
-    foundedYear: club.foundedYear,
-  };
 }
 
 /**
  * Get Featured Clubs (for homepage)
  */
 export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
-  const clubs = await prisma.club.findMany({
-    where: {
-      isActive: true,
-      isVerified: true,
-    },
-    include: {
-      city: {
-        select: { name: true, slug: true },
+  try {
+    const validatedLimit = limitSchema.parse(limit);
+    const clubs = await prisma.club.findMany({
+      where: {
+        isActive: true,
+        isVerified: true,
       },
-    },
-    orderBy: { name: 'asc' },
-    take: limit,
-  });
+      include: {
+        city: {
+          select: { name: true, slug: true },
+        },
+      },
+      orderBy: { name: 'asc' },
+      take: validatedLimit,
+    });
 
-  return clubs.map((club: ClubWithCity) => ({
-    id: club.id,
-    name: club.name,
-    slug: club.slug,
-    shortDescription: club.shortDescription,
-    neighborhood: club.neighborhood,
-    cityName: club.city.name,
-    citySlug: club.city.slug,
-    images: club.images,
-    logoUrl: club.logoUrl,
-    rating: null,
-    reviewCount: null,
-    priceRange: club.priceRange,
-    amenities: club.amenities,
-    vibeTags: club.vibeTags,
-    isVerified: club.isVerified,
-    description: club.description,
-    capacity: club.capacity,
-    foundedYear: club.foundedYear,
-  }));
+    return clubs.map((club: ClubWithCity) => ({
+      id: club.id,
+      name: club.name,
+      slug: club.slug,
+      shortDescription: club.shortDescription,
+      neighborhood: club.neighborhood,
+      cityName: club.city.name,
+      citySlug: club.city.slug,
+      images: club.images,
+      logoUrl: club.logoUrl,
+      rating: null,
+      reviewCount: null,
+      priceRange: club.priceRange,
+      amenities: club.amenities,
+      vibeTags: club.vibeTags,
+      isVerified: club.isVerified,
+      description: club.description,
+      capacity: club.capacity,
+      foundedYear: club.foundedYear,
+    }));
+  } catch (error) {
+    console.error('getFeaturedClubs error:', error);
+    return [];
+  }
 }
 
 /**
  * Get Club Neighbors (same city)
  */
 export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubCard[]> {
-  const club = await prisma.club.findUnique({
-    where: { id: clubId },
-    select: { cityId: true },
-  });
+  try {
+    const validatedId = idSchema.parse(clubId);
+    const validatedLimit = limitSchema.parse(limit);
+    const club = await prisma.club.findUnique({
+      where: { id: validatedId },
+      select: { cityId: true },
+    });
 
-  if (!club) {
+    if (!club) {
+      return [];
+    }
+
+    const neighbors = await prisma.club.findMany({
+      where: {
+        cityId: club.cityId,
+        isActive: true,
+        isVerified: true,
+        id: { not: validatedId },
+      },
+      include: {
+        city: {
+          select: { name: true, slug: true },
+        },
+      },
+      orderBy: { name: 'asc' },
+      take: validatedLimit,
+    });
+
+    return neighbors.map((clubItem: ClubWithCity) => ({
+      id: clubItem.id,
+      name: clubItem.name,
+      slug: clubItem.slug,
+      shortDescription: clubItem.shortDescription,
+      neighborhood: clubItem.neighborhood,
+      cityName: clubItem.city.name,
+      citySlug: clubItem.city.slug,
+      images: clubItem.images,
+      logoUrl: clubItem.logoUrl,
+      rating: null,
+      reviewCount: null,
+      priceRange: clubItem.priceRange,
+      amenities: clubItem.amenities,
+      vibeTags: clubItem.vibeTags,
+      isVerified: clubItem.isVerified,
+      description: clubItem.description,
+      capacity: clubItem.capacity,
+      foundedYear: clubItem.foundedYear,
+    }));
+  } catch (error) {
+    console.error('getCityNeighbors error:', error);
     return [];
   }
-
-  const neighbors = await prisma.club.findMany({
-    where: {
-      cityId: club.cityId,
-      isActive: true,
-      isVerified: true,
-      id: { not: clubId },
-    },
-    include: {
-      city: {
-        select: { name: true, slug: true },
-      },
-    },
-    orderBy: { name: 'asc' },
-    take: limit,
-  });
-
-  return neighbors.map((clubItem: ClubWithCity) => ({
-    id: clubItem.id,
-    name: clubItem.name,
-    slug: clubItem.slug,
-    shortDescription: clubItem.shortDescription,
-    neighborhood: clubItem.neighborhood,
-    cityName: clubItem.city.name,
-    citySlug: clubItem.city.slug,
-    images: clubItem.images,
-    logoUrl: clubItem.logoUrl,
-    rating: null,
-    reviewCount: null,
-    priceRange: clubItem.priceRange,
-    amenities: clubItem.amenities,
-    vibeTags: clubItem.vibeTags,
-    isVerified: clubItem.isVerified,
-    description: clubItem.description,
-    capacity: clubItem.capacity,
-    foundedYear: clubItem.foundedYear,
-  }));
 }
 
 /**
  * Get All Neighborhoods
  */
 export async function getNeighborhoods(citySlug?: string) {
-  const where: Record<string, unknown> = {
-    isActive: true,
-    isVerified: true,
-  };
+  try {
+    const validatedCitySlug = citySlugSchema.parse(citySlug);
+    const where: Record<string, unknown> = {
+      isActive: true,
+      isVerified: true,
+    };
 
-  if (citySlug) {
-    const city = await prisma.city.findUnique({
-      where: { slug: citySlug },
-      select: { id: true },
-    });
-    if (city) {
-      where.cityId = city.id;
+    if (validatedCitySlug) {
+      const city = await prisma.city.findUnique({
+        where: { slug: validatedCitySlug },
+        select: { id: true },
+      });
+      if (city) {
+        where.cityId = city.id;
+      }
     }
+
+    const neighborhoods = await prisma.club.groupBy({
+      by: ['neighborhood'],
+      where,
+      _count: { id: true },
+      orderBy: { neighborhood: 'asc' },
+    });
+
+    return neighborhoods.map((n: { neighborhood: string; _count: { id: number } }) => ({
+      name: n.neighborhood,
+      count: n._count.id,
+    }));
+  } catch (error) {
+    console.error('getNeighborhoods error:', error);
+    return [];
   }
-
-  const neighborhoods = await prisma.club.groupBy({
-    by: ['neighborhood'],
-    where,
-    _count: { id: true },
-    orderBy: { neighborhood: 'asc' },
-  });
-
-  return neighborhoods.map((n: { neighborhood: string; _count: { id: number } }) => ({
-    name: n.neighborhood,
-    count: n._count.id,
-  }));
 }
 
 /**
  * Get All Amenities
  */
 export async function getAllAmenities(citySlug?: string) {
-  const where: Record<string, unknown> = {
-    isActive: true,
-    isVerified: true,
-  };
+  try {
+    const validatedCitySlug = citySlugSchema.parse(citySlug);
+    
+    // Using unnest for performance on array columns
+    const result = await prisma.$queryRaw<any[]>`
+      SELECT DISTINCT unnest("amenities") as item 
+      FROM "Club" 
+      WHERE "isActive" = true AND "isVerified" = true
+      ${validatedCitySlug ? Prisma.sql`AND "cityId" = (SELECT id FROM "City" WHERE slug = ${validatedCitySlug})` : Prisma.empty}
+      ORDER BY item ASC
+    `;
 
-  if (citySlug) {
-    const city = await prisma.city.findUnique({
-      where: { slug: citySlug },
-      select: { id: true },
-    });
-    if (city) {
-      where.cityId = city.id;
-    }
+    return result.map(r => r.item as string);
+  } catch (error) {
+    console.error('getAllAmenities error:', error);
+    return [];
   }
-
-  const clubs = await prisma.club.findMany({
-    where,
-    select: { amenities: true },
-  });
-
-  const allAmenities: string[] = [];
-  for (const c of clubs) {
-    allAmenities.push(...c.amenities);
-  }
-  return Array.from(new Set(allAmenities)).sort();
 }
 
 /**
  * Get All Vibe Tags
  */
 export async function getAllVibes(citySlug?: string) {
-  const where: Record<string, unknown> = {
-    isActive: true,
-    isVerified: true,
-  };
+  try {
+    const validatedCitySlug = citySlugSchema.parse(citySlug);
+    
+    // Using unnest for performance on array columns
+    const result = await prisma.$queryRaw<any[]>`
+      SELECT DISTINCT unnest("vibeTags") as item 
+      FROM "Club" 
+      WHERE "isActive" = true AND "isVerified" = true
+      ${validatedCitySlug ? Prisma.sql`AND "cityId" = (SELECT id FROM "City" WHERE slug = ${validatedCitySlug})` : Prisma.empty}
+      ORDER BY item ASC
+    `;
 
-  if (citySlug) {
-    const city = await prisma.city.findUnique({
-      where: { slug: citySlug },
-      select: { id: true },
-    });
-    if (city) {
-      where.cityId = city.id;
-    }
+    return result.map(r => r.item as string);
+  } catch (error) {
+    console.error('getAllVibes error:', error);
+    return [];
   }
-
-  const clubs = await prisma.club.findMany({
-    where,
-    select: { vibeTags: true },
-  });
-
-  const allVibes: string[] = [];
-  for (const c of clubs) {
-    allVibes.push(...c.vibeTags);
-  }
-  return Array.from(new Set(allVibes)).sort();
 }
