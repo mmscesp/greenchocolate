@@ -27,20 +27,18 @@ interface ClubWithCity {
   city: { name: string; slug: string };
   images: string[];
   logoUrl: string | null;
-  rating: number | null;
-  reviewCount: number | null;
   priceRange: string;
   amenities: string[];
   vibeTags: string[];
   isVerified: boolean;
   description: string;
   addressDisplay: string;
-  coordinates: Record<string, number>;
+  coordinates: any;
   contactEmail: string;
   phoneNumber: string | null;
   website: string | null;
-  socialMedia: Record<string, string> | null;
-  openingHours: Record<string, string>;
+  socialMedia: any;
+  openingHours: any;
   capacity: number;
   foundedYear: number;
 }
@@ -50,6 +48,7 @@ export interface ClubCard {
   name: string;
   slug: string;
   shortDescription: string | null;
+  description: string;
   neighborhood: string;
   cityName: string;
   citySlug: string;
@@ -61,6 +60,8 @@ export interface ClubCard {
   amenities: string[];
   vibeTags: string[];
   isVerified: boolean;
+  capacity: number;
+  foundedYear: number;
 }
 
 export interface ClubDetail extends ClubCard {
@@ -144,12 +145,15 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
     citySlug: club.city.slug,
     images: club.images,
     logoUrl: club.logoUrl,
-    rating: club.rating,
-    reviewCount: club.reviewCount,
+    rating: null,
+    reviewCount: null,
     priceRange: club.priceRange,
     amenities: club.amenities,
     vibeTags: club.vibeTags,
     isVerified: club.isVerified,
+    description: club.description,
+    capacity: club.capacity,
+    foundedYear: club.foundedYear,
   }));
 }
 
@@ -180,8 +184,8 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
     citySlug: club.city.slug,
     images: club.images,
     logoUrl: club.logoUrl,
-    rating: club.rating,
-    reviewCount: club.reviewCount,
+    rating: null,
+    reviewCount: null,
     priceRange: club.priceRange,
     amenities: club.amenities,
     vibeTags: club.vibeTags,
@@ -213,7 +217,7 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
         select: { name: true, slug: true },
       },
     },
-    orderBy: { rating: 'desc' },
+    orderBy: { name: 'asc' },
     take: limit,
   });
 
@@ -227,12 +231,15 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
     citySlug: club.city.slug,
     images: club.images,
     logoUrl: club.logoUrl,
-    rating: club.rating,
-    reviewCount: club.reviewCount,
+    rating: null,
+    reviewCount: null,
     priceRange: club.priceRange,
     amenities: club.amenities,
     vibeTags: club.vibeTags,
     isVerified: club.isVerified,
+    description: club.description,
+    capacity: club.capacity,
+    foundedYear: club.foundedYear,
   }));
 }
 
@@ -261,7 +268,7 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
         select: { name: true, slug: true },
       },
     },
-    orderBy: { rating: 'desc' },
+    orderBy: { name: 'asc' },
     take: limit,
   });
 
@@ -275,12 +282,15 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
     citySlug: clubItem.city.slug,
     images: clubItem.images,
     logoUrl: clubItem.logoUrl,
-    rating: clubItem.rating,
-    reviewCount: clubItem.reviewCount,
+    rating: null,
+    reviewCount: null,
     priceRange: clubItem.priceRange,
     amenities: clubItem.amenities,
     vibeTags: clubItem.vibeTags,
     isVerified: clubItem.isVerified,
+    description: clubItem.description,
+    capacity: clubItem.capacity,
+    foundedYear: clubItem.foundedYear,
   }));
 }
 

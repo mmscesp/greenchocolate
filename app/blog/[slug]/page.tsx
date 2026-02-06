@@ -1,30 +1,58 @@
 import { notFound } from 'next/navigation';
 import ArticleContent from './ArticleContent';
-import articlesData from '@/data/dummy-articles.json';
-import { Article } from '@/lib/types';
+import { getArticleBySlug, getRelatedArticles } from '@/app/actions/articles';
+import { JsonLd } from '@/components/JsonLd';
+import { Metadata } from 'next';
 
 interface ArticlePageProps {
-  params: {
-    slug: string;
+  params: { slug: string };
+}
+
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+  const article = await getArticleBySlug(params.slug);
+  if (!article) return { title: 'Article Not Found' };
+  
+  return {
+    title: article.metaTitle || article.title,
+    description: article.metaDescription || article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      images: article.heroImage ? [article.heroImage] : [],
+      type: 'article',
+      publishedTime: article.publishedAt || undefined,
+      authors: [article.authorName],
+    },
   };
 }
 
-// Generate static params for all articles
-export async function generateStaticParams() {
-  const articles = articlesData as Article[];
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const article = await getArticleBySlug(params.slug);
+  if (!article) { notFound(); }
   
-  return articles.map((article) => ({
-    slug: article.slug,
-  }));
-}
+  const relatedArticles = await getRelatedArticles(article.id, 3);
 
-export default function ArticlePage({ params }: ArticlePageProps) {
-  const articles = articlesData as Article[];
-  const article = articles.find(a => a.slug === params.slug);
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    description: article.excerpt,
+    image: article.heroImage,
+    datePublished: article.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: article.authorName,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SocialClubsMaps',
+    },
+  };
 
-  if (!article) {
-    notFound();
-  }
-
-  return <ArticleContent article={article} />;
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <ArticleContent article={article} relatedArticles={relatedArticles} />
+    </>
+  );
 }

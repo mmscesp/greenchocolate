@@ -4,16 +4,25 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { FilterOptions } from '@/lib/types';
-import { NEIGHBORHOODS, AMENITIES, VIBE_TAGS } from '@/lib/constants';
 import { Filter, X, MapPin, Star, DollarSign, CheckCircle, Sparkles, Search } from 'lucide-react';
 
 interface FilterBarProps {
   filters: FilterOptions;
   onFiltersChange: (filters: FilterOptions) => void;
   totalResults: number;
+  neighborhoods: string[];
+  amenities: string[];
+  vibes: string[];
 }
 
-export default function FilterBar({ filters, onFiltersChange, totalResults }: FilterBarProps) {
+export default function FilterBar({ 
+  filters, 
+  onFiltersChange, 
+  totalResults,
+  neighborhoods = [],
+  amenities = [],
+  vibes = []
+}: FilterBarProps) {
   const [showFilters, setShowFilters] = useState(false);
 
   const updateFilter = (key: keyof FilterOptions, value: any) => {
@@ -176,7 +185,7 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
               Barrio
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-              {NEIGHBORHOODS.map(neighborhood => (
+              {neighborhoods.map(neighborhood => (
                 <button
                   key={neighborhood}
                   onClick={() => updateFilter('neighborhood', 
@@ -201,7 +210,7 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
               Servicios y Amenidades
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {AMENITIES.slice(0, 12).map(amenity => (
+              {amenities.map(amenity => (
                 <button
                   key={amenity}
                   onClick={() => toggleArrayFilter('amenities', amenity)}
@@ -227,7 +236,7 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
               Ambiente y Estilo
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {VIBE_TAGS.slice(0, 12).map(vibe => (
+              {vibes.map(vibe => (
                 <button
                   key={vibe}
                   onClick={() => toggleArrayFilter('vibes', vibe)}
