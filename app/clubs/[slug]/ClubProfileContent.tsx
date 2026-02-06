@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import VerificationBadge from '@/components/VerificationBadge';
@@ -10,21 +11,25 @@ import Footer from '@/components/Footer';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
-import { 
-  Leaf, 
-  MapPin, 
-  Star, 
-  Phone, 
-  Mail, 
-  Globe, 
-  Instagram, 
+import { submitMembershipRequest, ActionState } from '@/app/actions/membership';
+import {
+  Leaf,
+  MapPin,
+  Star,
+  Phone,
+  Mail,
+  Globe,
+  Instagram,
   Facebook,
   Clock,
   Users,
   Calendar,
   ChevronLeft,
   ChevronRight,
-  X
+  X,
+  Check,
+  AlertCircle,
+  Loader2,
 } from 'lucide-react';
 
 interface ClubProfileContentProps {
@@ -33,17 +38,11 @@ interface ClubProfileContentProps {
 
 export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   const { t } = useLanguage();
+  const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
-  const [preRegistrationForm, setPreRegistrationForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    age: '',
-    experience: '',
-    message: ''
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formState, setFormState] = useState<ActionState | null>(null);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % club.images.length);
@@ -53,26 +52,33 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
     setCurrentImageIndex((prev) => (prev - 1 + club.images.length) % club.images.length);
   };
 
-  const handlePreRegistrationSubmit = async (e: React.FormEvent) => {
+  const handlePreRegistrationSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setShowPreRegistrationModal(false);
-    alert(t('form.success'));
-    
-    // Reset form
-    setPreRegistrationForm({
-      name: '',
-      email: '',
-      phone: '',
-      age: '',
-      experience: '',
-      message: ''
-    });
+    setFormState(null);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      formData.append('clubId', club.id);
+
+      const result = await submitMembershipRequest({ success: false }, formData);
+      setFormState(result);
+
+      if (result.success) {
+        setTimeout(() => {
+          setShowPreRegistrationModal(false);
+          router.push('/dashboard/requests');
+        }, 1500);
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      setFormState({
+        success: false,
+        message: 'An unexpected error occurred. Please try again.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getDayName = (day: string) => {
@@ -83,7 +89,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       thursday: t('days.thursday'),
       friday: t('days.friday'),
       saturday: t('days.saturday'),
-      sunday: t('days.sunday')
+      sunday: t('days.sunday'),
     };
     return dayMap[day] || day;
   };
@@ -118,7 +124,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           fill
           className="object-cover"
         />
-        
+
         {/* Image Navigation */}
         {club.images.length > 1 && (
           <>
@@ -134,7 +140,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             >
               <ChevronRight className="h-6 w-6" />
             </button>
-            
+
             {/* Image Dots */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {club.images.map((_, index) => (
@@ -233,12 +239,8 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             {club.allowsPreRegistration && (
               <div className="bg-white rounded-lg p-6 sticky top-24">
                 <div className="text-center mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {t('club.join_club')}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {t('club.membership_request')}
-                  </p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{t('club.join_club')}</h3>
+                  <p className="text-gray-600 text-sm">{t('club.membership_request')}</p>
                 </div>
                 <Button
                   variant="cannabis"
@@ -270,7 +272,10 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 {club.website && (
                   <div className="flex items-center gap-3 text-gray-700">
                     <Globe className="h-5 w-5 text-green-600" />
-                    <a href={`https://${club.website}`} className="text-sm text-green-600 hover:underline">
+                    <a
+                      href={`https://${club.website}`}
+                      className="text-sm text-green-600 hover:underline"
+                    >
                       {club.website}
                     </a>
                   </div>
@@ -282,14 +287,18 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <div className="mt-4 pt-4 border-t">
                   <div className="flex gap-3">
                     {club.socialMedia.instagram && (
-                      <a href={`https://instagram.com/${club.socialMedia.instagram.replace('@', '')}`} 
-                         className="text-pink-600 hover:text-pink-700">
+                      <a
+                        href={`https://instagram.com/${club.socialMedia.instagram.replace('@', '')}`}
+                        className="text-pink-600 hover:text-pink-700"
+                      >
                         <Instagram className="h-5 w-5" />
                       </a>
                     )}
                     {club.socialMedia.facebook && (
-                      <a href={`https://facebook.com/${club.socialMedia.facebook}`} 
-                         className="text-blue-600 hover:text-blue-700">
+                      <a
+                        href={`https://facebook.com/${club.socialMedia.facebook}`}
+                        className="text-blue-600 hover:text-blue-700"
+                      >
                         <Facebook className="h-5 w-5" />
                       </a>
                     )}
@@ -307,7 +316,9 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     <Users className="h-4 w-4" />
                     <span className="text-sm">{t('club.capacity')}</span>
                   </div>
-                  <span className="text-sm font-medium">{club.capacity} {t('club.people')}</span>
+                  <span className="text-sm font-medium">
+                    {club.capacity} {t('club.people')}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-700">
@@ -332,110 +343,54 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   {t('form.pre_registration')} - {club.name}
                 </h3>
                 <button
-                  onClick={() => setShowPreRegistrationModal(false)}
+                  onClick={() => {
+                    setShowPreRegistrationModal(false);
+                    setFormState(null);
+                  }}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <X className="h-6 w-6" />
                 </button>
               </div>
 
+              {/* Form State Message */}
+              {formState && (
+                <div
+                  className={`mb-4 p-4 rounded-lg flex items-start gap-3 ${
+                    formState.success
+                      ? 'bg-green-50 border border-green-200 text-green-800'
+                      : 'bg-red-50 border border-red-200 text-red-800'
+                  }`}
+                >
+                  {formState.success ? (
+                    <Check className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  ) : (
+                    <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  )}
+                  <div>
+                    <p className="font-medium">{formState.message}</p>
+                    {formState.errors && (
+                      <ul className="mt-2 text-sm list-disc list-inside">
+                        {Object.entries(formState.errors).map(([field, errors]) =>
+                          errors.map((error, idx) => <li key={`${field}-${idx}`}>{error}</li>)
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handlePreRegistrationSubmit} className="space-y-4">
+                <input type="hidden" name="clubId" value={club.id} />
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {t('form.full_name')} {t('form.required')}
                   </label>
                   <input
                     type="text"
+                    name="message"
                     required
-                    value={preRegistrationForm.name}
-                    onChange={(e) => setPreRegistrationForm({
-                      ...preRegistrationForm,
-                      name: e.target.value
-                    })}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('form.email')} {t('form.required')}
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={preRegistrationForm.email}
-                    onChange={(e) => setPreRegistrationForm({
-                      ...preRegistrationForm,
-                      email: e.target.value
-                    })}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('form.phone')} {t('form.required')}
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={preRegistrationForm.phone}
-                    onChange={(e) => setPreRegistrationForm({
-                      ...preRegistrationForm,
-                      phone: e.target.value
-                    })}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('form.age')} {t('form.required')}
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="18"
-                    max="100"
-                    value={preRegistrationForm.age}
-                    onChange={(e) => setPreRegistrationForm({
-                      ...preRegistrationForm,
-                      age: e.target.value
-                    })}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('form.experience')}
-                  </label>
-                  <select
-                    value={preRegistrationForm.experience}
-                    onChange={(e) => setPreRegistrationForm({
-                      ...preRegistrationForm,
-                      experience: e.target.value
-                    })}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                  >
-                    <option value="">{t('form.experience.select')}</option>
-                    <option value="principiante">{t('form.experience.beginner')}</option>
-                    <option value="intermedio">{t('form.experience.intermediate')}</option>
-                    <option value="experto">{t('form.experience.expert')}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('form.message')}
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={preRegistrationForm.message}
-                    onChange={(e) => setPreRegistrationForm({
-                      ...preRegistrationForm,
-                      message: e.target.value
-                    })}
                     placeholder={t('form.message_placeholder')}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
                   />
@@ -445,8 +400,12 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setShowPreRegistrationModal(false)}
+                    onClick={() => {
+                      setShowPreRegistrationModal(false);
+                      setFormState(null);
+                    }}
                     className="flex-1"
+                    disabled={isSubmitting}
                   >
                     {t('form.cancel')}
                   </Button>
@@ -456,7 +415,14 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     disabled={isSubmitting}
                     className="flex-1"
                   >
-                    {isSubmitting ? t('form.submitting') : t('form.submit')}
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        {t('form.submitting')}
+                      </>
+                    ) : (
+                      t('form.submit')
+                    )}
                   </Button>
                 </div>
               </form>

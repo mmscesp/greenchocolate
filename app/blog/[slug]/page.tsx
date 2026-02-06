@@ -1,11 +1,27 @@
 import { notFound } from 'next/navigation';
 import ArticleContent from './ArticleContent';
-import { getArticleBySlug, getRelatedArticles } from '@/app/actions/articles';
+import { getArticleBySlug, getRelatedArticles, getArticles } from '@/app/actions/articles';
 import { JsonLd } from '@/components/JsonLd';
 import { Metadata } from 'next';
 
+// Force dynamic rendering to avoid build-time database calls
+export const dynamic = 'force-dynamic';
+
 interface ArticlePageProps {
   params: { slug: string };
+}
+
+// Generate static params for all articles at build time
+export async function generateStaticParams() {
+  try {
+    const articles = await getArticles();
+    return articles.map((article) => ({
+      slug: article.slug,
+    }));
+  } catch (error) {
+    console.warn('Failed to fetch articles during build, using empty params');
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {

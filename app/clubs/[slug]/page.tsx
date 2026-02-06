@@ -1,14 +1,30 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import ClubProfileContent from './ClubProfileContent';
-import { getClubBySlug, getCityNeighbors } from '@/app/actions/clubs';
+import { getClubBySlug, getCityNeighbors, getClubs } from '@/app/actions/clubs';
 import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
+
+// Force dynamic rendering to avoid build-time database calls
+export const dynamic = 'force-dynamic';
 
 interface ClubPageProps {
   params: {
     slug: string;
   };
+}
+
+// Generate static params for all clubs at build time
+export async function generateStaticParams() {
+  try {
+    const clubs = await getClubs({ isVerified: true });
+    return clubs.map((club) => ({
+      slug: club.slug,
+    }));
+  } catch (error) {
+    console.warn('Failed to fetch clubs during build, using empty params');
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {

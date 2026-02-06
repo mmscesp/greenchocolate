@@ -132,7 +132,7 @@ export async function submitMembershipRequest(
         userId: profile.id,
         clubId: validated.data.clubId,
         message: validated.data.message,
-        encryptedSnapshot,
+        ...(encryptedSnapshot && { encryptedSnapshot }),
       },
     });
 

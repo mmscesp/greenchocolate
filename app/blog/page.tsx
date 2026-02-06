@@ -9,6 +9,9 @@ import UserProfileDropdown from '@/components/UserProfileDropdown';
 import { getArticles, getCategoriesWithCounts, getFeaturedArticles } from '@/app/actions/articles';
 import { Leaf, Search, Calendar, Clock, User, Filter } from 'lucide-react';
 
+// Force dynamic rendering to avoid build-time database calls
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Blog | SocialClubsMaps',
   description: 'Discover articles about cannabis social clubs, health, wellness, and culture.',
