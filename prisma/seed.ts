@@ -1,9 +1,13 @@
 // Seed Script for MVP Launch
 // Populates database with cities, clubs, and articles
 
-import { PrismaClient } from '@prisma/client';
+import { config } from 'dotenv';
+import { resolve } from 'path';
 
-const prisma = new PrismaClient();
+// Load environment variables from .env.local
+config({ path: resolve(process.cwd(), '.env.local') });
+
+import { prisma } from '../lib/prisma';
 
 // ==========================================
 // CITIES SEED DATA
