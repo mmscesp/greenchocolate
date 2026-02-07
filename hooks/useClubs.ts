@@ -1,19 +1,52 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Club, FilterOptions } from '@/lib/types';
-import clubsData from '@/data/dummy-clubs.json';
+import { Club } from '@/lib/types';
+import { getClubs, type ClubFilters } from '@/app/actions/clubs';
 
 export const useClubs = () => {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setClubs(clubsData as Club[]);
-      setLoading(false);
-    }, 500);
+    async function fetchClubs() {
+      try {
+        // Fetch from server action instead of dummy JSON
+        const data = await getClubs({});
+        
+        // Map ClubCard to Club type for backward compatibility
+        const mappedClubs = data.map(card => ({
+          id: card.id,
+          name: card.name,
+          slug: card.slug,
+          isVerified: card.isVerified,
+          neighborhood: card.neighborhood,
+          images: card.images,
+          description: card.description,
+          amenities: card.amenities,
+          vibeTags: card.vibeTags,
+          openingHours: {},
+          allowsPreRegistration: true,
+          coordinates: { lat: 0, lng: 0 },
+          address: '',
+          contactEmail: '',
+          phoneNumber: '',
+          rating: card.rating || undefined,
+          reviewCount: card.reviewCount || undefined,
+          priceRange: card.priceRange as '$' | '$$' | '$$$',
+          capacity: card.capacity,
+          foundedYear: card.foundedYear,
+        }));
+        
+        setClubs(mappedClubs);
+      } catch (error) {
+        console.error('Failed to fetch clubs:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchClubs();
   }, []);
 
   return { clubs, loading };
@@ -21,7 +54,14 @@ export const useClubs = () => {
 
 export const useClubFilters = () => {
   const { clubs, loading } = useClubs();
-  const [filters, setFilters] = useState<FilterOptions>({
+  const [filters, setFilters] = useState<{
+    neighborhood: string;
+    amenities: string[];
+    vibes: string[];
+    isVerified: boolean;
+    priceRange: string[];
+    rating: number;
+  }>({
     neighborhood: '',
     amenities: [],
     vibes: [],

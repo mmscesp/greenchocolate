@@ -1,22 +1,56 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import ClubCard from '@/components/ClubCard';
+import ClubCardComponent from '@/components/ClubCard';
 import Footer from '@/components/Footer';
 import LanguageSelector from '@/components/LanguageSelector';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
 import HeroSection from '@/components/HeroSection';
-import { useClubs } from '@/hooks/useClubs';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Leaf, TrendingUp, Award } from 'lucide-react';
+import type { ClubCard } from '@/app/actions/clubs';
+import type { Club } from '@/lib/types';
 
-export default function HomePage() {
-  const { clubs, loading } = useClubs();
+interface HomePageContentProps {
+  featuredClubs: ClubCard[];
+  allClubs: ClubCard[];
+}
+
+// Map ClubCard (from server) to Club (expected by component)
+function mapToClub(card: ClubCard): Club {
+  return {
+    id: card.id,
+    name: card.name,
+    slug: card.slug,
+    isVerified: card.isVerified,
+    neighborhood: card.neighborhood,
+    images: card.images,
+    description: card.description,
+    amenities: card.amenities,
+    vibeTags: card.vibeTags,
+    openingHours: {},
+    allowsPreRegistration: true,
+    coordinates: { lat: 0, lng: 0 },
+    address: '',
+    contactEmail: '',
+    phoneNumber: '',
+    rating: card.rating || undefined,
+    reviewCount: card.reviewCount || undefined,
+    priceRange: card.priceRange as '$' | '$$' | '$$$',
+    capacity: card.capacity,
+    foundedYear: card.foundedYear,
+  };
+}
+
+export default function HomePageContent({ featuredClubs, allClubs }: HomePageContentProps) {
   const { t } = useLanguage();
-  const featuredClubs = clubs.filter(club => club.isVerified).slice(0, 3);
-  const monthPicks = clubs.slice(0, 4);
+  
+  const monthPicks = useMemo(() => {
+    return allClubs.slice(0, 4);
+  }, [allClubs]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
@@ -72,21 +106,13 @@ export default function HomePage() {
             </p>
           </div>
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="bg-gray-200 animate-pulse rounded-2xl h-96 skeleton"></div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredClubs.map(club => (
                 <div key={club.id} className="transform hover:scale-105 transition-all duration-300">
-                  <ClubCard club={club} />
+                  <ClubCardComponent club={mapToClub(club)} />
                 </div>
               ))}
             </div>
-          )}
         </div>
       </section>
 
@@ -106,25 +132,17 @@ export default function HomePage() {
             </p>
           </div>
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-gray-200 animate-pulse rounded-2xl h-80 skeleton"></div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {monthPicks.map((club, index) => (
                 <div 
                   key={club.id} 
                   className="transform hover:scale-105 transition-all duration-300"
                   style={{animationDelay: `${index * 0.1}s`}}
                 >
-                  <ClubCard club={club} />
+                  <ClubCardComponent club={mapToClub(club)} />
                 </div>
               ))}
             </div>
-          )}
 
           <div className="text-center mt-12">
             <Link href="/clubs">

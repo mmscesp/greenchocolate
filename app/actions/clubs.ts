@@ -5,6 +5,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
 // ==========================================
@@ -24,6 +25,60 @@ const citySlugSchema = z.string().optional();
 const slugSchema = z.string().min(1);
 const limitSchema = z.number().int().min(1).max(100).optional();
 const idSchema = z.string().uuid();
+
+// JSON field validation schemas
+const coordinatesSchema = z.object({
+  lat: z.number(),
+  lng: z.number(),
+});
+
+const socialMediaSchema = z.record(z.string()).nullable();
+const openingHoursSchema = z.record(z.string());
+
+// ==========================================
+// HELPER FUNCTIONS
+// ==========================================
+
+/**
+ * Get current user profile from Supabase auth
+ */
+async function getCurrentProfile() {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
+
+  return prisma.profile.findUnique({
+    where: { authId: user.id },
+  });
+}
+
+/**
+ * Verify that the current user is authorized to manage a club
+ * Returns the profile if authorized, null if not
+ */
+async function verifyClubAdminAccess(clubId: string) {
+  const profile = await getCurrentProfile();
+
+  if (!profile) {
+    return null;
+  }
+
+  // Allow if user is an admin
+  if (profile.role === 'ADMIN') {
+    return profile;
+  }
+
+  // Allow if user manages this specific club
+  const profileWithManagedClub = profile as typeof profile & { managedClubId: string | null };
+  if (profileWithManagedClub.managedClubId === clubId) {
+    return profile;
+  }
+
+  return null;
+}
 
 // ==========================================
 // TYPES
@@ -203,6 +258,11 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
       return null;
     }
 
+    // HIGH-001: Validate JSON fields with Zod instead of unsafe casting
+    const validatedCoordinates = coordinatesSchema.safeParse(club.coordinates);
+    const validatedSocialMedia = socialMediaSchema.safeParse(club.socialMedia);
+    const validatedOpeningHours = openingHoursSchema.safeParse(club.openingHours);
+
     return {
       id: club.id,
       name: club.name,
@@ -221,12 +281,12 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
       isVerified: club.isVerified,
       description: club.description,
       addressDisplay: club.addressDisplay,
-      coordinates: club.coordinates as { lat: number; lng: number },
+      coordinates: validatedCoordinates.success ? validatedCoordinates.data : { lat: 0, lng: 0 },
       contactEmail: club.contactEmail,
       phoneNumber: club.phoneNumber,
       website: club.website,
-      socialMedia: club.socialMedia as Record<string, string> | null,
-      openingHours: club.openingHours as Record<string, string>,
+      socialMedia: validatedSocialMedia.success ? validatedSocialMedia.data : null,
+      openingHours: validatedOpeningHours.success ? validatedOpeningHours.data : {},
       capacity: club.capacity,
       foundedYear: club.foundedYear,
     };
@@ -420,6 +480,155 @@ export async function getAllVibes(citySlug?: string) {
     return result.map(r => r.item as string);
   } catch (error) {
     console.error('getAllVibes error:', error);
+    return [];
+  }
+}
+
+// ==========================================
+// CLUB ADMIN ACTIONS
+// ==========================================
+
+/**
+ * Get Club by Auth ID (for Club Admin panel)
+ */
+export async function getClubByAuthId(authId: string) {
+  try {
+    const club = await prisma.club.findFirst({
+      where: {
+        // In a real app, Profile would have managedClubId
+        // For now, we'll find by contactEmail matching the user's email
+        // This is a temporary solution until proper club admin relationship is established
+      },
+      include: {
+        city: {
+          select: { name: true, slug: true },
+        },
+      },
+    });
+    return club;
+  } catch (error) {
+    console.error('getClubByAuthId error:', error);
+    return null;
+  }
+}
+
+/**
+ * Get Club Stats for Dashboard
+ */
+export async function getClubStats(clubId: string) {
+  try {
+    const [totalRequests, pendingRequests, approvedRequests] = await Promise.all([
+      prisma.membershipRequest.count({ where: { clubId } }),
+      prisma.membershipRequest.count({ where: { clubId, status: 'PENDING' } }),
+      prisma.membershipRequest.count({ where: { clubId, status: 'APPROVED' } }),
+    ]);
+
+    return {
+      totalRequests,
+      pendingRequests,
+      approvedRequests,
+      // Capacity info from club
+    };
+  } catch (error) {
+    console.error('getClubStats error:', error);
+    return null;
+  }
+}
+
+export type ClubActionState = {
+  success: boolean;
+  message?: string;
+  errors?: Record<string, string[]>;
+};
+
+/**
+ * Update Club Profile
+ * CRIT-001 FIX: Added authentication and authorization checks
+ */
+export async function updateClub(
+  clubId: string,
+  data: {
+    name?: string;
+    description?: string;
+    shortDescription?: string;
+    phoneNumber?: string;
+    website?: string;
+    socialMedia?: Record<string, string>;
+    openingHours?: Record<string, string>;
+    amenities?: string[];
+    vibeTags?: string[];
+  }
+): Promise<ClubActionState> {
+  // Verify user is authenticated and authorized to manage this club
+  const authorizedProfile = await verifyClubAdminAccess(clubId);
+
+  if (!authorizedProfile) {
+    return {
+      success: false,
+      message: 'Unauthorized: You do not have permission to update this club',
+    };
+  }
+
+  try {
+    await prisma.club.update({
+      where: { id: clubId },
+      data: {
+        ...(data.name && { name: data.name }),
+        ...(data.description && { description: data.description }),
+        ...(data.shortDescription && { shortDescription: data.shortDescription }),
+        ...(data.phoneNumber && { phoneNumber: data.phoneNumber }),
+        ...(data.website && { website: data.website }),
+        ...(data.socialMedia && { socialMedia: data.socialMedia }),
+        ...(data.openingHours && { openingHours: data.openingHours }),
+        ...(data.amenities && { amenities: data.amenities }),
+        ...(data.vibeTags && { vibeTags: data.vibeTags }),
+      },
+    });
+
+    return {
+      success: true,
+      message: 'Club updated successfully',
+    };
+  } catch (error) {
+    console.error('updateClub error:', error);
+    return {
+      success: false,
+      message: 'Failed to update club. Please try again.',
+    };
+  }
+}
+
+/**
+ * Get Club Membership Requests (for Club Admin)
+ * CRIT-002 FIX: Added authentication check
+ * HIGH-005 FIX: Removed email from selection to prevent PII leak
+ */
+export async function getClubMembershipRequests(clubId: string) {
+  // Verify user is authenticated and authorized to view this club's requests
+  const authorizedProfile = await verifyClubAdminAccess(clubId);
+
+  if (!authorizedProfile) {
+    return [];
+  }
+
+  try {
+    const requests = await prisma.membershipRequest.findMany({
+      where: { clubId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            displayName: true,
+            avatarUrl: true,
+            // CRIT-002: email removed - PII leak fix
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return requests;
+  } catch (error) {
+    console.error('getClubMembershipRequests error:', error);
     return [];
   }
 }

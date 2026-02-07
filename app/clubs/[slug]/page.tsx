@@ -114,9 +114,41 @@ export default async function ClubPage({ params }: ClubPageProps) {
     })),
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://socialclubsmaps.com/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Clubs',
+        item: 'https://socialclubsmaps.com/clubs',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: clubDetail.cityName,
+        item: `https://socialclubsmaps.com/clubs?city=${clubDetail.citySlug}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: club.name,
+        item: `https://socialclubsmaps.com/clubs/${club.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ClubProfileContent club={club} />
     </>
   );

@@ -65,9 +65,41 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     },
   };
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://socialclubsmaps.com/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://socialclubsmaps.com/blog',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.category,
+        item: `https://socialclubsmaps.com/blog?category=${encodeURIComponent(article.category)}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: article.title,
+        item: `https://socialclubsmaps.com/blog/${article.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ArticleContent article={article} relatedArticles={relatedArticles} />
     </>
   );

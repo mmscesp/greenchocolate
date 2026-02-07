@@ -2,24 +2,38 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Leaf, Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Leaf, Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '@/components/auth/AuthProvider';
+
+interface FormData {
+  clubName: string;
+  email: string;
+  password: string;
+  address: string;
+  phone: string;
+  description: string;
+}
 
 export default function ClubSignupPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<FormData>({
     clubName: '',
     email: '',
     password: '',
     address: '',
     phone: '',
-    description: ''
+    description: '',
   });
+  const { signUp } = useAuth();
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,14 +41,49 @@ export default function ClubSignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
     if (step < 2) {
+      // Basic validation for step 1
+      if (!formData.clubName || !formData.email || !formData.password) {
+        setError('Por favor, completa todos los campos');
+        return;
+      }
+      if (formData.password.length < 8) {
+        setError('La contraseña debe tener al menos 8 caracteres');
+        return;
+      }
       setStep(2);
     } else {
       setLoading(true);
-      setTimeout(() => {
+      try {
+        const { error: signUpError, needsEmailConfirmation } = await signUp(
+          formData.email,
+          formData.password,
+          formData.clubName,
+          {
+            club_name: formData.clubName,
+            club_address: formData.address,
+            club_phone: formData.phone,
+            club_description: formData.description,
+          }
+        );
+
+        if (signUpError) {
+          setError(signUpError.message);
+          setLoading(false);
+        } else if (needsEmailConfirmation) {
+          setStep(3);
+          setLoading(false);
+        } else {
+          router.push('/dashboard');
+          router.refresh();
+        }
+      } catch (err) {
+        setError('Ha ocurrido un error inesperado');
+        console.error('Signup error:', err);
         setLoading(false);
-        setStep(3);
-      }, 1500);
+      }
     }
   };
 
@@ -50,6 +99,7 @@ export default function ClubSignupPage() {
           </h2>
           <p className="text-gray-600 mb-8">
             Tu club <strong>{formData.clubName}</strong> ha sido registrado exitosamente.
+            Por favor, verifica tu correo electrónico para activar tu cuenta.
           </p>
           <div className="space-y-3">
             <Link href="/club-panel/login" className="block">
@@ -101,6 +151,13 @@ export default function ClubSignupPage() {
             </p>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {step === 1 && (
               <>
@@ -117,6 +174,7 @@ export default function ClubSignupPage() {
                     value={formData.clubName}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -133,6 +191,7 @@ export default function ClubSignupPage() {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -150,7 +209,11 @@ export default function ClubSignupPage() {
                     onChange={handleChange}
                     required
                     minLength={8}
+                    disabled={loading}
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Usa al menos 8 caracteres con una combinación de letras y números
+                  </p>
                 </div>
               </>
             )}
@@ -170,6 +233,7 @@ export default function ClubSignupPage() {
                     value={formData.address}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -186,6 +250,7 @@ export default function ClubSignupPage() {
                     value={formData.phone}
                     onChange={handleChange}
                     required
+                    disabled={loading}
                   />
                 </div>
 
@@ -202,6 +267,7 @@ export default function ClubSignupPage() {
                     onChange={handleChange}
                     rows={4}
                     required
+                    disabled={loading}
                   />
                 </div>
               </>
@@ -212,7 +278,16 @@ export default function ClubSignupPage() {
               className="w-full bg-green-600 hover:bg-green-700 text-white"
               disabled={loading}
             >
-              {loading ? 'Registrando...' : step === 2 ? 'Registrar Club' : 'Siguiente'}
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Registrando...
+                </>
+              ) : step === 2 ? (
+                'Registrar Club'
+              ) : (
+                'Siguiente'
+              )}
             </Button>
           </form>
 

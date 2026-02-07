@@ -77,6 +77,13 @@ export class EncryptionService {
   }
 
   /**
+   * Alias for encrypt (matches architecture plan)
+   */
+  static encryptPII(data: PIIData): string {
+    return this.encrypt(data);
+  }
+
+  /**
    * Decrypt PII data bundle
    */
   static decrypt(encryptedBundle: string): PIIData {
@@ -108,6 +115,13 @@ export class EncryptionService {
     } catch (error) {
       throw new Error('Failed to decrypt data: Invalid or corrupted data');
     }
+  }
+
+  /**
+   * Alias for decrypt (matches architecture plan)
+   */
+  static decryptPII(encryptedBundle: string): PIIData {
+    return this.decrypt(encryptedBundle);
   }
 
   /**

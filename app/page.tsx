@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import HomePageContent from './HomePageContent';
+import HomePageWrapper from './HomePageWrapper';
 
 export const metadata: Metadata = {
   title: 'Cannabis Social Clubs Spain | SocialClubsMaps - Find & Join CSCs',
@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   },
 };
 
+// Force dynamic rendering to avoid build-time database calls
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
-  return <HomePageContent />;
+  return <HomePageWrapper />;
 }

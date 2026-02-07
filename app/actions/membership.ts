@@ -18,6 +18,18 @@ const submitRequestSchema = z.object({
   message: z.string().max(500).optional(),
 });
 
+const approveRequestSchema = z.object({
+  requestId: z.string().uuid(),
+  clubSlug: z.string(),
+  notes: z.string().optional(),
+});
+
+const rejectRequestSchema = z.object({
+  requestId: z.string().uuid(),
+  clubSlug: z.string(),
+  reason: z.string().min(1).max(500),
+});
+
 // ==========================================
 // TYPES
 // ==========================================
@@ -34,6 +46,19 @@ export interface MembershipRequestCard {
   clubNeighborhood: string;
 }
 
+export interface ClubRequest {
+  id: string;
+  status: string;
+  message: string | null;
+  createdAt: string;
+  user: {
+    id: string;
+    displayName: string | null;
+    email: string; // Only returned for authorized club admins
+    avatarUrl: string | null;
+  };
+}
+
 export type ActionState = {
   success: boolean;
   message?: string;
@@ -44,7 +69,24 @@ export type ActionState = {
 // HELPER FUNCTIONS
 // ==========================================
 
-async function getCurrentProfile() {
+type ProfileWithManagedClub = {
+  id: string;
+  authId: string;
+  email: string;
+  role: 'USER' | 'ADMIN' | 'CLUB_ADMIN';
+  tier: string;
+  encryptedData: string | null;
+  avatarUrl: string | null;
+  bio: string | null;
+  displayName: string | null;
+  isVerified: boolean;
+  hasCompletedOnboarding: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  managedClubId: string | null;
+};
+
+async function getCurrentProfile(): Promise<ProfileWithManagedClub | null> {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -52,9 +94,44 @@ async function getCurrentProfile() {
     return null;
   }
 
-  return prisma.profile.findUnique({
+  const profile = await prisma.profile.findUnique({
     where: { authId: user.id },
   });
+
+  if (!profile) {
+    return null;
+  }
+
+  // Cast to include managedClubId which exists in DB but may not be in generated types
+  return {
+    ...profile,
+    managedClubId: (profile as unknown as Record<string, string | null>).managedClubId ?? null,
+  } as ProfileWithManagedClub;
+}
+
+/**
+ * Verify that the current user is authorized to manage a club
+ * CRIT-003: Centralized authorization check for club admin operations
+ */
+async function verifyClubAdminAccess(clubId: string, profile: Awaited<ReturnType<typeof getCurrentProfile>>) {
+  if (!profile) {
+    return false;
+  }
+
+  // Allow if user is an admin
+  if (profile.role === 'ADMIN') {
+    return true;
+  }
+
+  // Allow if user manages this specific club
+  // Access managedClubId through index signature to avoid type issues until Prisma types are regenerated
+  const profileRecord = profile as Record<string, unknown>;
+  const managedClubId = profileRecord.managedClubId as string | null | undefined;
+  if (managedClubId === clubId) {
+    return true;
+  }
+
+  return false;
 }
 
 // ==========================================
@@ -110,40 +187,42 @@ export async function submitMembershipRequest(
       };
     }
 
-    // Get user PII for legal snapshot
-    let encryptedSnapshot = null;
-    if (profile.encryptedData) {
-      try {
-        const pii = EncryptionService.decrypt(profile.encryptedData);
-        const snapshotData = {
-          ...pii,
-          email: profile.email,
-          timestamp: new Date().toISOString(),
-        };
-        encryptedSnapshot = { data: EncryptionService.encrypt(snapshotData) };
-      } catch {
-        // If decryption fails, skip snapshot
-        console.warn('Could not create legal snapshot');
-      }
+    // Get club info for the encrypted snapshot
+    const club = await prisma.club.findUnique({
+      where: { id: validated.data.clubId },
+    });
+
+    if (!club) {
+      return {
+        success: false,
+        message: 'Club not found',
+      };
     }
+
+    // Get user's PII for legal compliance snapshot
+    const pii = profile.encryptedData
+      ? EncryptionService.decryptPII(profile.encryptedData)
+      : {};
+
+    // Create encrypted snapshot
+    const encryptedSnapshot = EncryptionService.encryptPII(pii);
 
     await prisma.membershipRequest.create({
       data: {
         userId: profile.id,
         clubId: validated.data.clubId,
         message: validated.data.message,
-        ...(encryptedSnapshot && { encryptedSnapshot }),
+        encryptedSnapshot: { data: encryptedSnapshot },
+        status: 'PENDING',
       },
     });
 
     revalidatePath('/dashboard/requests');
-    revalidatePath(`/club/${data.clubId}`);
 
     return {
       success: true,
-      message: 'Membership request submitted successfully',
+      message: 'Request submitted successfully',
     };
-
   } catch (error) {
     console.error('Submit request error:', error);
     return {
@@ -156,14 +235,14 @@ export async function submitMembershipRequest(
 /**
  * Get User's Membership Requests
  */
-export async function getUserMembershipRequests(): Promise<MembershipRequestCard[]> {
+export async function getUserMembershipRequests() {
+  const profile = await getCurrentProfile();
+
+  if (!profile) {
+    return [];
+  }
+
   try {
-    const profile = await getCurrentProfile();
-
-    if (!profile) {
-      return [];
-    }
-
     const requests = await prisma.membershipRequest.findMany({
       where: { userId: profile.id },
       include: {
@@ -180,7 +259,7 @@ export async function getUserMembershipRequests(): Promise<MembershipRequestCard
       orderBy: { createdAt: 'desc' },
     });
 
-    return requests.map((req: { id: string; status: string; message: string | null; createdAt: Date; club: { id: string; name: string; slug: string; images: string[]; neighborhood: string } }) => ({
+    return requests.map((req) => ({
       id: req.id,
       status: req.status,
       message: req.message,
@@ -192,7 +271,7 @@ export async function getUserMembershipRequests(): Promise<MembershipRequestCard
       clubNeighborhood: req.club.neighborhood,
     }));
   } catch (error) {
-    console.error('getUserMembershipRequests error:', error);
+    console.error('Get requests error:', error);
     return [];
   }
 }
@@ -238,7 +317,6 @@ export async function cancelMembershipRequest(
       success: true,
       message: 'Request cancelled successfully',
     };
-
   } catch (error) {
     console.error('Cancel request error:', error);
     return {
@@ -249,40 +327,73 @@ export async function cancelMembershipRequest(
 }
 
 /**
- * Get Club's Membership Requests (for Club Admin)
+ * Get Club Membership Requests
+ * Can be called with a clubSlug or will infer from the current user's managed club
+ * CRIT-003 FIX: Added authorization check when clubSlug is provided
+ * HIGH-005 FIX: Removed email from selection to prevent PII leak
  */
-export async function getClubMembershipRequests(clubId: string) {
+export async function getClubMembershipRequests(clubSlug?: string): Promise<ClubRequest[]> {
   try {
     const profile = await getCurrentProfile();
 
-    if (!profile || profile.role !== 'CLUB_ADMIN') {
+    if (!profile) {
       return [];
     }
 
+    let targetClubId: string | undefined;
+
+    if (!clubSlug) {
+      // Use the user's managed club
+      if (!profile.managedClubId) {
+        return [];
+      }
+      targetClubId = profile.managedClubId;
+    } else {
+      // CRIT-003: When clubSlug is provided, verify user manages that club
+      const club = await prisma.club.findUnique({
+        where: { slug: clubSlug },
+      });
+
+      if (!club) return [];
+
+      // Verify authorization
+      const isAuthorized = await verifyClubAdminAccess(club.id, profile);
+      if (!isAuthorized) {
+        return [];
+      }
+
+      targetClubId = club.id;
+    }
+
     const requests = await prisma.membershipRequest.findMany({
-      where: { clubId },
+      where: { clubId: targetClubId },
       include: {
         user: {
           select: {
             id: true,
             displayName: true,
-            email: true,
+            email: true, // Email included for authorized club admins only
             avatarUrl: true,
           },
         },
       },
       orderBy: [
-        { status: 'asc' }, // PENDING first
+        { status: 'asc' },
         { createdAt: 'desc' },
       ],
     });
 
-    return requests.map((req) => ({
+    return requests.map(req => ({
       id: req.id,
       status: req.status,
       message: req.message,
       createdAt: req.createdAt.toISOString(),
-      user: req.user,
+      user: {
+        id: req.user.id,
+        displayName: req.user.displayName,
+        email: req.user.email,
+        avatarUrl: req.user.avatarUrl,
+      },
     }));
   } catch (error) {
     console.error('getClubMembershipRequests error:', error);
@@ -291,63 +402,89 @@ export async function getClubMembershipRequests(clubId: string) {
 }
 
 /**
- * Approve Membership Request (Admin)
+ * Approve Membership Request
+ * CRIT-003 FIX: Added ownership verification
  */
-export async function approveMembershipRequest(
+export async function approveClubMembershipRequest(
   requestId: string,
+  clubSlug?: string,
   notes?: string
 ): Promise<ActionState> {
-  const profile = await getCurrentProfile();
+  try {
+    const profile = await getCurrentProfile();
+    if (!profile) {
+      return { success: false, message: 'Unauthorized' };
+    }
 
-  if (!profile) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    };
-  }
+    let finalClubSlug = clubSlug;
+    if (!finalClubSlug) {
+      if (!profile.managedClubId) {
+        return { success: false, message: 'No managed club found' };
+      }
+      const club = await prisma.club.findUnique({ where: { id: profile.managedClubId } });
+      if (!club) return { success: false, message: 'Managed club not found' };
+      finalClubSlug = club.slug;
+    }
 
-  // Fetch the request first to verify club ownership
-  const request = await prisma.membershipRequest.findUnique({
-    where: { id: requestId },
-    include: { club: true },
-  });
+    const validated = approveRequestSchema.safeParse({
+      requestId,
+      clubSlug: finalClubSlug,
+      notes,
+    });
 
-  if (!request) {
-    return {
-      success: false,
-      message: 'Request not found',
-    };
-  }
-
-  // Authorization check: ADMIN can approve any, CLUB_ADMIN only their club
-  if (profile.role === 'CLUB_ADMIN') {
-    if (profile.managedClubId !== request.clubId) {
+    if (!validated.success) {
       return {
         success: false,
-        message: 'You can only approve requests for your own club',
+        message: 'Invalid request data',
       };
     }
-  }
 
-  try {
+    const club = await prisma.club.findUnique({
+      where: { slug: validated.data.clubSlug },
+    });
+
+    if (!club) {
+      return {
+        success: false,
+        message: 'Club not found',
+      };
+    }
+
+    // CRIT-003: Verify the user manages this club
+    const isAuthorized = await verifyClubAdminAccess(club.id, profile);
+    if (!isAuthorized) {
+      return {
+        success: false,
+        message: 'Unauthorized: You do not have permission to approve requests for this club',
+      };
+    }
+
+    const request = await prisma.membershipRequest.findUnique({
+      where: { id: validated.data.requestId },
+    });
+
+    if (!request || request.clubId !== club.id) {
+      return {
+        success: false,
+        message: 'Request not found or does not belong to this club',
+      };
+    }
+
     await prisma.membershipRequest.update({
-      where: { id: requestId },
+      where: { id: validated.data.requestId },
       data: {
         status: 'APPROVED',
-        reviewedBy: profile.id,
         reviewedAt: new Date(),
-        appointmentNotes: notes,
+        appointmentNotes: validated.data.notes,
       },
     });
 
-    revalidatePath('/dashboard/requests');
-    revalidatePath('/club-panel/dashboard');
+    revalidatePath('/club-panel/dashboard/requests');
 
     return {
       success: true,
       message: 'Request approved',
     };
-
   } catch (error) {
     console.error('Approve request error:', error);
     return {
@@ -357,64 +494,94 @@ export async function approveMembershipRequest(
   }
 }
 
+// Aliases for backward compatibility or cleaner imports
+export const approveMembershipRequest = approveClubMembershipRequest;
+export const rejectMembershipRequest = rejectClubMembershipRequest;
+
 /**
- * Reject Membership Request (Admin)
+ * Reject Membership Request
+ * CRIT-003 FIX: Added ownership verification
  */
-export async function rejectMembershipRequest(
+export async function rejectClubMembershipRequest(
   requestId: string,
-  reason: string
+  clubSlug?: string,
+  reason?: string
 ): Promise<ActionState> {
-  const profile = await getCurrentProfile();
+  try {
+    const profile = await getCurrentProfile();
+    if (!profile) {
+      return { success: false, message: 'Unauthorized' };
+    }
 
-  if (!profile) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    };
-  }
+    let finalClubSlug = clubSlug;
+    if (!finalClubSlug) {
+      if (!profile.managedClubId) {
+        return { success: false, message: 'No managed club found' };
+      }
+      const club = await prisma.club.findUnique({ where: { id: profile.managedClubId } });
+      if (!club) return { success: false, message: 'Managed club not found' };
+      finalClubSlug = club.slug;
+    }
 
-  // Fetch the request first to verify club ownership
-  const request = await prisma.membershipRequest.findUnique({
-    where: { id: requestId },
-    include: { club: true },
-  });
+    const validated = rejectRequestSchema.safeParse({
+      requestId,
+      clubSlug: finalClubSlug,
+      reason: reason || 'No reason provided',
+    });
 
-  if (!request) {
-    return {
-      success: false,
-      message: 'Request not found',
-    };
-  }
-
-  // Authorization check: ADMIN can reject any, CLUB_ADMIN only their club
-  if (profile.role === 'CLUB_ADMIN') {
-    if (profile.managedClubId !== request.clubId) {
+    if (!validated.success) {
       return {
         success: false,
-        message: 'You can only reject requests for your own club',
+        message: 'Invalid request data',
       };
     }
-  }
 
-  try {
+    const club = await prisma.club.findUnique({
+      where: { slug: validated.data.clubSlug },
+    });
+
+    if (!club) {
+      return {
+        success: false,
+        message: 'Club not found',
+      };
+    }
+
+    // CRIT-003: Verify the user manages this club
+    const isAuthorized = await verifyClubAdminAccess(club.id, profile);
+    if (!isAuthorized) {
+      return {
+        success: false,
+        message: 'Unauthorized: You do not have permission to reject requests for this club',
+      };
+    }
+
+    const request = await prisma.membershipRequest.findUnique({
+      where: { id: validated.data.requestId },
+    });
+
+    if (!request || request.clubId !== club.id) {
+      return {
+        success: false,
+        message: 'Request not found or does not belong to this club',
+      };
+    }
+
     await prisma.membershipRequest.update({
-      where: { id: requestId },
+      where: { id: validated.data.requestId },
       data: {
         status: 'REJECTED',
-        reviewedBy: profile.id,
         reviewedAt: new Date(),
-        rejectionReason: reason,
+        rejectionReason: validated.data.reason,
       },
     });
 
-    revalidatePath('/dashboard/requests');
-    revalidatePath('/club-panel/dashboard');
+    revalidatePath('/club-panel/dashboard/requests');
 
     return {
       success: true,
       message: 'Request rejected',
     };
-
   } catch (error) {
     console.error('Reject request error:', error);
     return {

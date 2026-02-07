@@ -62,13 +62,13 @@ export default function ClubRequestsPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // TODO: Get actual club ID from user's profile/context
-  const clubId = 'temp-club-id';
-
+  
   const loadRequests = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getClubMembershipRequests(clubId);
+      // Calling without arguments will infer the club from the user's managed club
+      const data = await getClubMembershipRequests();
       setRequests(data);
     } catch (err) {
       setError('Failed to load membership requests');
@@ -76,7 +76,7 @@ export default function ClubRequestsPage() {
     } finally {
       setLoading(false);
     }
-  }, [clubId]);
+  }, []);
 
   useEffect(() => {
     loadRequests();
@@ -89,6 +89,7 @@ export default function ClubRequestsPage() {
     try {
       const result: ActionState = await approveMembershipRequest(
         selectedRequest.id,
+        undefined, // clubSlug - will be inferred on server
         approvalNotes
       );
       if (result.success) {
@@ -119,6 +120,7 @@ export default function ClubRequestsPage() {
     try {
       const result: ActionState = await rejectMembershipRequest(
         selectedRequest.id,
+        undefined, // clubSlug - will be inferred on server
         rejectionReason
       );
       if (result.success) {
