@@ -11,6 +11,7 @@ import UserProfileDropdown from '@/components/UserProfileDropdown';
 import HeroSection from '@/components/HeroSection';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Leaf, TrendingUp, Award } from 'lucide-react';
+import { OrganizationStructuredData, WebSiteStructuredData } from '@/components/StructuredData';
 import type { ClubCard } from '@/app/actions/clubs';
 import type { Club } from '@/lib/types';
 
@@ -53,7 +54,24 @@ export default function HomePageContent({ featuredClubs, allClubs }: HomePageCon
   }, [allClubs]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
+    <>
+      {/* JSON-LD Structured Data */}
+      <OrganizationStructuredData
+        schema={{
+          name: 'SocialClubsMaps',
+          url: 'https://socialclubsmaps.com',
+          logo: 'https://socialclubsmaps.com/logo.png',
+          description: 'Directorio de clubs sociales de cannabis en España. Encuentra y únete a los mejores CSCs.',
+          sameAs: [
+            'https://www.instagram.com/socialclubsmaps',
+            'https://www.twitter.com/socialclubsmaps',
+            'https://www.facebook.com/socialclubsmaps',
+          ],
+        }}
+      />
+      <WebSiteStructuredData name="SocialClubsMaps" url="https://socialclubsmaps.com" />
+
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
       {/* Navigation */}
       <nav className="bg-white/95 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -233,5 +251,6 @@ export default function HomePageContent({ featuredClubs, allClubs }: HomePageCon
 
       <Footer />
     </div>
+  </>
   );
 }

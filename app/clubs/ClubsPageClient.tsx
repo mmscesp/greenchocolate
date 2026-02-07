@@ -12,6 +12,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { Leaf, Map, List, Grid } from 'lucide-react';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { Club, FilterOptions } from '@/lib/types';
+import { CollectionPageStructuredData } from '@/components/StructuredData';
 
 interface ClubsPageClientProps {
   initialClubs: ClubCardType[];
@@ -61,6 +62,16 @@ export default function ClubsPageClient({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* JSON-LD Structured Data */}
+      <CollectionPageStructuredData
+        schema={{
+          name: t('clubs.title'),
+          description: t('clubs.subtitle'),
+          url: 'https://socialclubsmaps.com/clubs',
+          numberOfItems: clubs.length,
+        }}
+      />
+
       {/* Navigation */}
       <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

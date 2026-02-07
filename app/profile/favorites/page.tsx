@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -225,7 +227,7 @@ export default function FavoritesPage() {
             {!searchQuery && (
               <Link href="/clubs">
                 <Button variant="cannabis">
-                  Explorar Clubs
+                  {t('nav.explore')}
                 </Button>
               </Link>
             )}
