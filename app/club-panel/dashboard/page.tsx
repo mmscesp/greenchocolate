@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { StatsCard } from '@/components/admin/StatsCard';
 import { Card } from '@/components/ui/card';
 import { mockClubData, mockMembers, mockRequests, mockEvents } from '@/lib/mock-admin-data';
