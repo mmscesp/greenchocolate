@@ -4,8 +4,8 @@ import { getArticleBySlug, getRelatedArticles, getArticles } from '@/app/actions
 import { JsonLd } from '@/components/JsonLd';
 import { Metadata } from 'next';
 
-// Force dynamic rendering to avoid build-time database calls
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate every hour
+export const revalidate = 3600;
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>;

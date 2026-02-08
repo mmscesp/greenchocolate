@@ -1,6 +1,9 @@
 import { Metadata } from 'next';
 import HomePageWrapper from './HomePageWrapper';
 
+// ISR: Revalidate every hour
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: 'Cannabis Social Clubs Spain | SocialClubsMaps - Find & Join CSCs',
   description: 'Discover verified cannabis social clubs in Spain. Find CSCs in Madrid, Barcelona, and more. Pre-register for membership, explore amenities, and join the community.',
@@ -32,9 +35,6 @@ export const metadata: Metadata = {
     },
   },
 };
-
-// Force dynamic rendering to avoid build-time database calls
-export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
   return <HomePageWrapper />;

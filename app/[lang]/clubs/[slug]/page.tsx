@@ -5,8 +5,8 @@ import { getClubBySlug, getCityNeighbors, getClubs } from '@/app/actions/clubs';
 import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
 
-// Force dynamic rendering to avoid build-time database calls
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate every hour
+export const revalidate = 3600;
 
 interface ClubPageProps {
   params: Promise<{

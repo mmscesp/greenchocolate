@@ -7,8 +7,8 @@ import { getArticles, getCategoriesWithCounts, getFeaturedArticles } from '@/app
 import BlogFilters from './BlogFilters';
 import { Search, Calendar, Clock, User } from 'lucide-react';
 
-// Force dynamic rendering to avoid build-time database calls
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate every hour
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Blog | SocialClubsMaps',

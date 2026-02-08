@@ -1,8 +1,8 @@
 import ClubsPageWrapper from './ClubsPageWrapper';
 import { Metadata } from 'next';
 
-// Force dynamic rendering to avoid build-time database calls
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate every hour
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Cannabis Social Clubs Directory | Find CSCs in Spain | SocialClubsMaps',
