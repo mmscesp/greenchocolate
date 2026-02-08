@@ -12,6 +12,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
 import { submitMembershipRequest, ActionState } from '@/app/actions/membership';
+import { useAuth } from '@/components/auth/AuthProvider';
 import {
   Leaf,
   MapPin,
@@ -38,6 +39,7 @@ interface ClubProfileContentProps {
 
 export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
@@ -242,14 +244,20 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{t('club.join_club')}</h3>
                   <p className="text-gray-600 text-sm">{t('club.membership_request')}</p>
                 </div>
-                <Button
-                  variant="cannabis"
-                  size="lg"
-                  onClick={() => setShowPreRegistrationModal(true)}
-                  className="w-full"
-                >
-                  {t('club.pre_register')}
-                </Button>
+                  <Button
+                    variant="cannabis"
+                    size="lg"
+                    onClick={() => {
+                      if (!user) {
+                        router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+                        return;
+                      }
+                      setShowPreRegistrationModal(true);
+                    }}
+                    className="w-full"
+                  >
+                    {t('club.pre_register')}
+                  </Button>
               </div>
             )}
 
@@ -259,7 +267,16 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-gray-700">
                   <MapPin className="h-5 w-5 text-green-600" />
-                  <span className="text-sm">{club.address}</span>
+                  {user ? (
+                    <span className="text-sm">{club.address}</span>
+                  ) : (
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm blur-sm select-none">Calle de la Verdad, 123</span>
+                      <Link href="/login" className="text-xs text-green-600 hover:underline mt-1">
+                        Log in to view address
+                      </Link>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 text-gray-700">
                   <Phone className="h-5 w-5 text-green-600" />
