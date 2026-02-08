@@ -29,7 +29,7 @@ export default function Navbar() {
             <Link href="/clubs">
               <Button variant="ghost" className="hover:bg-green-50">{t('nav.explore')}</Button>
             </Link>
-            <Link href="/blog">
+            <Link href="/learn">
               <Button variant="ghost" className="hover:bg-green-50">{t('nav.blog')}</Button>
             </Link>
             <Link href="/dashboard">

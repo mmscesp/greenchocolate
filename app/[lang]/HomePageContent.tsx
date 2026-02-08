@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ClubCardComponent from '@/components/ClubCard';
 import HeroSection from '@/components/HeroSection';
+import SafetyKitForm from '@/components/marketing/SafetyKitForm';
+import TrustBadge from '@/components/trust/TrustBadge';
 import { useLanguage } from '@/hooks/useLanguage';
-import { TrendingUp, Award } from 'lucide-react';
+import { TrendingUp, Award, ShieldCheck, Map, BookOpen, Scale, ArrowRight } from 'lucide-react';
 import { OrganizationStructuredData, WebSiteStructuredData } from '@/components/StructuredData';
 import type { ClubCard } from '@/app/actions/clubs';
 import type { Club } from '@/lib/types';
@@ -68,152 +70,119 @@ export default function HomePageContent({ featuredClubs, allClubs }: HomePageCon
       />
       <WebSiteStructuredData name="SocialClubsMaps" url="https://socialclubsmaps.com" />
 
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
+      <div className="min-h-screen bg-white relative overflow-hidden">
         {/* Hero Section */}
-      <HeroSection />
+        <HeroSection />
 
-      {/* Featured Clubs */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-green-50/50 to-emerald-50/50"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <Badge variant="verified" className="mb-4">
-              <Award className="h-4 w-4 mr-1" />
-              {t('home.featured.badge')}
-            </Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              {t('home.featured.title')}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t('home.featured.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredClubs.map(club => (
-                <div key={club.id} className="transform hover:scale-105 transition-all duration-300">
-                  <ClubCardComponent club={mapToClub(club)} />
+        {/* Safety & Etiquette - The Lead Magnet */}
+        <section className="py-24 bg-white relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <div>
+                <div className="flex gap-2 mb-6">
+                  <TrustBadge variant="expert" />
+                  <TrustBadge variant="privacy" />
                 </div>
-              ))}
-            </div>
-        </div>
-      </section>
-
-      {/* Month's Picks */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-green-50 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <Badge variant="success" className="mb-4 animate-pulse">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              {t('home.picks.badge')}
-            </Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              {t('home.picks.title')}
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t('home.picks.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {monthPicks.map((club, index) => (
-                <div 
-                  key={club.id} 
-                  className="transform hover:scale-105 transition-all duration-300"
-                  style={{animationDelay: `${index * 0.1}s`}}
-                >
-                  <ClubCardComponent club={mapToClub(club)} />
+                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-8 leading-tight">
+                  Spain is not Amsterdam. <br />
+                  <span className="text-green-600">Know the Rules.</span>
+                </h2>
+                <div className="space-y-6 mb-10">
+                  {[
+                    { title: 'Avoid Fines', desc: 'Public possession can cost you €601–€30,000. Learn how to stay safe.', icon: Scale },
+                    { title: 'Etiquette First', desc: 'Social clubs are private associations, not coffee shops. Respect is the currency.', icon: BookOpen },
+                    { title: 'Verified Only', desc: 'We only list clubs that meet our strict safety and legal standards.', icon: ShieldCheck },
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-4">
+                      <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
+                        <item.icon className="h-6 w-6 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-gray-900 mb-1">{item.title}</h4>
+                        <p className="text-gray-600">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <div className="relative">
+                <div className="absolute -inset-4 bg-green-100/50 rounded-3xl blur-2xl"></div>
+                <div className="relative">
+                  <SafetyKitForm />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Trusted Nav Layer - Why Us */}
+        <section className="py-24 bg-zinc-900 text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl lg:text-5xl font-bold mb-16">The Verified Navigation Layer</h2>
+            <div className="grid md:grid-cols-3 gap-12">
+              <div className="p-8 border border-white/10 rounded-2xl bg-white/5">
+                <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-green-400 text-3xl">
+                  📍
+                </div>
+                <h3 className="text-xl font-bold mb-4">Regulatory Wiki</h3>
+                <p className="text-zinc-400 leading-relaxed">Permanent, expert-reviewed knowledge nodes on laws, rights, and etiquette.</p>
+              </div>
+              <div className="p-8 border border-white/10 rounded-2xl bg-white/5">
+                <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400 text-3xl">
+                  🛡️
+                </div>
+                <h3 className="text-xl font-bold mb-4">Confidence UI</h3>
+                <p className="text-zinc-400 leading-relaxed">Visual status indicators showing the reliability and safety level of every club.</p>
+              </div>
+              <div className="p-8 border border-white/10 rounded-2xl bg-white/5">
+                <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-purple-400 text-3xl">
+                  🎟️
+                </div>
+                <h3 className="text-xl font-bold mb-4">Verified Access</h3>
+                <p className="text-zinc-400 leading-relaxed">Standardized membership request workflows that prioritize your privacy.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Clubs Preview (Trust proof) */}
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+              <div className="max-w-2xl">
+                <Badge variant="outline" className="mb-4 border-green-200 text-green-700">Vetted Clubs</Badge>
+                <h2 className="text-4xl font-bold text-gray-900 leading-tight">
+                  Transparent standards for <br />
+                  <span className="text-green-600">Peace of Mind.</span>
+                </h2>
+              </div>
+              <Link href="/learn">
+                <Button variant="outline" className="rounded-full px-8">
+                  Learn Vetting Process <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
 
-          <div className="text-center mt-12">
-            <Link href="/clubs">
-              <Button variant="outline" size="lg" className="border-green-200 hover:bg-green-50 group">
-                {t('common.view_all')} Clubs
-                <TrendingUp className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Search */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 cannabis-pattern opacity-20"></div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-8">
-            {t('home.search.title')}
-          </h2>
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
-            {t('home.search.subtitle')}
-          </p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-            {[
-              { name: 'Malasaña', icon: '🎨', color: 'from-purple-400 to-purple-600' },
-              { name: 'Centro', icon: '🏛️', color: 'from-blue-400 to-blue-600' },
-              { name: 'Chueca', icon: '🌈', color: 'from-pink-400 to-pink-600' },
-              { name: 'La Latina', icon: '🍷', color: 'from-red-400 to-red-600' }
-            ].map((neighborhood, index) => (
-              <Link key={neighborhood.name} href={`/clubs?neighborhood=${neighborhood.name}`}>
-                <div className="group p-6 bg-white rounded-2xl border border-gray-200 hover:border-green-300 hover:shadow-xl transition-all duration-300 card-hover cursor-pointer">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${neighborhood.color} rounded-2xl flex items-center justify-center text-2xl mb-4 mx-auto group-hover:scale-110 transition-transform`}>
-                    {neighborhood.icon}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredClubs.slice(0, 3).map(club => (
+                  <div key={club.id} className="opacity-80 grayscale hover:grayscale-0 transition-all duration-500">
+                    <ClubCardComponent club={mapToClub(club)} />
                   </div>
-                  <span className="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
-                    {neighborhood.name}
-                  </span>
-                </div>
+                ))}
+              </div>
+            
+            <div className="mt-16 text-center">
+              <p className="text-zinc-500 font-medium mb-8">Access to club details requires a Verified Visitor Pass.</p>
+              <Link href="/mission">
+                <Button className="bg-zinc-900 text-white hover:bg-zinc-800 px-10 py-6 rounded-2xl font-bold">
+                  Start Verification Process
+                </Button>
               </Link>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-3">
-            {[
-              { name: 'Relajado', color: 'bg-blue-100 text-blue-800 hover:bg-blue-200' },
-              { name: 'Social', color: 'bg-green-100 text-green-800 hover:bg-green-200' },
-              { name: 'Creativo', color: 'bg-purple-100 text-purple-800 hover:bg-purple-200' },
-              { name: 'Educativo', color: 'bg-orange-100 text-orange-800 hover:bg-orange-200' }
-            ].map(vibe => (
-              <Link key={vibe.name} href={`/clubs?vibe=${vibe.name}`}>
-                <Badge 
-                  variant="outline" 
-                  className={`cursor-pointer transition-all duration-300 hover:scale-105 ${vibe.color} border-transparent px-4 py-2 text-sm font-medium`}
-                >
-                  {vibe.name}
-                </Badge>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-emerald-600 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-            <div className="group">
-              <div className="text-4xl lg:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform">150+</div>
-              <div className="text-green-100 text-lg">{t('home.stats.verified_clubs')}</div>
-            </div>
-            <div className="group">
-              <div className="text-4xl lg:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform">10K+</div>
-              <div className="text-green-100 text-lg">{t('home.stats.active_members')}</div>
-            </div>
-            <div className="group">
-              <div className="text-4xl lg:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform">25</div>
-              <div className="text-green-100 text-lg">{t('home.stats.cities')}</div>
-            </div>
-            <div className="group">
-              <div className="text-4xl lg:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform">4.9★</div>
-              <div className="text-green-100 text-lg">{t('home.stats.rating')}</div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
-  </>
+        </section>
+      </div>
+    </>
   );
 }

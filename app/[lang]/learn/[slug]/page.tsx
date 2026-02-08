@@ -52,7 +52,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
+    '@type': 'MedicalWebPage',
     headline: article.title,
     description: article.excerpt,
     image: article.heroImage,
@@ -80,20 +80,20 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Blog',
-        item: 'https://socialclubsmaps.com/blog',
+        name: 'Knowledge Hub',
+        item: 'https://socialclubsmaps.com/learn',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: article.category,
-        item: `https://socialclubsmaps.com/blog?category=${encodeURIComponent(article.category)}`,
+        item: `https://socialclubsmaps.com/learn?category=${encodeURIComponent(article.category)}`,
       },
       {
         '@type': 'ListItem',
         position: 4,
         name: article.title,
-        item: `https://socialclubsmaps.com/blog/${article.slug}`,
+        item: `https://socialclubsmaps.com/learn/${article.slug}`,
       },
     ],
   };

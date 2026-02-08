@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Search, ArrowRight, Play, MapPin, Leaf, Shield, Users } from 'lucide-react';
+import { Search, ArrowRight, Play, MapPin, Leaf, Shield, Users, Mail, Rocket } from 'lucide-react';
+import WaitlistForm from './marketing/WaitlistForm';
 
 export default function HeroSection() {
   const { t } = useLanguage();
@@ -127,31 +128,36 @@ export default function HeroSection() {
           {/* Subtitle */}
           <div className="max-w-2xl sm:max-w-3xl mx-auto mb-8 sm:mb-10 lg:mb-12 px-2 sm:px-0 fade-in-up" style={{ animationDelay: '0.3s' }}>
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed font-medium drop-shadow-md">
-              {t('home.hero.subtitle')}
+              Navigate Spain's Cannabis Culture safely and respectfully with verified information and expert-vetted guides.
             </p>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center fade-in-up mb-10 sm:mb-12 lg:mb-16" style={{ animationDelay: '0.4s' }}>
-            <Link href="/clubs" className="w-full sm:w-auto">
+          {/* Waitlist Form Integration */}
+          <div className="fade-in-up mb-12 w-full flex justify-center" style={{ animationDelay: '0.4s' }}>
+            <WaitlistForm />
+          </div>
+
+          {/* Secondary CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center fade-in-up mb-10 sm:mb-12 lg:mb-16" style={{ animationDelay: '0.5s' }}>
+            <Link href="/learn" className="w-full sm:w-auto">
               <Button
                 size="lg"
                 className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-bold rounded-xl bg-white text-green-900 hover:bg-green-50 hover:scale-105 transition-all duration-300 shadow-lg group"
               >
-                <Search className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform" />
-                {t('home.hero.explore_clubs')}
+                <Leaf className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform" />
+                Start Learning
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
 
-            <Link href="/about" className="w-full sm:w-auto">
+            <Link href="/mission" className="w-full sm:w-auto">
               <Button
                 size="lg"
                 variant="outline"
                 className="w-full sm:w-auto px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-bold rounded-xl bg-white/10 backdrop-blur-xl border border-white/30 text-white hover:bg-white/20 hover:border-white/50 hover:scale-105 transition-all duration-300 group"
               >
-                <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-green-400 group-hover:scale-110 transition-transform" />
-                {t('home.hero.learn_more')}
+                <Shield className="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-green-400 group-hover:scale-110 transition-transform" />
+                Our Mission
               </Button>
             </Link>
           </div>

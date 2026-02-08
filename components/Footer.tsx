@@ -44,7 +44,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="hover:text-green-400 transition-colors flex items-center gap-2">
+                <Link href="/learn" className="hover:text-green-400 transition-colors flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   {t('nav.blog')}
                 </Link>
