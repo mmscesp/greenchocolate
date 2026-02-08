@@ -108,12 +108,12 @@ interface ClubWithCity {
   isVerified: boolean;
   description: string;
   addressDisplay: string;
-  coordinates: any;
+  coordinates: Prisma.JsonValue;
   contactEmail: string;
   phoneNumber: string | null;
   website: string | null;
-  socialMedia: any;
-  openingHours: any;
+  socialMedia: Prisma.JsonValue;
+  openingHours: Prisma.JsonValue;
   capacity: number;
   foundedYear: number;
 }
@@ -446,7 +446,7 @@ export async function getAllAmenities(citySlug?: string) {
     const validatedCitySlug = citySlugSchema.parse(citySlug);
     
     // Using unnest for performance on array columns
-    const result = await prisma.$queryRaw<any[]>`
+    const result = await prisma.$queryRaw<{ item: string }[]>`
       SELECT DISTINCT unnest("amenities") as item 
       FROM "Club" 
       WHERE "isActive" = true AND "isVerified" = true
@@ -454,7 +454,7 @@ export async function getAllAmenities(citySlug?: string) {
       ORDER BY item ASC
     `;
 
-    return result.map(r => r.item as string);
+    return result.map(r => r.item);
   } catch (error) {
     console.error('getAllAmenities error:', error);
     return [];
@@ -469,7 +469,7 @@ export async function getAllVibes(citySlug?: string) {
     const validatedCitySlug = citySlugSchema.parse(citySlug);
     
     // Using unnest for performance on array columns
-    const result = await prisma.$queryRaw<any[]>`
+    const result = await prisma.$queryRaw<{ item: string }[]>`
       SELECT DISTINCT unnest("vibeTags") as item 
       FROM "Club" 
       WHERE "isActive" = true AND "isVerified" = true
@@ -477,7 +477,7 @@ export async function getAllVibes(citySlug?: string) {
       ORDER BY item ASC
     `;
 
-    return result.map(r => r.item as string);
+    return result.map(r => r.item);
   } catch (error) {
     console.error('getAllVibes error:', error);
     return [];
