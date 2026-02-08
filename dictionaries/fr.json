@@ -1,0 +1,16 @@
+{
+  "nav.explore": "Explorer les Clubs",
+  "nav.blog": "Blog",
+  "nav.dashboard": "Panneau Club",
+  "nav.logout": "Déconnexion",
+  "home.hero.title": "Découvrez les Meilleurs",
+  "home.hero.subtitle": "Nous connectons les communautés de cannabis responsables en Espagne.",
+  "home.hero.explore_clubs": "Explorer les Clubs",
+  "clubs.title": "Répertoire des Clubs Sociaux",
+  "clubs.subtitle": "Découvrez des clubs sociaux de cannabis vérifiés dans toute l'Espagne",
+  "blog.title": "Blog Cannabis",
+  "footer.description": "La plateforme leader pour découvrir et connecter avec des clubs sociaux de cannabis en Espagne.",
+  "common.loading": "Chargement...",
+  "common.error": "Erreur",
+  "common.success": "Succès"
+}
