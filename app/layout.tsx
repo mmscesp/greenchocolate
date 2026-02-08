@@ -1,9 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { LanguageProvider } from '@/hooks/useLanguage';
-import { AuthProvider } from '@/components/auth/AuthProvider';
-import LanguageUpdater from '@/components/LanguageUpdater';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,14 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html>
       <body className={inter.className}>
-        <LanguageProvider>
-          <LanguageUpdater />
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </LanguageProvider>
+        {children}
       </body>
     </html>
   );
