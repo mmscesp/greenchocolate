@@ -1,10 +1,11 @@
-// Next.js Middleware for Session Management & Route Protection
+// Next.js Proxy for Session Management & Route Protection
 // Supabase Auth Integration
+// MIGRATED from middleware.ts to proxy.ts for Next.js 16
 
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers },
   });

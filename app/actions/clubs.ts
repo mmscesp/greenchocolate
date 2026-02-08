@@ -43,7 +43,7 @@ const openingHoursSchema = z.record(z.string());
  * Get current user profile from Supabase auth
  */
 async function getCurrentProfile() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

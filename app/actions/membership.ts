@@ -87,7 +87,7 @@ type ProfileWithManagedClub = {
 };
 
 async function getCurrentProfile(): Promise<ProfileWithManagedClub | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

@@ -9,9 +9,9 @@ import { Club } from '@/lib/types';
 export const dynamic = 'force-dynamic';
 
 interface ClubPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Generate static params for all clubs at build time
@@ -28,7 +28,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
-  const clubDetail = await getClubBySlug(params.slug);
+  const { slug } = await params;
+  const clubDetail = await getClubBySlug(slug);
   
   if (!clubDetail) {
     return {
@@ -53,7 +54,8 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
 }
 
 export default async function ClubPage({ params }: ClubPageProps) {
-  const clubDetail = await getClubBySlug(params.slug);
+  const { slug } = await params;
+  const clubDetail = await getClubBySlug(slug);
 
   if (!clubDetail) {
     notFound();

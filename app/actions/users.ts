@@ -53,7 +53,7 @@ const updateProfileSchema = z.object({
 // ==========================================
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   return user;
 }

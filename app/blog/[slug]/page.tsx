@@ -8,7 +8,7 @@ import { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 interface ArticlePageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 // Generate static params for all articles at build time
@@ -25,7 +25,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
   if (!article) return { title: 'Article Not Found' };
   
   return {
@@ -43,7 +44,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const article = await getArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
   if (!article) { notFound(); }
   
   const relatedArticles = await getRelatedArticles(article.id, 3);

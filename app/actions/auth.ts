@@ -53,7 +53,7 @@ export type ActionState = {
 // ==========================================
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -75,7 +75,7 @@ async function getCurrentUser() {
  * User Signup Action
  */
 export async function signUp(prevState: ActionState, formData: FormData): Promise<ActionState> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Extract form data
   const data = {
@@ -195,7 +195,7 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
  * User Login Action
  */
 export async function login(prevState: ActionState, formData: FormData): Promise<ActionState> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const data = {
     email: formData.get('email') as string,
@@ -244,7 +244,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
  * User Signout Action
  */
 export async function signOut() {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   redirect('/');
 }
@@ -261,7 +261,7 @@ export async function getCurrentUserAction() {
  * Update Profile Action
  */
 export async function updateProfile(prevState: ActionState, formData: FormData): Promise<ActionState> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
