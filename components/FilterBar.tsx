@@ -56,7 +56,7 @@ export default function FilterBar({
     filters.rating > 0;
 
   return (
-    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200 p-6 mb-8">
+    <div className="bg-card/80 backdrop-blur-md rounded-2xl shadow-lg border border-border/50 p-6 mb-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
@@ -82,7 +82,7 @@ export default function FilterBar({
             )}
           </Button>
           
-          <div className="flex items-center gap-2 text-gray-600">
+          <div className="flex items-center gap-2 text-muted-foreground">
             <Search className="h-4 w-4" />
             <span className="font-medium">
               {totalResults} clubs encontrados
@@ -177,10 +177,10 @@ export default function FilterBar({
 
       {/* Filter Options */}
       {showFilters && (
-        <div className="space-y-6 pt-6 border-t border-gray-200 animate-in slide-in-from-top duration-300">
+        <div className="space-y-6 pt-6 border-t border-border/50 animate-in slide-in-from-top duration-300">
           {/* Neighborhood Filter */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <label className="block text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <MapPin className="h-4 w-4 text-green-600" />
               Barrio
             </label>
@@ -193,8 +193,8 @@ export default function FilterBar({
                   )}
                   className={`p-3 rounded-xl text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
                     filters.neighborhood === neighborhood
-                      ? 'bg-green-100 border-green-300 text-green-800 shadow-lg'
-                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
+                      ? 'bg-primary/20 border-primary/50 text-primary shadow-lg'
+                      : 'bg-secondary/50 border-border text-muted-foreground hover:bg-secondary hover:border-border/80'
                   }`}
                 >
                   {neighborhood}
@@ -205,7 +205,7 @@ export default function FilterBar({
 
           {/* Amenities Filter */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <label className="block text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-purple-600" />
               Servicios y Amenidades
             </label>
@@ -216,8 +216,8 @@ export default function FilterBar({
                   onClick={() => toggleArrayFilter('amenities', amenity)}
                   className={`p-3 rounded-xl text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
                     filters.amenities.includes(amenity)
-                      ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-lg'
-                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
+                      ? 'bg-purple-500/20 border-purple-500/50 text-purple-400 shadow-lg'
+                      : 'bg-secondary/50 border-border text-muted-foreground hover:bg-secondary hover:border-border/80'
                   }`}
                 >
                   {filters.amenities.includes(amenity) && (
@@ -231,7 +231,7 @@ export default function FilterBar({
 
           {/* Vibes Filter */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <label className="block text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <Star className="h-4 w-4 text-yellow-600" />
               Ambiente y Estilo
             </label>
@@ -242,8 +242,8 @@ export default function FilterBar({
                   onClick={() => toggleArrayFilter('vibes', vibe)}
                   className={`p-3 rounded-xl text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
                     filters.vibes.includes(vibe)
-                      ? 'bg-yellow-100 border-yellow-300 text-yellow-800 shadow-lg'
-                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
+                      ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400 shadow-lg'
+                      : 'bg-secondary/50 border-border text-muted-foreground hover:bg-secondary hover:border-border/80'
                   }`}
                 >
                   {filters.vibes.includes(vibe) && (
@@ -255,10 +255,10 @@ export default function FilterBar({
             </div>
           </div>
 
-          {/* Additional Filters */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-gray-200">
+            {/* Additional Filters */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-border/50">
             {/* Verified Filter */}
-            <label className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors">
+            <label className="flex items-center gap-3 p-4 bg-blue-500/10 rounded-xl border border-blue-500/30 cursor-pointer hover:bg-blue-500/20 transition-colors">
               <input
                 type="checkbox"
                 checked={filters.isVerified}
@@ -267,15 +267,15 @@ export default function FilterBar({
               />
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">Solo clubs verificados</span>
+                <span className="text-sm font-medium text-blue-400">Solo clubs verificados</span>
               </div>
             </label>
             
             {/* Price Range Filter */}
-            <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+            <div className="p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/30">
               <div className="flex items-center gap-2 mb-3">
-                <DollarSign className="h-4 w-4 text-yellow-600" />
-                <span className="text-sm font-medium text-yellow-800">Rango de precios:</span>
+                <DollarSign className="h-4 w-4 text-yellow-500" />
+                <span className="text-sm font-medium text-yellow-500">Rango de precios:</span>
               </div>
               <div className="flex gap-2">
                 {['$', '$$', '$$$'].map(price => (
@@ -284,8 +284,8 @@ export default function FilterBar({
                     onClick={() => toggleArrayFilter('priceRange', price)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
                       filters.priceRange.includes(price)
-                        ? 'bg-yellow-200 border-yellow-400 text-yellow-800'
-                        : 'bg-white border-yellow-200 text-yellow-700 hover:bg-yellow-100'
+                        ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400'
+                        : 'bg-card border-yellow-500/30 text-yellow-500 hover:bg-yellow-500/10'
                     }`}
                   >
                     {price}
@@ -295,10 +295,10 @@ export default function FilterBar({
             </div>
 
             {/* Rating Filter */}
-            <div className="p-4 bg-orange-50 rounded-xl border border-orange-200">
+            <div className="p-4 bg-orange-500/10 rounded-xl border border-orange-500/30">
               <div className="flex items-center gap-2 mb-3">
-                <Star className="h-4 w-4 text-orange-600" />
-                <span className="text-sm font-medium text-orange-800">Valoración mínima:</span>
+                <Star className="h-4 w-4 text-orange-500" />
+                <span className="text-sm font-medium text-orange-500">Valoración mínima:</span>
               </div>
               <div className="flex gap-2">
                 {[4, 4.5, 5].map(rating => (
@@ -307,8 +307,8 @@ export default function FilterBar({
                     onClick={() => updateFilter('rating', filters.rating === rating ? 0 : rating)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
                       filters.rating === rating
-                        ? 'bg-orange-200 border-orange-400 text-orange-800'
-                        : 'bg-white border-orange-200 text-orange-700 hover:bg-orange-100'
+                        ? 'bg-orange-500/20 border-orange-500/50 text-orange-400'
+                        : 'bg-card border-orange-500/30 text-orange-500 hover:bg-orange-500/10'
                     }`}
                   >
                     {rating}★

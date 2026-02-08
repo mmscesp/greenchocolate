@@ -58,7 +58,7 @@ export default function ClubsPageClient({
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* JSON-LD Structured Data */}
       <CollectionPageStructuredData
         schema={{
@@ -72,23 +72,23 @@ export default function ClubsPageClient({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl font-bold text-foreground mb-4">
             {t('clubs.title')}
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-muted-foreground">
             {t('clubs.subtitle')}
           </p>
         </div>
 
         {/* View Mode Toggle */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex bg-white rounded-lg border overflow-hidden">
+          <div className="flex bg-card rounded-lg border overflow-hidden">
             <button
               onClick={() => setViewMode('grid')}
               className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${
                 viewMode === 'grid'
-                  ? 'bg-green-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               }`}
             >
               <Grid className="h-4 w-4" />
@@ -98,8 +98,8 @@ export default function ClubsPageClient({
               onClick={() => setViewMode('map')}
               className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${
                 viewMode === 'map'
-                  ? 'bg-green-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               }`}
             >
               <Map className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function ClubsPageClient({
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map(i => (
-                  <div key={i} className="bg-gray-200 animate-pulse rounded-lg h-96"></div>
+                  <div key={i} className="bg-muted animate-pulse rounded-lg h-96"></div>
                 ))}
               </div>
             ) : clubs.length > 0 ? (
@@ -135,12 +135,12 @@ export default function ClubsPageClient({
               </div>
             ) : (
               <div className="text-center py-12">
-                <div className="bg-white rounded-lg p-8 max-w-md mx-auto">
-                  <List className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <div className="bg-card rounded-lg p-8 max-w-md mx-auto border">
+                  <List className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">
                     {t('clubs.no_results.title')}
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-muted-foreground mb-4">
                     {t('clubs.no_results.subtitle')}
                   </p>
                   <Button
@@ -161,12 +161,12 @@ export default function ClubsPageClient({
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-lg p-8 text-center">
-            <Map className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="bg-card rounded-lg p-8 text-center border">
+            <Map className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">
               {t('clubs.view_mode.map')}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               {t('clubs.map.coming_soon')}
             </p>
           </div>

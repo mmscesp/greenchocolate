@@ -14,7 +14,7 @@ interface ClubCardProps {
 
 export default function ClubCard({ club, className = '' }: ClubCardProps) {
   return (
-    <div className={`bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group card-hover border border-gray-100 ${className}`}>
+    <div className={`bg-card rounded-2xl hover:shadow-2xl hover:border-primary/50 transition-all duration-500 overflow-hidden group card-hover border border-border/50 ${className}`}>
       {/* Image Section */}
       <div className="relative h-56 overflow-hidden">
         <Image
@@ -61,28 +61,28 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
       {/* Content Section */}
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-1">
+          <h3 className="text-xl font-bold text-card-foreground group-hover:text-primary transition-colors line-clamp-1">
             {club.name}
           </h3>
           {club.rating && (
-            <div className="flex items-center gap-1 text-sm text-gray-600 bg-yellow-50 px-2 py-1 rounded-full">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground bg-yellow-500/10 px-2 py-1 rounded-full">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span className="font-semibold">{club.rating}</span>
-              <span className="text-gray-400">({club.reviewCount})</span>
+              <span className="text-muted-foreground/60">({club.reviewCount})</span>
             </div>
           )}
         </div>
 
         {/* Location */}
-        <div className="flex items-center gap-2 text-gray-600 mb-4">
-          <div className="p-1 bg-green-100 rounded-full">
-            <MapPin className="h-3 w-3 text-green-600" />
+        <div className="flex items-center gap-2 text-muted-foreground mb-4">
+          <div className="p-1 bg-primary/10 rounded-full">
+            <MapPin className="h-3 w-3 text-primary" />
           </div>
           <span className="text-sm font-medium">{club.neighborhood}</span>
         </div>
 
         {/* Description */}
-        <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+        <p className="text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
           {club.description}
         </p>
 
@@ -92,29 +92,29 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
             <Badge 
               key={index} 
               variant="outline" 
-              className="text-xs border-green-200 text-green-700 hover:bg-green-50 transition-colors"
+              className="text-xs border-primary/20 text-primary hover:bg-primary/10 transition-colors"
             >
               {vibe}
             </Badge>
           ))}
           {club.vibeTags.length > 3 && (
-            <Badge variant="outline" className="text-xs border-gray-200 text-gray-500">
+            <Badge variant="outline" className="text-xs border-border text-muted-foreground">
               +{club.vibeTags.length - 3}
             </Badge>
           )}
         </div>
 
         {/* Stats */}
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-6 bg-gray-50 rounded-lg p-3">
+        <div className="flex items-center justify-between text-sm text-muted-foreground mb-6 bg-muted/50 rounded-lg p-3">
           <div className="flex items-center gap-2">
-            <div className="p-1 bg-blue-100 rounded-full">
-              <Users className="h-3 w-3 text-blue-600" />
+            <div className="p-1 bg-blue-500/10 rounded-full">
+              <Users className="h-3 w-3 text-blue-500" />
             </div>
             <span className="font-medium">{club.capacity} max</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="p-1 bg-purple-100 rounded-full">
-              <Clock className="h-3 w-3 text-purple-600" />
+            <div className="p-1 bg-purple-500/10 rounded-full">
+              <Clock className="h-3 w-3 text-purple-500" />
             </div>
             <span className="font-medium">Desde {club.foundedYear}</span>
           </div>
