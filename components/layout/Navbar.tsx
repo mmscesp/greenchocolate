@@ -17,7 +17,7 @@ export default function Navbar() {
                 <Leaf className="h-8 w-8 text-primary group-hover:text-primary/80 transition-colors animate-float" />
                 <div className="absolute inset-0 bg-primary rounded-full blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
               </div>
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-bold text-primary">
                 SocialClubsMaps
               </span>
             </Link>

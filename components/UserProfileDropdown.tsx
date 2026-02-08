@@ -61,7 +61,7 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
     return (
       <div className={`relative ${className}`}>
         <Link href="/club-panel/login">
-          <Button variant="ghost" size="sm" className="hover:bg-green-50 transition-colors">
+          <Button variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary/10 hover:text-primary transition-colors">
             <User className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">Iniciar Sesión</span>
           </Button>

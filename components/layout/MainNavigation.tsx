@@ -19,7 +19,7 @@ export default function MainNavigation() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent hover:bg-accent/50 data-[state=open]:bg-accent/50">
+          <NavigationMenuTrigger className="bg-transparent hover:bg-accent/50 data-[state=open]:bg-accent/50 text-primary hover:text-primary">
             Getting Started
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -39,16 +39,8 @@ export default function MainNavigation() {
 
         <NavigationMenuItem>
           <Link href="/clubs" legacyBehavior passHref>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50")}>
+            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50 text-primary hover:text-primary")}>
               Clubs Directory
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <Link href="/dashboard" legacyBehavior passHref>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50")}>
-              Club Panel
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
