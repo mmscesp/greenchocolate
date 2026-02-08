@@ -5,11 +5,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ClubCard from '@/components/ClubCard';
 import FilterBar from '@/components/FilterBar';
-import Footer from '@/components/Footer';
-import LanguageSelector from '@/components/LanguageSelector';
-import UserProfileDropdown from '@/components/UserProfileDropdown';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Leaf, Map, List, Grid } from 'lucide-react';
+import { Map, List, Grid } from 'lucide-react';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { Club, FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
@@ -71,30 +68,6 @@ export default function ClubsPageClient({
           numberOfItems: clubs.length,
         }}
       />
-
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center gap-2">
-                <Leaf className="h-8 w-8 text-green-600" />
-                <span className="text-xl font-bold text-gray-900">SocialClubsMaps</span>
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/blog">
-                <Button variant="ghost">{t('nav.blog')}</Button>
-              </Link>
-              <Link href="/club-panel">
-                <Button variant="outline" className="border-green-600 text-green-600 hover:bg-green-50">Panel Club</Button>
-              </Link>
-              <UserProfileDropdown />
-              <LanguageSelector />
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -199,8 +172,6 @@ export default function ClubsPageClient({
           </div>
         )}
       </div>
-
-      <Footer />
     </div>
   );
 }

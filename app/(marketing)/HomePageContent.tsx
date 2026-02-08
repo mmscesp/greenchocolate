@@ -5,12 +5,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ClubCardComponent from '@/components/ClubCard';
-import Footer from '@/components/Footer';
-import LanguageSelector from '@/components/LanguageSelector';
-import UserProfileDropdown from '@/components/UserProfileDropdown';
 import HeroSection from '@/components/HeroSection';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Leaf, TrendingUp, Award } from 'lucide-react';
+import { TrendingUp, Award } from 'lucide-react';
 import { OrganizationStructuredData, WebSiteStructuredData } from '@/components/StructuredData';
 import type { ClubCard } from '@/app/actions/clubs';
 import type { Club } from '@/lib/types';
@@ -72,39 +69,7 @@ export default function HomePageContent({ featuredClubs, allClubs }: HomePageCon
       <WebSiteStructuredData name="SocialClubsMaps" url="https://socialclubsmaps.com" />
 
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 relative overflow-hidden">
-      {/* Navigation */}
-      <nav className="bg-white/95 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center gap-2 group">
-                <div className="relative">
-                  <Leaf className="h-8 w-8 text-green-600 group-hover:text-green-700 transition-colors animate-float" />
-                  <div className="absolute inset-0 bg-green-400 rounded-full blur-lg opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                  SocialClubsMaps
-                </span>
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/clubs">
-                <Button variant="ghost" className="hover:bg-green-50">{t('nav.explore')}</Button>
-              </Link>
-              <Link href="/blog">
-                <Button variant="ghost" className="hover:bg-green-50">{t('nav.blog')}</Button>
-              </Link>
-              <Link href="/dashboard">
-                <Button variant="cannabis" size="sm" className="shadow-lg">{t('nav.dashboard')}</Button>
-              </Link>
-              <UserProfileDropdown />
-              <LanguageSelector />
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
+        {/* Hero Section */}
       <HeroSection />
 
       {/* Featured Clubs */}
@@ -248,8 +213,6 @@ export default function HomePageContent({ featuredClubs, allClubs }: HomePageCon
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   </>
   );
