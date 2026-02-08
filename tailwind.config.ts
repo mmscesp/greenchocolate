@@ -20,6 +20,8 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        'regulatory-slate': '#1A1A1B',
+        'verification-emerald': '#00FF41',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
