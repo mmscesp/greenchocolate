@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getArticles, getCategoriesWithCounts, getFeaturedArticles } from '@/app/actions/articles';
-import BlogFilters from './BlogFilters';
+import GuideFilters from './GuideFilters';
 import TrustBadge from '@/components/trust/TrustBadge';
 import { Search, Calendar, Clock, User, ArrowRight, BookOpen, Shield, Scale, Info } from 'lucide-react';
 
@@ -117,7 +117,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           <div className="flex-1">
             {/* Search Box */}
             <div className="mb-12">
-              <BlogFilters
+              <GuideFilters
                 categories={categories}
                 currentCategory={category}
                 currentSearch={searchQuery}
