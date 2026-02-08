@@ -14,44 +14,12 @@ export default function HeroSection() {
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [verifiedClubs, setVerifiedClubs] = useState(0);
-  const [activeMembers, setActiveMembers] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   // Check for reduced motion preference
   const prefersReducedMotion = useRef(
     typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
   );
-
-  // Counter animations with Intersection Observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          // Animate counters
-          const clubInterval = setInterval(() => {
-            setVerifiedClubs((prev) => (prev < 150 ? prev + 3 : prev));
-          }, 50);
-
-          const memberInterval = setInterval(() => {
-            setActiveMembers((prev) => (prev < 10000 ? prev + 200 : prev));
-          }, 50);
-
-          return () => {
-            clearInterval(clubInterval);
-            clearInterval(memberInterval);
-          };
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   // Handle image load
   const handleImageLoad = () => {
@@ -160,31 +128,6 @@ export default function HeroSection() {
                 Our Mission
               </Button>
             </Link>
-          </div>
-
-          {/* Trust Stats */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-2xl sm:max-w-3xl mx-auto w-full px-2 sm:px-0 fade-in-up" style={{ animationDelay: '0.5s' }}>
-            <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 text-center hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-1 sm:mb-2 drop-shadow-lg counter-animation">
-                {verifiedClubs}+
-              </div>
-              <div className="text-white/70 font-bold text-xs sm:text-sm uppercase tracking-widest flex items-center justify-center gap-1 sm:gap-2">
-                <Shield className="h-3 w-3 sm:h-4 sm:w-4 text-green-400" />
-                <span className="hidden sm:inline">{t('home.trust.verified')}</span>
-                <span className="sm:hidden">{t('home.trust.verified').split(' ')[0]}</span>
-              </div>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 text-center hover:bg-white/15 transition-all duration-300">
-              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-1 sm:mb-2 drop-shadow-lg counter-animation">
-                {Math.floor(activeMembers / 1000)}K+
-              </div>
-              <div className="text-white/70 font-bold text-xs sm:text-sm uppercase tracking-widest flex items-center justify-center gap-1 sm:gap-2">
-                <Users className="h-3 w-3 sm:h-4 sm:w-4 text-green-400" />
-                <span className="hidden sm:inline">{t('home.trust.community')}</span>
-                <span className="sm:hidden">{t('home.trust.community').split(' ')[0]}</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

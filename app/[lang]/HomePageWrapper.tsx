@@ -1,19 +1,20 @@
-import { getFeaturedClubs, getClubs } from '@/app/actions/clubs';
+import { getFeaturedArticles } from '@/app/actions/articles';
 import HomePageContent from './HomePageContent';
-import { ClubCard } from '@/app/actions/clubs';
+import { ArticleCard } from '@/app/actions/articles';
 
-interface HomePageWrapperProps {
-  // Accept pre-computed data from server
-  featuredClubs: ClubCard[];
-  allClubs: ClubCard[];
+export interface HomePageData {
+  featuredArticles: ArticleCard[];
 }
 
 export default async function HomePageWrapper() {
-  // Fetch data in parallel on the server
-  const [featuredClubs, allClubs] = await Promise.all([
-    getFeaturedClubs(3),
-    getClubs({ isVerified: true }),
+  // Fetch data - only articles exist in Phase 1 (clubs coming in Phase 2)
+  const [featuredArticles] = await Promise.all([
+    getFeaturedArticles(4),
   ]);
 
-  return <HomePageContent featuredClubs={featuredClubs} allClubs={allClubs} />;
+  return (
+    <HomePageContent
+      featuredArticles={featuredArticles}
+    />
+  );
 }
