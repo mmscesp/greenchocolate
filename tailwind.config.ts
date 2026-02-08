@@ -24,7 +24,7 @@ const config: Config = {
       },
       colors: {
         'regulatory-slate': '#1A1A1B',
-        'verification-emerald': '#00FF41',
+        'verification-emerald': '#22c55e',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
