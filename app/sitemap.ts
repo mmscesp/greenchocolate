@@ -39,10 +39,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/blog`,
+      url: `${baseUrl}/editorial`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/learn`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/club-panel`,
@@ -70,7 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Article pages
   const articleRoutes: MetadataRoute.Sitemap = articles.map((article) => ({
-    url: `${baseUrl}/blog/${article.slug}`,
+    url: `${baseUrl}/learn/${article.slug}`,
     lastModified: article.publishedAt ? new Date(article.publishedAt) : new Date(),
     changeFrequency: 'monthly',
     priority: 0.6,
