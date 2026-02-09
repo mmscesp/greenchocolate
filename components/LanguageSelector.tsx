@@ -14,7 +14,8 @@ export default function LanguageSelector({ variant = 'header' }: LanguageSelecto
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
-  const currentLanguage = languages[language];
+  // Fallback to 'en' if language key doesn't exist in languages object
+  const currentLanguage = languages[language] || languages['en'];
 
   const handleLanguageChange = (newLanguage: Language) => {
     setLanguage(newLanguage);

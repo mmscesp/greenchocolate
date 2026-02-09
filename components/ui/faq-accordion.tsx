@@ -63,24 +63,24 @@ const faqItems = [
 export function FaqAccordion() {
   return (
     <div className='w-full max-w-4xl mx-auto px-4 sm:px-6'>
-      <Accordion type='single' defaultValue='5' collapsible className='w-full'>
+      <Accordion type='single' collapsible className='w-full'>
         {faqItems.map((item) => (
-          <AccordionItem value={item.id} key={item.id} className='last:border-b'>
-            <AccordionTrigger className='text-left px-4 md:px-8 overflow-hidden text-foreground/60 duration-200 hover:no-underline cursor-pointer data-[state=open]:text-green-600 [&>svg]:hidden'>
-              <div className='flex items-start gap-3 md:gap-4 text-left'>
-                <p className='text-xs font-bold text-green-600 uppercase tracking-widest shrink-0 mt-1'>
+          <AccordionItem value={item.id} key={item.id} className='border-b border-border'>
+            <AccordionTrigger className='text-left px-4 py-4 hover:no-underline cursor-pointer'>
+              <div className='flex items-start gap-4 text-left'>
+                <p className='text-xs font-bold text-primary uppercase tracking-widest shrink-0 mt-1'>
                   {item.id}
                 </p>
-                <h1
-                  className={`uppercase relative text-xl md:text-3xl font-bold text-zinc-900 text-left leading-tight`}
-                >
+                <h3 className='text-base md:text-lg font-semibold text-foreground text-left'>
                   {item.title}
-                </h1>
+                </h3>
               </div>
             </AccordionTrigger>
 
-            <AccordionContent className='text-zinc-600 pb-6 px-4 md:px-12 ml-auto w-full max-w-[calc(100%-2rem)] md:max-w-[calc(100%-5rem)]'>
-              {item.content}
+            <AccordionContent className='px-4 pb-4 ml-auto w-full'>
+              <p className='text-muted-foreground leading-relaxed pl-9'>
+                {item.content}
+              </p>
             </AccordionContent>
           </AccordionItem>
         ))}

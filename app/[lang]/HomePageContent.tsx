@@ -6,10 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import HeroSection from '@/components/HeroSection';
 import SafetyKitForm from '@/components/marketing/SafetyKitForm';
 import WaitlistForm from '@/components/marketing/WaitlistForm';
+import FineCalculator from '@/components/marketing/FineCalculator';
+import EligibilityQuiz from '@/components/marketing/EligibilityQuiz';
 import { FaqAccordion } from '@/components/ui/faq-accordion';
 import TrustBadge from '@/components/trust/TrustBadge';
 import { useLanguage } from '@/hooks/useLanguage';
-import { BookOpen, Shield, AlertTriangle, Calendar, ArrowRight, Clock, MapPin } from 'lucide-react';
+import { BookOpen, Shield, AlertTriangle, Calendar, ArrowRight, Clock, MapPin, CheckCircle, Lock, Eye } from 'lucide-react';
 import { OrganizationStructuredData, WebSiteStructuredData } from '@/components/StructuredData';
 import type { ArticleCard } from '@/app/actions/articles';
 
@@ -112,6 +114,20 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
           </div>
         </section>
 
+        {/* Interactive Tools - Risk Radar & Eligibility */}
+        <section className="py-24 bg-zinc-50/50 border-y border-zinc-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <Badge variant="outline" className="mb-4 border-zinc-200 text-zinc-500 uppercase tracking-widest font-black text-[10px]">Interactive Tools</Badge>
+              <h2 className="text-4xl font-bold text-gray-900">Measure Your Readiness</h2>
+            </div>
+            <div className="grid lg:grid-cols-2 gap-8 items-start">
+              <FineCalculator />
+              <EligibilityQuiz />
+            </div>
+          </div>
+        </section>
+
         {/* Featured Articles */}
         <section className="py-24 bg-zinc-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,30 +176,76 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
         </section>
 
         {/* Trusted Nav Layer - Why Us */}
-        <section className="py-24 bg-zinc-900 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl lg:text-5xl font-bold mb-16">The Verified Navigation Layer</h2>
-            <div className="grid md:grid-cols-3 gap-12">
-              <div className="p-8 border border-white/10 rounded-2xl bg-white/5">
-                <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-green-400 text-3xl">
+        <section className="py-24 bg-zinc-900 text-white relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl lg:text-5xl font-bold mb-4">The Verified Navigation Layer</h2>
+              <p className="text-zinc-400 max-w-2xl mx-auto">We bridge the gap between complex local regulations and the visitor experience through rigorous standards.</p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-12 mb-24">
+              <div className="p-8 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-sm hover:border-green-500/50 transition-colors">
+                <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-green-400 text-3xl shadow-[0_0_20px_rgba(34,197,94,0.2)]">
                   📍
                 </div>
                 <h3 className="text-xl font-bold mb-4">Regulatory Wiki</h3>
-                <p className="text-zinc-400 leading-relaxed">Permanent, expert-reviewed knowledge nodes on laws, rights, and etiquette.</p>
+                <p className="text-zinc-400 leading-relaxed">Permanent, expert-reviewed knowledge nodes on laws, rights, and etiquette. We simplify the complexity of the Spanish legal grey zone.</p>
               </div>
-              <div className="p-8 border border-white/10 rounded-2xl bg-white/5">
-                <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400 text-3xl">
+              <div className="p-8 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-sm hover:border-blue-500/50 transition-colors">
+                <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400 text-3xl shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                   🛡️
                 </div>
                 <h3 className="text-xl font-bold mb-4">Confidence UI</h3>
-                <p className="text-zinc-400 leading-relaxed">Visual status indicators showing the reliability and safety level of every club.</p>
+                <p className="text-zinc-400 leading-relaxed">Visual status indicators showing the reliability and safety level of every club. Real-time verification status you can trust.</p>
               </div>
-              <div className="p-8 border border-white/10 rounded-2xl bg-white/5">
-                <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-purple-400 text-3xl">
+              <div className="p-8 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-sm hover:border-purple-500/50 transition-colors">
+                <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-purple-400 text-3xl shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                   🎟️
                 </div>
                 <h3 className="text-xl font-bold mb-4">Verified Access</h3>
-                <p className="text-zinc-400 leading-relaxed">Standardized membership request workflows that prioritize your privacy.</p>
+                <p className="text-zinc-400 leading-relaxed">Standardized membership request workflows that prioritize your privacy and ensure compliance with club statutes.</p>
+              </div>
+            </div>
+
+            {/* Verification Methodology */}
+            <div className="bg-white/5 border border-white/10 rounded-[3rem] p-8 md:p-12">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                  <Badge className="bg-green-500 hover:bg-green-600 text-white border-none mb-6">Our Standard</Badge>
+                  <h3 className="text-3xl font-bold mb-6">The SCM Verification Moat</h3>
+                  <p className="text-zinc-400 mb-8 leading-relaxed">
+                    We don't just list clubs. Every partner on our platform undergoes a multi-point verification process to ensure they operate within the strict legal framework of Spanish private associations.
+                  </p>
+                  <div className="space-y-4">
+                    {[
+                      { title: 'Legal Compliance Audit', desc: 'Verified non-profit status and registration with the Regional Registry of Associations.', icon: CheckCircle },
+                      { title: 'Privacy Protection', desc: 'GDPR-compliant handling of member data and secure pre-registration protocols.', icon: Lock },
+                      { title: 'Transparency Policy', desc: 'Clear communication of rules, membership fees, and association statutes.', icon: Eye },
+                    ].map((item, i) => (
+                      <div key={i} className="flex gap-4">
+                        <item.icon className="h-6 w-6 text-green-500 shrink-0" />
+                        <div>
+                          <h4 className="font-bold text-white">{item.title}</h4>
+                          <p className="text-sm text-zinc-500">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="relative">
+                  <div className="aspect-square bg-gradient-to-br from-green-500/20 to-emerald-500/5 rounded-full flex items-center justify-center border border-white/10 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-500/10 via-transparent to-transparent animate-pulse"></div>
+                    <Shield className="h-32 w-32 text-green-500 drop-shadow-[0_0_30px_rgba(34,197,94,0.5)] group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-zinc-950/40 backdrop-blur-sm p-8 text-center">
+                      <p className="text-sm font-bold text-white mb-2 uppercase tracking-widest">Trust Factor</p>
+                      <p className="text-4xl font-black text-green-400">100%</p>
+                      <p className="text-xs text-zinc-300 mt-2">Manual Verification Required for all Featured Partners</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

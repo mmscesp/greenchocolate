@@ -12,7 +12,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { BookOpen, Shield, Scale } from 'lucide-react';
+import { BookOpen, Shield, Scale, MapPin } from 'lucide-react';
 
 export default function MainNavigation() {
   return (
@@ -20,28 +20,29 @@ export default function MainNavigation() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent hover:bg-accent/50 data-[state=open]:bg-accent/50 text-primary hover:text-primary">
-            Getting Started
+            Explore
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] glass-liquid rounded-md">
-              <ListItem href="/learn" title="Knowledge Hub" icon={<BookOpen className="h-4 w-4" />}>
-                Comprehensive guides and resources for club members.
+              <ListItem href="/spain/barcelona" title="Barcelona Guide" icon={<MapPin className="h-4 w-4" />}>
+                The complete hub for Barcelona's cannabis culture and clubs.
               </ListItem>
-              <ListItem href="/learn/safety" title="Safety Protocol" icon={<Shield className="h-4 w-4" />}>
+              <ListItem href="/spain/madrid" title="Madrid Guide" icon={<MapPin className="h-4 w-4" />}>
+                Navigate Madrid's discreet but thriving scene.
+              </ListItem>
+              <ListItem href="/editorial" title="Knowledge Vault" icon={<BookOpen className="h-4 w-4" />}>
+                Comprehensive guides on laws, etiquette, and safety.
+              </ListItem>
+              <ListItem href="/safety" title="Safety Protocol" icon={<Shield className="h-4 w-4" />}>
                 Essential safety guidelines and best practices.
-              </ListItem>
-              <ListItem href="/learn/legal" title="Legal Guide" icon={<Scale className="h-4 w-4" />}>
-                Understanding the legal framework and compliance.
               </ListItem>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link href="/clubs" legacyBehavior passHref>
-            <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50 text-primary hover:text-primary")}>
-              Clubs Directory
-            </NavigationMenuLink>
+          <Link href="/clubs" className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50 text-primary hover:text-primary")}>
+            Clubs Directory
           </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
