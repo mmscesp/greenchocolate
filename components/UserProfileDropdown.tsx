@@ -19,6 +19,10 @@ import {
   Bell,
   CreditCard,
   Loader2,
+  Building2,
+  LayoutDashboard,
+  Users,
+  ClipboardList,
 } from 'lucide-react';
 
 interface UserProfileDropdownProps {
@@ -59,11 +63,15 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
   // If not logged in, show login button
   if (!user) {
     return (
-      <div className={`relative ${className}`}>
-        <Link href="/club-panel/login">
-          <Button variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary/10 hover:text-primary transition-colors">
-            <User className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Iniciar Sesión</span>
+      <div className={`relative ${className} flex items-center gap-2`}>
+        <Link href="/account/login">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+            Log in
+          </Button>
+        </Link>
+        <Link href="/account/register">
+          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            Get Visitor Pass
           </Button>
         </Link>
       </div>
@@ -71,9 +79,10 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
   }
 
   // Get user display info
-  const displayName = profile?.displayName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario';
+  const displayName = profile?.displayName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
   const userEmail = profile?.email || user.email || '';
-  const isPremium = profile?.role === 'ADMIN' || profile?.role === 'CLUB_ADMIN';
+  const isAdmin = profile?.role === 'ADMIN';
+  const isClubAdmin = profile?.role === 'CLUB_ADMIN';
   const memberSince = profile?.createdAt
     ? new Date(profile.createdAt).getFullYear().toString()
     : new Date().getFullYear().toString();
@@ -84,9 +93,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
         variant="ghost"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 hover:bg-green-50 transition-colors"
+        className="flex items-center gap-2 hover:bg-accent"
       >
-        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
           {user.user_metadata?.avatar_url ? (
             <img
               src={user.user_metadata.avatar_url}
@@ -94,13 +103,13 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               className="w-8 h-8 rounded-full object-cover"
             />
           ) : (
-            <User className="h-4 w-4 text-green-600" />
+            <User className="h-4 w-4 text-primary" />
           )}
         </div>
-        <span className="hidden sm:inline font-medium text-gray-700">
+        <span className="hidden sm:inline font-medium text-foreground">
           {displayName.split(' ')[0]}
         </span>
-        <ChevronDown className={`h-3 w-3 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-3 w-3 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </Button>
 
       {isOpen && (
@@ -112,11 +121,11 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
           />
 
           {/* Dropdown Menu */}
-          <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 py-4 z-50 animate-in slide-in-from-top-2 duration-200">
+          <div className="absolute top-full right-0 mt-2 w-80 bg-background rounded-xl shadow-lg border border-border py-4 z-50 animate-in slide-in-from-top-2 duration-200">
             {/* User Info Header */}
-            <div className="px-4 pb-4 border-b border-gray-100">
+            <div className="px-4 pb-4 border-b border-border">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                   {user.user_metadata?.avatar_url ? (
                     <img
                       src={user.user_metadata.avatar_url}
@@ -124,20 +133,26 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
-                    <User className="h-6 w-6 text-white" />
+                    <User className="h-6 w-6 text-primary" />
                   )}
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{displayName}</h3>
-                  <p className="text-sm text-gray-500 truncate">{userEmail}</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold truncate">{displayName}</h3>
+                  <p className="text-sm text-muted-foreground truncate">{userEmail}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-xs">
-                      {t('user.member_since')} {memberSince}
+                      Member since {memberSince}
                     </Badge>
-                    {isPremium && (
-                      <Badge variant="premium" className="text-xs">
+                    {isAdmin && (
+                      <Badge variant="default" className="bg-destructive text-destructive-foreground text-xs">
                         <Shield className="h-3 w-3 mr-1" />
-                        Premium
+                        Admin
+                      </Badge>
+                    )}
+                    {isClubAdmin && (
+                      <Badge variant="default" className="bg-primary text-primary-foreground text-xs">
+                        <Building2 className="h-3 w-3 mr-1" />
+                        Club Admin
                       </Badge>
                     )}
                   </div>
@@ -145,142 +160,141 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               </div>
             </div>
 
-            {/* Quick Stats */}
-            <div className="px-4 py-3 border-b border-gray-100">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-lg font-bold text-green-600">3</div>
-                  <div className="text-xs text-gray-500">{t('user.favorite_clubs')}</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-blue-600">12</div>
-                  <div className="text-xs text-gray-500">{t('user.reviews')}</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-purple-600">4.8</div>
-                  <div className="text-xs text-gray-500">{t('user.rating')}</div>
-                </div>
+            {/* Role-based Navigation */}
+            {isClubAdmin && (
+              <div className="px-4 py-3 border-b border-border bg-primary/5">
+                <Link
+                  href="/club-panel/dashboard"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  <span className="font-medium">Club Dashboard</span>
+                </Link>
               </div>
-            </div>
+            )}
 
-            {/* Menu Items */}
+            {/* Main Menu Items */}
             <div className="py-2">
               <Link
                 href="/profile"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-blue-600" />
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                  <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <div className="font-medium">{t('user.my_profile')}</div>
-                  <div className="text-xs text-gray-500">{t('user.profile_desc')}</div>
+                  <div className="font-medium">My Profile</div>
+                  <div className="text-xs text-muted-foreground">Account settings</div>
                 </div>
               </Link>
 
               <Link
                 href="/profile/favorites"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                  <Heart className="h-4 w-4 text-red-600" />
+                <div className="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                  <Heart className="h-4 w-4 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <div className="font-medium">{t('user.favorites')}</div>
-                  <div className="text-xs text-gray-500">3 clubs guardados</div>
+                  <div className="font-medium">Saved Clubs</div>
+                  <div className="text-xs text-muted-foreground">3 clubs saved</div>
                 </div>
               </Link>
 
               <Link
                 href="/profile/reviews"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Star className="h-4 w-4 text-yellow-600" />
+                <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
+                  <Star className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
-                  <div className="font-medium">{t('user.my_reviews')}</div>
-                  <div className="text-xs text-gray-500">12 reseñas escritas</div>
+                  <div className="font-medium">My Reviews</div>
+                  <div className="text-xs text-muted-foreground">12 reviews written</div>
                 </div>
               </Link>
 
               <Link
-                href="/profile/bookings"
+                href="/account/requests"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <Calendar className="h-4 w-4 text-green-600" />
+                <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                  <ClipboardList className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <div className="font-medium">{t('user.bookings')}</div>
-                  <div className="text-xs text-gray-500">{t('user.bookings_desc')}</div>
+                  <div className="font-medium">Membership Requests</div>
+                  <div className="text-xs text-muted-foreground">Track your applications</div>
                 </div>
               </Link>
 
+              {!isClubAdmin && !isAdmin && (
+                <Link
+                  href="/club-panel"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                >
+                  <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <Building2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <div className="font-medium">Club Panel</div>
+                    <div className="text-xs text-muted-foreground">Manage your club</div>
+                  </div>
+                </Link>
+              )}
+            </div>
+
+            {/* Secondary Menu */}
+            <div className="py-2 border-t border-border">
               <Link
                 href="/profile/notifications"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Bell className="h-4 w-4 text-purple-600" />
+                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                  <Bell className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <div className="font-medium">{t('user.notifications')}</div>
-                  <div className="text-xs text-gray-500">3 nuevas notificaciones</div>
+                  <div className="font-medium">Notifications</div>
+                  <div className="text-xs text-muted-foreground">3 new notifications</div>
                 </div>
               </Link>
 
               <Link
                 href="/profile/settings"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Settings className="h-4 w-4 text-gray-600" />
+                <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                  <Settings className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                 </div>
                 <div>
-                  <div className="font-medium">{t('user.settings')}</div>
-                  <div className="text-xs text-gray-500">{t('user.settings_desc')}</div>
+                  <div className="font-medium">Settings</div>
+                  <div className="text-xs text-muted-foreground">Preferences & privacy</div>
                 </div>
               </Link>
-
-              {!isPremium && (
-                <Link
-                  href="/profile/premium"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-orange-50 transition-colors"
-                >
-                  <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                    <CreditCard className="h-4 w-4 text-white" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-orange-600">{t('user.upgrade_premium')}</div>
-                    <div className="text-xs text-gray-500">{t('user.premium_desc')}</div>
-                  </div>
-                </Link>
-              )}
             </div>
 
             {/* Logout */}
-            <div className="pt-2 border-t border-gray-100">
+            <div className="pt-2 border-t border-border">
               <button
                 onClick={handleLogout}
                 disabled={loading}
-                className="flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors w-full disabled:opacity-50"
+                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full disabled:opacity-50"
               >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
-                    <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                      <LogOut className="h-4 w-4 text-red-600" />
+                    <div className="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                      <LogOut className="h-4 w-4 text-red-600 dark:text-red-400" />
                     </div>
-                    <div className="font-medium">{t('nav.logout')}</div>
+                    <div className="font-medium">Log out</div>
                   </>
                 )}
               </button>
