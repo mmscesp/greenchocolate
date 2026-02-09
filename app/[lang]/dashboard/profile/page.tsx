@@ -75,8 +75,8 @@ export default function ProfilePage() {
     setEditForm({
       name: club.name,
       description: club.description,
-      address: club.address,
-      phoneNumber: club.phoneNumber,
+      address: club.address || '',
+      phoneNumber: club.phoneNumber || '',
       contactEmail: club.contactEmail,
       website: club.website || '',
       neighborhood: club.neighborhood,
@@ -479,7 +479,7 @@ export default function ProfilePage() {
         <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('club.schedule')}</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {Object.entries(editForm.openingHours).map(([day, hours]) => (
+          {Object.entries(editForm.openingHours as Record<string, string>).map(([day, hours]) => (
             <div key={day} className="flex items-center justify-between">
               <span className="font-medium text-gray-700 capitalize w-24">
                 {getDayName(day)}

@@ -87,6 +87,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
     priceRange: clubDetail.priceRange as '$' | '$$' | '$$$',
     capacity: clubDetail.capacity,
     foundedYear: clubDetail.foundedYear,
+    cityId: '', // Default value - not used in UI
+    addressDisplay: clubDetail.addressDisplay,
+    isActive: true, // Default value
+    createdAt: new Date(), // Default value
+    updatedAt: new Date(), // Default value
   };
 
   // LocalBusiness Schema.org structured data

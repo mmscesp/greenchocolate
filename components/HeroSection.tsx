@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Search, ArrowRight, Play, MapPin, Leaf, Shield, Users, Mail, Rocket } from 'lucide-react';
-import WaitlistForm from './marketing/WaitlistForm';
+import SafetyKitForm from './marketing/SafetyKitForm';
 
 export default function HeroSection() {
   const { t } = useLanguage();
@@ -100,9 +100,9 @@ export default function HeroSection() {
             </p>
           </div>
 
-          {/* Waitlist Form Integration */}
-          <div className="fade-in-up mb-12 w-full flex justify-center" style={{ animationDelay: '0.4s' }}>
-            <WaitlistForm />
+          {/* Safety Kit Lead Magnet */}
+          <div className="fade-in-up mb-12 w-full max-w-md mx-auto" style={{ animationDelay: '0.4s' }}>
+            <SafetyKitForm />
           </div>
 
           {/* Secondary CTA Buttons */}

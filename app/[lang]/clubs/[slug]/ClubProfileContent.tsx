@@ -223,7 +223,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             <div className="bg-white rounded-lg p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('club.schedule')}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {Object.entries(club.openingHours).map(([day, hours]) => (
+                {Object.entries(club.openingHours as Record<string, string>).map(([day, hours]) => (
                   <div key={day} className="flex justify-between">
                     <span className="font-medium text-gray-700 capitalize">
                       {getDayName(day)}

@@ -36,6 +36,11 @@ export const useClubs = () => {
           priceRange: card.priceRange as '$' | '$$' | '$$$',
           capacity: card.capacity,
           foundedYear: card.foundedYear,
+          cityId: '',
+          addressDisplay: '',
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         }));
         
         setClubs(mappedClubs);
