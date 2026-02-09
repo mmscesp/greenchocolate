@@ -24,13 +24,18 @@ const CITIES = [
 
 export default function CitySelectorSection() {
   return (
-    <section className="py-16 md:py-24">
-      <div className="container">
-        <h2 className="text-3xl font-bold tracking-tight mb-8">Where are you visiting?</h2>
+    <section className="py-20 md:py-28">
+      <div className="container max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-10 gap-4">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Where are you visiting?</h2>
+            <p className="mt-2 text-muted-foreground">Explore clubs in Spain's top cities</p>
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {CITIES.map((city) => (
-            <Link key={city.slug} href={`/en/spain/${city.slug}`} className="group relative overflow-hidden rounded-2xl aspect-[4/3]">
-              <div className="absolute inset-0 bg-muted animate-pulse group-hover:hidden transition-opacity duration-300" /> {/* Placeholder */}
+            <Link key={city.slug} href={`/en/spain/${city.slug}`} className="group relative block overflow-hidden rounded-xl aspect-[4/3]">
+              <div className="absolute inset-0 bg-muted animate-pulse group-hover:hidden transition-opacity duration-300" />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300 z-10" />
               <div className="absolute inset-0 p-6 flex flex-col justify-end z-20">
                 <h3 className="text-2xl font-bold text-white mb-1">{city.name}</h3>

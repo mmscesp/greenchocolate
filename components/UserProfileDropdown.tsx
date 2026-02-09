@@ -63,15 +63,10 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
   // If not logged in, show login button
   if (!user) {
     return (
-      <div className={`relative ${className} flex items-center gap-2`}>
+      <div className={`relative ${className} flex items-center gap-3`}>
         <Link href="/account/login">
-          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-accent">
             Log in
-          </Button>
-        </Link>
-        <Link href="/account/register">
-          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-            Get Visitor Pass
           </Button>
         </Link>
       </div>
