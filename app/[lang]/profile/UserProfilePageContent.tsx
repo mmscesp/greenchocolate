@@ -79,9 +79,9 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('user.my_profile')}</h1>
-          <p className="text-gray-600 mt-2">
-            Gestiona tu información personal y preferencias
+          <h1 className="text-3xl font-bold text-foreground">{t('user.my_profile')}</h1>
+          <p className="text-muted-foreground mt-2">
+            Manage your personal information and preferences
           </p>
         </div>
         
@@ -92,7 +92,7 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
             className="flex items-center gap-2"
           >
             <Edit3 className="h-4 w-4" />
-            Editar Perfil
+            Edit Profile
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -102,7 +102,7 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
               className="flex items-center gap-2"
             >
               <X className="h-4 w-4" />
-              Cancelar
+              Cancel
             </Button>
             <Button
               variant="cannabis"
@@ -115,7 +115,7 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
               ) : (
                 <Save className="h-4 w-4" />
               )}
-              Guardar
+              Save Changes
             </Button>
           </div>
         )}
@@ -124,7 +124,7 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
       {/* Profile Card */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Cover Image */}
-        <div className="h-32 bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 relative">
+        <div className="h-32 bg-gradient-to-r from-primary via-emerald-500 to-primary relative">
           <div className="absolute inset-0 bg-black/20"></div>
           {isEditing && (
             <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full p-2 hover:bg-white/30 transition-colors">
@@ -138,8 +138,8 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
           {/* Avatar */}
           <div className="flex items-end gap-6 -mt-16 mb-6">
             <div className="relative">
-              <div className="w-32 h-32 bg-white rounded-full p-2 shadow-lg">
-                <div className="w-full h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+              <div className="w-32 h-32 bg-background rounded-full p-2 shadow-lg">
+                <div className="w-full h-full bg-gradient-to-r from-primary to-emerald-500 rounded-full flex items-center justify-center">
                   {userProfile.avatarUrl ? (
                     <img 
                       src={userProfile.avatarUrl} 
@@ -147,49 +147,49 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
-                    <User className="h-16 w-16 text-white" />
+                    <User className="h-16 w-16 text-primary-foreground" />
                   )}
                 </div>
               </div>
               {isEditing && (
-                <button className="absolute bottom-2 right-2 bg-green-600 rounded-full p-2 hover:bg-green-700 transition-colors">
-                  <Camera className="h-4 w-4 text-white" />
+                <button className="absolute bottom-2 right-2 bg-primary rounded-full p-2 hover:bg-primary/90 transition-colors">
+                  <Camera className="h-4 w-4 text-primary-foreground" />
                 </button>
               )}
             </div>
 
             <div className="flex-1 pb-4">
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-foreground">
                   {isEditing ? (
                     <Input
                       value={editForm.displayName}
                       onChange={(e) => setEditForm(prev => ({ ...prev, displayName: e.target.value }))}
                       className="w-64"
-                      placeholder="Tu nombre"
+                      placeholder="Your display name"
                     />
                   ) : (
-                    userProfile.displayName || 'Usuario'
+                    userProfile.displayName || 'User'
                   )}
                 </h2>
                 {userProfile.isVerified && (
                   <Badge variant="verified" className="flex items-center gap-1">
                     <Shield className="h-3 w-3" />
-                    Verificado
+                    Verified
                   </Badge>
                 )}
               </div>
-              <p className="text-gray-600 mb-3">
+              <p className="text-muted-foreground mb-3">
                 {isEditing ? (
                   <Textarea
                     value={editForm.bio}
                     onChange={(e) => setEditForm(prev => ({ ...prev, bio: e.target.value }))}
                     className="w-full resize-none"
                     rows={2}
-                    placeholder="Cuéntanos sobre ti..."
+                    placeholder="Tell us about yourself..."
                   />
                 ) : (
-                  userProfile.bio || 'Sin biografía'
+                  userProfile.bio || 'No bio yet'
                 )}
               </p>
               <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -204,25 +204,25 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
       </div>
 
       {/* Personal Information */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6">Información Personal</h3>
+      <div className="bg-card rounded-2xl p-8 shadow-sm">
+        <h3 className="text-xl font-semibold text-foreground mb-6">Personal Information</h3>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-muted-foreground mb-2">
               Email
             </label>
-            <p className="text-gray-900 p-3 bg-gray-50 rounded-lg flex items-center gap-2">
-              <Mail className="h-4 w-4 text-gray-400" />
+            <p className="text-foreground p-3 bg-muted rounded-lg flex items-center gap-2">
+              <Mail className="h-4 w-4 text-muted-foreground" />
               {userProfile.email}
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rol
+            <label className="block text-sm font-medium text-muted-foreground mb-2">
+              Role
             </label>
-            <p className="text-gray-900 p-3 bg-gray-50 rounded-lg capitalize">
+            <p className="text-foreground p-3 bg-muted rounded-lg capitalize">
               {userProfile.role.toLowerCase().replace('_', ' ')}
             </p>
           </div>
@@ -230,31 +230,31 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
       </div>
 
       {/* Account Status */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6">Estado de la Cuenta</h3>
+      <div className="bg-card rounded-2xl p-8 shadow-sm">
+        <h3 className="text-xl font-semibold text-foreground mb-6">Account Status</h3>
         
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+          <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <Check className="h-5 w-5 text-green-600" />
+              <div className="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
+                <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <div className="font-medium text-green-800">Cuenta Verificada</div>
-                <div className="text-sm text-green-600">Tu identidad ha sido verificada</div>
+                <div className="font-medium text-green-800 dark:text-green-200">Account Verified</div>
+                <div className="text-sm text-green-600 dark:text-green-400">Your identity has been verified</div>
               </div>
             </div>
-            <Badge variant="verified">Verificado</Badge>
+            <Badge variant="verified">Verified</Badge>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
                 <Star className="h-5 w-5 text-white" />
               </div>
               <div>
-                <div className="font-medium text-orange-800">Tier: {userProfile.tier}</div>
-                <div className="text-sm text-orange-600">Nivel de membresía</div>
+                <div className="font-medium text-orange-800 dark:text-orange-200">Tier: {userProfile.tier}</div>
+                <div className="text-sm text-orange-600 dark:text-orange-400">Membership level</div>
               </div>
             </div>
             <Badge variant="secondary" className="capitalize">{userProfile.tier}</Badge>
