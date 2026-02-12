@@ -5,21 +5,35 @@ export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLanguage } from '@/hooks/useLanguage';
-import { 
-  Bell, 
-  Shield, 
-  Eye, 
-  Globe, 
-  Smartphone, 
-  Mail, 
-  Lock,
-  Trash2,
+import {
+  Bell,
+  Shield,
+  Eye,
   Download,
-  AlertTriangle,
   Check,
-  X
+  X,
+  Lock,
+  Trash2
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
   const { t } = useLanguage();
@@ -54,7 +68,7 @@ export default function SettingsPage() {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsSaving(false);
-    alert('Configuración guardada correctamente');
+    toast.success(t('settings.save_success'));
   };
 
   const updateNotificationSetting = (key: string, value: boolean) => {
@@ -88,16 +102,16 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('user.settings')}</h1>
           <p className="text-gray-600 mt-2">
-            Gestiona tu privacidad, notificaciones y configuración de seguridad
+            {t('settings.subtitle')}
           </p>
         </div>
-        
+
         <Button
           variant="cannabis"
           onClick={handleSave}
@@ -109,224 +123,192 @@ export default function SettingsPage() {
           ) : (
             <Check className="h-4 w-4" />
           )}
-          Guardar Cambios
+          {t('common.save_changes')}
         </Button>
       </div>
 
       {/* Notifications */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-            <Bell className="h-5 w-5 text-blue-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Notificaciones</h2>
-            <p className="text-gray-600">Controla cómo y cuándo recibes notificaciones</p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900">Notificaciones por Email</h3>
-              <p className="text-sm text-gray-600">Recibe actualizaciones importantes por correo</p>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+              <Bell className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.notifications.email}
-                onChange={(e) => updateNotificationSetting('email', e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-            </label>
+            <div>
+              <CardTitle>{t('settings.notifications.title')}</CardTitle>
+              <CardDescription>{t('settings.notifications.desc')}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="notifications-email" className="flex flex-col space-y-1">
+              <span className="font-medium">{t('settings.notifications.email')}</span>
+              <span className="font-normal text-sm text-muted-foreground">{t('settings.notifications.email_desc')}</span>
+            </Label>
+            <Switch
+              id="notifications-email"
+              checked={settings.notifications.email}
+              onCheckedChange={(checked) => updateNotificationSetting('email', checked)}
+            />
           </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900">Notificaciones Push</h3>
-              <p className="text-sm text-gray-600">Recibe notificaciones en tiempo real</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.notifications.push}
-                onChange={(e) => updateNotificationSetting('push', e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-            </label>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="notifications-push" className="flex flex-col space-y-1">
+              <span className="font-medium">{t('settings.notifications.push')}</span>
+              <span className="font-normal text-sm text-muted-foreground">{t('settings.notifications.push_desc')}</span>
+            </Label>
+            <Switch
+              id="notifications-push"
+              checked={settings.notifications.push}
+              onCheckedChange={(checked) => updateNotificationSetting('push', checked)}
+            />
           </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900">Actualizaciones de Clubs</h3>
-              <p className="text-sm text-gray-600">Nuevos eventos y noticias de tus clubs favoritos</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.notifications.clubUpdates}
-                onChange={(e) => updateNotificationSetting('clubUpdates', e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-            </label>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="notifications-clubUpdates" className="flex flex-col space-y-1">
+              <span className="font-medium">{t('settings.notifications.club_updates')}</span>
+              <span className="font-normal text-sm text-muted-foreground">{t('settings.notifications.club_updates_desc')}</span>
+            </Label>
+            <Switch
+              id="notifications-clubUpdates"
+              checked={settings.notifications.clubUpdates}
+              onCheckedChange={(checked) => updateNotificationSetting('clubUpdates', checked)}
+            />
           </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900">Nuevas Reseñas</h3>
-              <p className="text-sm text-gray-600">Cuando alguien responde a tus reseñas</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.notifications.newReviews}
-                onChange={(e) => updateNotificationSetting('newReviews', e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-            </label>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="notifications-newReviews" className="flex flex-col space-y-1">
+              <span className="font-medium">{t('settings.notifications.new_reviews')}</span>
+              <span className="font-normal text-sm text-muted-foreground">{t('settings.notifications.new_reviews_desc')}</span>
+            </Label>
+            <Switch
+              id="notifications-newReviews"
+              checked={settings.notifications.newReviews}
+              onCheckedChange={(checked) => updateNotificationSetting('newReviews', checked)}
+            />
           </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900">Marketing y Promociones</h3>
-              <p className="text-sm text-gray-600">Ofertas especiales y contenido promocional</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.notifications.marketing}
-                onChange={(e) => updateNotificationSetting('marketing', e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-            </label>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="notifications-marketing" className="flex flex-col space-y-1">
+              <span className="font-medium">{t('settings.notifications.marketing')}</span>
+              <span className="font-normal text-sm text-muted-foreground">{t('settings.notifications.marketing_desc')}</span>
+            </Label>
+            <Switch
+              id="notifications-marketing"
+              checked={settings.notifications.marketing}
+              onCheckedChange={(checked) => updateNotificationSetting('marketing', checked)}
+            />
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Privacy */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-            <Eye className="h-5 w-5 text-purple-600" />
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+              <Eye className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <div>
+              <CardTitle>{t('settings.privacy.title')}</CardTitle>
+              <CardDescription>{t('settings.privacy.desc')}</CardDescription>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Privacidad</h2>
-            <p className="text-gray-600">Controla quién puede ver tu información</p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-medium text-gray-900 mb-3">Visibilidad del Perfil</h3>
-            <div className="space-y-2">
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <Label className="text-base font-medium">{t('settings.privacy.visibility')}</Label>
+            <RadioGroup
+              value={settings.privacy.profileVisibility}
+              onValueChange={(value) => updatePrivacySetting('profileVisibility', value)}
+              className="space-y-2"
+            >
               {[
-                { value: 'public', label: 'Público', desc: 'Cualquiera puede ver tu perfil' },
-                { value: 'friends', label: 'Solo Amigos', desc: 'Solo tus conexiones pueden ver tu perfil' },
-                { value: 'private', label: 'Privado', desc: 'Solo tú puedes ver tu perfil' }
+                { value: 'public', label: t('settings.privacy.visibility_public'), desc: t('settings.privacy.visibility_public_desc') },
+                { value: 'friends', label: t('settings.privacy.visibility_friends'), desc: t('settings.privacy.visibility_friends_desc') },
+                { value: 'private', label: t('settings.privacy.visibility_private'), desc: t('settings.privacy.visibility_private_desc') }
               ].map(option => (
-                <label key={option.value} className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                  <input
-                    type="radio"
-                    name="profileVisibility"
-                    value={option.value}
-                    checked={settings.privacy.profileVisibility === option.value}
-                    onChange={(e) => updatePrivacySetting('profileVisibility', e.target.value)}
-                    className="w-4 h-4 text-green-600 focus:ring-green-500"
-                  />
-                  <div>
-                    <div className="font-medium text-gray-900">{option.label}</div>
-                    <div className="text-sm text-gray-600">{option.desc}</div>
-                  </div>
-                </label>
+                <div key={option.value} className="flex items-center space-x-3 space-y-0 rounded-md border p-4 hover:bg-accent hover:text-accent-foreground transition-colors">
+                  <RadioGroupItem value={option.value} id={`privacy-${option.value}`} />
+                  <Label htmlFor={`privacy-${option.value}`} className="flex flex-col space-y-1 cursor-pointer w-full">
+                    <span className="font-medium">{option.label}</span>
+                    <span className="font-normal text-sm text-muted-foreground">{option.desc}</span>
+                  </Label>
+                </div>
               ))}
-            </div>
+            </RadioGroup>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-gray-900">Mostrar Email</h3>
-                <p className="text-sm text-gray-600">Permite que otros vean tu dirección de email</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.privacy.showEmail}
-                  onChange={(e) => updatePrivacySetting('showEmail', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-              </label>
+          <div className="space-y-4 pt-4 border-t">
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="privacy-showEmail" className="flex flex-col space-y-1">
+                <span className="font-medium">{t('settings.privacy.show_email')}</span>
+                <span className="font-normal text-sm text-muted-foreground">{t('settings.privacy.show_email_desc')}</span>
+              </Label>
+              <Switch
+                id="privacy-showEmail"
+                checked={settings.privacy.showEmail}
+                onCheckedChange={(checked) => updatePrivacySetting('showEmail', checked)}
+              />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-gray-900">Mostrar Ubicación</h3>
-                <p className="text-sm text-gray-600">Permite que otros vean tu ciudad</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.privacy.showLocation}
-                  onChange={(e) => updatePrivacySetting('showLocation', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-              </label>
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="privacy-showLocation" className="flex flex-col space-y-1">
+                <span className="font-medium">{t('settings.privacy.show_location')}</span>
+                <span className="font-normal text-sm text-muted-foreground">{t('settings.privacy.show_location_desc')}</span>
+              </Label>
+              <Switch
+                id="privacy-showLocation"
+                checked={settings.privacy.showLocation}
+                onCheckedChange={(checked) => updatePrivacySetting('showLocation', checked)}
+              />
             </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-gray-900">Permitir Mensajes</h3>
-                <p className="text-sm text-gray-600">Otros usuarios pueden enviarte mensajes</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.privacy.allowMessages}
-                  onChange={(e) => updatePrivacySetting('allowMessages', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-              </label>
+            <div className="flex items-center justify-between space-x-2">
+              <Label htmlFor="privacy-allowMessages" className="flex flex-col space-y-1">
+                <span className="font-medium">{t('settings.privacy.allow_messages')}</span>
+                <span className="font-normal text-sm text-muted-foreground">{t('settings.privacy.allow_messages_desc')}</span>
+              </Label>
+              <Switch
+                id="privacy-allowMessages"
+                checked={settings.privacy.allowMessages}
+                onCheckedChange={(checked) => updatePrivacySetting('allowMessages', checked)}
+              />
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Security */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-            <Shield className="h-5 w-5 text-red-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Seguridad</h2>
-            <p className="text-gray-600">Protege tu cuenta con configuraciones de seguridad</p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+              <Shield className="h-5 w-5 text-red-600 dark:text-red-400" />
+            </div>
             <div>
-              <h3 className="font-medium text-gray-900">Autenticación de Dos Factores</h3>
-              <p className="text-sm text-gray-600">Añade una capa extra de seguridad a tu cuenta</p>
+              <CardTitle>{t('settings.security.title')}</CardTitle>
+              <CardDescription>{t('settings.security.desc')}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <Label className="text-base font-medium">{t('settings.security.two_factor')}</Label>
+              <p className="text-sm text-muted-foreground">{t('settings.security.two_factor_desc')}</p>
             </div>
             <div className="flex items-center gap-3">
               {settings.security.twoFactor ? (
                 <Badge variant="success" className="flex items-center gap-1">
                   <Check className="h-3 w-3" />
-                  Activado
+                  {t('common.enabled')}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="flex items-center gap-1">
                   <X className="h-3 w-3" />
-                  Desactivado
+                  {t('common.disabled')}
                 </Badge>
               )}
               <Button
@@ -334,87 +316,88 @@ export default function SettingsPage() {
                 size="sm"
                 onClick={() => updateSecuritySetting('twoFactor', !settings.security.twoFactor)}
               >
-                {settings.security.twoFactor ? 'Desactivar' : 'Activar'}
+                {settings.security.twoFactor ? t('common.disable') : t('common.enable')}
               </Button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="font-medium text-gray-900">Alertas de Inicio de Sesión</h3>
-              <p className="text-sm text-gray-600">Recibe notificaciones de nuevos inicios de sesión</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.security.loginAlerts}
-                onChange={(e) => updateSecuritySetting('loginAlerts', e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-            </label>
+          <div className="flex items-center justify-between space-x-2">
+            <Label htmlFor="security-loginAlerts" className="flex flex-col space-y-1">
+              <span className="font-medium">{t('settings.security.login_alerts')}</span>
+              <span className="font-normal text-sm text-muted-foreground">{t('settings.security.login_alerts_desc')}</span>
+            </Label>
+            <Switch
+              id="security-loginAlerts"
+              checked={settings.security.loginAlerts}
+              onCheckedChange={(checked) => updateSecuritySetting('loginAlerts', checked)}
+            />
           </div>
 
-          <div>
-            <h3 className="font-medium text-gray-900 mb-3">Tiempo de Sesión</h3>
-            <select
-              value={settings.security.sessionTimeout}
-              onChange={(e) => updateSecuritySetting('sessionTimeout', Number(e.target.value))}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+          <div className="space-y-3">
+            <Label htmlFor="security-sessionTimeout" className="font-medium">{t('settings.security.session_timeout')}</Label>
+            <Select
+              value={settings.security.sessionTimeout.toString()}
+              onValueChange={(value) => updateSecuritySetting('sessionTimeout', Number(value))}
             >
-              <option value={15}>15 minutos</option>
-              <option value={30}>30 minutos</option>
-              <option value={60}>1 hora</option>
-              <option value={120}>2 horas</option>
-              <option value={0}>Sin límite</option>
-            </select>
+              <SelectTrigger id="security-sessionTimeout" className="w-full">
+                <SelectValue placeholder={t('settings.security.session_timeout')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="15">{t('settings.security.timeout_15m')}</SelectItem>
+                <SelectItem value="30">{t('settings.security.timeout_30m')}</SelectItem>
+                <SelectItem value="60">{t('settings.security.timeout_1h')}</SelectItem>
+                <SelectItem value="120">{t('settings.security.timeout_2h')}</SelectItem>
+                <SelectItem value="0">{t('settings.security.timeout_none')}</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="pt-4 border-t">
             <Button variant="outline" className="flex items-center gap-2">
               <Lock className="h-4 w-4" />
-              Cambiar Contraseña
+              {t('settings.security.change_password')}
             </Button>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Data Management */}
-      <div className="bg-white rounded-2xl p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-            <Download className="h-5 w-5 text-gray-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Gestión de Datos</h2>
-            <p className="text-gray-600">Controla tus datos personales</p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+              <Download className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+            </div>
             <div>
-              <h3 className="font-medium text-gray-900">Descargar mis Datos</h3>
-              <p className="text-sm text-gray-600">Obtén una copia de toda tu información</p>
+              <CardTitle>{t('settings.data.title')}</CardTitle>
+              <CardDescription>{t('settings.data.desc')}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+            <div className="space-y-1">
+              <h3 className="font-medium text-foreground">{t('settings.data.download')}</h3>
+              <p className="text-sm text-muted-foreground">{t('settings.data.download_desc')}</p>
             </div>
             <Button variant="outline" className="flex items-center gap-2">
               <Download className="h-4 w-4" />
-              Descargar
+              {t('common.download')}
             </Button>
           </div>
 
-          <div className="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50">
-            <div>
-              <h3 className="font-medium text-red-900">Eliminar Cuenta</h3>
-              <p className="text-sm text-red-600">Esta acción no se puede deshacer</p>
+          <div className="flex items-center justify-between p-4 border border-destructive/20 rounded-lg bg-destructive/5 hover:bg-destructive/10 transition-colors">
+            <div className="space-y-1">
+              <h3 className="font-medium text-destructive">{t('settings.data.delete_account')}</h3>
+              <p className="text-sm text-destructive/80">{t('settings.data.delete_account_desc')}</p>
             </div>
             <Button variant="destructive" className="flex items-center gap-2">
               <Trash2 className="h-4 w-4" />
-              Eliminar
+              {t('common.delete')}
             </Button>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

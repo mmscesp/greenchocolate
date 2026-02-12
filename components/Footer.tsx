@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
 import LanguageSelector from './LanguageSelector';
 import { Leaf, MapPin, Clock, Users } from 'lucide-react';

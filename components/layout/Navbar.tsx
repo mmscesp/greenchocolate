@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import MainNavigation from './MainNavigation';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
 import LanguageSelector from '@/components/LanguageSelector';

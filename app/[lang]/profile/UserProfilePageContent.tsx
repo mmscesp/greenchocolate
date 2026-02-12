@@ -2,10 +2,30 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { UserProfile } from '@/app/actions/users';
 import { useLanguage } from '@/hooks/useLanguage';
 import { updateUserProfile } from '@/app/actions/users';
@@ -15,59 +35,78 @@ import {
   X, 
   User, 
   Mail, 
-  Phone, 
-  MapPin, 
   Calendar,
-  Star,
-  Heart,
   Shield,
   Camera,
-  Check
+  Check,
+  Star,
+  MapPin,
+  Loader2
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface UserProfilePageContentProps {
   userProfile: UserProfile | null;
 }
 
+const profileFormSchema = z.object({
+  displayName: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  bio: z.string().max(160).optional(),
+});
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
 export default function UserProfilePageContent({ userProfile }: UserProfilePageContentProps) {
   const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
-  const [editForm, setEditForm] = useState({
-    displayName: userProfile?.displayName || '',
-    bio: userProfile?.bio || '',
+
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      displayName: userProfile?.displayName || '',
+      bio: userProfile?.bio || '',
+    },
   });
 
   if (!userProfile) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-800 mb-2">User Not Found</h2>
-          <p className="text-red-600">Please log in to view your profile.</p>
-        </div>
+      <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
+        <Card className="border-destructive/50 bg-destructive/10">
+          <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+            <h2 className="text-xl font-semibold text-destructive mb-2">{t('profile.not_found')}</h2>
+            <p className="text-destructive/80">{t('profile.login_required')}</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  const handleSave = async () => {
+  async function onSubmit(data: ProfileFormValues) {
     setIsSaving(true);
-    const form = new FormData();
-    form.set('displayName', editForm.displayName);
-    form.set('bio', editForm.bio);
+    const formData = new FormData();
+    formData.set('displayName', data.displayName);
+    if (data.bio) formData.set('bio', data.bio);
     
-    const result = await updateUserProfile(form);
-    
-    setIsSaving(false);
-    if (result.success) {
-      setIsEditing(false);
-    } else {
-      alert(result.message);
+    try {
+      const result = await updateUserProfile(formData);
+      if (result.success) {
+        setIsEditing(false);
+        toast.success(t('profile.update_success'));
+      } else {
+        toast.error(result.message || t('profile.update_error'));
+      }
+    } catch (error) {
+      toast.error(t('profile.error_generic'));
+    } finally {
+      setIsSaving(false);
     }
-  };
+  }
 
   const handleCancel = () => {
-    setEditForm({
+    form.reset({
       displayName: userProfile.displayName || '',
       bio: userProfile.bio || '',
     });
@@ -75,24 +114,23 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">{t('user.my_profile')}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('user.my_profile')}</h1>
           <p className="text-muted-foreground mt-2">
-            Manage your personal information and preferences
+            {t('profile.subtitle')}
           </p>
         </div>
         
         {!isEditing ? (
           <Button
-            variant="cannabis"
             onClick={() => setIsEditing(true)}
             className="flex items-center gap-2"
           >
             <Edit3 className="h-4 w-4" />
-            Edit Profile
+            {t('profile.edit')}
           </Button>
         ) : (
           <div className="flex gap-2">
@@ -100,167 +138,196 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
               variant="outline"
               onClick={handleCancel}
               className="flex items-center gap-2"
+              disabled={isSaving}
             >
               <X className="h-4 w-4" />
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
-              variant="cannabis"
-              onClick={handleSave}
+              onClick={form.handleSubmit(onSubmit)}
               disabled={isSaving}
               className="flex items-center gap-2"
             >
               {isSaving ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Save className="h-4 w-4" />
               )}
-              Save Changes
+              {t('common.save_changes')}
             </Button>
           </div>
         )}
       </div>
 
-      {/* Profile Card */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Cover Image */}
-        <div className="h-32 bg-gradient-to-r from-primary via-emerald-500 to-primary relative">
-          <div className="absolute inset-0 bg-black/20"></div>
-          {isEditing && (
-            <button className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full p-2 hover:bg-white/30 transition-colors">
-              <Camera className="h-4 w-4 text-white" />
-            </button>
-          )}
-        </div>
-
-        {/* Profile Info */}
-        <div className="relative px-8 pb-8">
-          {/* Avatar */}
-          <div className="flex items-end gap-6 -mt-16 mb-6">
-            <div className="relative">
-              <div className="w-32 h-32 bg-background rounded-full p-2 shadow-lg">
-                <div className="w-full h-full bg-gradient-to-r from-primary to-emerald-500 rounded-full flex items-center justify-center">
-                  {userProfile.avatarUrl ? (
-                    <img 
-                      src={userProfile.avatarUrl} 
-                      alt={userProfile.displayName || 'User'} 
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <User className="h-16 w-16 text-primary-foreground" />
-                  )}
-                </div>
-              </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {/* Profile Card */}
+          <Card className="overflow-hidden border-0 shadow-lg">
+            {/* Cover Image */}
+            <div className="h-32 bg-gradient-to-r from-primary/80 via-primary to-primary/60 relative">
+              <div className="absolute inset-0 bg-black/10"></div>
               {isEditing && (
-                <button className="absolute bottom-2 right-2 bg-primary rounded-full p-2 hover:bg-primary/90 transition-colors">
-                  <Camera className="h-4 w-4 text-primary-foreground" />
-                </button>
+                <Button 
+                  size="icon" 
+                  variant="secondary" 
+                  className="absolute top-4 right-4 rounded-full bg-background/20 backdrop-blur-sm hover:bg-background/40 text-white border-0"
+                  type="button"
+                >
+                  <Camera className="h-4 w-4" />
+                </Button>
               )}
             </div>
 
-            <div className="flex-1 pb-4">
-              <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold text-foreground">
-                  {isEditing ? (
-                    <Input
-                      value={editForm.displayName}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, displayName: e.target.value }))}
-                      className="w-64"
-                      placeholder="Your display name"
-                    />
-                  ) : (
-                    userProfile.displayName || 'User'
+            {/* Profile Info */}
+            <div className="relative px-8 pb-8">
+              {/* Avatar */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16 mb-6 text-center sm:text-left">
+                <div className="relative group">
+                  <div className="rounded-full p-1.5 bg-background shadow-xl">
+                    <Avatar className="w-32 h-32 border-4 border-background">
+                      <AvatarImage src={userProfile.avatarUrl || ''} alt={userProfile.displayName || 'User'} />
+                      <AvatarFallback className="text-4xl bg-primary/10 text-primary">
+                        {(userProfile.displayName || 'U').charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  {isEditing && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                      <Camera className="h-8 w-8 text-white" />
+                    </div>
                   )}
-                </h2>
-                {userProfile.isVerified && (
-                  <Badge variant="verified" className="flex items-center gap-1">
-                    <Shield className="h-3 w-3" />
-                    Verified
-                  </Badge>
-                )}
-              </div>
-              <p className="text-muted-foreground mb-3">
-                {isEditing ? (
-                  <Textarea
-                    value={editForm.bio}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, bio: e.target.value }))}
-                    className="w-full resize-none"
-                    rows={2}
-                    placeholder="Tell us about yourself..."
-                  />
-                ) : (
-                  userProfile.bio || 'No bio yet'
-                )}
-              </p>
-              <div className="flex items-center gap-4 text-sm text-gray-500">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  <span>{t('user.member_since')} {new Date(userProfile.createdAt).getFullYear()}</span>
+                </div>
+
+                <div className="flex-1 pb-2 space-y-2">
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    {isEditing ? (
+                      <FormField
+                        control={form.control}
+                        name="displayName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input {...field} className="text-xl font-bold h-auto py-1 px-3 w-full sm:w-64" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      <h2 className="text-2xl font-bold text-foreground">
+                        {userProfile.displayName || 'User'}
+                      </h2>
+                    )}
+                    
+                    {userProfile.isVerified && (
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-blue-200 gap-1">
+                        <Shield className="h-3 w-3 fill-blue-700" />
+                        {t('profile.verified')}
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="text-muted-foreground max-w-2xl">
+                    {isEditing ? (
+                      <FormField
+                        control={form.control}
+                        name="bio"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Textarea 
+                                {...field} 
+                                placeholder={t('profile.bio_placeholder')} 
+                                className="resize-none min-h-[80px]" 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      <p>{userProfile.bio || t('profile.no_bio')}</p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground pt-2 justify-center sm:justify-start">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>{t('user.member_since')} {new Date(userProfile.createdAt).getFullYear()}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </Card>
 
-      {/* Personal Information */}
-      <div className="bg-card rounded-2xl p-8 shadow-sm">
-        <h3 className="text-xl font-semibold text-foreground mb-6">Personal Information</h3>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-2">
-              Email
-            </label>
-            <p className="text-foreground p-3 bg-muted rounded-lg flex items-center gap-2">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              {userProfile.email}
-            </p>
-          </div>
+          <div className="grid grid-cols-1 gap-6">
+            {/* Personal Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('profile.personal_info')}</CardTitle>
+                <CardDescription>{t('profile.personal_info_desc')}</CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block">
+                    {t('form.email')}
+                  </label>
+                  <div className="flex items-center gap-2 p-3 rounded-md border bg-muted/50 text-muted-foreground">
+                    <Mail className="h-4 w-4" />
+                    <span>{userProfile.email}</span>
+                  </div>
+                </div>
 
-          <div>
-            <label className="block text-sm font-medium text-muted-foreground mb-2">
-              Role
-            </label>
-            <p className="text-foreground p-3 bg-muted rounded-lg capitalize">
-              {userProfile.role.toLowerCase().replace('_', ' ')}
-            </p>
-          </div>
-        </div>
-      </div>
+                <div>
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-2 block">
+                    {t('profile.role')}
+                  </label>
+                  <div className="flex items-center gap-2 p-3 rounded-md border bg-muted/50 text-muted-foreground capitalize">
+                    <User className="h-4 w-4" />
+                    <span>{userProfile.role.toLowerCase().replace('_', ' ')}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-      {/* Account Status */}
-      <div className="bg-card rounded-2xl p-8 shadow-sm">
-        <h3 className="text-xl font-semibold text-foreground mb-6">Account Status</h3>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
-                <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <div className="font-medium text-green-800 dark:text-green-200">Account Verified</div>
-                <div className="text-sm text-green-600 dark:text-green-400">Your identity has been verified</div>
-              </div>
-            </div>
-            <Badge variant="verified">Verified</Badge>
-          </div>
+            {/* Account Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('profile.account_status')}</CardTitle>
+                <CardDescription>{t('profile.account_status_desc')}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                      <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <div className="font-medium">{t('profile.account_verified')}</div>
+                      <div className="text-sm text-muted-foreground">{t('profile.account_verified_desc')}</div>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/10 dark:border-green-800">{t('profile.verified')}</Badge>
+                </div>
 
-          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Star className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <div className="font-medium text-orange-800 dark:text-orange-200">Tier: {userProfile.tier}</div>
-                <div className="text-sm text-orange-600 dark:text-orange-400">Membership level</div>
-              </div>
-            </div>
-            <Badge variant="secondary" className="capitalize">{userProfile.tier}</Badge>
+                <div className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                      <Star className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                    </div>
+                    <div>
+                      <div className="font-medium">{t('profile.membership_tier')}</div>
+                      <div className="text-sm text-muted-foreground">{t('profile.membership_tier_desc')}</div>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="capitalize">{userProfile.tier}</Badge>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </div>
-      </div>
+        </form>
+      </Form>
     </div>
   );
 }

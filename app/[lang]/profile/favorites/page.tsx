@@ -7,6 +7,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useClubs } from '@/hooks/useClubs';
 import { 
@@ -14,12 +16,13 @@ import {
   Star, 
   MapPin, 
   Calendar, 
-  Filter,
   Search,
   Grid,
   List,
-  Trash2
+  Trash2,
+  ExternalLink
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function FavoritesPage() {
   const { t } = useLanguage();
@@ -40,96 +43,100 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">{t('user.favorites')}</h1>
-        <p className="text-gray-600 mt-2">
-          Tus clubs favoritos guardados para acceso rápido
+        <h1 className="text-3xl font-bold tracking-tight">{t('user.favorites')}</h1>
+        <p className="text-muted-foreground mt-2">
+          {t('favorites.subtitle')}
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+        <Card>
+          <CardContent className="flex items-center justify-between p-6">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Favoritos</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.total')}</p>
               <p className="text-2xl font-bold text-red-600">{favoriteClubs.length}</p>
             </div>
-            <div className="bg-red-100 p-3 rounded-full">
-              <Heart className="h-6 w-6 text-red-600" />
+            <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-full">
+              <Heart className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+        <Card>
+          <CardContent className="flex items-center justify-between p-6">
             <div>
-              <p className="text-sm font-medium text-gray-600">Clubs Visitados</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.visited')}</p>
               <p className="text-2xl font-bold text-green-600">3</p>
             </div>
-            <div className="bg-green-100 p-3 rounded-full">
-              <MapPin className="h-6 w-6 text-green-600" />
+            <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
+              <MapPin className="h-6 w-6 text-green-600 dark:text-green-400" />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+        <Card>
+          <CardContent className="flex items-center justify-between p-6">
             <div>
-              <p className="text-sm font-medium text-gray-600">Próximas Visitas</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.upcoming')}</p>
               <p className="text-2xl font-bold text-blue-600">2</p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Calendar className="h-6 w-6 text-blue-600" />
+            <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+              <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Controls */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <div className="flex flex-col lg:flex-row gap-4 justify-between">
-          {/* Search */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar en favoritos..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex flex-col lg:flex-row gap-4 justify-between">
+            {/* Search */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder={t('favorites.search_placeholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
 
-          {/* View Mode Toggle */}
-          <div className="flex bg-gray-100 rounded-lg overflow-hidden">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${
-                viewMode === 'grid'
-                  ? 'bg-green-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <Grid className="h-4 w-4" />
-              Cuadrícula
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`px-4 py-2 flex items-center gap-2 text-sm font-medium transition-colors ${
-                viewMode === 'list'
-                  ? 'bg-green-600 text-white'
-                  : 'text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <List className="h-4 w-4" />
-              Lista
-            </button>
+            {/* View Mode Toggle */}
+            <div className="flex bg-muted p-1 rounded-md">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={cn(
+                  "px-3 py-1.5 flex items-center gap-2 text-sm font-medium rounded-sm transition-all",
+                  viewMode === 'grid'
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Grid className="h-4 w-4" />
+                <span className="sr-only sm:not-sr-only">{t('common.grid')}</span>
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={cn(
+                  "px-3 py-1.5 flex items-center gap-2 text-sm font-medium rounded-sm transition-all",
+                  viewMode === 'list'
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <List className="h-4 w-4" />
+                <span className="sr-only sm:not-sr-only">{t('common.list')}</span>
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Favorites List */}
       {filteredFavorites.length > 0 ? (
@@ -138,101 +145,116 @@ export default function FavoritesPage() {
           : 'space-y-4'
         }>
           {filteredFavorites.map(club => (
-            <div 
+            <Card 
               key={club.id} 
-              className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group ${
-                viewMode === 'list' ? 'flex' : ''
-              }`}
+              className={cn(
+                "overflow-hidden hover:shadow-lg transition-all duration-300 group",
+                viewMode === 'list' && "flex flex-col md:flex-row"
+              )}
             >
-              <div className={`relative ${viewMode === 'list' ? 'w-48 h-32' : 'h-48'} overflow-hidden`}>
+              <div className={cn(
+                "relative overflow-hidden",
+                viewMode === 'list' ? "w-full md:w-64 h-48 md:h-auto" : "h-48"
+              )}>
                 <Image
                   src={club.images[0]}
                   alt={club.name}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-3 right-3">
-                  <button
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                    className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => removeFavorite(club.id)}
-                    className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
                   >
                     <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-                <div className="absolute top-3 left-3">
-                  <Heart className="h-5 w-5 text-red-500 fill-red-500" />
-                </div>
-              </div>
-
-              <div className="p-6 flex-1">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
-                    {club.name}
-                  </h3>
-                  {club.rating && (
-                    <div className="flex items-center gap-1 text-sm">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-medium">{club.rating}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2 text-gray-600 mb-3">
-                  <MapPin className="h-4 w-4" />
-                  <span className="text-sm">{club.neighborhood}</span>
-                </div>
-
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {club.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {club.vibeTags.slice(0, 2).map(vibe => (
-                    <Badge key={vibe} variant="outline" className="text-xs">
-                      {vibe}
-                    </Badge>
-                  ))}
-                  <Badge variant="secondary" className="text-xs">
-                    {club.priceRange}
-                  </Badge>
-                </div>
-
-                <div className="flex gap-2">
-                  <Link href={`/clubs/${club.slug}`} className="flex-1">
-                    <Button variant="cannabis" size="sm" className="w-full">
-                      Ver Club
-                    </Button>
-                  </Link>
-                  <Button variant="outline" size="sm">
-                    <Calendar className="h-4 w-4" />
                   </Button>
                 </div>
+                <div className="absolute top-3 left-3">
+                  <div className="bg-background/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm">
+                    <Heart className="h-4 w-4 text-red-500 fill-red-500" />
+                  </div>
+                </div>
               </div>
-            </div>
+
+              <div className="flex flex-col flex-1">
+                <CardHeader className="p-4 pb-2">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-primary transition-colors">
+                        {club.name}
+                      </h3>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                        <MapPin className="h-3 w-3" />
+                        <span>{club.neighborhood}</span>
+                      </div>
+                    </div>
+                    {club.rating && (
+                      <Badge variant="secondary" className="flex items-center gap-1 bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400">
+                        <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                        <span>{club.rating}</span>
+                      </Badge>
+                    )}
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="p-4 pt-0 flex-1">
+                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    {club.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {club.vibeTags.slice(0, 2).map(vibe => (
+                      <Badge key={vibe} variant="outline" className="text-xs">
+                        {vibe}
+                      </Badge>
+                    ))}
+                    <Badge variant="secondary" className="text-xs">
+                      {club.priceRange}
+                    </Badge>
+                  </div>
+                </CardContent>
+
+                <CardFooter className="p-4 pt-0 gap-2">
+                  <Link href={`/clubs/${club.slug}`} className="flex-1">
+                    <Button className="w-full">
+                      {t('favorites.view_club')}
+                    </Button>
+                  </Link>
+                  <Button variant="outline" size="icon">
+                    <Calendar className="h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </div>
+            </Card>
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="bg-white rounded-xl p-8 max-w-md mx-auto">
-            <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchQuery ? 'No se encontraron favoritos' : 'No tienes favoritos aún'}
+        <Card className="py-12 text-center">
+          <CardContent>
+            <div className="bg-muted/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Heart className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-medium mb-2">
+              {searchQuery ? t('favorites.no_results_search') : t('favorites.no_results_empty')}
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
               {searchQuery 
-                ? 'Prueba con otros términos de búsqueda'
-                : 'Explora clubs y guarda tus favoritos para acceso rápido'
+                ? t('favorites.no_results_search_desc') || 'Try adjusting your search terms'
+                : t('favorites.no_results_empty_desc') || 'Explore clubs and add them to your favorites'
               }
             </p>
             {!searchQuery && (
               <Link href="/clubs">
-                <Button variant="cannabis">
+                <Button>
+                  <ExternalLink className="h-4 w-4 mr-2" />
                   {t('nav.explore')}
                 </Button>
               </Link>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

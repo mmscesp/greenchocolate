@@ -4,9 +4,10 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useLanguage } from '@/hooks/useLanguage';
 import { 
   Star, 
@@ -98,7 +99,7 @@ export default function ReviewsPage() {
   const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
 
   const deleteReview = (reviewId: string) => {
-    if (confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
+    if (confirm(t('reviews.confirm_delete'))) {
       setReviews(prev => prev.filter(review => review.id !== reviewId));
     }
   };
@@ -115,45 +116,45 @@ export default function ReviewsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">{t('user.my_reviews')}</h1>
         <p className="text-gray-600 mt-2">
-          Gestiona tus reseñas y comparte tu experiencia con la comunidad
+          {t('reviews.subtitle')}
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+        <Card>
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Reseñas</p>
+              <p className="text-sm font-medium text-gray-600">{t('reviews.stats.total')}</p>
               <p className="text-2xl font-bold text-blue-600">{reviews.length}</p>
             </div>
             <div className="bg-blue-100 p-3 rounded-full">
               <MessageCircle className="h-6 w-6 text-blue-600" />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+        <Card>
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Rating Promedio</p>
+              <p className="text-sm font-medium text-gray-600">{t('reviews.stats.average_rating')}</p>
               <p className="text-2xl font-bold text-yellow-600">{averageRating.toFixed(1)}</p>
             </div>
             <div className="bg-yellow-100 p-3 rounded-full">
               <Star className="h-6 w-6 text-yellow-600" />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+        <Card>
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Likes</p>
+              <p className="text-sm font-medium text-gray-600">{t('reviews.stats.total_likes')}</p>
               <p className="text-2xl font-bold text-green-600">
                 {reviews.reduce((sum, review) => sum + review.likes, 0)}
               </p>
@@ -161,13 +162,13 @@ export default function ReviewsPage() {
             <div className="bg-green-100 p-3 rounded-full">
               <ThumbsUp className="h-6 w-6 text-green-600" />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between">
+        <Card>
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Respuestas</p>
+              <p className="text-sm font-medium text-gray-600">{t('reviews.stats.replies')}</p>
               <p className="text-2xl font-bold text-purple-600">
                 {reviews.reduce((sum, review) => sum + review.replies, 0)}
               </p>
@@ -175,58 +176,56 @@ export default function ReviewsPage() {
             <div className="bg-purple-100 p-3 rounded-full">
               <MessageCircle className="h-6 w-6 text-purple-600" />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar reseñas..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder={t('reviews.search_placeholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
 
-          <div className="flex items-center gap-2">
-            <Filter className="h-5 w-5 text-gray-400" />
-            <select
-              value={ratingFilter}
-              onChange={(e) => setRatingFilter(Number(e.target.value))}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
-            >
-              <option value={0}>Todas las valoraciones</option>
-              <option value={5}>5 estrellas</option>
-              <option value={4}>4 estrellas</option>
-              <option value={3}>3 estrellas</option>
-              <option value={2}>2 estrellas</option>
-              <option value={1}>1 estrella</option>
-            </select>
+            <div className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-gray-400" />
+              <select
+                value={ratingFilter}
+                onChange={(e) => setRatingFilter(Number(e.target.value))}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+              >
+                <option value={0}>{t('reviews.filter.all')}</option>
+                <option value={5}>{t('reviews.filter.5_stars')}</option>
+                <option value={4}>{t('reviews.filter.4_stars')}</option>
+                <option value={3}>{t('reviews.filter.3_stars')}</option>
+                <option value={2}>{t('reviews.filter.2_stars')}</option>
+                <option value={1}>{t('reviews.filter.1_star')}</option>
+              </select>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Reviews List */}
       {filteredReviews.length > 0 ? (
         <div className="space-y-6">
           {filteredReviews.map(review => (
-            <div key={review.id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-              <div className="p-6">
+            <Card key={review.id} className="hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+              <CardContent className="p-6">
                 {/* Review Header */}
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden">
-                    <Image
-                      src={review.clubImage}
-                      alt={review.clubName}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                  <Avatar className="h-16 w-16 rounded-lg">
+                    <AvatarImage src={review.clubImage} alt={review.clubName} className="object-cover" />
+                    <AvatarFallback className="rounded-lg">{review.clubName[0]}</AvatarFallback>
+                  </Avatar>
                   
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
@@ -273,9 +272,9 @@ export default function ReviewsPage() {
                     <div className="flex items-center gap-1">
                       {renderStars(review.rating)}
                     </div>
-                    <span className="text-sm font-medium text-gray-700">
+                    <Badge variant="secondary" className="text-xs">
                       {review.rating}/5
-                    </span>
+                    </Badge>
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">
                     {review.title}
@@ -291,38 +290,44 @@ export default function ReviewsPage() {
                 <div className="flex items-center gap-6 pt-4 border-t border-gray-100">
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <ThumbsUp className="h-4 w-4" />
-                    <span>{review.likes} likes</span>
+                    <span>{review.likes} {t('reviews.likes')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <MessageCircle className="h-4 w-4" />
-                    <span>{review.replies} respuestas</span>
+                    <span>{review.replies} {t('reviews.replies')}</span>
                   </div>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="bg-white rounded-xl p-8 max-w-md mx-auto">
-            <Star className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {searchQuery || ratingFilter ? 'No se encontraron reseñas' : 'No has escrito reseñas aún'}
-            </h3>
-            <p className="text-gray-600 mb-4">
-              {searchQuery || ratingFilter
-                ? 'Prueba ajustando los filtros de búsqueda'
-                : 'Visita clubs y comparte tu experiencia con la comunidad'
-              }
-            </p>
-            {!searchQuery && !ratingFilter && (
-              <Link href="/clubs">
-                <Button variant="cannabis">
-                  {t('nav.explore')}
-                </Button>
-              </Link>
-            )}
-          </div>
+          <Card className="max-w-md mx-auto">
+            <CardContent className="p-8">
+              {searchQuery || ratingFilter ? (
+                <Search className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              ) : (
+                <Star className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              )}
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {searchQuery || ratingFilter ? t('reviews.no_results_search') : t('reviews.no_results_empty')}
+              </h3>
+              <p className="text-gray-600 mb-4">
+                {searchQuery || ratingFilter
+                  ? t('reviews.no_results_search_desc') || 'Try adjusting your filters'
+                  : t('reviews.no_results_empty_desc') || 'Visit clubs and share your experience'
+                }
+              </p>
+              {!searchQuery && !ratingFilter && (
+                <Link href="/clubs">
+                  <Button variant="cannabis">
+                    {t('nav.explore')}
+                  </Button>
+                </Link>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>
