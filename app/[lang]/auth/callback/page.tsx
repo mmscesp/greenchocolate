@@ -1,0 +1,162 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Loader2, CheckCircle, AlertCircle, Leaf } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+
+/**
+ * Auth Callback Page
+ * Handles email confirmation and OAuth callbacks from Supabase
+ */
+export default function AuthCallbackPage() {
+  const router = useRouter();
+  const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+  const [message, setMessage] = useState('Verifying your email...');
+
+  useEffect(() => {
+    const handleAuthCallback = async () => {
+      try {
+        const supabase = createClient();
+        
+        // Get the URL hash which contains the tokens from email confirmation
+        const hash = window.location.hash;
+        
+        if (hash && hash.includes('access_token')) {
+          // Email confirmation flow - tokens are in hash
+          // Supabase automatically handles the token exchange
+          const { data: { session }, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error('Auth callback error:', error);
+            setStatus('error');
+            setMessage('Failed to verify your email. The link may have expired.');
+            return;
+          }
+          
+          if (session) {
+            setStatus('success');
+            setMessage('Your email has been verified successfully!');
+            
+            // Redirect to dashboard after a short delay
+            setTimeout(() => {
+              router.push('/dashboard');
+              router.refresh();
+            }, 2000);
+          } else {
+            // No session but no error - might need to wait for confirmation
+            setStatus('error');
+            setMessage('Email verification incomplete. Please try signing in.');
+          }
+        } else {
+          // Check if there's a code parameter (PKCE flow for OAuth)
+          const searchParams = new URLSearchParams(window.location.search);
+          const code = searchParams.get('code');
+          
+          if (code) {
+            // OAuth callback with code - exchange for session
+            const { error } = await supabase.auth.exchangeCodeForSession(code);
+            
+            if (error) {
+              console.error('OAuth callback error:', error);
+              setStatus('error');
+              setMessage('Failed to complete authentication.');
+              return;
+            }
+            
+            setStatus('success');
+            setMessage('Authentication successful!');
+            
+            setTimeout(() => {
+              router.push('/dashboard');
+              router.refresh();
+            }, 1500);
+          } else {
+            // No tokens found - invalid callback
+            setStatus('error');
+            setMessage('Invalid verification link. Please request a new one.');
+          }
+        }
+      } catch (error) {
+        console.error('Callback processing error:', error);
+        setStatus('error');
+        setMessage('An unexpected error occurred. Please try again.');
+      }
+    };
+
+    handleAuthCallback();
+  }, [router]);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
+      <Card className="p-8 max-w-md w-full text-center shadow-xl">
+        <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Leaf className="h-10 w-10 text-green-600" />
+          <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            SocialClubsMaps
+          </span>
+        </Link>
+
+        {status === 'verifying' && (
+          <>
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Verifying Your Email
+            </h2>
+            <p className="text-gray-600">
+              {message}
+            </p>
+          </>
+        )}
+
+        {status === 'success' && (
+          <>
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Email Verified!
+            </h2>
+            <p className="text-gray-600 mb-6">
+              {message}
+            </p>
+            <p className="text-sm text-gray-500">
+              Redirecting you to the dashboard...
+            </p>
+          </>
+        )}
+
+        {status === 'error' && (
+          <>
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="h-8 w-8 text-red-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Verification Failed
+            </h2>
+            <p className="text-gray-600 mb-8">
+              {message}
+            </p>
+            <div className="space-y-3">
+              <Link href="/account/login">
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/resend-confirmation">
+                <Button variant="outline" className="w-full">
+                  Resend Verification Email
+                </Button>
+              </Link>
+            </div>
+          </>
+        )}
+      </Card>
+    </div>
+  );
+}

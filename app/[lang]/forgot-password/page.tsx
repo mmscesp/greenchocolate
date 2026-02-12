@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useActionState, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,34 +11,20 @@ import { useAuth } from '@/components/auth/AuthProvider';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const { resetPassword } = useAuth();
-  const router = useRouter();
+  
+  const [state, formAction, isPending] = useActionState(async () => {
+    const { error } = await resetPassword(email);
+    return {
+      success: !error,
+      message: error?.message || '',
+    };
+  }, {
+    success: false,
+    message: '',
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { error } = await resetPassword(email);
-
-      if (error) {
-        setError(error.message);
-      } else {
-        setSuccess(true);
-      }
-    } catch (err) {
-      setError('Ha ocurrido un error inesperado');
-      console.error('Reset password error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (success) {
+  if (state?.success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
         <Card className="p-8 max-w-md w-full text-center shadow-xl">
@@ -47,21 +32,21 @@ export default function ForgotPasswordPage() {
             <CheckCircle className="h-10 w-10 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Correo Enviado
+            Email Sent
           </h2>
           <p className="text-gray-600 mb-8">
-            Si existe una cuenta con el correo <strong>{email}</strong>,
-            recibirás un enlace para restaurar tu contraseña.
+            If an account exists with <strong>{email}</strong>,
+            you will receive a password reset link.
           </p>
           <div className="space-y-3">
-            <Link href="/club-panel/login" className="block">
+            <Link href="/account/login" className="block">
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                Volver a Iniciar Sesión
+                Back to Sign In
               </Button>
             </Link>
             <Link href="/" className="block">
               <Button variant="outline" className="w-full">
-                Volver al Inicio
+                Back to Home
               </Button>
             </Link>
           </div>
@@ -73,9 +58,9 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Link href="/club-panel/login" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
+        <Link href="/account/login" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          <span>Volver</span>
+          <span>Back</span>
         </Link>
 
         <Card className="p-8 shadow-xl border-2">
@@ -87,59 +72,59 @@ export default function ForgotPasswordPage() {
               </span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              ¿Olvidaste tu Contraseña?
+              Forgot Your Password?
             </h1>
             <p className="text-gray-600 mt-2">
-              Introduce tu correo electrónico y te enviaremos un enlace para restaurar tu contraseña.
+              Enter your email address and we'll send you a link to reset your password.
             </p>
           </div>
 
-          {error && (
+          {state?.message && !state?.success && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700">{state.message}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form action={formAction} className="space-y-6">
             <div>
               <Label htmlFor="email" className="flex items-center gap-2 mb-2">
                 <Mail className="h-4 w-4 text-gray-500" />
-                Correo Electrónico
+                Email Address
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="tu@email.com"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full"
                 required
-                disabled={loading}
+                disabled={isPending}
               />
             </div>
 
             <Button
               type="submit"
               className="w-full bg-green-600 hover:bg-green-700 text-white"
-              disabled={loading}
+              disabled={isPending}
             >
-              {loading ? (
+              {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Enviando...
+                  Sending...
                 </>
               ) : (
-                'Enviar Enlace de Restauración'
+                'Send Reset Link'
               )}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              ¿Recordaste tu contraseña?{' '}
-              <Link href="/club-panel/login" className="text-green-600 hover:text-green-700 font-medium">
-                Inicia sesión
+              Remember your password?{' '}
+              <Link href="/account/login" className="text-green-600 hover:text-green-700 font-medium">
+                Sign in
               </Link>
             </p>
           </div>
