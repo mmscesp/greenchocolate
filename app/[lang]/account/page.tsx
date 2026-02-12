@@ -10,7 +10,8 @@ import {
   Heart, 
   Star, 
   ClipboardList,
-  ArrowRight
+  ArrowRight,
+  Clock
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -80,6 +81,12 @@ export default async function AccountPage() {
               {userProfile.role.toLowerCase().replace('_', ' ')} Account
             </span>
           </div>
+          {userProfile.lastActiveAt && (
+            <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>Last active: {new Date(userProfile.lastActiveAt).toLocaleDateString()} at {new Date(userProfile.lastActiveAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+          )}
         </div>
 
         {/* Quick Stats */}
