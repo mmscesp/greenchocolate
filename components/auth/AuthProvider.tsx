@@ -101,14 +101,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
           // Show toast on sign in
           if (event === 'SIGNED_IN') {
-            toast.success('¡Bienvenido de nuevo!');
+            toast.success('Welcome back!');
           }
         } else {
           setProfile(null);
 
           // Show toast on sign out
           if (event === 'SIGNED_OUT') {
-            toast.info('Has cerrado sesión');
+            toast.info('You have been signed out');
           }
         }
 
@@ -116,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // Handle password recovery
         if (event === 'PASSWORD_RECOVERY') {
-          toast.info('Por favor, introduce tu nueva contraseña');
+          toast.info('Please enter your new password');
         }
       }
     );
@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       router.refresh();
       return { error: null };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error al iniciar sesión';
+      const message = error instanceof Error ? error.message : 'Error signing in';
       toast.error(message);
       return { error: new Error(message) };
     }
@@ -175,14 +175,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Check if email confirmation is required
       if (!data.session) {
-        toast.success('Por favor, verifica tu correo electrónico');
+        toast.success('Please check your email for verification');
         return { error: null, needsEmailConfirmation: true };
       }
 
       router.refresh();
       return { error: null };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error al registrar';
+      const message = error instanceof Error ? error.message : 'Error creating account';
       toast.error(message);
       return { error: new Error(message) };
     }
@@ -211,10 +211,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: new Error(error.message) };
       }
 
-      toast.success('Se ha enviado un correo para restaurar tu contraseña');
+      toast.success('Password reset email sent');
       return { error: null };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error al enviar correo';
+      const message = error instanceof Error ? error.message : 'Error sending email';
       toast.error(message);
       return { error: new Error(message) };
     }
@@ -232,10 +232,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: new Error(error.message) };
       }
 
-      toast.success('Contraseña actualizada correctamente');
+      toast.success('Password updated successfully');
       return { error: null };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error al actualizar contraseña';
+      const message = error instanceof Error ? error.message : 'Error updating password';
       toast.error(message);
       return { error: new Error(message) };
     }
@@ -257,10 +257,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: new Error(error.message) };
       }
 
-      toast.success('Correo de verificación enviado');
+      toast.success('Verification email sent');
       return { error: null };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error al enviar correo';
+      const message = error instanceof Error ? error.message : 'Error sending email';
       toast.error(message);
       return { error: new Error(message) };
     }
