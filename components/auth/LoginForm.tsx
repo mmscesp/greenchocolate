@@ -1,39 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useActionState, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthProvider';
+import { useSearchParams } from 'next/navigation';
+import { login } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Leaf, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/dashboard';
+  
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const { signIn } = useAuth();
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const { error } = await signIn(email, password);
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-    } else {
-      router.push('/');
-      router.refresh();
-    }
-  };
+  const [rememberMe, setRememberMe] = useState(false);
+  
+  const [state, formAction, isPending] = useActionState(login, {
+    success: false,
+    message: '',
+  });
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -45,10 +32,16 @@ export default function LoginForm() {
         <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {error && (
+      <form action={formAction} className="space-y-6">
+        {/* Hidden redirect field */}
+        <input type="hidden" name="redirect" value={redirectUrl} />
+        
+        {/* Hidden remember me field */}
+        <input type="hidden" name="rememberMe" value={rememberMe ? 'true' : 'false'} />
+
+        {state?.message && !state?.success && (
           <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
-            {error}
+            {state.message}
           </div>
         )}
 
@@ -58,15 +51,17 @@ export default function LoginForm() {
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="email"
+              name="email"
               type="email"
               placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="pl-10"
               required
-              disabled={loading}
+              disabled={isPending}
             />
           </div>
+          {state?.errors?.email && (
+            <p className="text-sm text-destructive">{state.errors.email[0]}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -83,13 +78,12 @@ export default function LoginForm() {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="password"
+              name="password"
               type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               className="pl-10 pr-10"
               required
-              disabled={loading}
+              disabled={isPending}
             />
             <button
               type="button"
@@ -99,6 +93,24 @@ export default function LoginForm() {
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
+          {state?.errors?.password && (
+            <p className="text-sm text-destructive">{state.errors.password[0]}</p>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="rememberMe" 
+            checked={rememberMe}
+            onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+            disabled={isPending}
+          />
+          <Label 
+            htmlFor="rememberMe" 
+            className="text-sm text-muted-foreground cursor-pointer"
+          >
+            Remember me for 30 days
+          </Label>
         </div>
 
         <Button
@@ -106,9 +118,9 @@ export default function LoginForm() {
           variant="cannabis"
           size="lg"
           className="w-full"
-          disabled={loading}
+          disabled={isPending}
         >
-          {loading ? (
+          {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Signing in...
