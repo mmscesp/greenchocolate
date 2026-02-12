@@ -5,13 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import HeroSection from '@/components/HeroSection';
 import SafetyKitForm from '@/components/marketing/SafetyKitForm';
+import TouristMistakes from '@/components/marketing/TouristMistakes';
 import WaitlistForm from '@/components/marketing/WaitlistForm';
 import FineCalculator from '@/components/marketing/FineCalculator';
 import EligibilityQuiz from '@/components/marketing/EligibilityQuiz';
+import FeaturedArticles from '@/components/marketing/FeaturedArticles';
+import WhyUsSection from '@/components/marketing/WhyUsSection';
 import { FaqAccordion } from '@/components/ui/faq-accordion';
 import TrustBadge from '@/components/trust/TrustBadge';
 import { useLanguage } from '@/hooks/useLanguage';
-import { BookOpen, Shield, AlertTriangle, Calendar, ArrowRight, Clock, MapPin, CheckCircle, Lock, Eye } from 'lucide-react';
+import { BookOpen, Shield, AlertTriangle, Calendar, ArrowRight, Clock, MapPin, CheckCircle, Lock, Eye, Calculator } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { OrganizationStructuredData, WebSiteStructuredData } from '@/components/StructuredData';
 import type { ArticleCard } from '@/app/actions/articles';
 
@@ -72,55 +76,35 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
           </div>
         </section>
 
-        {/* Safety & Etiquette - The Lead Magnet */}
+        {/* What Tourists Get Wrong */}
         <section className="py-24 bg-white relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <div className="flex gap-2 mb-6">
-                  <TrustBadge variant="expert" />
-                  <TrustBadge variant="privacy" />
-                </div>
-                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-8 leading-tight">
-                  Spain is not Amsterdam. <br />
-                  <span className="text-green-600">Know the Rules.</span>
-                </h2>
-                <div className="space-y-6 mb-10">
-                  {[
-                    { title: 'Avoid Fines', desc: 'Public possession can cost you €601–€30,000. Learn how to stay safe.', icon: AlertTriangle },
-                    { title: 'Etiquette First', desc: 'Social clubs are private associations, not coffee shops. Respect is the currency.', icon: BookOpen },
-                    { title: 'Verified Only', desc: 'We only list clubs that meet our strict safety and legal standards.', icon: Shield },
-                  ].map((item, i) => (
-                    <div key={i} className="flex gap-4">
-                      <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center shrink-0">
-                        <item.icon className="h-6 w-6 text-green-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-gray-900 mb-1">{item.title}</h4>
-                        <p className="text-gray-600">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="absolute -inset-4 bg-green-100/50 rounded-3xl blur-2xl"></div>
-                <div className="relative">
-                  <SafetyKitForm />
-                </div>
-              </div>
-            </div>
+            <TouristMistakes />
           </div>
         </section>
 
         {/* Interactive Tools - Risk Radar & Eligibility */}
-        <section className="py-24 bg-zinc-50/50 border-y border-zinc-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-24 bg-gradient-to-b from-zinc-50 to-white relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-red-100 rounded-full blur-3xl" />
+          </div>
+          
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-16">
-              <Badge variant="outline" className="mb-4 border-zinc-200 text-zinc-500 uppercase tracking-widest font-black text-[10px]">Interactive Tools</Badge>
-              <h2 className="text-4xl font-bold text-gray-900">Measure Your Readiness</h2>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-full text-indigo-600 mb-6">
+                <Calculator className="h-4 w-4" />
+                <span className="text-sm font-bold">Interactive Tools</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-4">
+                Know Before You Go
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Two essential tools to check your eligibility and understand the real costs of mistakes.
+              </p>
             </div>
+            
             <div className="grid lg:grid-cols-2 gap-8 items-start">
               <FineCalculator />
               <EligibilityQuiz />
@@ -129,127 +113,71 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
         </section>
 
         {/* Featured Articles */}
-        <section className="py-24 bg-zinc-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-              <div className="max-w-2xl">
-                <Badge variant="outline" className="mb-4 border-green-200 text-green-700">Knowledge Hub</Badge>
-                <h2 className="text-4xl font-bold text-gray-900 leading-tight">
-                  Latest Expert Guides
-                </h2>
-              </div>
-              <Link href="/learn">
-                <Button variant="outline" className="rounded-full px-8">
-                  View All Guides <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredArticles.slice(0, 4).map((article) => (
-                <Link key={article.id} href={`/learn/${article.slug}`}>
-                  <article className="group bg-white rounded-2xl border border-zinc-100 p-6 transition-all hover:border-green-500 hover:shadow-xl flex flex-col h-full">
-                    <div className="flex justify-between items-start mb-4">
-                      <Badge variant="outline" className="bg-zinc-50 text-zinc-500 text-[10px] font-black border-zinc-200 uppercase tracking-widest px-2">
-                        {article.category}
-                      </Badge>
-                      <Clock className="h-3 w-3 text-zinc-400" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors line-clamp-2">
-                      {article.title}
-                    </h3>
-                    <p className="text-zinc-500 text-sm leading-relaxed mb-4 line-clamp-2">
-                      {article.excerpt}
-                    </p>
-                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-zinc-50">
-                      <span className="text-xs font-bold text-green-600 uppercase tracking-wider">
-                        Read Guide
-                      </span>
-                      <span className="text-[10px] font-bold text-zinc-300 uppercase">
-                        {article.readTime} min
-                      </span>
-                    </div>
-                  </article>
+        <section className="py-24 bg-gradient-to-b from-zinc-50 to-white relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-20 left-10 w-72 h-72 bg-green-100 rounded-full blur-3xl opacity-30" />
+            <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-30" />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full text-green-600 mb-6"
+              >
+                <BookOpen className="h-4 w-4" />
+                <span className="text-sm font-bold">Knowledge Hub</span>
+              </motion.div>
+
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-4xl lg:text-5xl font-black text-gray-900 mb-4"
+              >
+                Expert Guides & Insights
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="text-xl text-gray-600 max-w-2xl mx-auto mb-8"
+              >
+                Deep dives into Spanish cannabis culture, written by locals and legal experts.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
+                <Link href="/learn">
+                  <Button
+                    variant="outline"
+                    className="rounded-full px-8 py-6 text-base font-bold border-2 hover:bg-green-50 hover:border-green-300 transition-all group"
+                  >
+                    Browse All Guides
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
                 </Link>
-              ))}
+              </motion.div>
             </div>
+
+            {/* Articles Grid */}
+            <FeaturedArticles articles={featuredArticles.slice(0, 4)} />
           </div>
         </section>
 
         {/* Trusted Nav Layer - Why Us */}
-        <section className="py-24 bg-zinc-900 text-white relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-            <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
-          </div>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-5xl font-bold mb-4">The Verified Navigation Layer</h2>
-              <p className="text-zinc-400 max-w-2xl mx-auto">We bridge the gap between complex local regulations and the visitor experience through rigorous standards.</p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-12 mb-24">
-              <div className="p-8 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-sm hover:border-green-500/50 transition-colors">
-                <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-green-400 text-3xl shadow-[0_0_20px_rgba(34,197,94,0.2)]">
-                  📍
-                </div>
-                <h3 className="text-xl font-bold mb-4">Regulatory Wiki</h3>
-                <p className="text-zinc-400 leading-relaxed">Permanent, expert-reviewed knowledge nodes on laws, rights, and etiquette. We simplify the complexity of the Spanish legal grey zone.</p>
-              </div>
-              <div className="p-8 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-sm hover:border-blue-500/50 transition-colors">
-                <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-blue-400 text-3xl shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-                  🛡️
-                </div>
-                <h3 className="text-xl font-bold mb-4">Confidence UI</h3>
-                <p className="text-zinc-400 leading-relaxed">Visual status indicators showing the reliability and safety level of every club. Real-time verification status you can trust.</p>
-              </div>
-              <div className="p-8 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-sm hover:border-purple-500/50 transition-colors">
-                <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-purple-400 text-3xl shadow-[0_0_20px_rgba(168,85,247,0.2)]">
-                  🎟️
-                </div>
-                <h3 className="text-xl font-bold mb-4">Verified Access</h3>
-                <p className="text-zinc-400 leading-relaxed">Standardized membership request workflows that prioritize your privacy and ensure compliance with club statutes.</p>
-              </div>
-            </div>
-
-            {/* Verification Methodology */}
-            <div className="bg-white/5 border border-white/10 rounded-[3rem] p-8 md:p-12">
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
-                <div>
-                  <Badge className="bg-green-500 hover:bg-green-600 text-white border-none mb-6">Our Standard</Badge>
-                  <h3 className="text-3xl font-bold mb-6">The SCM Verification Moat</h3>
-                  <p className="text-zinc-400 mb-8 leading-relaxed">
-                    We don't just list clubs. Every partner on our platform undergoes a multi-point verification process to ensure they operate within the strict legal framework of Spanish private associations.
-                  </p>
-                  <div className="space-y-4">
-                    {[
-                      { title: 'Legal Compliance Audit', desc: 'Verified non-profit status and registration with the Regional Registry of Associations.', icon: CheckCircle },
-                      { title: 'Privacy Protection', desc: 'GDPR-compliant handling of member data and secure pre-registration protocols.', icon: Lock },
-                      { title: 'Transparency Policy', desc: 'Clear communication of rules, membership fees, and association statutes.', icon: Eye },
-                    ].map((item, i) => (
-                      <div key={i} className="flex gap-4">
-                        <item.icon className="h-6 w-6 text-green-500 shrink-0" />
-                        <div>
-                          <h4 className="font-bold text-white">{item.title}</h4>
-                          <p className="text-sm text-zinc-500">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="relative">
-                  <div className="aspect-square bg-gradient-to-br from-green-500/20 to-emerald-500/5 rounded-full flex items-center justify-center border border-white/10 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-500/10 via-transparent to-transparent animate-pulse"></div>
-                    <Shield className="h-32 w-32 text-green-500 drop-shadow-[0_0_30px_rgba(34,197,94,0.5)] group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-zinc-950/40 backdrop-blur-sm p-8 text-center">
-                      <p className="text-sm font-bold text-white mb-2 uppercase tracking-widest">Trust Factor</p>
-                      <p className="text-4xl font-black text-green-400">100%</p>
-                      <p className="text-xs text-zinc-300 mt-2">Manual Verification Required for all Featured Partners</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <WhyUsSection />
 
         {/* Coming Soon: Barcelona */}
         <section className="py-24 bg-white">

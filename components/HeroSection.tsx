@@ -36,34 +36,15 @@ export default function HeroSection() {
     >
       {/* Background Image Container */}
       <div className="absolute inset-0 w-full h-full">
-        {/* Placeholder - User will provide image */}
-        {/* Replace src with actual image when ready */}
-        <div
-          className="w-full h-full bg-gradient-to-br from-green-900 via-emerald-800 to-green-950"
-          aria-hidden="true"
-        >
-          {/* Pattern overlay for visual interest */}
-          <div className="absolute inset-0 opacity-10">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Image would go here when provided:
         <Image
-          src="/user-provided-image.jpg"
-          alt={t('home.hero.image_alt')}
+          src="/pexels-jamesheming-4570837-ezgif.com-jpg-to-webp-converter.webp"
+          alt={t('home.hero.title')}
           fill
-          className={`object-cover transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`object-cover object-[center_40%] transition-opacity duration-1000 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
           onLoad={handleImageLoad}
           priority
           sizes="100vw"
         />
-        */}
       </div>
 
       {/* Gradient Overlays for Text Readability */}
@@ -142,8 +123,8 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Bottom decorative gradient */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-green-950/50 to-transparent z-20 pointer-events-none" />
+      {/* Bottom decorative gradient - "The Merge" */}
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-zinc-950 via-emerald-950/80 to-transparent z-20 pointer-events-none" />
     </section>
   );
 }

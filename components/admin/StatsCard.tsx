@@ -1,34 +1,61 @@
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface StatsCardProps {
   title: string;
   value: string | number;
   icon: LucideIcon;
   trend?: string;
-  color?: 'green' | 'blue' | 'purple' | 'orange';
+  color?: 'green' | 'blue' | 'purple' | 'orange' | 'default';
+  className?: string;
 }
 
-const colorClasses = {
-  green: 'bg-green-50 text-green-600',
-  blue: 'bg-blue-50 text-blue-600',
-  purple: 'bg-slate-50 text-slate-600',
-  orange: 'bg-orange-50 text-orange-600',
+const colorStyles = {
+  green: {
+    bg: 'bg-green-100 dark:bg-green-900/20',
+    text: 'text-green-600 dark:text-green-400',
+  },
+  blue: {
+    bg: 'bg-blue-100 dark:bg-blue-900/20',
+    text: 'text-blue-600 dark:text-blue-400',
+  },
+  purple: {
+    bg: 'bg-purple-100 dark:bg-purple-900/20',
+    text: 'text-purple-600 dark:text-purple-400',
+  },
+  orange: {
+    bg: 'bg-orange-100 dark:bg-orange-900/20',
+    text: 'text-orange-600 dark:text-orange-400',
+  },
+  default: {
+    bg: 'bg-muted',
+    text: 'text-muted-foreground',
+  }
 };
 
-export function StatsCard({ title, value, icon: Icon, trend, color = 'green' }: StatsCardProps) {
+export function StatsCard({ title, value, icon: Icon, trend, color = 'default', className }: StatsCardProps) {
+  const styles = colorStyles[color];
+
   return (
-    <Card className="p-6 hover:shadow-lg transition-shadow">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm text-gray-600 mb-2">{title}</p>
-          <div className="text-3xl font-bold text-gray-900">{value}</div>
-          {trend && <p className="text-xs text-green-600 mt-2">{trend}</p>}
+    <Card className={cn("hover:shadow-md transition-shadow", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">
+          {title}
+        </CardTitle>
+        <div className={cn("p-2 rounded-full", styles.bg, styles.text)}>
+          <Icon className="h-4 w-4" />
         </div>
-        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
-          <Icon className="h-6 w-6" />
-        </div>
-      </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {trend && (
+          <p className="text-xs text-muted-foreground mt-1">
+            {trend}
+          </p>
+        )}
+      </CardContent>
     </Card>
   );
 }
+

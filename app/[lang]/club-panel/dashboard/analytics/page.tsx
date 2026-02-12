@@ -3,8 +3,10 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
+import { StatsCard } from '@/components/admin/StatsCard';
 import { 
   BarChart3, 
   Users, 
@@ -13,8 +15,12 @@ import {
   Eye,
   UserPlus,
   Star,
-  MapPin
+  MapPin,
+  ArrowUpRight,
+  ArrowDownRight,
+  Clock
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function AnalyticsPage() {
   const { t } = useLanguage();
@@ -29,232 +35,253 @@ export default function AnalyticsPage() {
   };
 
   const monthlyData = [
-    { month: 'Ene', views: 890, requests: 12 },
+    { month: 'Jan', views: 890, requests: 12 },
     { month: 'Feb', views: 1020, requests: 15 },
     { month: 'Mar', views: 1150, requests: 18 },
-    { month: 'Abr', views: 1247, requests: 23 },
+    { month: 'Apr', views: 1247, requests: 23 },
   ];
 
   const topSources = [
-    { source: 'Búsqueda directa', percentage: 45, visits: 561 },
-    { source: 'Redes sociales', percentage: 28, visits: 349 },
-    { source: 'Referencias', percentage: 18, visits: 224 },
-    { source: 'Otros', percentage: 9, visits: 113 }
+    { source: 'Direct Search', percentage: 45, visits: 561 },
+    { source: 'Social Media', percentage: 28, visits: 349 },
+    { source: 'Referrals', percentage: 18, visits: 224 },
+    { source: 'Other', percentage: 9, visits: 113 }
   ];
 
   const recentActivity = [
-    { type: 'view', message: 'Nueva visita al perfil', time: '2 min ago' },
-    { type: 'request', message: 'Nueva solicitud de membresía', time: '15 min ago' },
-    { type: 'view', message: 'Perfil visto desde Malasaña', time: '1 hora ago' },
-    { type: 'request', message: 'Solicitud aprobada', time: '2 horas ago' },
-    { type: 'view', message: 'Nueva visita al perfil', time: '3 horas ago' }
+    { type: 'view', message: 'New profile visit', time: '2 min ago' },
+    { type: 'request', message: 'New membership request', time: '15 min ago' },
+    { type: 'view', message: 'Profile viewed from downtown', time: '1 hour ago' },
+    { type: 'request', message: 'Request approved', time: '2 hours ago' },
+    { type: 'view', message: 'New profile visit', time: '3 hours ago' }
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.analytics')}</h1>
-          <p className="text-gray-600 mt-2">
-            Analiza el rendimiento y la actividad de tu club
+          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+          <p className="text-muted-foreground mt-1">
+            Track your club's performance and member engagement
           </p>
         </div>
         
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 bg-white"
+          className="px-3 py-2 border rounded-md text-sm bg-background"
         >
-          <option value="7d">Últimos 7 días</option>
-          <option value="30d">Últimos 30 días</option>
-          <option value="90d">Últimos 90 días</option>
-          <option value="1y">Último año</option>
+          <option value="7d">Last 7 days</option>
+          <option value="30d">Last 30 days</option>
+          <option value="90d">Last 90 days</option>
+          <option value="1y">Last year</option>
         </select>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Visualizaciones</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalViews.toLocaleString()}</p>
-              <p className="text-sm text-green-600 flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                +12% vs mes anterior
-              </p>
-            </div>
-            <div className="bg-blue-100 p-3 rounded-full">
-              <Eye className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Nuevos Miembros</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.newMembers}</p>
-              <p className="text-sm text-green-600 flex items-center mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                +28% vs mes anterior
-              </p>
-            </div>
-            <div className="bg-green-100 p-3 rounded-full">
-              <UserPlus className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Valoración Media</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.averageRating}</p>
-              <p className="text-sm text-gray-500 flex items-center mt-1">
-                <Star className="h-3 w-3 mr-1 fill-yellow-400 text-yellow-400" />
-                Basado en 142 reseñas
-              </p>
-            </div>
-            <div className="bg-yellow-100 p-3 rounded-full">
-              <Star className="h-6 w-6 text-yellow-600" />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Solicitudes</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalRequests}</p>
-              <p className="text-sm text-orange-600 flex items-center mt-1">
-                <Calendar className="h-3 w-3 mr-1" />
-                5 pendientes
-              </p>
-            </div>
-            <div className="bg-orange-100 p-3 rounded-full">
-              <Users className="h-6 w-6 text-orange-600" />
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Profile Views"
+          value={stats.totalViews.toLocaleString()}
+          icon={Eye}
+          color="blue"
+          trend="+12% vs last month"
+        />
+        <StatsCard
+          title="New Members"
+          value={stats.newMembers}
+          icon={UserPlus}
+          color="green"
+          trend="+28% vs last month"
+        />
+        <StatsCard
+          title="Average Rating"
+          value={stats.averageRating}
+          icon={Star}
+          color="orange"
+          trend="Based on 142 reviews"
+        />
+        <StatsCard
+          title="Total Requests"
+          value={stats.totalRequests}
+          icon={Users}
+          color="purple"
+          trend="5 pending"
+        />
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Monthly Trends */}
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Tendencias Mensuales</h3>
-            <BarChart3 className="h-5 w-5 text-gray-400" />
-          </div>
-          
-          <div className="space-y-4">
-            {monthlyData.map((data, index) => (
-              <div key={data.month} className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700 w-12">{data.month}</span>
-                <div className="flex-1 mx-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(data.views / 1300) * 100}%` }}
-                      />
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-muted-foreground" />
+              Monthly Trends
+            </CardTitle>
+            <CardDescription>Profile views and membership requests over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {monthlyData.map((data) => (
+                <div key={data.month} className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-muted-foreground w-10">{data.month}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
+                        <div 
+                          className="bg-primary h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${(data.views / 1300) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-muted-foreground w-12 text-right">{data.views}</span>
                     </div>
-                    <span className="text-xs text-gray-500 w-12">{data.views}</span>
                   </div>
+                  <Badge variant="outline" className="text-xs whitespace-nowrap">
+                    {data.requests} req
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="text-xs">
-                  {data.requests} req
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Traffic Sources */}
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Fuentes de Tráfico</h3>
-            <MapPin className="h-5 w-5 text-gray-400" />
-          </div>
-          
-          <div className="space-y-4">
-            {topSources.map((source, index) => (
-              <div key={source.source} className="flex items-center justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-700">{source.source}</span>
-                    <span className="text-sm text-gray-500">{source.percentage}%</span>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+              Traffic Sources
+            </CardTitle>
+            <CardDescription>Where your visitors are coming from</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {topSources.map((source) => (
+                <div key={source.source} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">{source.source}</span>
+                    <span className="text-muted-foreground">{source.percentage}%</span>
                   </div>
-                  <div className="bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${source.percentage}%` }}
-                    />
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
+                      <div 
+                        className={cn(
+                          "h-2 rounded-full transition-all duration-500",
+                          source.percentage > 40 ? "bg-green-500" :
+                          source.percentage > 25 ? "bg-blue-500" :
+                          source.percentage > 15 ? "bg-orange-500" : "bg-muted-foreground"
+                        )}
+                        style={{ width: `${source.percentage}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted-foreground w-14 text-right">
+                      {source.visits}
+                    </span>
                   </div>
                 </div>
-                <span className="text-xs text-gray-500 ml-4 w-16 text-right">
-                  {source.visits} visitas
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white rounded-lg p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Actividad Reciente</h3>
-        
-        <div className="space-y-4">
-          {recentActivity.map((activity, index) => (
-            <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
-              <div className={`p-2 rounded-full ${
-                activity.type === 'view' ? 'bg-blue-100' : 'bg-green-100'
-              }`}>
-                {activity.type === 'view' ? (
-                  <Eye className={`h-4 w-4 ${activity.type === 'view' ? 'text-blue-600' : 'text-green-600'}`} />
-                ) : (
-                  <UserPlus className="h-4 w-4 text-green-600" />
-                )}
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                <p className="text-xs text-gray-500">{activity.time}</p>
-              </div>
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Recent Activity */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>Latest interactions with your club</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentActivity.map((activity, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className={cn(
+                    "p-2 rounded-full shrink-0",
+                    activity.type === 'view' 
+                      ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
+                      : "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400"
+                  )}>
+                    {activity.type === 'view' ? (
+                      <Eye className="h-4 w-4" />
+                    ) : (
+                      <UserPlus className="h-4 w-4" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium">{activity.message}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <Clock className="h-3 w-3" />
+                      {activity.time}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </CardContent>
+        </Card>
 
-      {/* Performance Insights */}
-      <div className="bg-white rounded-lg p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Insights de Rendimiento</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
-              <span className="font-medium text-green-800">Crecimiento Positivo</span>
+        {/* Performance Insights */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Performance Insights</CardTitle>
+            <CardDescription>Key takeaways from your analytics</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="p-4 bg-green-50 dark:bg-green-900/10 rounded-lg border border-green-200 dark:border-green-900/20">
+                <div className="flex items-start gap-3">
+                  <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full shrink-0">
+                    <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-green-800 dark:text-green-400 mb-1">Positive Growth</h4>
+                    <p className="text-sm text-green-700 dark:text-green-500">
+                      Your club has experienced 28% growth in new members this month. 
+                      Great work maintaining service quality!
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-900/20">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 dark:bg-blue-900/20 p-2 rounded-full shrink-0">
+                    <Eye className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-blue-800 dark:text-blue-400 mb-1">High Visibility</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-500">
+                      Your profile is getting many views. Consider updating photos and 
+                      description to keep visitors engaged.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 bg-orange-50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-900/20">
+                <div className="flex items-start gap-3">
+                  <div className="bg-orange-100 dark:bg-orange-900/20 p-2 rounded-full shrink-0">
+                    <Star className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-orange-800 dark:text-orange-400 mb-1">Excellent Rating</h4>
+                    <p className="text-sm text-orange-700 dark:text-orange-500">
+                      With a 4.8/5 rating, your club is among the top-rated in the area. 
+                      Keep up the great work!
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-green-700">
-              Tu club ha experimentado un crecimiento del 28% en nuevos miembros este mes. 
-              ¡Excelente trabajo manteniendo la calidad del servicio!
-            </p>
-          </div>
-          
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center gap-2 mb-2">
-              <Eye className="h-5 w-5 text-blue-600" />
-              <span className="font-medium text-blue-800">Alta Visibilidad</span>
-            </div>
-            <p className="text-sm text-blue-700">
-              Tu perfil está siendo muy visitado. Considera actualizar las fotos y 
-              la descripción para mantener el interés de los visitantes.
-            </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

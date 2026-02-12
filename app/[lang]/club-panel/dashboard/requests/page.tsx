@@ -3,9 +3,10 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Dialog,
   DialogContent,
@@ -36,6 +37,7 @@ import {
   Calendar,
   AlertCircle,
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ClubRequest {
   id: string;
@@ -63,13 +65,10 @@ export default function ClubRequestsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // TODO: Get actual club ID from user's profile/context
-  
   const loadRequests = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Calling without arguments will infer the club from the user's managed club
       const data = await getClubMembershipRequests();
       setRequests(data);
     } catch (err) {
@@ -91,7 +90,7 @@ export default function ClubRequestsPage() {
     try {
       const result: ActionState = await approveMembershipRequest(
         selectedRequest.id,
-        undefined, // clubSlug - will be inferred on server
+        undefined,
         approvalNotes
       );
       if (result.success) {
@@ -122,7 +121,7 @@ export default function ClubRequestsPage() {
     try {
       const result: ActionState = await rejectMembershipRequest(
         selectedRequest.id,
-        undefined, // clubSlug - will be inferred on server
+        undefined,
         rejectionReason
       );
       if (result.success) {
@@ -167,7 +166,7 @@ export default function ClubRequestsPage() {
         );
       case 'APPROVED':
         return (
-          <Badge variant="success" className="flex items-center gap-1">
+          <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-green-200 flex items-center gap-1">
             <Check className="h-3 w-3" />
             Approved
           </Badge>
@@ -192,12 +191,12 @@ export default function ClubRequestsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Membership Requests</h1>
-          <p className="text-gray-600 mt-2">Manage membership requests for your club</p>
+          <h1 className="text-3xl font-bold tracking-tight">Membership Requests</h1>
+          <p className="text-muted-foreground mt-2">Manage membership requests for your club</p>
         </div>
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-          <span className="ml-3 text-gray-600">Loading requests...</span>
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="ml-3 text-muted-foreground">Loading requests...</span>
         </div>
       </div>
     );
@@ -207,12 +206,12 @@ export default function ClubRequestsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Membership Requests</h1>
-          <p className="text-gray-600 mt-2">Manage membership requests for your club</p>
+          <h1 className="text-3xl font-bold tracking-tight">Membership Requests</h1>
+          <p className="text-muted-foreground mt-2">Manage membership requests for your club</p>
         </div>
-        <Card className="p-12 text-center">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-red-900 mb-2">{error}</h3>
+        <Card className="p-12 text-center border-destructive/50 bg-destructive/5">
+          <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-destructive mb-2">{error}</h3>
           <Button onClick={loadRequests} variant="outline" className="mt-4">
             <RefreshCw className="h-4 w-4 mr-2" />
             Retry
@@ -227,182 +226,197 @@ export default function ClubRequestsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Membership Requests</h1>
-          <p className="text-gray-600 mt-2">Manage membership requests for your club</p>
+          <h1 className="text-3xl font-bold tracking-tight">Membership Requests</h1>
+          <p className="text-muted-foreground mt-2">Manage membership requests for your club</p>
         </div>
         <Button variant="outline" onClick={loadRequests} disabled={loading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
           Refresh
         </Button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-6 text-center">
-          <div className="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Clock className="h-6 w-6 text-yellow-600" />
-          </div>
-          <p className="text-3xl font-bold text-yellow-600">{pendingRequests.length}</p>
-          <p className="text-sm text-gray-600">Pending</p>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <div className="bg-yellow-100 dark:bg-yellow-900/20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+            </div>
+            <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{pendingRequests.length}</p>
+            <p className="text-sm text-muted-foreground">Pending</p>
+          </CardContent>
         </Card>
-        <Card className="p-6 text-center">
-          <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Check className="h-6 w-6 text-green-600" />
-          </div>
-          <p className="text-3xl font-bold text-green-600">{approvedRequests.length}</p>
-          <p className="text-sm text-gray-600">Approved</p>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <div className="bg-green-100 dark:bg-green-900/20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Check className="h-6 w-6 text-green-600 dark:text-green-400" />
+            </div>
+            <p className="text-3xl font-bold text-green-600 dark:text-green-400">{approvedRequests.length}</p>
+            <p className="text-sm text-muted-foreground">Approved</p>
+          </CardContent>
         </Card>
-        <Card className="p-6 text-center">
-          <div className="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-            <X className="h-6 w-6 text-red-600" />
-          </div>
-          <p className="text-3xl font-bold text-red-600">{rejectedRequests.length}</p>
-          <p className="text-sm text-gray-600">Rejected</p>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <div className="bg-red-100 dark:bg-red-900/20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+              <X className="h-6 w-6 text-red-600 dark:text-red-400" />
+            </div>
+            <p className="text-3xl font-bold text-red-600 dark:text-red-400">{rejectedRequests.length}</p>
+            <p className="text-sm text-muted-foreground">Rejected</p>
+          </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card className="p-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input
-              placeholder="Search by name or email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border rounded-md text-sm bg-background"
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Filter className="h-5 w-5 text-gray-400" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 bg-white"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-        </div>
+        </CardContent>
       </Card>
 
       {/* Requests List */}
-      <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">All Requests</h2>
-        {filteredRequests.length === 0 ? (
-          <div className="text-center py-12">
-            <User className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No requests found</h3>
-            <p className="text-gray-600">
-              {searchQuery || statusFilter !== 'all'
-                ? 'Try adjusting your search or filters'
-                : 'No membership requests yet'}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {filteredRequests.map((request) => (
-              <div
-                key={request.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                      {request.user.avatarUrl ? (
-                        <img
-                          src={request.user.avatarUrl}
-                          alt={request.user.displayName || ''}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <User className="h-5 w-5 text-gray-500" />
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {request.user.displayName || 'Anonymous'}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Mail className="h-3 w-3" />
-                        <span>{request.user.email}</span>
+      <Card>
+        <CardHeader>
+          <CardTitle>All Requests</CardTitle>
+          <CardDescription>Review and manage incoming membership applications.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {filteredRequests.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="bg-muted inline-flex p-4 rounded-full mb-4">
+                <User className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium text-foreground mb-2">No requests found</h3>
+              <p className="text-muted-foreground">
+                {searchQuery || statusFilter !== 'all'
+                  ? 'Try adjusting your search or filters'
+                  : 'No membership requests yet'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredRequests.map((request) => (
+                <div
+                  key={request.id}
+                  className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-4"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start md:items-center gap-4">
+                      <Avatar className="h-10 w-10 border">
+                        <AvatarImage src={request.user.avatarUrl || ''} />
+                        <AvatarFallback>{request.user.displayName?.charAt(0) || 'U'}</AvatarFallback>
+                      </Avatar>
+                      
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-semibold text-foreground">
+                            {request.user.displayName || 'Anonymous'}
+                          </h3>
+                          {getStatusBadge(request.status)}
+                        </div>
+                        
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
+                          <div className="flex items-center gap-1.5">
+                            <Mail className="h-3.5 w-3.5" />
+                            <span>{request.user.email}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5" />
+                            <span>{new Date(request.createdAt).toLocaleDateString('es-ES')}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    
+                    {request.message && (
+                      <div className="mt-3 ml-14 p-3 bg-muted/50 rounded-md text-sm italic text-muted-foreground border-l-2 border-primary/20">
+                        &ldquo;{request.message}&rdquo;
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-4 mt-2 ml-13">
-                    {getStatusBadge(request.status)}
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Calendar className="h-3 w-3" />
-                      <span>{new Date(request.createdAt).toLocaleDateString('es-ES')}</span>
-                    </div>
+
+                  <div className="flex items-center gap-2 md:self-center ml-14 md:ml-0">
+                    {request.status === 'PENDING' ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedRequest(request);
+                            setIsRejectDialogOpen(true);
+                          }}
+                          className="text-destructive hover:bg-destructive/10 border-destructive/20"
+                        >
+                          <X className="h-4 w-4 mr-1.5" />
+                          Reject
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setSelectedRequest(request);
+                            setIsApproveDialogOpen(true);
+                          }}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <Check className="h-4 w-4 mr-1.5" />
+                          Approve
+                        </Button>
+                      </>
+                    ) : (
+                      <span className="text-sm text-muted-foreground px-2">
+                        Processed on {new Date().toLocaleDateString()}
+                      </span>
+                    )}
                   </div>
-                  {request.message && (
-                    <p className="text-sm text-gray-600 mt-2 ml-13 line-clamp-1 italic">
-                      &ldquo;{request.message}&rdquo;
-                    </p>
-                  )}
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                  {request.status === 'PENDING' && (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setIsRejectDialogOpen(true);
-                        }}
-                        className="text-red-600 hover:bg-red-50"
-                      >
-                        <X className="h-4 w-4 mr-1" />
-                        Reject
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setIsApproveDialogOpen(true);
-                        }}
-                        className="bg-green-600 hover:bg-green-700"
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Approve
-                      </Button>
-                    </>
-                  )}
-                  {request.status !== 'PENDING' && (
-                    <span className="text-sm text-gray-500">
-                      {request.status === 'APPROVED' ? 'Approved' : 'Rejected'}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </CardContent>
       </Card>
 
-      {/* Approve Dialog */}
+      {/* Dialogs remain mostly the same but with small UI tweaks if needed, 
+          using standard components is fine */}
       <Dialog open={isApproveDialogOpen} onOpenChange={setIsApproveDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Approve Membership Request</DialogTitle>
             <DialogDescription>
               You are about to approve the membership request from{' '}
-              {selectedRequest?.user.displayName || selectedRequest?.user.email}
+              <span className="font-semibold text-foreground">{selectedRequest?.user.displayName || selectedRequest?.user.email}</span>
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Notes (optional)
+              </label>
               <Textarea
                 placeholder="Add any notes about this approval..."
                 value={approvalNotes}
                 onChange={(e) => setApprovalNotes(e.target.value)}
-                className="mt-1"
               />
             </div>
           </div>
@@ -426,24 +440,24 @@ export default function ClubRequestsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Reject Dialog */}
       <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Reject Membership Request</DialogTitle>
             <DialogDescription>
               You are about to reject the membership request from{' '}
-              {selectedRequest?.user.displayName || selectedRequest?.user.email}
+              <span className="font-semibold text-foreground">{selectedRequest?.user.displayName || selectedRequest?.user.email}</span>
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700">Reason (optional)</label>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Reason (optional)
+              </label>
               <Textarea
                 placeholder="Provide a reason for rejection..."
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                className="mt-1"
               />
             </div>
           </div>
