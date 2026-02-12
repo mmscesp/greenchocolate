@@ -21,7 +21,7 @@ export default function ClubPanelChooser() {
             </Link>
             <div className="flex items-center">
               <Link href="/">
-                <Button variant="ghost">Volver al inicio</Button>
+                <Button variant="ghost">Back to Home</Button>
               </Link>
             </div>
           </div>
@@ -32,13 +32,13 @@ export default function ClubPanelChooser() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full mb-6">
             <Shield className="h-4 w-4" />
-            <span className="text-sm font-medium">Panel de Gestión para Clubs</span>
+            <span className="text-sm font-medium">Club Management Panel</span>
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Bienvenido al Panel Club
+            Welcome to Club Panel
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Gestiona tu club social de cannabis, recibe solicitudes y conecta con tu comunidad
+            Manage your cannabis social club, receive membership requests, and connect with your community
           </p>
         </div>
 
@@ -50,13 +50,13 @@ export default function ClubPanelChooser() {
                   <LogIn className="h-8 w-8 text-green-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Iniciar Sesión
+                  Sign In
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  ¿Ya tienes un club registrado? Accede a tu panel de control
+                  Already have a registered club? Access your dashboard
                 </p>
                 <div className="flex items-center justify-center gap-2 text-green-600 font-medium group-hover:gap-3 transition-all">
-                  <span>Acceder</span>
+                  <span>Access Panel</span>
                   <LogIn className="h-4 w-4" />
                 </div>
               </div>
@@ -70,13 +70,13 @@ export default function ClubPanelChooser() {
                   <UserPlus className="h-8 w-8 text-emerald-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Registrar Club
+                  Register Club
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  ¿Nuevo aquí? Registra tu club y empieza a gestionar tu comunidad
+                  New here? Register your club and start managing your community
                 </p>
                 <div className="flex items-center justify-center gap-2 text-emerald-600 font-medium group-hover:gap-3 transition-all">
-                  <span>Registrarse</span>
+                  <span>Get Started</span>
                   <UserPlus className="h-4 w-4" />
                 </div>
               </div>

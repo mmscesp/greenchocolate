@@ -2,138 +2,137 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, Suspense } from 'react';
+import { useActionState, useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
-import { Leaf, Mail, Lock, ArrowLeft, AlertCircle, Loader2 } from 'lucide-react';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { Leaf, Mail, Lock, ArrowLeft, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { login } from '@/app/actions/auth';
 
-function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { signIn } = useAuth();
-  const router = useRouter();
+function ClubLoginForm() {
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/dashboard';
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { error } = await signIn(email, password);
-
-      if (error) {
-        setError(error.message);
-      } else {
-        router.push(redirectTo);
-        router.refresh();
-      }
-    } catch (err) {
-      setError('Ha ocurrido un error inesperado');
-      console.error('Login error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const redirectTo = searchParams.get('redirect') || '/club-panel/dashboard';
+  
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  
+  const [state, formAction, isPending] = useActionState(login, {
+    success: false,
+    message: '',
+  });
 
   return (
     <>
-      {error && (
+      {state?.message && !state?.success && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
-          <p className="text-sm text-red-700">{error}</p>
+          <p className="text-sm text-red-700">{state.message}</p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form action={formAction} className="space-y-6">
+        {/* Hidden redirect field */}
+        <input type="hidden" name="redirect" value={redirectTo} />
+        
+        {/* Hidden remember me field */}
+        <input type="hidden" name="rememberMe" value={rememberMe ? 'true' : 'false'} />
+
         <div>
           <Label htmlFor="email" className="flex items-center gap-2 mb-2">
             <Mail className="h-4 w-4 text-gray-500" />
-            Email del Club
+            Club Email
           </Label>
           <Input
             id="email"
+            name="email"
             type="email"
-            placeholder="club@ejemplo.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="club@example.com"
             className="w-full"
             required
-            disabled={loading}
+            disabled={isPending}
           />
+          {state?.errors?.email && (
+            <p className="text-sm text-red-600 mt-1">{state.errors.email[0]}</p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="password" className="flex items-center gap-2 mb-2">
             <Lock className="h-4 w-4 text-gray-500" />
-            Contraseña
+            Password
           </Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full"
-            required
-            disabled={loading}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              className="w-full pr-10"
+              required
+              disabled={isPending}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+          {state?.errors?.password && (
+            <p className="text-sm text-red-600 mt-1">{state.errors.password[0]}</p>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" className="rounded border-gray-300" />
-            <span className="text-gray-600">Recordarme</span>
-          </label>
+          <div className="flex items-center gap-2">
+            <Checkbox 
+              id="rememberMe" 
+              checked={rememberMe}
+              onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+              disabled={isPending}
+            />
+            <Label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+              Remember me
+            </Label>
+          </div>
           <Link
             href="/forgot-password"
             className="text-sm text-green-600 hover:text-green-700"
           >
-            ¿Olvidaste tu contraseña?
+            Forgot password?
           </Link>
         </div>
 
         <Button
           type="submit"
           className="w-full bg-green-600 hover:bg-green-700 text-white"
-          disabled={loading}
+          disabled={isPending}
         >
-          {loading ? (
+          {isPending ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Iniciando sesión...
+              Signing in...
             </>
           ) : (
-            'Iniciar Sesión'
+            'Sign In'
           )}
         </Button>
       </form>
 
       <div className="mt-6 text-center">
         <p className="text-gray-600">
-          ¿No tienes una cuenta?{' '}
+          Don't have an account?{' '}
           <Link href="/club-panel/signup" className="text-green-600 hover:text-green-700 font-medium">
-            Registra tu club
+            Register your club
           </Link>
         </p>
       </div>
     </>
-  );
-}
-
-function LoginLoading() {
-  return (
-    <div className="flex items-center justify-center py-12">
-      <Loader2 className="h-8 w-8 text-green-600 animate-spin" />
-    </div>
   );
 }
 
@@ -143,7 +142,7 @@ export default function ClubLoginPage() {
       <div className="w-full max-w-md">
         <Link href="/club-panel" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          <span>Volver</span>
+          <span>Back</span>
         </Link>
 
         <Card className="p-8 shadow-xl border-2">
@@ -155,16 +154,14 @@ export default function ClubLoginPage() {
               </span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              Acceso Panel Club
+              Club Panel Access
             </h1>
             <p className="text-gray-600 mt-2">
-              Inicia sesión para gestionar tu club
+              Sign in to manage your club
             </p>
           </div>
 
-          <Suspense fallback={<LoginLoading />}>
-            <LoginForm />
-          </Suspense>
+          <ClubLoginForm />
         </Card>
       </div>
     </div>

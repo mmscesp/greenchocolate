@@ -2,31 +2,23 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useActionState, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Leaf, Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import { useAuth } from '@/components/auth/AuthProvider';
-
-interface FormData {
-  clubName: string;
-  email: string;
-  password: string;
-  address: string;
-  phone: string;
-  description: string;
-}
+import { Leaf, Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { clubSignUp } from '@/app/actions/club-auth';
 
 export default function ClubSignupPage() {
   const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<FormData>({
+  const [showPassword, setShowPassword] = useState(false);
+  const [clientError, setClientError] = useState<string | null>(null);
+  
+  // Form state for multi-step form
+  const [formData, setFormData] = useState({
     clubName: '',
     email: '',
     password: '',
@@ -34,62 +26,36 @@ export default function ClubSignupPage() {
     phone: '',
     description: '',
   });
-  const { signUp } = useAuth();
-  const router = useRouter();
+  
+  const [state, formAction, isPending] = useActionState(clubSignUp, {
+    success: false,
+    message: '',
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setClientError(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setClientError(null);
 
-    if (step < 2) {
-      // Basic validation for step 1
-      if (!formData.clubName || !formData.email || !formData.password) {
-        setError('Por favor, completa todos los campos');
-        return;
-      }
-      if (formData.password.length < 8) {
-        setError('La contraseña debe tener al menos 8 caracteres');
-        return;
-      }
-      setStep(2);
-    } else {
-      setLoading(true);
-      try {
-        const { error: signUpError, needsEmailConfirmation } = await signUp(
-          formData.email,
-          formData.password,
-          formData.clubName,
-          {
-            club_name: formData.clubName,
-            club_address: formData.address,
-            club_phone: formData.phone,
-            club_description: formData.description,
-          }
-        );
-
-        if (signUpError) {
-          setError(signUpError.message);
-          setLoading(false);
-        } else if (needsEmailConfirmation) {
-          setStep(3);
-          setLoading(false);
-        } else {
-          router.push('/dashboard');
-          router.refresh();
-        }
-      } catch (err) {
-        setError('Ha ocurrido un error inesperado');
-        console.error('Signup error:', err);
-        setLoading(false);
-      }
+    // Validate step 1
+    if (!formData.clubName || !formData.email || !formData.password) {
+      setClientError('Please fill in all fields');
+      return;
     }
+    if (formData.password.length < 8) {
+      setClientError('Password must be at least 8 characters');
+      return;
+    }
+    
+    setStep(2);
   };
 
-  if (step === 3) {
+  // Show success state
+  if (state?.success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
         <Card className="p-8 max-w-md w-full text-center shadow-xl">
@@ -97,21 +63,22 @@ export default function ClubSignupPage() {
             <CheckCircle className="h-10 w-10 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Registro Exitoso
+            Registration Successful
           </h2>
           <p className="text-gray-600 mb-8">
-            Tu club <strong>{formData.clubName}</strong> ha sido registrado exitosamente.
-            Por favor, verifica tu correo electrónico para activar tu cuenta.
+            Your club <strong>{formData.clubName}</strong> has been registered successfully.
+            Please check your email to verify your account. 
+            Our team will review your application within 1-2 business days.
           </p>
           <div className="space-y-3">
             <Link href="/club-panel/login" className="block">
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                Ir a Iniciar Sesión
+                Go to Sign In
               </Button>
             </Link>
             <Link href="/" className="block">
               <Button variant="outline" className="w-full">
-                Volver al Inicio
+                Back to Home
               </Button>
             </Link>
           </div>
@@ -134,7 +101,7 @@ export default function ClubSignupPage() {
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>Volver</span>
+          <span>Back</span>
         </Link>
 
         <Card className="p-8 shadow-xl">
@@ -146,157 +113,192 @@ export default function ClubSignupPage() {
               </span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              Registrar Nuevo Club
+              Register New Club
             </h1>
             <p className="text-gray-600 mt-2">
-              Paso {step} de 2
+              Step {step} of 2
             </p>
           </div>
 
-          {error && (
+          {(clientError || (state?.message && !state?.success)) && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700">{clientError || state?.message}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {step === 1 && (
-              <>
-                <div>
-                  <Label htmlFor="clubName" className="flex items-center gap-2 mb-2">
-                    <Building className="h-4 w-4 text-gray-500" />
-                    Nombre del Club
-                  </Label>
-                  <Input
-                    id="clubName"
-                    name="clubName"
-                    type="text"
-                    placeholder="Green Harmony CSC"
-                    value={formData.clubName}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
-                </div>
+          {step === 1 ? (
+            <form onSubmit={handleNextStep} className="space-y-6">
+              <div>
+                <Label htmlFor="clubName" className="flex items-center gap-2 mb-2">
+                  <Building className="h-4 w-4 text-gray-500" />
+                  Club Name
+                </Label>
+                <Input
+                  id="clubName"
+                  name="clubName"
+                  type="text"
+                  placeholder="Green Harmony CSC"
+                  value={formData.clubName}
+                  onChange={handleChange}
+                  required
+                />
+                {state?.errors?.clubName && (
+                  <p className="text-sm text-red-600 mt-1">{state.errors.clubName[0]}</p>
+                )}
+              </div>
 
-                <div>
-                  <Label htmlFor="email" className="flex items-center gap-2 mb-2">
-                    <Mail className="h-4 w-4 text-gray-500" />
-                    Email de Contacto
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="info@greenharmony.com"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="email" className="flex items-center gap-2 mb-2">
+                  <Mail className="h-4 w-4 text-gray-500" />
+                  Contact Email
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="info@greenharmony.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                {state?.errors?.email && (
+                  <p className="text-sm text-red-600 mt-1">{state.errors.email[0]}</p>
+                )}
+              </div>
 
-                <div>
-                  <Label htmlFor="password" className="flex items-center gap-2 mb-2">
-                    <Lock className="h-4 w-4 text-gray-500" />
-                    Contraseña
-                  </Label>
+              <div>
+                <Label htmlFor="password" className="flex items-center gap-2 mb-2">
+                  <Lock className="h-4 w-4 text-gray-500" />
+                  Password
+                </Label>
+                <div className="relative">
                   <Input
                     id="password"
                     name="password"
-                    type="password"
-                    placeholder="Mínimo 8 caracteres"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Minimum 8 characters"
                     value={formData.password}
                     onChange={handleChange}
                     required
                     minLength={8}
-                    disabled={loading}
+                    className="pr-10"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Usa al menos 8 caracteres con una combinación de letras y números
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
-              </>
-            )}
+                <p className="text-xs text-gray-500 mt-1">
+                  Use at least 8 characters with letters and numbers
+                </p>
+                {state?.errors?.password && (
+                  <p className="text-sm text-red-600 mt-1">{state.errors.password[0]}</p>
+                )}
+              </div>
 
-            {step === 2 && (
-              <>
-                <div>
-                  <Label htmlFor="address" className="flex items-center gap-2 mb-2">
-                    <MapPin className="h-4 w-4 text-gray-500" />
-                    Dirección
-                  </Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    type="text"
-                    placeholder="Calle Mayor 123, Madrid"
-                    value={formData.address}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
-                </div>
+              <Button
+                type="submit"
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                Next
+              </Button>
+            </form>
+          ) : (
+            <form action={formAction} className="space-y-6">
+              {/* Hidden fields from step 1 */}
+              <input type="hidden" name="clubName" value={formData.clubName} />
+              <input type="hidden" name="email" value={formData.email} />
+              <input type="hidden" name="password" value={formData.password} />
 
-                <div>
-                  <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
-                    <Phone className="h-4 w-4 text-gray-500" />
-                    Teléfono
-                  </Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+34 600 123 456"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
-                </div>
+              <div>
+                <Label htmlFor="address" className="flex items-center gap-2 mb-2">
+                  <MapPin className="h-4 w-4 text-gray-500" />
+                  Address
+                </Label>
+                <Input
+                  id="address"
+                  name="address"
+                  type="text"
+                  placeholder="123 Main Street, Madrid"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                  disabled={isPending}
+                />
+                {state?.errors?.address && (
+                  <p className="text-sm text-red-600 mt-1">{state.errors.address[0]}</p>
+                )}
+              </div>
 
-                <div>
-                  <Label htmlFor="description" className="flex items-center gap-2 mb-2">
-                    <Building className="h-4 w-4 text-gray-500" />
-                    Descripción
-                  </Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    placeholder="Describe tu club..."
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={4}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-              </>
-            )}
+              <div>
+                <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
+                  <Phone className="h-4 w-4 text-gray-500" />
+                  Phone
+                </Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="+34 600 123 456"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                  disabled={isPending}
+                />
+                {state?.errors?.phone && (
+                  <p className="text-sm text-red-600 mt-1">{state.errors.phone[0]}</p>
+                )}
+              </div>
 
-            <Button
-              type="submit"
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Registrando...
-                </>
-              ) : step === 2 ? (
-                'Registrar Club'
-              ) : (
-                'Siguiente'
-              )}
-            </Button>
-          </form>
+              <div>
+                <Label htmlFor="description" className="flex items-center gap-2 mb-2">
+                  <Building className="h-4 w-4 text-gray-500" />
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  placeholder="Describe your club, its values, and what makes it unique..."
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={4}
+                  required
+                  disabled={isPending}
+                  minLength={20}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Minimum 20 characters
+                </p>
+                {state?.errors?.description && (
+                  <p className="text-sm text-red-600 mt-1">{state.errors.description[0]}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Registering...
+                  </>
+                ) : (
+                  'Register Club'
+                )}
+              </Button>
+            </form>
+          )}
 
           <div className="mt-6 text-center text-sm text-gray-600">
-            ¿Ya tienes una cuenta?{' '}
+            Already have an account?{' '}
             <Link href="/club-panel/login" className="text-green-600 hover:text-green-700 font-medium">
-              Inicia sesión
+              Sign in
             </Link>
           </div>
         </Card>
