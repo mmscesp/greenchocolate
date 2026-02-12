@@ -69,7 +69,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       if (result.success) {
         setTimeout(() => {
           setShowPreRegistrationModal(false);
-          router.push('/dashboard/requests');
+          router.push('/profile/requests');
         }, 1500);
       }
     } catch (error) {

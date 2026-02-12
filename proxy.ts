@@ -88,9 +88,8 @@ export async function proxy(request: NextRequest) {
 
   // Protected routes (require authentication)
   const protectedRoutes = [
-    '/dashboard',
     '/profile',
-    '/my-requests',
+    '/account/requests',
   ];
 
   // Admin routes (require ADMIN or CLUB_ADMIN role)
@@ -105,8 +104,12 @@ export async function proxy(request: NextRequest) {
   // Protect authenticated routes
   if (isProtected || isAdmin) {
     if (!user) {
-      // Redirect to login with return URL
-      const loginUrl = new URL(`/${pathnameLocale}/club-panel/login`, request.url);
+      // Determine which login page to use
+      const loginPath = pathname.startsWith('/club-panel') 
+        ? '/club-panel/login' 
+        : '/account/login';
+        
+      const loginUrl = new URL(`/${pathnameLocale}${loginPath}`, request.url);
       loginUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(loginUrl);
     }
@@ -127,9 +130,25 @@ export async function proxy(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  const authRoutes = ['/club-panel/login', '/club-panel/signup'];
+  const authRoutes = ['/club-panel/login', '/club-panel/signup', '/account/login', '/account/register'];
   if (authRoutes.some(route => pathname.startsWith(route)) && user) {
-    return NextResponse.redirect(new URL(`/${pathnameLocale}/dashboard`, request.url));
+    // Get user role to redirect appropriately
+    const { data: profile } = await supabase
+      .from('Profile')
+      .select('role')
+      .eq('authId', user.id)
+      .single();
+
+    const role = profile?.role || 'USER';
+    let landingPage = `/${pathnameLocale}`;
+    
+    if (role === 'CLUB_ADMIN') {
+      landingPage = `/${pathnameLocale}/club-panel/dashboard`;
+    } else if (role === 'ADMIN') {
+      landingPage = `/${pathnameLocale}/admin`;
+    }
+
+    return NextResponse.redirect(new URL(landingPage, request.url));
   }
 
   return response;

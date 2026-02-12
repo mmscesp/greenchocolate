@@ -99,39 +99,6 @@ export default function UserRequestsPage() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return (
-          <div className="bg-yellow-100 p-3 rounded-full">
-            <Clock className="h-6 w-6 text-yellow-600" />
-          </div>
-        );
-      case 'APPROVED':
-        return (
-          <div className="bg-green-100 p-3 rounded-full">
-            <Check className="h-6 w-6 text-green-600" />
-          </div>
-        );
-      case 'REJECTED':
-        return (
-          <div className="bg-red-100 p-3 rounded-full">
-            <X className="h-6 w-6 text-red-600" />
-          </div>
-        );
-      default:
-        return (
-          <div className="bg-gray-100 p-3 rounded-full">
-            <AlertCircle className="h-6 w-6 text-gray-600" />
-          </div>
-        );
-    }
-  };
-
-  const pendingCount = requests.filter((r) => r.status === 'PENDING').length;
-  const approvedCount = requests.filter((r) => r.status === 'APPROVED').length;
-  const rejectedCount = requests.filter((r) => r.status === 'REJECTED').length;
-
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto space-y-8">
@@ -165,8 +132,12 @@ export default function UserRequestsPage() {
       </div>
     );
   }
+  const pendingCount = requests.filter((r) => r.status === 'PENDING').length;
+  const approvedCount = requests.filter((r) => r.status === 'APPROVED').length;
+  const rejectedCount = requests.filter((r) => r.status === 'REJECTED').length;
 
   return (
+
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">

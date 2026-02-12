@@ -214,7 +214,7 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               </Link>
 
               <Link
-                href="/account/requests"
+                href="/profile/requests"
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
@@ -227,21 +227,7 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
                 </div>
               </Link>
 
-              {!isClubAdmin && !isAdmin && (
-                <Link
-                  href="/club-panel"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                >
-                  <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                    <Building2 className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <div className="font-medium">Club Panel</div>
-                    <div className="text-xs text-muted-foreground">Manage your club</div>
-                  </div>
-                </Link>
-              )}
+
             </div>
 
             {/* Secondary Menu */}

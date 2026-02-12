@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { EncryptionService, type PIIData } from '@/lib/encryption';
 import { z } from 'zod';
+import { getLandingPageByRole } from '@/lib/auth-utils';
 
 // ==========================================
 // ZOD SCHEMAS
@@ -128,27 +129,38 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
 
     const encryptedData = EncryptionService.encrypt(piiData);
 
-    // Update profile with encrypted data (trigger should create initial profile)
-    try {
-      await prisma.profile.update({
-        where: { authId: user.id },
-        data: {
-          encryptedData,
-          displayName: validated.data.fullName,
-          hasCompletedOnboarding: true,
-        },
-      });
-    } catch {
-      // If trigger hasn't run yet, create profile directly
-      await prisma.profile.create({
-        data: {
-          authId: user.id,
-          email: validated.data.email,
-          encryptedData,
-          displayName: validated.data.fullName,
-          hasCompletedOnboarding: true,
-        },
-      });
+    // Upsert profile with encrypted data
+    // Uses atomic upsert to handle race conditions between trigger and app code
+    const maxRetries = 3;
+    let profile;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        profile = await prisma.profile.upsert({
+          where: { authId: user.id },
+          update: {
+            encryptedData,
+            displayName: validated.data.fullName,
+            hasCompletedOnboarding: true,
+          },
+          create: {
+            authId: user.id,
+            email: validated.data.email,
+            encryptedData,
+            displayName: validated.data.fullName,
+            hasCompletedOnboarding: true,
+          },
+        });
+        break;
+      } catch (error) {
+        // If unique constraint violation on last retry, give up
+        if (attempt === maxRetries) {
+          console.error('Profile upsert failed after retries:', error);
+          throw new Error('Failed to create user profile. Please try again.');
+        }
+        // Otherwise retry (race condition between trigger and upsert)
+        await new Promise(resolve => setTimeout(resolve, 100 * attempt));
+      }
     }
 
     // Record consent for GDPR
@@ -173,6 +185,9 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
 
     revalidatePath('/', 'layout');
     
+    // Determine landing page after signup
+    const landingPage = getLandingPageByRole('USER', 'en');
+    
     // Check if email confirmation is required
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
@@ -181,10 +196,12 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
         message: 'Please check your email to confirm your account.',
       };
     }
-
-    redirect('/dashboard');
-
+    
+    redirect(landingPage);
   } catch (error) {
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+      throw error;
+    }
     console.error('Signup error:', error);
     return {
       success: false,
@@ -205,8 +222,6 @@ export async function login(prevState: ActionState, formData: FormData): Promise
     password: formData.get('password') as string,
   };
 
-  const rememberMe = formData.get('rememberMe') === 'true';
-
   const validated = loginSchema.safeParse(data);
 
   if (!validated.success) {
@@ -217,6 +232,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
     };
   }
 
+  let profile;
   try {
     const { data: authData, error } = await supabase.auth.signInWithPassword({
       email: validated.data.email,
@@ -230,27 +246,15 @@ export async function login(prevState: ActionState, formData: FormData): Promise
       };
     }
 
-    // Update lastActive timestamp
+    // Update lastActive timestamp and get profile
     if (authData.user) {
-      await prisma.profile.update({
+      profile = await prisma.profile.update({
         where: { authId: authData.user.id },
         data: { lastActiveAt: new Date() },
       });
     }
 
-    // Handle Remember Me - extend session if requested
-    if (rememberMe && authData.session) {
-      // Session persistence is handled by Supabase automatically
-      // The cookie will have extended expiration based on Supabase config
-      // In production, you may want to set a custom cookie for longer persistence
-    }
-
     revalidatePath('/', 'layout');
-    
-    // Get redirect URL from form or default to dashboard
-    const redirectUrl = formData.get('redirect') as string || '/dashboard';
-    redirect(redirectUrl);
-
   } catch (error) {
     console.error('Login error:', error);
     return {
@@ -258,7 +262,19 @@ export async function login(prevState: ActionState, formData: FormData): Promise
       message: 'An unexpected error occurred. Please try again.',
     };
   }
+
+  // Get the user's role to determine redirect
+  const userRole = profile?.role || 'USER';
+  
+  // Get redirect URL from form or default based on role
+  const formDataRedirect = formData.get('redirect') as string;
+  const redirectUrl = formDataRedirect && formDataRedirect !== '/dashboard' 
+    ? formDataRedirect 
+    : getLandingPageByRole(userRole, 'en');
+
+  redirect(redirectUrl);
 }
+
 
 /**
  * User Signout Action
@@ -318,7 +334,6 @@ export async function updateProfile(prevState: ActionState, formData: FormData):
     });
 
     revalidatePath('/profile');
-    revalidatePath('/dashboard');
 
     return {
       success: true,

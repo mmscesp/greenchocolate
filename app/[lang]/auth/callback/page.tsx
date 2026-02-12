@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Loader2, CheckCircle, AlertCircle, Leaf } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { getLandingPageByRole } from '@/lib/auth-utils';
 
 /**
  * Auth Callback Page
@@ -30,27 +31,34 @@ export default function AuthCallbackPage() {
           // Supabase automatically handles the token exchange
           const { data: { session }, error } = await supabase.auth.getSession();
           
-          if (error) {
-            console.error('Auth callback error:', error);
-            setStatus('error');
-            setMessage('Failed to verify your email. The link may have expired.');
-            return;
-          }
-          
-          if (session) {
+            if (error) {
+              console.error('Auth callback error:', error);
+              setStatus('error');
+              setMessage('Failed to verify your email. The link may have expired.');
+              return;
+            }
+            
+            if (session) {
+
             setStatus('success');
             setMessage('Your email has been verified successfully!');
             
-            // Redirect to dashboard after a short delay
+            // Get user profile to determine role-based landing page
+            const { data: profile } = await supabase
+              .from('Profile')
+              .select('role')
+              .eq('authId', session.user.id)
+              .single();
+
+            const landingPage = getLandingPageByRole(profile?.role || 'USER');
+            
+            // Redirect after a short delay
             setTimeout(() => {
-              router.push('/dashboard');
+              router.push(landingPage);
               router.refresh();
             }, 2000);
-          } else {
-            // No session but no error - might need to wait for confirmation
-            setStatus('error');
-            setMessage('Email verification incomplete. Please try signing in.');
           }
+
         } else {
           // Check if there's a code parameter (PKCE flow for OAuth)
           const searchParams = new URLSearchParams(window.location.search);
@@ -70,15 +78,25 @@ export default function AuthCallbackPage() {
             setStatus('success');
             setMessage('Authentication successful!');
             
+            // Get session to find user profile
+            const { data: { session } } = await supabase.auth.getSession();
+            let landingPage = '/';
+            
+            if (session) {
+              const { data: profile } = await supabase
+                .from('Profile')
+                .select('role')
+                .eq('authId', session.user.id)
+                .single();
+              landingPage = getLandingPageByRole(profile?.role || 'USER');
+            }
+            
             setTimeout(() => {
-              router.push('/dashboard');
+              router.push(landingPage);
               router.refresh();
             }, 1500);
-          } else {
-            // No tokens found - invalid callback
-            setStatus('error');
-            setMessage('Invalid verification link. Please request a new one.');
           }
+
         }
       } catch (error) {
         console.error('Callback processing error:', error);
