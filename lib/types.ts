@@ -53,6 +53,7 @@ export interface Profile {
   stats: any;
   isVerified: boolean;
   hasCompletedOnboarding: boolean;
+  lastActiveAt?: Date;
   createdAt: Date;
   updatedAt: Date;
   managedClubId?: string;

@@ -83,6 +83,7 @@ model Profile {
   stats                  Json                @default("{\"requests\": 0, \"favoriteClubs\": 0}")
   isVerified             Boolean             @default(false)
   hasCompletedOnboarding Boolean             @default(false)
+  lastActiveAt           DateTime?
   createdAt              DateTime            @default(now())
   updatedAt              DateTime            @updatedAt
   managedClubId          String?
@@ -93,6 +94,7 @@ model Profile {
   @@index([authId])
   @@index([email])
   @@index([managedClubId])
+  @@index([lastActiveAt])
 }
 
 model MembershipRequest {
