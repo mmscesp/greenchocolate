@@ -8,7 +8,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
   const { city } = await params;
   
   return (
-    <div className="container py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h1 className="text-4xl font-bold mb-4 capitalize">{city} Guides</h1>
       <p className="text-lg text-muted-foreground">City Specific Editorial</p>
     </div>

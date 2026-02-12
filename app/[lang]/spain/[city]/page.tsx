@@ -45,7 +45,7 @@ export default async function CityPage({ params }: PageProps) {
 
   if (!cityData) {
     return (
-      <div className="container py-20 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <h1 className="text-4xl font-bold">City Not Found</h1>
         <p className="mt-4 text-muted-foreground">We are currently expanding to this location.</p>
         <Button className="mt-8" asChild><Link href="/">Go Home</Link></Button>
@@ -62,7 +62,7 @@ export default async function CityPage({ params }: PageProps) {
         <div className="absolute inset-0 bg-black/60 z-10" />
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent z-20" />
         
-        <div className="container relative z-30 h-full flex flex-col justify-end pb-12 md:pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-30 h-full flex flex-col justify-end pb-12 md:pb-20">
           <div className="flex items-center gap-2 text-white/80 text-sm font-medium mb-4 uppercase tracking-wider">
             <MapPin className="h-4 w-4" />
             Spain / {cityData.name}
@@ -76,7 +76,7 @@ export default async function CityPage({ params }: PageProps) {
         </div>
       </section>
 
-      <div className="container py-12 lg:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-12">

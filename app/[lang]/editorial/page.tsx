@@ -49,7 +49,7 @@ export default async function EditorialPage() {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-muted/50 to-background py-20 md:py-28">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm">
               <BookOpen className="w-4 h-4 mr-2" />
@@ -68,7 +68,7 @@ export default async function EditorialPage() {
 
       {/* Category Grid */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl md:text-3xl font-bold mb-8">Browse by Topic</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {CATEGORIES.map((category) => (
@@ -104,7 +104,7 @@ export default async function EditorialPage() {
       {/* Featured Articles */}
       {featuredArticles.length > 0 && (
         <section className="py-16 md:py-24 bg-muted/30">
-          <div className="container">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold">Featured Articles</h2>
               <Button variant="ghost" asChild>
@@ -154,7 +154,7 @@ export default async function EditorialPage() {
 
       {/* Trust Signals */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-6">Our Editorial Standards</h2>
             <p className="text-muted-foreground mb-10">

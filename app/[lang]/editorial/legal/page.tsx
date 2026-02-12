@@ -45,7 +45,7 @@ export default async function LegalPage() {
     <div className="min-h-screen bg-background">
       {/* Hero */}
       <section className="relative bg-gradient-to-b from-blue-50/50 to-background py-16 md:py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <Button variant="ghost" asChild className="mb-6">
               <Link href="/en/editorial">
@@ -73,7 +73,7 @@ export default async function LegalPage() {
 
       {/* Key Points */}
       <section className="py-12 border-b">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
@@ -107,7 +107,7 @@ export default async function LegalPage() {
 
       {/* Articles Grid */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-8">Legal Guides & Resources</h2>
             <div className="grid gap-6">
@@ -148,7 +148,7 @@ export default async function LegalPage() {
 
       {/* Disclaimer */}
       <section className="py-12 bg-muted/30 border-t">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-sm text-muted-foreground">
               <strong>Disclaimer:</strong> This information is for educational purposes only 

@@ -45,7 +45,7 @@ export default async function CulturePage() {
     <div className="min-h-screen bg-background">
       {/* Hero */}
       <section className="relative bg-gradient-to-b from-purple-50/50 to-background py-16 md:py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <Button variant="ghost" asChild className="mb-6">
               <Link href="/en/editorial">
@@ -73,7 +73,7 @@ export default async function CulturePage() {
 
       {/* Timeline */}
       <section className="py-12 border-b">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-xl font-semibold mb-6">A Brief History</h2>
             <div className="space-y-6">
@@ -131,7 +131,7 @@ export default async function CulturePage() {
 
       {/* Articles Grid */}
       <section className="py-16 md:py-24">
-        <div className="container">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-8">Culture & History Articles</h2>
             <div className="grid gap-6">
