@@ -22,6 +22,7 @@ export interface UserProfile {
   tier: string;
   isVerified: boolean;
   hasCompletedOnboarding: boolean;
+  lastActiveAt: Date | null;
   managedClubId: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -95,6 +96,7 @@ export async function getCurrentUserProfile(): Promise<UserProfile | null> {
       tier: profile.tier,
       isVerified: profile.isVerified,
       hasCompletedOnboarding: profile.hasCompletedOnboarding,
+      lastActiveAt: profile.lastActiveAt,
       managedClubId: (profile as unknown as Record<string, string | null>).managedClubId ?? null,
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,

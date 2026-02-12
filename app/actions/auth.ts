@@ -48,6 +48,8 @@ export type ActionState = {
   data?: unknown;
 };
 
+export type OAuthProvider = 'google' | 'apple';
+
 // ==========================================
 // HELPER FUNCTIONS
 // ==========================================
@@ -228,11 +230,11 @@ export async function login(prevState: ActionState, formData: FormData): Promise
       };
     }
 
-    // Update last sign in timestamp
+    // Update lastActive timestamp
     if (authData.user) {
       await prisma.profile.update({
         where: { authId: authData.user.id },
-        data: { updatedAt: new Date() },
+        data: { lastActiveAt: new Date() },
       });
     }
 
@@ -330,6 +332,40 @@ export async function updateProfile(prevState: ActionState, formData: FormData):
       message: 'Failed to update profile. Please try again.',
     };
   }
+}
+
+/**
+ * OAuth Sign In Action
+ * Initiates OAuth flow for Google or Apple
+ */
+export async function signInWithOAuth(provider: OAuthProvider) {
+  const supabase = await createClient();
+
+  const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`;
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: redirectUrl,
+    },
+  });
+
+  if (error) {
+    return { success: false, message: error.message };
+  }
+
+  // Return the URL to redirect to
+  return { success: true, data: data.url };
+}
+
+/**
+ * Update lastActive timestamp
+ */
+async function updateLastActive(authId: string) {
+  await prisma.profile.update({
+    where: { authId },
+    data: { lastActiveAt: new Date() },
+  });
 }
 
 /**
