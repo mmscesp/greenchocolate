@@ -3,15 +3,19 @@
 import { useActionState, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signUp } from '@/app/actions/auth';
+import { signUp, signInWithOAuth } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Leaf, Mail, Lock, User, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
+import { FaApple } from 'react-icons/fa';
 
 export default function RegisterForm() {
   const router = useRouter();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -55,6 +59,23 @@ export default function RegisterForm() {
     }
   };
 
+  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
+    if (provider === 'google') setIsGoogleLoading(true);
+    else setIsAppleLoading(true);
+
+    try {
+      const result = await signInWithOAuth(provider);
+      if (result.success && result.data) {
+        window.location.href = result.data;
+      }
+    } catch (error) {
+      console.error('OAuth error:', error);
+    } finally {
+      setIsGoogleLoading(false);
+      setIsAppleLoading(false);
+    }
+  };
+
   // Show success state when signup is successful (message indicates email confirmation)
   if (state?.success && state?.message?.includes('email')) {
     return (
@@ -85,6 +106,50 @@ export default function RegisterForm() {
         </div>
         <h1 className="text-3xl font-bold text-foreground">Create Account</h1>
         <p className="text-muted-foreground mt-2">Join our community of cannabis enthusiasts</p>
+      </div>
+
+      {/* OAuth Buttons */}
+      <div className="space-y-3 mb-6">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-3 h-12"
+          onClick={() => handleOAuthSignIn('google')}
+          disabled={isGoogleLoading || isAppleLoading}
+        >
+          {isGoogleLoading ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <FcGoogle className="h-5 w-5" />
+          )}
+          Sign up with Google
+        </Button>
+        
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-3 h-12"
+          onClick={() => handleOAuthSignIn('apple')}
+          disabled={isGoogleLoading || isAppleLoading}
+        >
+          {isAppleLoading ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <FaApple className="h-5 w-5 text-foreground" />
+          )}
+          Sign up with Apple
+        </Button>
+      </div>
+
+      <div className="relative mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with email
+          </span>
+        </div>
       </div>
 
       <form action={formAction} onSubmit={handleSubmit} className="space-y-5">
