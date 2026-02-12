@@ -11,11 +11,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Leaf, Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { clubSignUp } from '@/app/actions/club-auth';
+import { signInWithOAuth } from '@/app/actions/auth';
+import { FcGoogle } from 'react-icons/fc';
+import { FaApple } from 'react-icons/fa';
 
 export default function ClubSignupPage() {
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [clientError, setClientError] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isAppleLoading, setIsAppleLoading] = useState(false);
   
   // Form state for multi-step form
   const [formData, setFormData] = useState({
@@ -52,6 +57,23 @@ export default function ClubSignupPage() {
     }
     
     setStep(2);
+  };
+
+  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
+    if (provider === 'google') setIsGoogleLoading(true);
+    else setIsAppleLoading(true);
+
+    try {
+      const result = await signInWithOAuth(provider);
+      if (result.success && result.data) {
+        window.location.href = result.data;
+      }
+    } catch (error) {
+      console.error('OAuth error:', error);
+    } finally {
+      setIsGoogleLoading(false);
+      setIsAppleLoading(false);
+    }
   };
 
   // Show success state
@@ -118,6 +140,50 @@ export default function ClubSignupPage() {
             <p className="text-gray-600 mt-2">
               Step {step} of 2
             </p>
+          </div>
+
+          {/* OAuth Buttons */}
+          <div className="space-y-3 mb-6">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full flex items-center justify-center gap-3 h-11"
+              onClick={() => handleOAuthSignIn('google')}
+              disabled={isGoogleLoading || isAppleLoading}
+            >
+              {isGoogleLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <FcGoogle className="h-4 w-4" />
+              )}
+              Continue with Google
+            </Button>
+            
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full flex items-center justify-center gap-3 h-11"
+              onClick={() => handleOAuthSignIn('apple')}
+              disabled={isGoogleLoading || isAppleLoading}
+            >
+              {isAppleLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <FaApple className="h-4 w-4" />
+              )}
+              Continue with Apple
+            </Button>
+          </div>
+
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-gray-500">
+                Or register with email
+              </span>
+            </div>
           </div>
 
           {(clientError || (state?.message && !state?.success)) && (

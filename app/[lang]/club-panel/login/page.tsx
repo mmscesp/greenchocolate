@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,15 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { Leaf, Mail, Lock, ArrowLeft, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
-import { login } from '@/app/actions/auth';
+import { login, signInWithOAuth } from '@/app/actions/auth';
+import { FcGoogle } from 'react-icons/fc';
+import { FaApple } from 'react-icons/fa';
 
 function ClubLoginForm() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/club-panel/dashboard';
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isAppleLoading, setIsAppleLoading] = useState(false);
   
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -25,8 +29,69 @@ function ClubLoginForm() {
     message: '',
   });
 
+  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
+    if (provider === 'google') setIsGoogleLoading(true);
+    else setIsAppleLoading(true);
+
+    try {
+      const result = await signInWithOAuth(provider);
+      if (result.success && result.data) {
+        window.location.href = result.data;
+      }
+    } catch (error) {
+      console.error('OAuth error:', error);
+    } finally {
+      setIsGoogleLoading(false);
+      setIsAppleLoading(false);
+    }
+  };
+
   return (
     <>
+      {/* OAuth Buttons */}
+      <div className="space-y-3 mb-6">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-3 h-11"
+          onClick={() => handleOAuthSignIn('google')}
+          disabled={isGoogleLoading || isAppleLoading}
+        >
+          {isGoogleLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <FcGoogle className="h-4 w-4" />
+          )}
+          Continue with Google
+        </Button>
+        
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full flex items-center justify-center gap-3 h-11"
+          onClick={() => handleOAuthSignIn('apple')}
+          disabled={isGoogleLoading || isAppleLoading}
+        >
+          {isAppleLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <FaApple className="h-4 w-4" />
+          )}
+          Continue with Apple
+        </Button>
+      </div>
+
+      <div className="relative mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-gray-500">
+            Or sign in with email
+          </span>
+        </div>
+      </div>
+
       {state?.message && !state?.success && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
@@ -161,7 +226,9 @@ export default function ClubLoginPage() {
             </p>
           </div>
 
-          <ClubLoginForm />
+          <Suspense fallback={<div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-green-600" /></div>}>
+            <ClubLoginForm />
+          </Suspense>
         </Card>
       </div>
     </div>
