@@ -171,11 +171,11 @@ export default function StatsSection() {
   return (
     <section 
       ref={sectionRef}
-      className="stats-section bg-[#0A0A0F] py-16 md:py-20 lg:py-24 border-t border-zinc-800 relative z-40"
+      className="stats-section py-16 md:py-20 lg:py-24 border-t border-zinc-800 relative z-40"
       style={{ perspective: '1000px' }}
     >
       {/* Background subtle gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A0A0F]/50 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0A0F]/80 to-[#0A0A0F] pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
