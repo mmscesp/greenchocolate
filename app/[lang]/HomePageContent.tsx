@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import HeroSection from '@/components/HeroSection';
+import StatsSection from '@/components/StatsSection';
 import SafetyKitForm from '@/components/marketing/SafetyKitForm';
 import TouristMistakes from '@/components/marketing/TouristMistakes';
 import WaitlistForm from '@/components/marketing/WaitlistForm';
@@ -52,29 +53,12 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
       />
       <WebSiteStructuredData name="SocialClubsMaps" url="https://socialclubsmaps.com" />
 
-        <div className="min-h-screen bg-white relative overflow-hidden">
+        <div className="min-h-screen bg-white relative">
         {/* Hero Section */}
         <HeroSection />
 
         {/* Content Statistics */}
-        <section className="py-16 bg-zinc-950 border-y border-zinc-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {contentStats.map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="flex justify-center mb-3">
-                    <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
-                      <stat.icon className="h-6 w-6 text-green-400" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-black text-white mb-1">{stat.value}</div>
-                  <div className="text-sm font-bold text-green-400 mb-1">{stat.label}</div>
-                  <div className="text-xs font-medium text-zinc-500 uppercase tracking-wider">{stat.description}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <StatsSection />
 
         {/* What Tourists Get Wrong */}
         <section className="py-24 bg-white relative overflow-hidden">

@@ -1,115 +1,243 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+// Register plugins safely
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 export default function HeroSection() {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const containerRef = useRef<HTMLElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
-  // Handle image load
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
+  useGSAP(() => {
+    if (!imageLoaded || !containerRef.current || !imageRef.current) return;
+
+    const scrollConfig = {
+      trigger: containerRef.current,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1,
+    };
+
+    // PHASE 1: Zoom Out (0% - 66%)
+    gsap.to(imageRef.current, {
+      scale: 1.2,
+      ease: "power2.inOut",
+      scrollTrigger: {
+        ...scrollConfig,
+        end: "66% bottom", 
+      }
+    });
+
+    // PHASE 2: Vertical Pan (33% - 100%)
+    gsap.to(imageRef.current, {
+      yPercent: -10,
+      ease: "power2.inOut",
+      scrollTrigger: {
+        ...scrollConfig,
+        start: "33% top",
+      }
+    });
+
+    // PHASE 3: Text Exit (10% - 35%)
+    if (textRef.current) {
+      gsap.to(textRef.current, {
+        opacity: 0,
+        y: -100,
+        scale: 0.9,
+        ease: "power2.in",
+        scrollTrigger: {
+          ...scrollConfig,
+          start: "10% top",
+          end: "35% top", 
+        }
+      });
+    }
+
+    // PHASE 4: Greenery Gradient (60% - 100%)
+    gsap.to(".greenery-transition-gradient", {
+      opacity: 1,
+      ease: "power2.inOut",
+      scrollTrigger: {
+        ...scrollConfig,
+        start: "60% top",
+      }
+    });
+
+  }, { scope: containerRef, dependencies: [imageLoaded] });
+
+  // Initial scale based on device assumption (1.53 desktop)
+  const initialScale = 1.53; 
 
   return (
-    <section
-      className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center pt-safe-top pb-safe-bottom"
+    <section 
+      ref={containerRef}
+      className="hero-scroll-wrapper relative w-full bg-[#0A0A0F]"
+      style={{ height: '300vh' }}
       role="region"
-      aria-label="Wake-Up Call Hero"
+      aria-label="Hero Introduction"
     >
-      {/* Background Image Container */}
-      <div className="absolute inset-0 w-full h-full">
-          <Image
-            src="/pexels-jamesheming-4570837-ezgif.com-jpg-to-webp-converter.webp"
-            alt="Barcelona Cannabis Social Club Background"
-            fill
-            className={`object-cover object-[center_40%] transition-opacity duration-1000 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={handleImageLoad}
-            priority
-            sizes="100vw"
-          />
-      </div>
-
-      {/* Gradient Overlays for Text Readability */}
-      <div
-        className="absolute inset-0 z-10 bg-gradient-to-b from-black/80 via-black/50 to-black/90 pointer-events-none"
-        aria-hidden="true"
-      />
-
-      {/* Main Content Container */}
-      <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center w-full min-h-screen pb-12 md:pb-24 lg:pb-32">
+      {/* Sticky Viewport Container */}
+      <div className="sticky-wrapper sticky top-0 left-0 w-full h-screen overflow-hidden">
         
-        {/* HEADER TEXT - Cinematic & Compact */}
-        <div className="mb-6 md:mb-10">
-          <p className="text-sm md:text-base font-medium text-white/80 tracking-[0.4em] uppercase mb-2">
-            Different city. Different rules.
-          </p>
-          <h2 className="text-xl md:text-3xl font-black text-[#D9534F] tracking-[0.2em] uppercase">
-            Different consequences.
-          </h2>
-        </div>
-
-        {/* CITY SIDE-BY-SIDE - Symmetrical & Contained */}
-        <div className="flex flex-col md:flex-row items-center justify-center w-full mb-10 md:mb-16 select-none max-w-[98vw] mx-auto overflow-hidden">
-          {/* Barcelona Side */}
-          <div className="flex-1 w-full md:text-right">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[0.1em] lg:tracking-[0.15em] uppercase leading-none md:pr-4 lg:pr-8">
-              BARCELONA
-            </h1>
+        {/* ═══════════════════════════════════════════ */}
+        {/* IMAGE LAYER (z-0)                           */}
+        {/* ═══════════════════════════════════════════ */}
+        <div className="absolute inset-0 bg-black">
+          <div 
+            ref={imageRef}
+            className="hero-image-container absolute inset-0 w-full h-full will-change-transform"
+            style={{ 
+              transform: `scale(${initialScale})`,
+              transformOrigin: 'center 40%',
+            }}
+          >
+            <Image
+              src="/images/hero/barcelona-skyline.webp"
+              alt="Aerial view of Barcelona with Sagrada Familia"
+              fill
+              priority
+              quality={90}
+              sizes="100vw"
+              className={`
+                object-cover 
+                object-[center_40%] 
+                transition-opacity 
+                duration-1000
+                ${imageLoaded ? 'opacity-100' : 'opacity-0'}
+              `}
+              onLoad={() => setImageLoaded(true)}
+            />
           </div>
-          
-          {/* Mirror Pivot */}
-          <div className="py-2 md:py-0 text-5xl md:text-7xl font-bold text-[#E8A838] leading-none z-10 drop-shadow-[0_0_20px_rgba(232,168,56,0.4)]">
-            ≠
+        </div>
+
+        {/* ═══════════════════════════════════════════ */}
+        {/* DARK GRADIENT OVERLAY (z-10)                */}
+        {/* ═══════════════════════════════════════════ */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(10,10,15,0.7) 0%, rgba(10,10,15,0.4) 40%, rgba(10,10,15,0.75) 100%)'
+          }}
+        />
+
+        {/* ═══════════════════════════════════════════ */}
+        {/* EDGE VIGNETTE (z-20)                        */}
+        {/* ═══════════════════════════════════════════ */}
+        <div className="image-vignette absolute inset-0 pointer-events-none z-20" />
+
+        {/* ═══════════════════════════════════════════ */}
+        {/* GREENERY TRANSITION GRADIENT (z-25)         */}
+        {/* ═══════════════════════════════════════════ */}
+        <div 
+          className="greenery-transition-gradient absolute inset-0 pointer-events-none z-25 opacity-0"
+          style={{
+            background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(10,10,15,0.6) 70%, rgba(10,10,15,1) 100%)'
+          }}
+        />
+
+        {/* ═══════════════════════════════════════════ */}
+        {/* TEXT CONTENT LAYER (z-30)                   */}
+        {/* ═══════════════════════════════════════════ */}
+        <div ref={textRef} className="hero-text-content relative z-30 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto w-full text-center">
+            
+            {/* TAGLINE */}
+            <div className="mb-6 md:mb-8 animate-fade-in-up animation-delay-500 opacity-0 fill-mode-forwards">
+              <p className="text-xl md:text-2xl lg:text-3xl text-[#F5F0EB] tracking-[0.1em] leading-relaxed">
+                Different city. Different rules.
+              </p>
+              <p 
+                className="text-xl md:text-2xl lg:text-3xl font-bold tracking-[0.1em] leading-relaxed mt-1"
+                style={{ color: '#D9534F' }}
+              >
+                Different consequences.
+              </p>
+            </div>
+
+            {/* MAIN HEADLINE */}
+            <div className="mb-8 md:mb-12 animate-fade-in-scale animation-delay-1300 opacity-0 fill-mode-forwards">
+              <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 flex-wrap">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-[0.15em] uppercase text-[#F5F0EB]">
+                  BARCELONA
+                </h1>
+                <span 
+                  className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black"
+                  style={{ 
+                    color: '#E8A838',
+                    textShadow: '0 0 40px rgba(232, 168, 56, 0.4)'
+                  }}
+                >
+                  ≠
+                </span>
+                <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-[0.15em] uppercase text-[#F5F0EB]">
+                  AMSTERDAM
+                </h1>
+              </div>
+            </div>
+
+            {/* BODY TEXT */}
+            <div className="mb-8 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto animate-fade-in-up animation-delay-2000 opacity-0 fill-mode-forwards">
+              <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed mb-4">
+                Spain&apos;s cannabis social clubs aren&apos;t coffeeshops.<br className="hidden sm:block" />
+                No walk-ins. No menus. No second chances if you don&apos;t know the rules.
+              </p>
+              <p className="text-lg md:text-xl lg:text-2xl text-[#F5F0EB] font-semibold">
+                We&apos;re the verification layer that keeps you safe.
+              </p>
+            </div>
+
+             {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-md mx-auto animate-fade-in-up animation-delay-2500 opacity-0 fill-mode-forwards mb-8">
+              <Link href="/safety-guide" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto px-8 py-7 text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] transition-all shadow-xl group border-none"
+                >
+                  Get the Free Safety Guide →
+                </Button>
+              </Link>
+
+              <Link href="/how-it-works" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto px-8 py-7 text-lg font-bold rounded-full border-2 border-white text-white bg-transparent hover:bg-white/10 transition-all"
+                >
+                  How It Actually Works
+                </Button>
+              </Link>
+            </div>
+
+            {/* SCROLL INDICATOR */}
+            <div className="animate-fade-in-up animation-delay-2500 opacity-0 fill-mode-forwards">
+              <div className="flex flex-col items-center gap-2">
+                <ChevronDown 
+                  className="w-8 h-8 md:w-10 md:h-10 animate-bounce" 
+                  style={{ color: '#E8A838' }}
+                  strokeWidth={2.5}
+                />
+                <span className="text-sm md:text-base text-gray-400 uppercase tracking-wider font-medium">
+                  Scroll to explore
+                </span>
+              </div>
+            </div>
+
           </div>
-          
-          {/* Amsterdam Side */}
-          <div className="flex-1 w-full md:text-left">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-[0.1em] lg:tracking-[0.15em] uppercase leading-none md:pl-4 lg:pl-8">
-              AMSTERDAM
-            </h1>
-          </div>
         </div>
 
-        {/* BODY CONTENT - Enhanced Readability */}
-        <div className="max-w-xl md:max-w-2xl mx-auto mb-10 md:mb-14 px-4">
-          <p className="text-sm md:text-lg text-gray-300 leading-relaxed mb-4 font-medium">
-            Spain's cannabis social clubs aren't coffeeshops. <br className="hidden md:block" />
-            No walk-ins. No menus. No second chances if you don't know the rules.
-          </p>
-          <p className="text-lg md:text-2xl text-white font-bold tracking-tight">
-            We're the verification layer that keeps you safe.
-          </p>
-        </div>
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-md mx-auto">
-          <Link href="/safety-guide" className="w-full sm:w-auto">
-            <Button
-              size="lg"
-              className="w-full sm:w-auto px-8 py-7 text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] transition-all shadow-xl group border-none"
-            >
-              Get the Free Safety Guide →
-            </Button>
-          </Link>
-
-          <Link href="/how-it-works" className="w-full sm:w-auto">
-            <Button
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto px-8 py-7 text-lg font-bold rounded-full border-2 border-white text-white bg-transparent hover:bg-white/10 transition-all"
-            >
-              How It Actually Works
-            </Button>
-          </Link>
-        </div>
       </div>
-
-      {/* Bottom decorative gradient - "The Merge" transition */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-zinc-950 to-transparent z-20 pointer-events-none" />
     </section>
   );
 }
-

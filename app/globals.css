@@ -128,9 +128,9 @@
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 }
 
-/* Smooth scrolling */
+/* Smooth scrolling - DISABLED for GSAP */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Custom scrollbar */
@@ -300,6 +300,59 @@ html {
 
 .fade-in-up {
   animation: fade-in-up 0.8s ease-out;
+}
+
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 1s ease-out forwards;
+  opacity: 0;
+}
+
+.animation-delay-500 {
+  animation-delay: 0.5s;
+}
+
+.animation-delay-1300 {
+  animation-delay: 1.3s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-2500 {
+  animation-delay: 2.5s;
+}
+
+/* Edge vignette effect */
+.image-vignette {
+  background: radial-gradient(
+    ellipse 120% 100% at 50% 50%,
+    transparent 0%,
+    transparent 65%,
+    rgba(10, 10, 15, 0.25) 80%,
+    rgba(10, 10, 15, 0.7) 100%
+  );
+}
+
+/* Custom z-index for greenery gradient */
+.z-25 {
+  z-index: 25;
 }
 
 .counter-animation {
