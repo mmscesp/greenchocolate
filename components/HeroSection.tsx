@@ -14,26 +14,89 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
+// ═══════════════════════════════════════════════════════════════
+// ADJUSTABLE CONFIGURATION - Tweak these values to perfect the hero
+// ═══════════════════════════════════════════════════════════════
+const HERO_CONFIG = {
+  // Image positioning
+  image: {
+    desktop: {
+      initialScale: 1.5,         // More zoom for bleed room during pan
+      objectPosition: 'center 55%', // Balanced: shows sky + Sagrada
+      transformOrigin: 'center 50%', // Center focal point
+    },
+    mobile: {
+      initialScale: 1.35,        // Less zoom on mobile but still bleed room
+      objectPosition: 'center 60%', // Slightly lower for mobile
+      transformOrigin: 'center 55%',
+    }
+  },
+  
+  // Scroll behavior
+  scroll: {
+    totalHeight: '350vh',        // Total scroll height (try 300vh to 400vh)
+    introLimit: 200,             // Pixels for initial scroll-capture (0 to disable)
+  },
+  
+  // Animation ranges
+  animation: {
+    // Zoom: start → end scale during scroll
+    zoomStart: 1.5,              // More zoom = more bleed room for panning
+    zoomEnd: 1.0,                // Final zoom level
+    
+    // Pan: vertical movement 
+    // NEGATIVE = image shifted UP (hidden overflow at top)
+    // POSITIVE = image shifted DOWN (reveals bottom)
+    panStart: -20,               // Start HIGHER (negative = hidden overflow above viewport)
+    panEnd: 20,                  // End LOWER (positive = reveals city bottom)
+    
+    // Text exit timing
+    textExitStart: '100vh',      // When text starts fading
+    textExitEnd: '250vh',        // When text fully gone
+  },
+  
+  // Entrance timing (in seconds, staggered)
+  entrance: {
+    taglineDelay: 0.3,           // Tagline appears after load
+    headlineDelay: 0.8,          // Headline appears
+    bodyDelay: 1.3,              // Body text appears
+    ctaDelay: 1.8,               // CTAs appear
+    scrollIndicatorDelay: 2.2,   // Scroll hint appears
+    stagger: 0.15,               // Time between elements
+  }
+};
+
+// Easing function for smooth scroll-capture
+function easeOutCubic(x: number): number {
+  return 1 - Math.pow(1 - x, 3);
+}
+
 export default function HeroSection() {
-  // State (minimal - only for UI, not animations)
+  // State
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Refs for all animation targets (NO STATE for animations!)
+  // Refs
   const containerRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const localTriggersRef = useRef<ScrollTrigger[]>([]);
   
-  // Animation values stored in refs (NOT state!)
-  const initialScaleRef = useRef(1.53);
+  // Animation values - start with correct scale from config
+  const initialScaleRef = useRef(HERO_CONFIG.image.desktop.initialScale);
+  const scrollProgressRef = useRef(0);
   const prefersReducedMotionRef = useRef(false);
+  const INTRO_SCROLL_LIMIT = HERO_CONFIG.scroll.introLimit; // pixels for scroll-capture
+  
+  // Image position ref for dynamic updates
+  const imagePositionRef = useRef(HERO_CONFIG.image.desktop.objectPosition);
 
-  // Check for reduced motion preference (once on mount)
+  // Check reduced motion preference
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     prefersReducedMotionRef.current = mediaQuery.matches;
@@ -46,7 +109,7 @@ export default function HeroSection() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Responsive detection (debounced)
+  // Responsive detection
   useEffect(() => {
     let resizeTimeout: NodeJS.Timeout;
     
@@ -55,7 +118,12 @@ export default function HeroSection() {
       resizeTimeout = setTimeout(() => {
         const mobile = window.innerWidth < 768;
         setIsMobile(mobile);
-        initialScaleRef.current = mobile ? 1.3 : 1.53;
+        initialScaleRef.current = mobile 
+          ? HERO_CONFIG.image.mobile.initialScale 
+          : HERO_CONFIG.image.desktop.initialScale;
+        imagePositionRef.current = mobile
+          ? HERO_CONFIG.image.mobile.objectPosition
+          : HERO_CONFIG.image.desktop.objectPosition;
       }, 100);
     };
     
@@ -67,57 +135,61 @@ export default function HeroSection() {
     };
   }, []);
 
-  // Letter split helper
-  const splitText = useCallback((text: string) => {
-    return text.split(' ').map((word: string, i: number) => (
-      <span key={i} className="inline-block overflow-hidden">
-        <span className="word-inner inline-block">{word}</span>
-        {i < text.split(' ').length - 1 && <span>&nbsp;</span>}
-      </span>
-    ));
-  }, []);
 
-  // OPTIMIZED GSAP ANIMATIONS
+
+  // GSAP animations for post-intro scroll
   useGSAP(() => {
     if (!imageLoaded || !containerRef.current || prefersReducedMotionRef.current) return;
 
     const ctx = gsap.context(() => {
-      const triggers = [];
+      const triggers: ScrollTrigger[] = [];
 
-      // ANIMATION 1: Image Zoom + Pan (MERGED into single timeline)
+      // Only run post-intro animations
       const imageTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top top',
+          start: `${INTRO_SCROLL_LIMIT}px top`,
           end: 'bottom bottom',
           scrub: 0.3,
           onUpdate: (self) => {
             if (progressRef.current) {
-              progressRef.current.style.transform = `scaleX(${self.progress})`;
+              const adjustedProgress = (self.progress * 0.7) + 0.3;
+              progressRef.current.style.transform = `scaleX(${adjustedProgress})`;
             }
           }
         }
       });
 
+      // ═══════════════════════════════════════════════════════════════
+      // CAMERA EFFECT: Zoom out + Pan down simultaneously
+      // This creates the "descending helicopter" feeling
+      // ═══════════════════════════════════════════════════════════════
+      
+      // Zoom out from initial scale to final scale
       imageTl.fromTo(imageRef.current, 
-        { scale: initialScaleRef.current },
-        { scale: 1, ease: 'none', duration: 0.66 },
+        { scale: HERO_CONFIG.animation.zoomStart },
+        { scale: HERO_CONFIG.animation.zoomEnd, ease: 'power2.inOut', duration: 1 },
         0
       );
 
-      imageTl.to(imageRef.current, 
-        { yPercent: -25, ease: 'none', duration: 0.67 },
-        0.33
+      // Pan DOWN (positive yPercent reveals bottom of image)
+      // Combined with zoom, this creates the descending camera effect
+      imageTl.fromTo(imageRef.current,
+        { yPercent: HERO_CONFIG.animation.panStart },
+        { yPercent: HERO_CONFIG.animation.panEnd, ease: 'power2.inOut', duration: 1 },
+        0
       );
 
       if (imageTl.scrollTrigger) triggers.push(imageTl.scrollTrigger);
 
-      // ANIMATION 2: Text Exit + Parallax (BATCHED into single timeline)
+      // ═══════════════════════════════════════════════════════════════
+      // TEXT EXIT: Fade out as user scrolls past the hero content
+      // ═══════════════════════════════════════════════════════════════
       const textTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top top',
-          end: '50% top',
+          start: HERO_CONFIG.animation.textExitStart,
+          end: HERO_CONFIG.animation.textExitEnd,
           scrub: 0.3,
         }
       });
@@ -126,7 +198,7 @@ export default function HeroSection() {
         textTl.fromTo(textRef.current,
           { opacity: 1, filter: 'blur(0px)' },
           { opacity: 0, filter: 'blur(10px)', ease: 'power2.in' },
-          0.4
+          0
         );
       }
 
@@ -140,32 +212,42 @@ export default function HeroSection() {
 
       if (headlineRef.current) {
         textTl.fromTo(headlineRef.current,
-          { yPercent: 0 },
-          { yPercent: -30, ease: 'none' },
-          0
-        );
-      }
-
-      if (bodyRef.current) {
-        textTl.fromTo(bodyRef.current,
-          { yPercent: 0 },
-          { yPercent: -20, ease: 'none' },
+          { yPercent: 0, scale: 0.95 },
+          { yPercent: -30, scale: 0.9, ease: 'none' },
           0
         );
       }
 
       if (textTl.scrollTrigger) triggers.push(textTl.scrollTrigger);
 
-      // ANIMATION 3: Greenery Gradient
+      // ═══════════════════════════════════════════════════════════════
+      // PROGRESSIVE DARKENING: Image gets darker as we approach stats
+      // This creates seamless transition to the black stats section
+      // ═══════════════════════════════════════════════════════════════
+      
+      // Gradient overlay intensifies
       const gradientTrigger = ScrollTrigger.create({
         trigger: containerRef.current,
-        start: '60% top',
+        start: '50% top',
         end: 'bottom bottom',
-        scrub: 0.3,
+        scrub: 0.5,
         onUpdate: (self) => {
-          const gradient = document.querySelector('.greenery-transition-gradient') as HTMLElement | null;
-          if (gradient) {
-            gradient.style.opacity = String(self.progress);
+          // Greenery gradient becomes visible
+          const greeneryGradient = document.querySelector('.greenery-transition-gradient') as HTMLElement | null;
+          if (greeneryGradient) {
+            greeneryGradient.style.opacity = String(self.progress);
+          }
+          
+          // Main dark overlay intensifies
+          const mainOverlay = document.querySelector('.hero-main-overlay') as HTMLElement | null;
+          if (mainOverlay) {
+            // Start at 0.65 opacity, end at 0.95 (almost solid black)
+            const newOpacity = 0.65 + (self.progress * 0.3);
+            mainOverlay.style.background = `linear-gradient(to bottom, 
+              rgba(10,10,15,${newOpacity}) 0%, 
+              rgba(10,10,15,${0.35 + (self.progress * 0.4)}) 35%, 
+              rgba(10,10,15,${0.6 + (self.progress * 0.35)}) 70%, 
+              rgba(10,10,15,${0.9 + (self.progress * 0.1)}) 100%)`;
           }
         }
       });
@@ -173,24 +255,55 @@ export default function HeroSection() {
 
       localTriggersRef.current = triggers;
 
-      // ENTRANCE ANIMATIONS
-      gsap.from('.tagline-word .word-inner', {
-        y: 40,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: 'power3.out',
-        delay: 0.3,
-      });
-
-      gsap.to('.symbol-not-equal', {
-        textShadow: '0 0 60px rgba(232, 168, 56, 0.6)',
-        scale: 1.02,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
+      // ═══════════════════════════════════════════════════════════════
+      // ELEGANT ENTRANCE: All text elements stagger in on page load
+      // No scroll required - immediate value proposition
+      // ═══════════════════════════════════════════════════════════════
+      
+      const entranceTl = gsap.timeline({ delay: 0.2 });
+      
+      // Tagline slides up and fades in
+      if (taglineRef.current) {
+        entranceTl.fromTo(taglineRef.current,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          HERO_CONFIG.entrance.taglineDelay
+        );
+      }
+      
+      // Headline scales in with slight bounce
+      if (headlineRef.current) {
+        entranceTl.fromTo(headlineRef.current,
+          { scale: 0.9, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.2)' },
+          HERO_CONFIG.entrance.headlineDelay
+        );
+      }
+      
+      // Body text fades up
+      if (bodyRef.current) {
+        entranceTl.fromTo(bodyRef.current,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' },
+          HERO_CONFIG.entrance.bodyDelay
+        );
+      }
+      
+      // CTAs slide up
+      if (ctaRef.current) {
+        entranceTl.fromTo(ctaRef.current,
+          { y: 25, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
+          HERO_CONFIG.entrance.ctaDelay
+        );
+      }
+      
+      // Scroll indicator pulses in last
+      entranceTl.fromTo('.scroll-indicator',
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+        HERO_CONFIG.entrance.scrollIndicatorDelay
+      );
 
     }, containerRef);
 
@@ -211,7 +324,7 @@ export default function HeroSection() {
     gsap.to(textRef.current, {
       rotateY: x * 2,
       rotateX: -y * 2,
-      duration: 0.2,
+      duration: 0.3,
       ease: 'power1.out',
       overwrite: 'auto'
     });
@@ -223,20 +336,31 @@ export default function HeroSection() {
     gsap.to(textRef.current, {
       rotateY: 0,
       rotateX: 0,
-      duration: 0.4,
+      duration: 0.5,
       ease: 'power2.out',
       overwrite: 'auto'
     });
   }, []);
 
+  // Letter split helper
+  const splitText = useCallback((text: string) => {
+    return text.split(' ').map((word: string, i: number) => (
+      <span key={i} className="inline-block overflow-hidden mr-1">
+        <span className="word-inner inline-block">{word}</span>
+        {i < text.split(' ').length - 1 && <span>&nbsp;</span>}
+      </span>
+    ));
+  }, []);
+
   return (
     <section 
       ref={containerRef}
-      className="hero-scroll-wrapper relative w-full bg-[#0A0A0F]"
-      style={{ height: '300vh' }}
+      className="hero-scroll-wrapper relative w-full bg-transparent"
+      style={{ height: HERO_CONFIG.scroll.totalHeight }}
       role="region"
       aria-label="Hero Introduction"
     >
+      {/* Loading screen */}
       <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-[#0A0A0F] transition-all duration-700 ${imageLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="relative">
           <div className="w-20 h-20 border-2 border-[#E8A838]/20 rounded-full" />
@@ -245,54 +369,157 @@ export default function HeroSection() {
         </div>
       </div>
 
+      {/* Progress bar */}
       <div className="fixed top-0 left-0 w-full h-1 z-50 bg-transparent">
         <div ref={progressRef} className="h-full bg-gradient-to-r from-[#E8A838] to-[#D9534F] origin-left" style={{ transform: 'scaleX(0)' }} />
       </div>
 
+      {/* Sticky viewport */}
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
+        {/* Background layer */}
         <div className="absolute inset-0 bg-black">
-          <div ref={imageRef} className="hero-image-container absolute inset-0 w-full h-full will-change-transform" style={{ transform: `scale(${initialScaleRef.current})`, transformOrigin: 'center 40%', backfaceVisibility: 'hidden' }}>
-            <Image src="/images/hero/barcelona-skyline.webp" alt="Aerial view of Barcelona with Sagrada Familia" fill priority quality={75} sizes="100vw" className={`object-cover object-[center_40%] transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} onLoad={() => setImageLoaded(true)} />
+          <div 
+            ref={imageRef} 
+            className="hero-image-container absolute inset-0 w-full h-full will-change-transform"
+            style={{ 
+              transform: `scale(${initialScaleRef.current})`, 
+              transformOrigin: isMobile 
+                ? HERO_CONFIG.image.mobile.transformOrigin 
+                : HERO_CONFIG.image.desktop.transformOrigin,
+              backfaceVisibility: 'hidden'
+            }}
+          >
+            <Image 
+              src="/images/hero/barcelona-skyline.webp" 
+              alt="Aerial view of Barcelona with Sagrada Familia" 
+              fill 
+              priority 
+              quality={85} 
+              sizes="100vw"
+              objectFit="cover"
+              objectPosition={isMobile ? 'center 55%' : 'center 50%'}
+              className={`transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => setImageLoaded(true)} 
+            />
           </div>
         </div>
 
-        <div className="absolute inset-0 pointer-events-none z-10" style={{ background: 'linear-gradient(to bottom, rgba(10,10,15,0.7) 0%, rgba(10,10,15,0.4) 40%, rgba(10,10,15,0.75) 100%)' }} />
+        {/* Overlays - Darker for text readability */}
+        <div className="hero-main-overlay absolute inset-0 pointer-events-none z-10" style={{ 
+          background: 'linear-gradient(to bottom, rgba(10,10,15,0.85) 0%, rgba(10,10,15,0.55) 35%, rgba(10,10,15,0.75) 70%, rgba(10,10,15,0.95) 100%)' 
+        }} />
         <div className="image-vignette absolute inset-0 pointer-events-none z-20" />
-        <div className="greenery-transition-gradient absolute inset-0 pointer-events-none z-25" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(10,10,15,0.6) 70%, rgba(10,10,15,1) 100%)', opacity: 0 }} />
+        
+        {/* Hero fade mask - smooth transition to stats */}
+        <div 
+          className="hero-fade-mask absolute inset-0 pointer-events-none z-30"
+          style={{ 
+            background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(10,10,15,0.2) 65%, rgba(10,10,15,0.6) 80%, rgba(10,10,15,1) 100%)',
+            opacity: 1
+          }} 
+        />
+        
+        {/* Greenery transition gradient */}
+        <div 
+          className="greenery-transition-gradient absolute inset-0 pointer-events-none z-35" 
+          style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(10,10,15,0.4) 60%, rgba(10,10,15,0.8) 80%, rgba(10,10,15,1) 100%)', opacity: 0 }} 
+        />
 
-        <div ref={textRef} className="hero-text-content relative z-30 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 md:pt-32" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+        {/* Text content */}
+        <div 
+          ref={textRef} 
+          className="hero-text-content relative z-40 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 md:pt-24"
+          style={{ perspective: '1000px', transformStyle: 'preserve-3d' }} 
+          onMouseMove={handleMouseMove} 
+          onMouseLeave={handleMouseLeave}
+        >
           <div className="max-w-6xl mx-auto w-full text-center">
-            <div ref={taglineRef} className="mb-6 md:mb-8">
-              <p className="tagline-word text-xl md:text-2xl lg:text-3xl text-[#F5F0EB] tracking-[0.1em] leading-relaxed">{splitText('Different city. Different rules.')}</p>
-              <p className="tagline-word text-xl md:text-2xl lg:text-3xl font-bold tracking-[0.1em] leading-relaxed mt-1" style={{ color: '#D9534F' }}>{splitText('Different consequences.')}</p>
+            {/* Tagline - Always visible */}
+            <div ref={taglineRef} className="mb-5 md:mb-7">
+              <p className="text-lg md:text-xl lg:text-2xl text-[#F5F0EB] tracking-[0.12em] leading-relaxed">
+                {splitText('Different city. Different rules.')}
+              </p>
+              <p 
+                className="text-lg md:text-xl lg:text-2xl font-bold tracking-[0.12em] leading-relaxed mt-1" 
+                style={{ color: '#D9534F' }}
+              >
+                {splitText('Different consequences.')}
+              </p>
             </div>
 
-            <div ref={headlineRef} className="mb-8 md:mb-12 animate-fade-in-scale animation-delay-1300 opacity-0 fill-mode-forwards">
-              <div className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8 flex-wrap">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-[0.15em] uppercase text-[#F5F0EB]">BARCELONA</h1>
-                <span className="symbol-not-equal text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black" style={{ color: '#E8A838', textShadow: '0 0 40px rgba(232, 168, 56, 0.4)', display: 'inline-block' }}>≠</span>
-                <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-[0.15em] uppercase text-[#F5F0EB]">AMSTERDAM</h1>
+            {/* Headline */}
+            <div 
+              ref={headlineRef} 
+              className="mb-6 md:mb-10"
+            >
+              <div className="flex items-center justify-center gap-3 md:gap-5 lg:gap-7 flex-wrap px-2">
+                <h1 className="text-3.5xl md:text-5xl lg:text-6xl xl:text-7.5xl font-black tracking-[0.12em] uppercase text-[#F5F0EB] leading-tight">
+                  BARCELONA
+                </h1>
+                <span 
+                  className="symbol-not-equal text-4xl md:text-6xl lg:text-7xl xl:text-9xl font-black leading-none"
+                  style={{ 
+                    color: '#E8A838',
+                    display: 'inline-block',
+                    filter: 'drop-shadow(0 0 30px rgba(232, 168, 56, 0.5))',
+                  }}
+                >
+                  ≠
+                </span>
+                <h1 className="text-3.5xl md:text-5xl lg:text-6xl xl:text-7.5xl font-black tracking-[0.12em] uppercase text-[#F5F0EB] leading-tight">
+                  AMSTERDAM
+                </h1>
               </div>
             </div>
 
-            <div ref={bodyRef} className="mb-8 md:mb-12 max-w-2xl lg:max-w-3xl mx-auto animate-fade-in-up animation-delay-2000 opacity-0 fill-mode-forwards">
-              <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed mb-4">Spain&apos;s cannabis social clubs aren&apos;t coffeeshops.<br className="hidden sm:block" /> No walk-ins. No menus. No second chances if you don&apos;t know the rules.</p>
-              <p className="text-lg md:text-xl lg:text-2xl text-[#F5F0EB] font-semibold">We&apos;re the verification layer that keeps you safe.</p>
+            {/* Body - Appears on page load */}
+            <div 
+              ref={bodyRef} 
+              className="mb-6 md:mb-10 max-w-xl lg:max-w-2xl mx-auto"
+            >
+              <p className="text-sm md:text-base lg:text-lg text-gray-300 leading-relaxed mb-3">
+                Spanish CSCs aren&apos;t coffeeshops. No walk-ins. No menus. No second chances.
+              </p>
+              <p className="text-base md:text-lg lg:text-xl text-[#F5F0EB] font-semibold">
+                We&apos;re your verification layer.
+              </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-md mx-auto animate-fade-in-up animation-delay-2500 opacity-0 fill-mode-forwards mb-8">
+            {/* CTAs - Appear on page load */}
+            <div 
+              ref={ctaRef} 
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-md mx-auto mb-6"
+            >
               <Link href="/safety-guide" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto px-8 py-7 text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] transition-all shadow-xl hover:shadow-2xl hover:shadow-[#E8A838]/20 group border-none hover:-translate-y-1">Get the Free Safety Guide →</Button>
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto px-6 py-5 md:px-8 md:py-6 text-base md:text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] transition-all shadow-xl hover:shadow-2xl hover:shadow-[#E8A838]/25 group border-none hover:-translate-y-1"
+                >
+                  Get the Free Safety Guide →
+                </Button>
               </Link>
               <Link href="/how-it-works" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto px-8 py-7 text-lg font-bold rounded-full border-2 border-white text-white bg-transparent hover:bg-white/10 transition-all hover:-translate-y-1">How It Actually Works</Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="w-full sm:w-auto px-6 py-5 md:px-8 md:py-6 text-base md:text-lg font-bold rounded-full border-2 border-white/60 text-white bg-transparent hover:bg-white/10 hover:border-white transition-all hover:-translate-y-1"
+                >
+                  How It Works
+                </Button>
               </Link>
             </div>
 
-            <div className="animate-fade-in-up animation-delay-2500 opacity-0 fill-mode-forwards">
+            {/* Scroll indicator */}
+            <div className="scroll-indicator mt-4">
               <div className="flex flex-col items-center gap-2">
-                <ChevronDown className="w-8 h-8 md:w-10 md:h-10 animate-bounce" style={{ color: '#E8A838' }} strokeWidth={2.5} />
-                <span className="text-sm md:text-base text-gray-400 uppercase tracking-wider font-medium">Scroll to explore</span>
+                <ChevronDown 
+                  className="w-6 h-6 md:w-8 md:h-8 animate-bounce" 
+                  style={{ color: '#E8A838' }} 
+                  strokeWidth={2.5} 
+                />
+                <span className="text-xs md:text-sm text-gray-400 uppercase tracking-widest font-medium">
+                  Scroll to explore
+                </span>
               </div>
             </div>
           </div>

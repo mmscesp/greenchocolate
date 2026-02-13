@@ -94,29 +94,33 @@ function StatCard({ stat, index, startAnimation }: { stat: typeof statsData[0]; 
   
   return (
     <div 
-      className="stat-card text-center group cursor-default"
-      style={{ animationDelay: `${index * 0.12}s` }}
+      className="stat-card text-center group cursor-default rising-card"
+      style={{ 
+        animationDelay: `${index * 0.1}s`,
+        opacity: 0,
+        transform: 'translateY(60px) scale(0.95)'
+      }}
     >
       {/* Icon Container with enhanced hover */}
-      <div className="relative w-14 h-14 md:w-16 md:h-16 mx-auto mb-4">
+      <div className="relative w-12 h-12 md:w-14 md:h-14 mx-auto mb-4">
         <div className="absolute inset-0 bg-[#E8A838]/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative w-full h-full bg-[#E8A838]/10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-[#E8A838]/20 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#E8A838]/10">
-          <Icon className="w-7 h-7 md:w-8 md:h-8 text-[#E8A838] transition-transform duration-300 group-hover:scale-110" strokeWidth={2} />
+          <Icon className="w-6 h-6 md:w-7 md:h-7 text-[#E8A838] transition-transform duration-300 group-hover:scale-110" strokeWidth={2} />
         </div>
       </div>
 
       {/* Value with counter animation */}
-      <div className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 tracking-tight tabular-nums">
+      <div className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight tabular-nums">
         {count}
       </div>
 
       {/* Label */}
-      <div className="text-sm md:text-base font-bold text-[#4A7C6F] mb-1 tracking-wide">
+      <div className="text-xs md:text-sm font-bold text-[#4A7C6F] mb-1 tracking-wide">
         {stat.label}
       </div>
 
       {/* Description */}
-      <div className="text-xs md:text-sm text-zinc-500 uppercase tracking-wider font-medium px-2">
+      <div className="text-[10px] md:text-xs text-zinc-500 uppercase tracking-wider font-medium px-1">
         {stat.description}
       </div>
     </div>
@@ -131,22 +135,22 @@ export default function StatsSection() {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Staggered card entrance with enhanced animation
-      gsap.from('.stat-card', {
-        opacity: 0,
-        y: 80,
-        scale: 0.9,
-        rotateX: 15,
+      // Rising card entrance - appears to rise from depth
+      gsap.to('.rising-card', {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        rotateX: 0,
         stagger: {
-          each: 0.12,
+          each: 0.1,
           from: 'start',
         },
-        duration: 1,
-        ease: 'back.out(1.7)',
+        duration: 0.8,
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 85%',
-          end: 'top 50%',
+          start: 'top 80%',
+          end: 'top 40%',
           toggleActions: 'play none none reverse',
           onEnter: () => setStartAnimation(true),
         }
@@ -154,7 +158,7 @@ export default function StatsSection() {
 
       // Subtle parallax on the entire section
       gsap.to(sectionRef.current, {
-        yPercent: -5,
+        yPercent: -3,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -171,14 +175,20 @@ export default function StatsSection() {
   return (
     <section 
       ref={sectionRef}
-      className="stats-section py-16 md:py-20 lg:py-24 border-t border-zinc-800 relative z-40"
+      className="stats-section py-14 md:py-18 lg:py-22 relative z-50"
       style={{ perspective: '1000px' }}
     >
-      {/* Background subtle gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0A0F]/80 to-[#0A0A0F] pointer-events-none" />
+      {/* Seamless gradient from hero - transparent at top to dark at bottom */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ 
+          background: 'linear-gradient(to bottom, rgba(10,10,15,0.3) 0%, rgba(10,10,15,0.7) 30%, rgba(10,10,15,1) 100%)',
+          zIndex: -1
+        }} 
+      />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
           {statsData.map((stat, index) => (
             <StatCard 
               key={index} 
