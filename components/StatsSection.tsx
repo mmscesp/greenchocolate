@@ -135,6 +135,29 @@ export default function StatsSection() {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
+      // ═══════════════════════════════════════════════════════════════
+      // PARALLAX ENTRANCE: Stats rise from hero bottom with depth
+      // ═══════════════════════════════════════════════════════════════
+      
+      // Create a more dramatic parallax effect
+      gsap.fromTo(sectionRef.current,
+        { 
+          yPercent: 15,  // Start slightly below
+          opacity: 0.8,
+        },
+        {
+          yPercent: 0,
+          opacity: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 90%',  // Start when top of stats hits 90% of viewport
+            end: 'top 60%',
+            scrub: 1.5,  // Smoother, more dramatic scrub
+          }
+        }
+      );
+
       // Rising card entrance - appears to rise from depth
       gsap.to('.rising-card', {
         opacity: 1,
@@ -149,20 +172,23 @@ export default function StatsSection() {
         ease: 'power3.out',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 80%',
-          end: 'top 40%',
+          start: 'top 75%',
+          end: 'top 35%',
           toggleActions: 'play none none reverse',
           onEnter: () => setStartAnimation(true),
         }
       });
 
-      // Subtle parallax on the entire section
+      // ═══════════════════════════════════════════════════════════════
+      // SUBTLE FLOAT: Stats float slightly as user continues scrolling
+      // ═══════════════════════════════════════════════════════════════
+      
       gsap.to(sectionRef.current, {
-        yPercent: -3,
+        yPercent: -5,
         ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top bottom',
+          start: 'top 60%',
           end: 'bottom top',
           scrub: true,
         }

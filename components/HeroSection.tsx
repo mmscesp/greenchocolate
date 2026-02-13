@@ -21,49 +21,47 @@ const HERO_CONFIG = {
   // Image positioning
   image: {
     desktop: {
-      initialScale: 1.5,         // More zoom for bleed room during pan
-      objectPosition: 'center 55%', // Balanced: shows sky + Sagrada
-      transformOrigin: 'center 50%', // Center focal point
+      initialScale: 1.3,         // 1.3x zoom - focal point on Sagrada
+      // center 28% = more sky ABOVE Sagrada (lower value = more sky at top)
+      objectPosition: 'center 28%', 
+      transformOrigin: 'center 30%', // Focal point around Sagrada area
     },
     mobile: {
-      initialScale: 1.35,        // Less zoom on mobile but still bleed room
-      objectPosition: 'center 60%', // Slightly lower for mobile
-      transformOrigin: 'center 55%',
+      initialScale: 1.25,        // Slightly less zoom on mobile
+      objectPosition: 'center 32%', // More sky on mobile
+      transformOrigin: 'center 35%',
     }
   },
   
   // Scroll behavior
   scroll: {
-    totalHeight: '350vh',        // Total scroll height (try 300vh to 400vh)
-    introLimit: 200,             // Pixels for initial scroll-capture (0 to disable)
+    totalHeight: '350vh',        // Total scroll height
+    introLimit: 100,             // Minimal delay before scroll triggers
   },
   
   // Animation ranges
   animation: {
     // Zoom: start → end scale during scroll
-    zoomStart: 1.5,              // More zoom = more bleed room for panning
-    zoomEnd: 1.0,                // Final zoom level
+    // PHASE 1 (0-50%): Zoom OUT only: 1.3 → 1.0
+    // PHASE 2 (50-100%): Stay at 1.0
+    zoomStart: 1.3,              
+    zoomEnd: 1.0,               
+    zoomPhaseEnd: 0.5,           // Zoom completes at 50% scroll
     
-    // Pan: vertical movement 
-    // NEGATIVE = image shifted UP (hidden overflow at top)
-    // POSITIVE = image shifted DOWN (reveals bottom)
-    panStart: -20,               // Start HIGHER (negative = hidden overflow above viewport)
-    panEnd: 20,                  // End LOWER (positive = reveals city bottom)
-    
-    // Text exit timing
-    textExitStart: '100vh',      // When text starts fading
-    textExitEnd: '250vh',        // When text fully gone
+    // Pan: vertical movement
+    // PHASE 1 (0-50%): NO vertical movement
+    // PHASE 2 (50-100%): Camera LOWERS - pan from middle/up TO down
+    // POSITIVE yPercent = image moves DOWN (camera goes UP)
+    // NEGATIVE yPercent = image moves UP (camera goes DOWN = what we want)
+    // Start at 0 (middle), end at -30 (camera lowered, reveals bottom)
+    panStart: 0,                 // Start at middle
+    panEnd: -30,                // End: camera lowered (shows more bottom)
+    panPhaseStart: 0.5,          // Pan starts at 50% scroll
   },
   
-  // Entrance timing (in seconds, staggered)
-  entrance: {
-    taglineDelay: 0.3,           // Tagline appears after load
-    headlineDelay: 0.8,          // Headline appears
-    bodyDelay: 1.3,              // Body text appears
-    ctaDelay: 1.8,               // CTAs appear
-    scrollIndicatorDelay: 2.2,   // Scroll hint appears
-    stagger: 0.15,               // Time between elements
-  }
+  // Text exit timing (text stays visible, then fades at end)
+  textExitStart: 0.7,           // Text starts fading at 70% scroll
+  textExitEnd: 0.9,             // Text fully gone by 90% scroll
 };
 
 // Easing function for smooth scroll-capture
@@ -137,14 +135,19 @@ export default function HeroSection() {
 
 
 
-  // GSAP animations for post-intro scroll
+  // GSAP animations for scroll
   useGSAP(() => {
     if (!imageLoaded || !containerRef.current || prefersReducedMotionRef.current) return;
 
     const ctx = gsap.context(() => {
       const triggers: ScrollTrigger[] = [];
 
-      // Only run post-intro animations
+      // ═══════════════════════════════════════════════════════════════
+      // PHASE 1 (0-50% scroll): ZOOM OUT ONLY - no vertical movement
+      // PHASE 2 (50-100% scroll): CAMERA LOWERS - pan from middle to bottom
+      // Text: visible throughout, fades at end (70-90%)
+      // ═══════════════════════════════════════════════════════════════
+      
       const imageTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
@@ -152,77 +155,73 @@ export default function HeroSection() {
           end: 'bottom bottom',
           scrub: 0.3,
           onUpdate: (self) => {
+            // Progress bar at top
             if (progressRef.current) {
               const adjustedProgress = (self.progress * 0.7) + 0.3;
               progressRef.current.style.transform = `scaleX(${adjustedProgress})`;
+            }
+            
+            // Update vertical scroll indicator on right side
+            const scrollProgressEl = document.querySelector('.scroll-progress') as HTMLElement | null;
+            if (scrollProgressEl) {
+              scrollProgressEl.style.height = `${self.progress * 100}%`;
+            }
+            
+            // ═══════════════════════════════════════════════════════════
+            // TEXT: stays visible, fades at end (70-90%)
+            // ═══════════════════════════════════════════════════════════
+            const progress = self.progress;
+            let textOpacity = 1;
+            
+            if (progress > HERO_CONFIG.textExitStart) {
+              // Fading phase
+              const exitProgress = (progress - HERO_CONFIG.textExitStart) / 
+                (HERO_CONFIG.textExitEnd - HERO_CONFIG.textExitStart);
+              textOpacity = 1 - easeOutCubic(Math.min(exitProgress, 1));
+            }
+            
+            // Apply opacity to all text elements
+            if (textRef.current) {
+              textRef.current.style.opacity = String(textOpacity);
+              // Add blur during fade
+              const blurAmount = progress > HERO_CONFIG.textExitStart 
+                ? (1 - textOpacity) * 15 
+                : 0;
+              textRef.current.style.filter = `blur(${blurAmount}px)`;
             }
           }
         }
       });
 
-      // ═══════════════════════════════════════════════════════════════
-      // CAMERA EFFECT: Zoom out + Pan down simultaneously
-      // This creates the "descending helicopter" feeling
-      // ═══════════════════════════════════════════════════════════════
-      
-      // Zoom out from initial scale to final scale
+      // PHASE 1: ZOOM OUT only (0-50% scroll)
+      // Scale: 1.3 → 1.0
       imageTl.fromTo(imageRef.current, 
         { scale: HERO_CONFIG.animation.zoomStart },
-        { scale: HERO_CONFIG.animation.zoomEnd, ease: 'power2.inOut', duration: 1 },
+        { 
+          scale: HERO_CONFIG.animation.zoomEnd, 
+          ease: 'power2.inOut', 
+          duration: HERO_CONFIG.animation.zoomPhaseEnd,
+        },
         0
       );
 
-      // Pan DOWN (positive yPercent reveals bottom of image)
-      // Combined with zoom, this creates the descending camera effect
+      // PHASE 2: CAMERA LOWERS - pan from middle to bottom (50-100% scroll)
+      // yPercent: 0 → -30 (image moves UP = camera goes DOWN = lowered)
+      const panDuration = 1 - HERO_CONFIG.animation.panPhaseStart;
       imageTl.fromTo(imageRef.current,
         { yPercent: HERO_CONFIG.animation.panStart },
-        { yPercent: HERO_CONFIG.animation.panEnd, ease: 'power2.inOut', duration: 1 },
-        0
+        { 
+          yPercent: HERO_CONFIG.animation.panEnd, 
+          ease: 'power2.inOut', 
+          duration: panDuration,
+        },
+        HERO_CONFIG.animation.panPhaseStart
       );
 
       if (imageTl.scrollTrigger) triggers.push(imageTl.scrollTrigger);
 
       // ═══════════════════════════════════════════════════════════════
-      // TEXT EXIT: Fade out as user scrolls past the hero content
-      // ═══════════════════════════════════════════════════════════════
-      const textTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: HERO_CONFIG.animation.textExitStart,
-          end: HERO_CONFIG.animation.textExitEnd,
-          scrub: 0.3,
-        }
-      });
-
-      if (textRef.current) {
-        textTl.fromTo(textRef.current,
-          { opacity: 1, filter: 'blur(0px)' },
-          { opacity: 0, filter: 'blur(10px)', ease: 'power2.in' },
-          0
-        );
-      }
-
-      if (taglineRef.current) {
-        textTl.fromTo(taglineRef.current,
-          { yPercent: 0 },
-          { yPercent: -15, ease: 'none' },
-          0
-        );
-      }
-
-      if (headlineRef.current) {
-        textTl.fromTo(headlineRef.current,
-          { yPercent: 0, scale: 0.95 },
-          { yPercent: -30, scale: 0.9, ease: 'none' },
-          0
-        );
-      }
-
-      if (textTl.scrollTrigger) triggers.push(textTl.scrollTrigger);
-
-      // ═══════════════════════════════════════════════════════════════
       // PROGRESSIVE DARKENING: Image gets darker as we approach stats
-      // This creates seamless transition to the black stats section
       // ═══════════════════════════════════════════════════════════════
       
       // Gradient overlay intensifies
@@ -241,69 +240,19 @@ export default function HeroSection() {
           // Main dark overlay intensifies
           const mainOverlay = document.querySelector('.hero-main-overlay') as HTMLElement | null;
           if (mainOverlay) {
-            // Start at 0.65 opacity, end at 0.95 (almost solid black)
-            const newOpacity = 0.65 + (self.progress * 0.3);
+            // Start at 0.7 opacity, end at 0.95 (almost solid black)
+            const newOpacity = 0.7 + (self.progress * 0.25);
             mainOverlay.style.background = `linear-gradient(to bottom, 
               rgba(10,10,15,${newOpacity}) 0%, 
-              rgba(10,10,15,${0.35 + (self.progress * 0.4)}) 35%, 
-              rgba(10,10,15,${0.6 + (self.progress * 0.35)}) 70%, 
-              rgba(10,10,15,${0.9 + (self.progress * 0.1)}) 100%)`;
+              rgba(10,10,15,${0.4 + (self.progress * 0.35)}) 35%, 
+              rgba(10,10,15,${0.65 + (self.progress * 0.3)}) 70%, 
+              rgba(10,10,15,${0.95 + (self.progress * 0.05)}) 100%)`;
           }
         }
       });
       triggers.push(gradientTrigger);
 
       localTriggersRef.current = triggers;
-
-      // ═══════════════════════════════════════════════════════════════
-      // ELEGANT ENTRANCE: All text elements stagger in on page load
-      // No scroll required - immediate value proposition
-      // ═══════════════════════════════════════════════════════════════
-      
-      const entranceTl = gsap.timeline({ delay: 0.2 });
-      
-      // Tagline slides up and fades in
-      if (taglineRef.current) {
-        entranceTl.fromTo(taglineRef.current,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
-          HERO_CONFIG.entrance.taglineDelay
-        );
-      }
-      
-      // Headline scales in with slight bounce
-      if (headlineRef.current) {
-        entranceTl.fromTo(headlineRef.current,
-          { scale: 0.9, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.2)' },
-          HERO_CONFIG.entrance.headlineDelay
-        );
-      }
-      
-      // Body text fades up
-      if (bodyRef.current) {
-        entranceTl.fromTo(bodyRef.current,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' },
-          HERO_CONFIG.entrance.bodyDelay
-        );
-      }
-      
-      // CTAs slide up
-      if (ctaRef.current) {
-        entranceTl.fromTo(ctaRef.current,
-          { y: 25, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
-          HERO_CONFIG.entrance.ctaDelay
-        );
-      }
-      
-      // Scroll indicator pulses in last
-      entranceTl.fromTo('.scroll-indicator',
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
-        HERO_CONFIG.entrance.scrollIndicatorDelay
-      );
 
     }, containerRef);
 
@@ -397,7 +346,7 @@ export default function HeroSection() {
               quality={85} 
               sizes="100vw"
               objectFit="cover"
-              objectPosition={isMobile ? 'center 55%' : 'center 50%'}
+              objectPosition={isMobile ? HERO_CONFIG.image.mobile.objectPosition : HERO_CONFIG.image.desktop.objectPosition}
               className={`transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setImageLoaded(true)} 
             />
@@ -425,11 +374,11 @@ export default function HeroSection() {
           style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(10,10,15,0.4) 60%, rgba(10,10,15,0.8) 80%, rgba(10,10,15,1) 100%)', opacity: 0 }} 
         />
 
-        {/* Text content */}
+        {/* Text content - VISIBLE IMMEDIATELY on page load */}
         <div 
           ref={textRef} 
-          className="hero-text-content relative z-40 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 md:pt-24"
-          style={{ perspective: '1000px', transformStyle: 'preserve-3d' }} 
+          className="hero-text-content relative z-40 w-full h-full flex flex-col items-center justify-start md:justify-center px-4 sm:px-6 lg:px-8 pt-32 md:pt-24"
+          style={{ perspective: '1000px', transformStyle: 'preserve-3d', opacity: 1 }} 
           onMouseMove={handleMouseMove} 
           onMouseLeave={handleMouseLeave}
         >
@@ -509,17 +458,32 @@ export default function HeroSection() {
               </Link>
             </div>
 
-            {/* Scroll indicator */}
-            <div className="scroll-indicator mt-4">
-              <div className="flex flex-col items-center gap-2">
-                <ChevronDown 
-                  className="w-6 h-6 md:w-8 md:h-8 animate-bounce" 
-                  style={{ color: '#E8A838' }} 
-                  strokeWidth={2.5} 
-                />
-                <span className="text-xs md:text-sm text-gray-400 uppercase tracking-widest font-medium">
-                  Scroll to explore
-                </span>
+            {/* Scroll indicator - RIGHT SIDE VERTICAL */}
+            <div className="scroll-indicator absolute right-6 md:right-10 top-1/2 -translate-y-1/2 z-50">
+              <div className="flex flex-col items-center gap-3">
+                {/* Vertical line with dots */}
+                <div className="relative h-20 w-0.5 bg-white/20">
+                  {/* Animated progress fill */}
+                  <div 
+                    className="scroll-progress absolute top-0 left-0 w-full bg-[#E8A838] origin-top"
+                    style={{ height: '0%', transition: 'height 0.1s linear' }}
+                  />
+                </div>
+                
+                {/* Scroll text - vertical */}
+                <div className="flex flex-col items-center gap-1">
+                  <span 
+                    className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-medium"
+                    style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                  >
+                    Scroll
+                  </span>
+                  <ChevronDown 
+                    className="w-4 h-4 animate-bounce" 
+                    style={{ color: '#E8A838' }} 
+                    strokeWidth={2.5} 
+                  />
+                </div>
               </div>
             </div>
           </div>
