@@ -79,7 +79,13 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow-x: hidden;
   }
+}
+
+.hero-scroll-wrapper {
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 /* Custom animations and effects */

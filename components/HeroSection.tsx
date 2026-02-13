@@ -4,65 +4,74 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, BookOpen, Shield, AlertCircle, Calendar } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
-// Register plugins once
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
-}
-
 // ═══════════════════════════════════════════════════════════════
-// ADJUSTABLE CONFIGURATION - Tweak these values to perfect the hero
+// HERO CONFIGURATION - Barcelona Skyline Cinematic Sequence
+// Image: 3333x5000px (2:3 ratio)
+// Scene1 reference: 53% crop → scale 1.88 → Sagrada centered with sky above
+// Full width: scale 1.0
 // ═══════════════════════════════════════════════════════════════
 const HERO_CONFIG = {
-  // Image positioning
   image: {
     desktop: {
-      initialScale: 1.3,         // 1.3x zoom - focal point on Sagrada
-      // center 28% = more sky ABOVE Sagrada (lower value = more sky at top)
-      objectPosition: 'center 28%', 
-      transformOrigin: 'center 30%', // Focal point around Sagrada area
+      initialScale: 1.88,      // Start at Scene1 frame (53% crop)
+      finalScale: 1.0,         // Zoom OUT to show full city width
+      objectPosition: '51% 41%', // Sagrada: 51% horiz, 41% vert
+      transformOrigin: '51% 41%',
     },
     mobile: {
-      initialScale: 1.25,        // Slightly less zoom on mobile
-      objectPosition: 'center 32%', // More sky on mobile
-      transformOrigin: 'center 35%',
+      initialScale: 1.5,
+      finalScale: 0.85,
+      objectPosition: '50% 45%',
+      transformOrigin: '50% 45%',
     }
   },
   
-  // Scroll behavior
   scroll: {
-    totalHeight: '350vh',        // Total scroll height
-    introLimit: 100,             // Minimal delay before scroll triggers
+    totalHeight: '175vh',      // Premium scroll, not 300vh
   },
   
-  // Animation ranges
   animation: {
-    // Zoom: start → end scale during scroll
-    // PHASE 1 (0-50%): Zoom OUT only: 1.3 → 1.0
-    // PHASE 2 (50-100%): Stay at 1.0
-    zoomStart: 1.3,              
-    zoomEnd: 1.0,               
-    zoomPhaseEnd: 0.5,           // Zoom completes at 50% scroll
+    // Phase 1: ZOOM OUT (0% → 50% scroll)
+    zoomStart: 1.88,
+    zoomEnd: 1.0,
+    zoomPhaseEnd: 0.5,
     
-    // Pan: vertical movement
-    // PHASE 1 (0-50%): NO vertical movement
-    // PHASE 2 (50-100%): Camera LOWERS - pan from middle/up TO down
-    // POSITIVE yPercent = image moves DOWN (camera goes UP)
-    // NEGATIVE yPercent = image moves UP (camera goes DOWN = what we want)
-    // Start at 0 (middle), end at -30 (camera lowered, reveals bottom)
-    panStart: 0,                 // Start at middle
-    panEnd: -30,                // End: camera lowered (shows more bottom)
-    panPhaseStart: 0.5,          // Pan starts at 50% scroll
+    // Phase 2: PAN DOWN (30% → 90% scroll) - reveal greenery
+    panStart: 0,
+    panEnd: -30,
+    panPhaseStart: 0.3,
+    panPhaseEnd: 0.9,
+    
+    // Text: shrink + fade during scroll
+    textScaleStart: 1.0,
+    textScaleEnd: 0.75,
+    textFadeStart: 0.5,
+    textFadeEnd: 0.8,
   },
   
-  // Text exit timing (text stays visible, then fades at end)
-  textExitStart: 0.7,           // Text starts fading at 70% scroll
-  textExitEnd: 0.9,             // Text fully gone by 90% scroll
+  // Buttons appear mid-scroll (left/right of Sagrada)
+  buttonsAppear: 0.45,
+  buttonsFullVisible: 0.65,
+  
+  // Stats: appear on dark greenery (bottom 25% of image)
+  statsAppear: 0.75,
+  statsFullVisible: 1.0,
 };
+
+// ═══════════════════════════════════════════════════════════════
+// STATS DATA - Integrated into hero
+// ═══════════════════════════════════════════════════════════════
+const statsData = [
+  { value: '4', label: 'Expert Guides', description: '100% Verified Content', icon: BookOpen },
+  { value: '2.5K+', label: 'Safety Kits', description: 'Downloaded by Travelers', icon: Shield },
+  { value: '€0', label: 'Fines', description: 'For Protected Members', icon: AlertCircle },
+  { value: 'Mar', label: '2026', description: 'Barcelona Club Launch', icon: Calendar },
+];
 
 // Easing function for smooth scroll-capture
 function easeOutCubic(x: number): number {
@@ -78,34 +87,35 @@ export default function HeroSection() {
   const containerRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const statsContainerRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const localTriggersRef = useRef<ScrollTrigger[]>([]);
   
-  // Animation values - start with correct scale from config
+  // Animation values - initialized in useEffect
   const initialScaleRef = useRef(HERO_CONFIG.image.desktop.initialScale);
-  const scrollProgressRef = useRef(0);
+  const finalScaleRef = useRef(HERO_CONFIG.image.desktop.finalScale);
   const prefersReducedMotionRef = useRef(false);
-  const INTRO_SCROLL_LIMIT = HERO_CONFIG.scroll.introLimit; // pixels for scroll-capture
-  
-  // Image position ref for dynamic updates
-  const imagePositionRef = useRef(HERO_CONFIG.image.desktop.objectPosition);
 
-  // Check reduced motion preference
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    prefersReducedMotionRef.current = mediaQuery.matches;
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      prefersReducedMotionRef.current = e.matches;
-    };
-    
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  // Refs for scroll progress (avoid querySelector)
+  const scrollProgressRef = useRef<HTMLDivElement>(null);
+
+// Check reduced motion preference
+useEffect(() => {
+  gsap.registerPlugin(ScrollTrigger);
+  
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  prefersReducedMotionRef.current = mediaQuery.matches;
+  
+  const handleChange = (e: MediaQueryListEvent) => {
+    prefersReducedMotionRef.current = e.matches;
+  };
+  
+  mediaQuery.addEventListener('change', handleChange);
+  return () => mediaQuery.removeEventListener('change', handleChange);
+}, []);
 
   // Responsive detection
   useEffect(() => {
@@ -119,9 +129,9 @@ export default function HeroSection() {
         initialScaleRef.current = mobile 
           ? HERO_CONFIG.image.mobile.initialScale 
           : HERO_CONFIG.image.desktop.initialScale;
-        imagePositionRef.current = mobile
-          ? HERO_CONFIG.image.mobile.objectPosition
-          : HERO_CONFIG.image.desktop.objectPosition;
+        finalScaleRef.current = mobile 
+          ? HERO_CONFIG.image.mobile.finalScale 
+          : HERO_CONFIG.image.desktop.finalScale;
       }, 100);
     };
     
@@ -133,163 +143,117 @@ export default function HeroSection() {
     };
   }, []);
 
-
-
-  // GSAP animations for scroll
+  // GSAP animations for scroll - SIMPLIFIED
   useGSAP(() => {
     if (!imageLoaded || !containerRef.current || prefersReducedMotionRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const triggers: ScrollTrigger[] = [];
-
-      // ═══════════════════════════════════════════════════════════════
-      // PHASE 1 (0-50% scroll): ZOOM OUT ONLY - no vertical movement
-      // PHASE 2 (50-100% scroll): CAMERA LOWERS - pan from middle to bottom
-      // Text: visible throughout, fades at end (70-90%)
-      // ═══════════════════════════════════════════════════════════════
-      
-      const imageTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: `${INTRO_SCROLL_LIMIT}px top`,
-          end: 'bottom bottom',
-          scrub: 0.3,
-          onUpdate: (self) => {
-            // Progress bar at top
-            if (progressRef.current) {
-              const adjustedProgress = (self.progress * 0.7) + 0.3;
-              progressRef.current.style.transform = `scaleX(${adjustedProgress})`;
-            }
-            
-            // Update vertical scroll indicator on right side
-            const scrollProgressEl = document.querySelector('.scroll-progress') as HTMLElement | null;
-            if (scrollProgressEl) {
-              scrollProgressEl.style.height = `${self.progress * 100}%`;
-            }
-            
-            // ═══════════════════════════════════════════════════════════
-            // TEXT: stays visible, fades at end (70-90%)
-            // ═══════════════════════════════════════════════════════════
-            const progress = self.progress;
-            let textOpacity = 1;
-            
-            if (progress > HERO_CONFIG.textExitStart) {
-              // Fading phase
-              const exitProgress = (progress - HERO_CONFIG.textExitStart) / 
-                (HERO_CONFIG.textExitEnd - HERO_CONFIG.textExitStart);
-              textOpacity = 1 - easeOutCubic(Math.min(exitProgress, 1));
-            }
-            
-            // Apply opacity to all text elements
-            if (textRef.current) {
-              textRef.current.style.opacity = String(textOpacity);
-              // Add blur during fade
-              const blurAmount = progress > HERO_CONFIG.textExitStart 
-                ? (1 - textOpacity) * 15 
-                : 0;
-              textRef.current.style.filter = `blur(${blurAmount}px)`;
-            }
-          }
-        }
-      });
-
-      // PHASE 1: ZOOM OUT only (0-50% scroll)
-      // Scale: 1.3 → 1.0
-      imageTl.fromTo(imageRef.current, 
-        { scale: HERO_CONFIG.animation.zoomStart },
-        { 
-          scale: HERO_CONFIG.animation.zoomEnd, 
-          ease: 'power2.inOut', 
-          duration: HERO_CONFIG.animation.zoomPhaseEnd,
-        },
-        0
-      );
-
-      // PHASE 2: CAMERA LOWERS - pan from middle to bottom (50-100% scroll)
-      // yPercent: 0 → -30 (image moves UP = camera goes DOWN = lowered)
-      const panDuration = 1 - HERO_CONFIG.animation.panPhaseStart;
-      imageTl.fromTo(imageRef.current,
-        { yPercent: HERO_CONFIG.animation.panStart },
-        { 
-          yPercent: HERO_CONFIG.animation.panEnd, 
-          ease: 'power2.inOut', 
-          duration: panDuration,
-        },
-        HERO_CONFIG.animation.panPhaseStart
-      );
-
-      if (imageTl.scrollTrigger) triggers.push(imageTl.scrollTrigger);
-
-      // ═══════════════════════════════════════════════════════════════
-      // PROGRESSIVE DARKENING: Image gets darker as we approach stats
-      // ═══════════════════════════════════════════════════════════════
-      
-      // Gradient overlay intensifies
-      const gradientTrigger = ScrollTrigger.create({
+    // Main scroll timeline
+    const mainTl = gsap.timeline({
+      scrollTrigger: {
         trigger: containerRef.current,
-        start: '50% top',
+        start: 'top top',
         end: 'bottom bottom',
         scrub: 0.5,
-        onUpdate: (self) => {
-          // Greenery gradient becomes visible
-          const greeneryGradient = document.querySelector('.greenery-transition-gradient') as HTMLElement | null;
-          if (greeneryGradient) {
-            greeneryGradient.style.opacity = String(self.progress);
-          }
-          
-          // Main dark overlay intensifies
-          const mainOverlay = document.querySelector('.hero-main-overlay') as HTMLElement | null;
-          if (mainOverlay) {
-            // Start at 0.7 opacity, end at 0.95 (almost solid black)
-            const newOpacity = 0.7 + (self.progress * 0.25);
-            mainOverlay.style.background = `linear-gradient(to bottom, 
-              rgba(10,10,15,${newOpacity}) 0%, 
-              rgba(10,10,15,${0.4 + (self.progress * 0.35)}) 35%, 
-              rgba(10,10,15,${0.65 + (self.progress * 0.3)}) 70%, 
-              rgba(10,10,15,${0.95 + (self.progress * 0.05)}) 100%)`;
-          }
+      }
+    });
+
+    // PHASE 1: ZOOM OUT (0% → 50% scroll)
+    mainTl.fromTo(imageRef.current, 
+      { 
+        scale: HERO_CONFIG.animation.zoomStart,
+        yPercent: HERO_CONFIG.animation.panStart,
+      },
+      { 
+        scale: HERO_CONFIG.animation.zoomEnd, 
+        ease: 'power2.inOut', 
+        duration: HERO_CONFIG.animation.zoomPhaseEnd,
+      },
+      0
+    );
+
+    // PHASE 2: PAN DOWN (30% → 90% scroll)
+    const panDuration = HERO_CONFIG.animation.panPhaseEnd - HERO_CONFIG.animation.panPhaseStart;
+    mainTl.to(imageRef.current,
+      { 
+        yPercent: HERO_CONFIG.animation.panEnd, 
+        ease: 'power2.inOut', 
+        duration: panDuration,
+      },
+      HERO_CONFIG.animation.panPhaseStart
+    );
+
+    // Scroll progress + text animation in onUpdate
+    ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.5,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        
+        // Update progress bar (using ref)
+        if (progressRef.current) {
+          progressRef.current.style.transform = `scaleX(${progress})`;
         }
-      });
-      triggers.push(gradientTrigger);
+        
+        // Update scroll indicator (using ref)
+        if (scrollProgressRef.current) {
+          scrollProgressRef.current.style.height = `${progress * 100}%`;
+        }
+        
+        // TEXT: Scale + Fade
+        let textOpacity = 1;
+        let textScale = 1;
+        
+        if (progress > HERO_CONFIG.animation.textFadeStart) {
+          const fadeProgress = (progress - HERO_CONFIG.animation.textFadeStart) / 
+            (HERO_CONFIG.animation.textFadeEnd - HERO_CONFIG.animation.textFadeStart);
+          const easedFade = easeOutCubic(Math.min(fadeProgress, 1));
+          textOpacity = 1 - easedFade;
+          textScale = HERO_CONFIG.animation.textScaleStart - 
+            (easedFade * (HERO_CONFIG.animation.textScaleStart - HERO_CONFIG.animation.textScaleEnd));
+        }
+        
+        if (textRef.current) {
+          textRef.current.style.opacity = String(textOpacity);
+          textRef.current.style.transform = `scale(${textScale})`;
+        }
+        
+        // BUTTONS: Appear mid-scroll
+        let buttonsOpacity = 0;
+        if (progress > HERO_CONFIG.buttonsAppear) {
+          const btnProgress = (progress - HERO_CONFIG.buttonsAppear) / 
+            (HERO_CONFIG.buttonsFullVisible - HERO_CONFIG.buttonsAppear);
+          buttonsOpacity = easeOutCubic(Math.min(btnProgress, 1));
+        }
+        
+        if (ctaRef.current) {
+          ctaRef.current.style.opacity = String(buttonsOpacity);
+          ctaRef.current.style.pointerEvents = buttonsOpacity > 0 ? 'auto' : 'none';
+        }
+        
+        // STATS: Rise from bottom on dark greenery
+        let statsOpacity = 0;
+        let statsY = 100;
+        
+        if (progress > HERO_CONFIG.statsAppear) {
+          const statsProgress = (progress - HERO_CONFIG.statsAppear) / 
+            (HERO_CONFIG.statsFullVisible - HERO_CONFIG.statsAppear);
+          const easedStats = easeOutCubic(Math.min(statsProgress, 1));
+          statsOpacity = easedStats;
+          statsY = 100 - (easedStats * 100);
+        }
+        
+        if (statsContainerRef.current) {
+          statsContainerRef.current.style.opacity = String(statsOpacity);
+          statsContainerRef.current.style.transform = `translateY(${statsY}px)`;
+        }
+      }
+    });
 
-      localTriggersRef.current = triggers;
-
-    }, containerRef);
-
-    return () => {
-      localTriggersRef.current.forEach(trigger => trigger.kill());
-      ctx.revert();
-    };
   }, { scope: containerRef, dependencies: [imageLoaded] });
 
-  // 3D Tilt effect
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (prefersReducedMotionRef.current || isMobile || !textRef.current) return;
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    
-    gsap.to(textRef.current, {
-      rotateY: x * 2,
-      rotateX: -y * 2,
-      duration: 0.3,
-      ease: 'power1.out',
-      overwrite: 'auto'
-    });
-  }, [isMobile]);
-
-  const handleMouseLeave = useCallback(() => {
-    if (!textRef.current) return;
-    
-    gsap.to(textRef.current, {
-      rotateY: 0,
-      rotateX: 0,
-      duration: 0.5,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    });
-  }, []);
+  // REMOVED: 3D Tilt effect (not approved)
 
   // Letter split helper
   const splitText = useCallback((text: string) => {
@@ -318,15 +282,10 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="fixed top-0 left-0 w-full h-1 z-50 bg-transparent">
-        <div ref={progressRef} className="h-full bg-gradient-to-r from-[#E8A838] to-[#D9534F] origin-left" style={{ transform: 'scaleX(0)' }} />
-      </div>
-
-      {/* Sticky viewport */}
-      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
-        {/* Background layer */}
-        <div className="absolute inset-0 bg-black">
+      {/* Full-height background */}
+      <div className="absolute inset-0">
+        {/* Background layer - FIXED overflow */}
+        <div className="absolute inset-0 bg-black overflow-hidden">
           <div 
             ref={imageRef} 
             className="hero-image-container absolute inset-0 w-full h-full will-change-transform"
@@ -335,7 +294,6 @@ export default function HeroSection() {
               transformOrigin: isMobile 
                 ? HERO_CONFIG.image.mobile.transformOrigin 
                 : HERO_CONFIG.image.desktop.transformOrigin,
-              backfaceVisibility: 'hidden'
             }}
           >
             <Image 
@@ -343,44 +301,39 @@ export default function HeroSection() {
               alt="Aerial view of Barcelona with Sagrada Familia" 
               fill 
               priority 
-              quality={85} 
+              quality={90} 
               sizes="100vw"
-              objectFit="cover"
-              objectPosition={isMobile ? HERO_CONFIG.image.mobile.objectPosition : HERO_CONFIG.image.desktop.objectPosition}
+              style={{
+                objectFit: 'cover',
+                objectPosition: isMobile 
+                  ? HERO_CONFIG.image.mobile.objectPosition 
+                  : HERO_CONFIG.image.desktop.objectPosition,
+              }}
               className={`transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
               onLoad={() => setImageLoaded(true)} 
             />
           </div>
         </div>
-
-        {/* Overlays - Darker for text readability */}
-        <div className="hero-main-overlay absolute inset-0 pointer-events-none z-10" style={{ 
-          background: 'linear-gradient(to bottom, rgba(10,10,15,0.85) 0%, rgba(10,10,15,0.55) 35%, rgba(10,10,15,0.75) 70%, rgba(10,10,15,0.95) 100%)' 
-        }} />
-        <div className="image-vignette absolute inset-0 pointer-events-none z-20" />
         
-        {/* Hero fade mask - smooth transition to stats */}
+        {/* SINGLE OPTIMIZED OVERLAY - Gradient + Vignette combined */}
         <div 
-          className="hero-fade-mask absolute inset-0 pointer-events-none z-30"
+          className="hero-overlay absolute inset-0 pointer-events-none z-10"
           style={{ 
-            background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(10,10,15,0.2) 65%, rgba(10,10,15,0.6) 80%, rgba(10,10,15,1) 100%)',
-            opacity: 1
+            background: `
+              radial-gradient(ellipse 120% 100% at 50% 20%, transparent 0%, transparent 50%, rgba(10,10,15,0.3) 80%, rgba(10,10,15,0.6) 100%),
+              linear-gradient(to bottom, rgba(10,10,15,0.4) 0%, rgba(10,10,15,0.1) 30%, rgba(10,10,15,0.3) 60%, rgba(10,10,15,0.7) 100%)
+            `,
+            backgroundBlendMode: 'normal, normal'
           }} 
         />
-        
-        {/* Greenery transition gradient */}
-        <div 
-          className="greenery-transition-gradient absolute inset-0 pointer-events-none z-35" 
-          style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 40%, rgba(10,10,15,0.4) 60%, rgba(10,10,15,0.8) 80%, rgba(10,10,15,1) 100%)', opacity: 0 }} 
-        />
+      </div>
 
-        {/* Text content - VISIBLE IMMEDIATELY on page load */}
+      {/* Sticky text content */}
+      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
         <div 
           ref={textRef} 
           className="hero-text-content relative z-40 w-full h-full flex flex-col items-center justify-start md:justify-center px-4 sm:px-6 lg:px-8 pt-32 md:pt-24"
-          style={{ perspective: '1000px', transformStyle: 'preserve-3d', opacity: 1 }} 
-          onMouseMove={handleMouseMove} 
-          onMouseLeave={handleMouseLeave}
+          style={{ opacity: 1 }}
         >
           <div className="max-w-6xl mx-auto w-full text-center">
             {/* Tagline - Always visible */}
@@ -434,10 +387,11 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* CTAs - Appear on page load */}
+            {/* CTAs - Appear mid-scroll */}
             <div 
               ref={ctaRef} 
               className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center w-full max-w-md mx-auto mb-6"
+              style={{ opacity: 0, pointerEvents: 'none' }}
             >
               <Link href="/safety-guide" className="w-full sm:w-auto">
                 <Button 
@@ -465,8 +419,9 @@ export default function HeroSection() {
                 <div className="relative h-20 w-0.5 bg-white/20">
                   {/* Animated progress fill */}
                   <div 
+                    ref={scrollProgressRef}
                     className="scroll-progress absolute top-0 left-0 w-full bg-[#E8A838] origin-top"
-                    style={{ height: '0%', transition: 'height 0.1s linear' }}
+                    style={{ height: '0%' }}
                   />
                 </div>
                 
@@ -485,6 +440,54 @@ export default function HeroSection() {
                   />
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════ */}
+        {/* STATS CARDS (fade in at 70-95%, rise from bottom) */}
+        {/* ═══════════════════════════════════════════ */}
+        <div 
+          ref={statsContainerRef}
+          className="absolute bottom-16 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8"
+          style={{ opacity: 0, transform: 'translateY(100px)' }}
+        >
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
+              {statsData.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div 
+                    key={index} 
+                    className="stat-card relative group cursor-default overflow-hidden rounded-xl md:rounded-2xl border border-white/5 bg-black/40 backdrop-blur-lg p-4 md:p-6 transition-all duration-500 hover:border-[#E8A838]/30 hover:bg-black/60"
+                  >
+                    {/* Hover glow */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#E8A838]/0 to-[#E8A838]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    <div className="relative z-10 flex flex-col items-center">
+                      {/* Icon */}
+                      <div className="w-10 h-10 md:w-12 md:h-12 mb-3 bg-[#E8A838]/10 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:bg-[#E8A838]/20 group-hover:scale-110 border border-[#E8A838]/20">
+                        <Icon className="w-5 h-5 md:w-6 md:h-6 text-[#E8A838]" strokeWidth={2} />
+                      </div>
+
+                      {/* Value */}
+                      <div className="text-2xl md:text-4xl lg:text-5xl font-black text-white mb-1 tracking-tight">
+                        {stat.value}
+                      </div>
+
+                      {/* Label */}
+                      <div className="text-xs md:text-sm font-bold text-[#E8A838] mb-1 uppercase tracking-wide">
+                        {stat.label}
+                      </div>
+
+                      {/* Description */}
+                      <div className="text-[10px] md:text-xs text-zinc-400 uppercase tracking-wider font-medium text-center">
+                        {stat.description}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

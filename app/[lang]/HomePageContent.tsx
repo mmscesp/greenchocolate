@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import HeroSection from '@/components/HeroSection';
-import StatsSection from '@/components/StatsSection';
 import SafetyKitForm from '@/components/marketing/SafetyKitForm';
 import TouristMistakes from '@/components/marketing/TouristMistakes';
 import WaitlistForm from '@/components/marketing/WaitlistForm';
@@ -54,11 +53,8 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
       <WebSiteStructuredData name="SocialClubsMaps" url="https://socialclubsmaps.com" />
 
         <div className="min-h-screen bg-white relative">
-        {/* Hero Section */}
+        {/* Hero Section (stats integrated inside) */}
         <HeroSection />
-
-        {/* Content Statistics */}
-        <StatsSection />
 
         {/* What Tourists Get Wrong */}
         <section className="py-24 bg-white relative overflow-hidden">
