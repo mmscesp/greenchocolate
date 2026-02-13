@@ -2,6 +2,7 @@ import { getDictionary } from '@/lib/dictionary';
 import { i18n, type Locale } from '@/lib/i18n-config';
 import { LanguageProvider } from '@/hooks/useLanguage';
 import { AuthProvider } from '@/components/auth/AuthProvider';
+import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/Footer';
 
@@ -24,13 +25,15 @@ export default async function LocaleLayout({
   return (
     <LanguageProvider locale={lang as Locale} dictionary={dictionary}>
       <AuthProvider>
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <SmoothScroll>
+          <div className="min-h-screen flex flex-col">
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </SmoothScroll>
       </AuthProvider>
     </LanguageProvider>
   );

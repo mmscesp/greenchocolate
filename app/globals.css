@@ -350,6 +350,35 @@ html {
   );
 }
 
+/* Enhanced word animation */
+.word-inner {
+  display: inline-block;
+}
+
+/* Fill mode for animations */
+.fill-mode-forwards {
+  animation-fill-mode: forwards;
+}
+
+/* Cinematic blur support */
+.hero-text-content {
+  will-change: transform, opacity, filter;
+}
+
+/* Performance optimization */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* 3D perspective for text hover */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
 /* Custom z-index for greenery gradient */
 .z-25 {
   z-index: 25;
