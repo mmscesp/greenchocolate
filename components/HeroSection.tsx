@@ -260,7 +260,7 @@ export default function HeroSection() {
         <div className="image-vignette absolute inset-0 pointer-events-none z-20" />
         <div className="greenery-transition-gradient absolute inset-0 pointer-events-none z-25" style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(10,10,15,0.6) 70%, rgba(10,10,15,1) 100%)', opacity: 0 }} />
 
-        <div ref={textRef} className="hero-text-content relative z-30 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+        <div ref={textRef} className="hero-text-content relative z-30 w-full h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 md:pt-32" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
           <div className="max-w-6xl mx-auto w-full text-center">
             <div ref={taglineRef} className="mb-6 md:mb-8">
               <p className="tagline-word text-xl md:text-2xl lg:text-3xl text-[#F5F0EB] tracking-[0.1em] leading-relaxed">{splitText('Different city. Different rules.')}</p>
