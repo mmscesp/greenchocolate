@@ -15,7 +15,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      // Trigger glassmorphism only after the Hero Cinematic sequence is well underway
+      setIsScrolled(window.scrollY > window.innerHeight * 2);
     };
 
     window.addEventListener('scroll', handleScroll);
