@@ -12,7 +12,7 @@ export default async function ClubsPageWrapper() {
   return (
     <ClubsPageClient 
       initialClubs={clubs}
-      neighborhoods={neighborhoods.map(n => n.name)}
+      neighborhoods={neighborhoods.map((n: { name: string }) => n.name)}
       amenities={amenities}
       vibes={vibes}
     />
