@@ -238,5 +238,19 @@
   "requests.status.rejected": "Rejected",
   "requests.confirm_cancel": "Are you sure you want to cancel this request?",
   "requests.error_load": "Failed to load membership requests",
-  "requests.error_cancel": "Failed to cancel request"
+  "requests.error_cancel": "Failed to cancel request",
+  "filters.advanced": "Advanced Filters",
+  "filters.results_found": "clubs found",
+  "filters.clear": "Clear filters",
+  "filters.active": "Active filters:",
+  "filters.verified": "Verified",
+  "filters.stars_suffix": "stars",
+  "filters.neighborhood": "Neighborhood",
+  "filters.amenities": "Services & Amenities",
+  "filters.vibes": "Vibe & Style",
+  "filters.verified_only": "Verified clubs only",
+  "filters.price_range": "Price range:",
+  "filters.min_rating": "Minimum rating:",
+  "club_dashboard.no_club": "No club assigned",
+  "club_dashboard.no_club_description": "Your account is not associated with any club. Please contact an administrator."
 }

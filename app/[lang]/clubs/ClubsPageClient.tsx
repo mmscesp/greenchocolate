@@ -8,7 +8,7 @@ import FilterBar from '@/components/FilterBar';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Map, List, Grid } from 'lucide-react';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
-import { Club, FilterOptions } from '@/lib/types';
+import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
 
 interface ClubsPageClientProps {
@@ -129,8 +129,8 @@ export default function ClubsPageClient({
               </div>
             ) : clubs.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {clubs.map(club => (
-                  <ClubCard key={club.id} club={club as unknown as Club} />
+                {clubs.map((club) => (
+                  <ClubCard key={club.id} club={club} />
                 ))}
               </div>
             ) : (

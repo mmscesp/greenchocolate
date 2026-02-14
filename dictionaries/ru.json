@@ -119,5 +119,19 @@
   "user.reviews": "[RU] Reseñas",
   "user.settings": "[RU] Configuración",
   "user.settings_desc": "[RU] Privacidad y preferencias",
-  "user.upgrade_premium": "[RU] Actualizar a Premium"
+  "user.upgrade_premium": "[RU] Actualizar a Premium",
+  "filters.advanced": "[RU] Advanced Filters",
+  "filters.results_found": "[RU] clubs found",
+  "filters.clear": "[RU] Clear filters",
+  "filters.active": "[RU] Active filters:",
+  "filters.verified": "[RU] Verified",
+  "filters.stars_suffix": "[RU] stars",
+  "filters.neighborhood": "[RU] Neighborhood",
+  "filters.amenities": "[RU] Services & Amenities",
+  "filters.vibes": "[RU] Vibe & Style",
+  "filters.verified_only": "[RU] Verified clubs only",
+  "filters.price_range": "[RU] Price range:",
+  "filters.min_rating": "[RU] Minimum rating:",
+  "club_dashboard.no_club": "[RU] No club assigned",
+  "club_dashboard.no_club_description": "[RU] Your account is not associated with any club. Please contact an administrator."
 }

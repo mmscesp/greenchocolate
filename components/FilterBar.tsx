@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { FilterOptions } from '@/lib/types';
+import { useLanguage } from '@/hooks/useLanguage';
 import { Filter, X, MapPin, Star, DollarSign, CheckCircle, Sparkles, Search } from 'lucide-react';
 
 interface FilterBarProps {
@@ -23,6 +24,7 @@ export default function FilterBar({
   amenities = [],
   vibes = []
 }: FilterBarProps) {
+  const { t } = useLanguage();
   const [showFilters, setShowFilters] = useState(false);
 
   const updateFilter = (key: keyof FilterOptions, value: any) => {
@@ -67,7 +69,7 @@ export default function FilterBar({
             className="flex items-center gap-2 transition-all duration-300"
           >
             <Filter className="h-4 w-4" />
-            Filtros Avanzados
+            {t('filters.advanced')}
             {hasActiveFilters && (
               <Badge variant="cannabis" className="ml-2 px-2 py-0 text-xs">
                 {[
@@ -85,7 +87,7 @@ export default function FilterBar({
           <div className="flex items-center gap-2 text-muted-foreground">
             <Search className="h-4 w-4" />
             <span className="font-medium">
-              {totalResults} clubs encontrados
+              {totalResults} {t('filters.results_found')}
             </span>
           </div>
         </div>
@@ -98,7 +100,7 @@ export default function FilterBar({
             className="text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300"
           >
             <X className="h-4 w-4 mr-1" />
-            Limpiar filtros
+            {t('filters.clear')}
           </Button>
         )}
       </div>
@@ -106,7 +108,7 @@ export default function FilterBar({
       {/* Active Filters Display */}
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 mb-6 p-4 bg-green-50 rounded-xl border border-green-200">
-          <span className="text-sm font-medium text-green-800 mr-2">Filtros activos:</span>
+          <span className="text-sm font-medium text-green-800 mr-2">{t('filters.active')}</span>
           
           {filters.neighborhood && (
             <Badge variant="cannabis" className="flex items-center gap-1 animate-pulse">
@@ -154,7 +156,7 @@ export default function FilterBar({
           {filters.isVerified && (
             <Badge variant="verified" className="flex items-center gap-1">
               <CheckCircle className="h-3 w-3" />
-              Verificado
+              {t('filters.verified')}
               <X 
                 className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
                 onClick={() => updateFilter('isVerified', false)}
@@ -165,7 +167,7 @@ export default function FilterBar({
           {filters.rating > 0 && (
             <Badge variant="outline" className="flex items-center gap-1 border-yellow-200 text-yellow-700">
               <Star className="h-3 w-3" />
-              {filters.rating}+ estrellas
+              {filters.rating}+ {t('filters.stars_suffix')}
               <X 
                 className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
                 onClick={() => updateFilter('rating', 0)}
@@ -182,7 +184,7 @@ export default function FilterBar({
           <div>
             <label className="block text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <MapPin className="h-4 w-4 text-green-600" />
-              Barrio
+              {t('filters.neighborhood')}
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
               {neighborhoods.map(neighborhood => (
@@ -207,7 +209,7 @@ export default function FilterBar({
           <div>
             <label className="block text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-purple-600" />
-              Servicios y Amenidades
+              {t('filters.amenities')}
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {amenities.map(amenity => (
@@ -233,7 +235,7 @@ export default function FilterBar({
           <div>
             <label className="block text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
               <Star className="h-4 w-4 text-yellow-600" />
-              Ambiente y Estilo
+              {t('filters.vibes')}
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {vibes.map(vibe => (
@@ -267,7 +269,7 @@ export default function FilterBar({
               />
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-400">Solo clubs verificados</span>
+                <span className="text-sm font-medium text-blue-400">{t('filters.verified_only')}</span>
               </div>
             </label>
             
@@ -275,7 +277,7 @@ export default function FilterBar({
             <div className="p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/30">
               <div className="flex items-center gap-2 mb-3">
                 <DollarSign className="h-4 w-4 text-yellow-500" />
-                <span className="text-sm font-medium text-yellow-500">Rango de precios:</span>
+                <span className="text-sm font-medium text-yellow-500">{t('filters.price_range')}</span>
               </div>
               <div className="flex gap-2">
                 {['$', '$$', '$$$'].map(price => (
@@ -298,7 +300,7 @@ export default function FilterBar({
             <div className="p-4 bg-orange-500/10 rounded-xl border border-orange-500/30">
               <div className="flex items-center gap-2 mb-3">
                 <Star className="h-4 w-4 text-orange-500" />
-                <span className="text-sm font-medium text-orange-500">Valoración mínima:</span>
+                <span className="text-sm font-medium text-orange-500">{t('filters.min_rating')}</span>
               </div>
               <div className="flex gap-2">
                 {[4, 4.5, 5].map(rating => (

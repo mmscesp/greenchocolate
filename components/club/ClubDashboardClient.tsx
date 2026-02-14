@@ -39,9 +39,9 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
         <Card className="max-w-md">
           <CardHeader>
-            <CardTitle>{t('club_dashboard.no_club') || 'No club assigned'}</CardTitle>
+            <CardTitle>{t('club_dashboard.no_club')}</CardTitle>
             <CardDescription>
-              Your account is not associated with any club. Please contact an administrator.
+              {t('club_dashboard.no_club_description')}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -50,10 +50,14 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
   }
   
   // Use real club data
+  const location = ('addressDisplay' in club && club.addressDisplay)
+    ? club.addressDisplay
+    : (club.neighborhood || 'Location Pending');
+
   const displayClub = {
     name: club.name,
-    location: (club as any).addressDisplay || club.neighborhood || 'Location Pending',
-    members: club.capacity || 0, 
+    location,
+    members: club.capacity || 0,
     capacity: club.capacity || 100,
     description: club.description || club.shortDescription || 'No description available.',
     foundedYear: club.foundedYear || new Date().getFullYear(),

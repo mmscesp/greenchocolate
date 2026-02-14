@@ -87,7 +87,7 @@ export default function EventsPage() {
       toast.success('Event updated successfully');
     } else {
       const newEvent = { 
-        id: Date.now().toString(), 
+        id: `${formData.title}-${formData.date}-${events.length + 1}`,
         attendees: 0, 
         ...formData,
         image: formData.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'

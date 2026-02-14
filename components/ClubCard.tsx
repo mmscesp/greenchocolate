@@ -4,11 +4,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Club } from '@/lib/types';
+import type { Club as ClubModel } from '@/lib/types';
+import type { ClubCard as ClubCardData } from '@/app/actions/clubs';
 import { MapPin, Star, Users, Clock, CheckCircle, Sparkles, Heart } from 'lucide-react';
 
+type ClubCardEntity = ClubModel | ClubCardData;
+
 interface ClubCardProps {
-  club: Club;
+  club: ClubCardEntity;
   className?: string;
 }
 

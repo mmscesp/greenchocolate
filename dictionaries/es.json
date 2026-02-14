@@ -238,5 +238,19 @@
   "requests.status.rejected": "Rechazada",
   "requests.confirm_cancel": "¿Estás seguro de que quieres cancelar esta solicitud?",
   "requests.error_load": "Error al cargar las solicitudes de membresía",
-  "requests.error_cancel": "Error al cancelar la solicitud"
+  "requests.error_cancel": "Error al cancelar la solicitud",
+  "filters.advanced": "Filtros Avanzados",
+  "filters.results_found": "clubs encontrados",
+  "filters.clear": "Limpiar filtros",
+  "filters.active": "Filtros activos:",
+  "filters.verified": "Verificado",
+  "filters.stars_suffix": "estrellas",
+  "filters.neighborhood": "Barrio",
+  "filters.amenities": "Servicios y Amenidades",
+  "filters.vibes": "Ambiente y Estilo",
+  "filters.verified_only": "Solo clubs verificados",
+  "filters.price_range": "Rango de precios:",
+  "filters.min_rating": "Valoración mínima:",
+  "club_dashboard.no_club": "No tienes un club asignado",
+  "club_dashboard.no_club_description": "Tu cuenta no está asociada a ningún club. Por favor, contacta con un administrador."
 }
