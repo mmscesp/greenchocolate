@@ -209,30 +209,41 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
         city: {
           select: { name: true, slug: true },
         },
+        reviews: {
+          where: { isPublic: true },
+          select: { rating: true },
+        },
       },
       orderBy: { name: 'asc' },
     });
 
-    return clubs.map((club: ClubWithCity) => ({
-      id: club.id,
-      name: club.name,
-      slug: club.slug,
-      shortDescription: club.shortDescription,
-      neighborhood: club.neighborhood,
-      cityName: club.city.name,
-      citySlug: club.city.slug,
-      images: club.images,
-      logoUrl: club.logoUrl,
-      rating: null,
-      reviewCount: null,
-      priceRange: club.priceRange,
-      amenities: club.amenities,
-      vibeTags: club.vibeTags,
-      isVerified: club.isVerified,
-      description: club.description,
-      capacity: club.capacity,
-      foundedYear: club.foundedYear,
-    }));
+    return clubs.map((club: ClubWithCity & { reviews: { rating: number }[] }) => {
+      const ratings = club.reviews.map(r => r.rating);
+      const avgRating = ratings.length > 0
+        ? Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10
+        : null;
+      
+      return {
+        id: club.id,
+        name: club.name,
+        slug: club.slug,
+        shortDescription: club.shortDescription,
+        neighborhood: club.neighborhood,
+        cityName: club.city.name,
+        citySlug: club.city.slug,
+        images: club.images,
+        logoUrl: club.logoUrl,
+        rating: avgRating,
+        reviewCount: ratings.length,
+        priceRange: club.priceRange,
+        amenities: club.amenities,
+        vibeTags: club.vibeTags,
+        isVerified: club.isVerified,
+        description: club.description,
+        capacity: club.capacity,
+        foundedYear: club.foundedYear,
+      };
+    });
   } catch (error) {
     console.error('getClubs error:', error);
     return [];
@@ -630,5 +641,203 @@ export async function getClubMembershipRequests(clubId: string) {
   } catch (error) {
     console.error('getClubMembershipRequests error:', error);
     return [];
+  }
+}
+
+// ==========================================
+// FAVORITES & REVIEWS
+// ==========================================
+
+/**
+ * Get user's favorite clubs
+ */
+export async function getUserFavorites(userId: string) {
+  try {
+    const favorites = await prisma.favorite.findMany({
+      where: { userId },
+      include: {
+        club: {
+          include: {
+            city: {
+              select: { name: true, slug: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return favorites.map(fav => ({
+      id: fav.club.id,
+      name: fav.club.name,
+      slug: fav.club.slug,
+      shortDescription: fav.club.shortDescription,
+      neighborhood: fav.club.neighborhood,
+      cityName: fav.club.city.name,
+      citySlug: fav.club.city.slug,
+      images: fav.club.images,
+      logoUrl: fav.club.logoUrl,
+      rating: null,
+      reviewCount: null,
+      priceRange: fav.club.priceRange,
+      amenities: fav.club.amenities,
+      vibeTags: fav.club.vibeTags,
+      isVerified: fav.club.isVerified,
+      description: fav.club.description,
+      capacity: fav.club.capacity,
+      foundedYear: fav.club.foundedYear,
+    }));
+  } catch (error) {
+    console.error('getUserFavorites error:', error);
+    return [];
+  }
+}
+
+/**
+ * Add a club to favorites
+ */
+export async function addFavorite(userId: string, clubId: string) {
+  try {
+    await prisma.favorite.create({
+      data: {
+        userId,
+        clubId,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('addFavorite error:', error);
+    return { success: false, message: 'Failed to add favorite' };
+  }
+}
+
+/**
+ * Remove a club from favorites
+ */
+export async function removeFavorite(userId: string, clubId: string) {
+  try {
+    await prisma.favorite.delete({
+      where: {
+        userId_clubId: {
+          userId,
+          clubId,
+        },
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('removeFavorite error:', error);
+    return { success: false, message: 'Failed to remove favorite' };
+  }
+}
+
+/**
+ * Get club reviews
+ */
+export async function getClubReviews(clubId: string) {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: { clubId, isPublic: true },
+      include: {
+        user: {
+          select: {
+            id: true,
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return reviews;
+  } catch (error) {
+    console.error('getClubReviews error:', error);
+    return [];
+  }
+}
+
+/**
+ * Add a review to a club
+ */
+export async function addReview(
+  userId: string,
+  clubId: string,
+  data: { rating: number; content?: string; isPublic?: boolean }
+) {
+  try {
+    await prisma.review.create({
+      data: {
+        userId,
+        clubId,
+        rating: data.rating,
+        content: data.content,
+        isPublic: data.isPublic ?? false,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('addReview error:', error);
+    return { success: false, message: 'Failed to add review' };
+  }
+}
+
+// ==========================================
+// CLUB ADMIN
+// ==========================================
+
+/**
+ * Get Club for Admin (using managedClubId)
+ */
+export async function getClubForAdmin(authId: string) {
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: { authId },
+      include: {
+        managedClub: {
+          include: {
+            city: {
+              select: { name: true, slug: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!profile?.managedClub) {
+      return null;
+    }
+
+    const club = profile.managedClub;
+    return {
+      id: club.id,
+      name: club.name,
+      slug: club.slug,
+      shortDescription: club.shortDescription,
+      neighborhood: club.neighborhood,
+      cityName: club.city.name,
+      citySlug: club.city.slug,
+      images: club.images,
+      logoUrl: club.logoUrl,
+      rating: null,
+      reviewCount: null,
+      priceRange: club.priceRange,
+      amenities: club.amenities,
+      vibeTags: club.vibeTags,
+      isVerified: club.isVerified,
+      description: club.description,
+      addressDisplay: club.addressDisplay,
+      coordinates: club.coordinates,
+      contactEmail: club.contactEmail,
+      phoneNumber: club.phoneNumber,
+      website: club.website,
+      socialMedia: club.socialMedia,
+      openingHours: club.openingHours,
+      capacity: club.capacity,
+      foundedYear: club.foundedYear,
+    };
+  } catch (error) {
+    console.error('getClubForAdmin error:', error);
+    return null;
   }
 }

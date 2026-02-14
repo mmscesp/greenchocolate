@@ -117,6 +117,52 @@ export interface MembershipRequest {
   updatedAt: Date;
 }
 
+export interface Review {
+  id: string;
+  rating: number;
+  content?: string;
+  userId: string;
+  clubId: string;
+  isPublic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Favorite {
+  id: string;
+  userId: string;
+  clubId: string;
+  createdAt: Date;
+}
+
+export interface Event {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  location: string;
+  clubId?: string;
+  cityId?: string;
+  isPublished: boolean;
+  imageUrl?: string;
+  eventUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Notification {
+  id: string;
+  userId: string;
+  type: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  data?: any;
+  createdAt: Date;
+}
+
 export interface FilterOptions {
   neighborhood: string;
   amenities: string[];

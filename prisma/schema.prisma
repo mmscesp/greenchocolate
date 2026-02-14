@@ -23,6 +23,7 @@ model City {
   countryCode     String    @default("ES")
   articles        Article[]
   clubs           Club[]
+  events          Event[]
 
   @@index([slug])
   @@index([country, region])
@@ -62,6 +63,9 @@ model Club {
   city                  City                @relation(fields: [cityId], references: [id])
   membershipRequests    MembershipRequest[]
   admins                Profile[]           @relation("ClubAdmin")
+  reviews               Review[]
+  favorites             Favorite[]
+  events                Event[]
 
   @@index([slug])
   @@index([cityId])
@@ -89,6 +93,9 @@ model Profile {
   managedClubId          String?
   consents               ConsentRecord[]
   membershipRequests     MembershipRequest[]
+  reviews                Review[]
+  favorites              Favorite[]
+  notifications          Notification[]
   managedClub            Club?               @relation("ClubAdmin", fields: [managedClubId], references: [id])
 
   @@index([authId])
@@ -164,6 +171,74 @@ model ConsentRecord {
   user        Profile   @relation(fields: [userId], references: [id])
 
   @@index([userId, purpose])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  content   String?
+  userId    String
+  clubId    String
+  isPublic  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club      Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, clubId])
+  @@index([clubId, isPublic])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  clubId    String
+  createdAt DateTime @default(now())
+  
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club      Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, clubId])
+}
+
+model Event {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  name        String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  location    String
+  clubId      String?
+  cityId      String?
+  isPublished Boolean   @default(false)
+  imageUrl    String?
+  eventUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  club        Club?     @relation(fields: [clubId], references: [id], onDelete: SetNull)
+  city        City?     @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  
+  @@index([clubId])
+  @@index([cityId])
+  @@index([startDate])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  isRead    Boolean   @default(false)
+  data      Json?
+  createdAt DateTime  @default(now())
+  
+  user      Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, isRead])
 }
 
 model AuditLog {
