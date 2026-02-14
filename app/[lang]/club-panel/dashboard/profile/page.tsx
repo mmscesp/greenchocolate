@@ -19,10 +19,21 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { mockClubData } from '@/lib/mock-admin-data';
 import { toast } from 'sonner';
 import { Upload, Image as ImageIcon, MapPin, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Default values for empty form
+const defaultValues = {
+  name: '',
+  description: '',
+  neighborhood: '',
+  addressDisplay: '',
+  contactEmail: '',
+  phoneNumber: '',
+  capacity: 50,
+  foundedYear: new Date().getFullYear(),
+};
 
 // Schema Definition
 const clubProfileSchema = z.object({
@@ -42,21 +53,12 @@ type ClubProfileFormValues = z.infer<typeof clubProfileSchema>;
 
 export default function ClubProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
-  const [coverImage, setCoverImage] = useState<string | null>(mockClubData.image);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
 
-  // Initialize form with default values (mock data for now)
+  // Initialize form with default values
   const form = useForm<ClubProfileFormValues>({
     resolver: zodResolver(clubProfileSchema),
-    defaultValues: {
-      name: mockClubData.name,
-      description: mockClubData.description,
-      neighborhood: mockClubData.location.split(',')[0] || '', // Simple extraction
-      addressDisplay: mockClubData.location,
-      contactEmail: 'contact@socialclub.com', // Mock
-      phoneNumber: '+34 600 000 000', // Mock
-      capacity: mockClubData.capacity,
-      foundedYear: mockClubData.foundedYear,
-    },
+    defaultValues: defaultValues,
   });
 
   async function onSubmit(data: ClubProfileFormValues) {

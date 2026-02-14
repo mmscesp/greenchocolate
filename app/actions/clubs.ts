@@ -501,26 +501,11 @@ export async function getAllVibes(citySlug?: string) {
 
 /**
  * Get Club by Auth ID (for Club Admin panel)
+ * Now uses managedClubId via getClubForAdmin
  */
 export async function getClubByAuthId(authId: string) {
-  try {
-    const club = await prisma.club.findFirst({
-      where: {
-        // In a real app, Profile would have managedClubId
-        // For now, we'll find by contactEmail matching the user's email
-        // This is a temporary solution until proper club admin relationship is established
-      },
-      include: {
-        city: {
-          select: { name: true, slug: true },
-        },
-      },
-    });
-    return club;
-  } catch (error) {
-    console.error('getClubByAuthId error:', error);
-    return null;
-  }
+  // Reuse getClubForAdmin which uses managedClubId relation
+  return getClubForAdmin(authId);
 }
 
 /**

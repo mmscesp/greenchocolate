@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { mockEvents } from '@/lib/mock-admin-data';
 import { Calendar, MapPin, Users, Edit, Trash2, Plus, Image as ImageIcon, Clock, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -23,6 +22,18 @@ interface EventForm {
   capacity: number;
   description: string;
   image: string;
+}
+
+interface ClubEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  capacity: number;
+  attendees?: number;
+  description: string;
+  image?: string;
 }
 
 const getStatusBadge = (date: string) => {
@@ -41,7 +52,7 @@ const getStatusBadge = (date: string) => {
 };
 
 export default function EventsPage() {
-  const [events, setEvents] = useState(mockEvents);
+  const [events, setEvents] = useState<ClubEvent[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<EventForm>({

@@ -2,32 +2,62 @@
 
 import { StatsCard } from '@/components/admin/StatsCard';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
-import { mockClubData, mockMembers, mockRequests, mockEvents } from '@/lib/mock-admin-data';
 import { Users, Calendar, FileText, TrendingUp, MapPin, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { ClubCard, ClubDetail } from '@/app/actions/clubs';
+import { useEffect, useState } from 'react';
+import { getClubMembershipRequests } from '@/app/actions/clubs';
 
 interface ClubDashboardClientProps {
   club: ClubCard | ClubDetail | null;
 }
 
+interface MembershipRequest {
+  id: string;
+  status: string;
+}
+
 export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
   const { t } = useLanguage();
+  const [pendingRequests, setPendingRequests] = useState(0);
   
-  // Fallback to mock data if no club is provided (for dev/demo)
-  const displayClub = club ? {
+  useEffect(() => {
+    async function fetchData() {
+      if (club) {
+        const requests = await getClubMembershipRequests(club.id);
+        setPendingRequests(requests.filter((r: MembershipRequest) => r.status === 'PENDING').length);
+      }
+    }
+    fetchData();
+  }, [club?.id]);
+
+  // Show message if no club assigned
+  if (!club) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>{t('club_dashboard.no_club') || 'No club assigned'}</CardTitle>
+            <CardDescription>
+              Your account is not associated with any club. Please contact an administrator.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+  
+  // Use real club data
+  const displayClub = {
     name: club.name,
     location: (club as any).addressDisplay || club.neighborhood || 'Location Pending',
     members: club.capacity || 0, 
     capacity: club.capacity || 100,
-    description: (club as any).description || club.shortDescription || 'No description available.',
+    description: club.description || club.shortDescription || 'No description available.',
     foundedYear: club.foundedYear || new Date().getFullYear(),
-  } : mockClubData;
-
-  const pendingRequests = mockRequests.filter((r) => r.status === 'pending').length;
-  const upcomingEvents = mockEvents.filter((e) => new Date(e.date) > new Date()).length;
+  };
 
   return (
     <div className="space-y-8">
@@ -58,7 +88,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
         />
         <StatsCard 
           title="Upcoming Events" 
-          value={upcomingEvents} 
+          value="0" 
           icon={Calendar} 
           color="orange" 
         />

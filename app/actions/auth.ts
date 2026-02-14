@@ -423,3 +423,95 @@ export async function decryptUserPII(userId: string): Promise<ActionState> {
     };
   }
 }
+
+// ==========================================
+// CLUB ADMIN ACTIONS
+// ==========================================
+
+/**
+ * Assign a club to a user (make them a CLUB_ADMIN)
+ * Only admins can perform this action
+ */
+export async function assignClubAdmin(userId: string, clubId: string): Promise<ActionState> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser || currentUser.role !== 'ADMIN') {
+    return {
+      success: false,
+      message: 'Unauthorized: Only admins can assign club admins',
+    };
+  }
+
+  try {
+    // Verify club exists
+    const club = await prisma.club.findUnique({
+      where: { id: clubId },
+    });
+
+    if (!club) {
+      return {
+        success: false,
+        message: 'Club not found',
+      };
+    }
+
+    // Update profile with managedClubId and set role to CLUB_ADMIN
+    await prisma.profile.update({
+      where: { id: userId },
+      data: {
+        managedClubId: clubId,
+        role: 'CLUB_ADMIN',
+      },
+    });
+
+    revalidatePath('/admin/clubs');
+
+    return {
+      success: true,
+      message: `Successfully assigned ${club.name} to user`,
+    };
+  } catch (error) {
+    console.error('assignClubAdmin error:', error);
+    return {
+      success: false,
+      message: 'Failed to assign club admin',
+    };
+  }
+}
+
+/**
+ * Remove club admin from a user
+ */
+export async function removeClubAdmin(userId: string): Promise<ActionState> {
+  const currentUser = await getCurrentUser();
+
+  if (!currentUser || currentUser.role !== 'ADMIN') {
+    return {
+      success: false,
+      message: 'Unauthorized: Only admins can remove club admins',
+    };
+  }
+
+  try {
+    await prisma.profile.update({
+      where: { id: userId },
+      data: {
+        managedClubId: null,
+        role: 'USER',
+      },
+    });
+
+    revalidatePath('/admin/clubs');
+
+    return {
+      success: true,
+      message: 'Successfully removed club admin',
+    };
+  } catch (error) {
+    console.error('removeClubAdmin error:', error);
+    return {
+      success: false,
+      message: 'Failed to remove club admin',
+    };
+  }
+}
