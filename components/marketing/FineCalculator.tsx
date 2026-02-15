@@ -69,15 +69,15 @@ export default function FineCalculator() {
       transition={{ delay: 0.2 }}
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-zinc-900 to-zinc-800 rounded-t-3xl p-6 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl" />
+      <div className="bg-gradient-to-r from-red-500 to-rose-600 rounded-t-3xl p-6 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
-            <Scale className="h-5 w-5 text-red-400" />
-            <span className="text-xs font-bold uppercase tracking-widest text-red-400">Fine Calculator</span>
+            <Scale className="h-5 w-5 text-white" />
+            <span className="text-xs font-bold uppercase tracking-widest text-white/90">Fine Calculator</span>
           </div>
           <h3 className="text-2xl font-bold">The Cost of Ignorance</h3>
-          <p className="text-zinc-400 text-sm mt-1">Slide to see potential penalties</p>
+          <p className="text-white/80 text-sm mt-1">Slide to see potential penalties</p>
         </div>
       </div>
 

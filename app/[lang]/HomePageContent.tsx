@@ -64,23 +64,23 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
         </section>
 
         {/* Interactive Tools - Risk Radar & Eligibility */}
-        <section className="py-24 bg-gradient-to-b from-zinc-50 to-white relative overflow-hidden">
+        <section className="py-24 bg-zinc-900 relative overflow-hidden">
           {/* Background decoration */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-red-100 rounded-full blur-3xl" />
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-red-500 rounded-full blur-3xl" />
           </div>
-          
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-full text-indigo-600 mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 rounded-full text-indigo-300 mb-6">
                 <Calculator className="h-4 w-4" />
                 <span className="text-sm font-bold">Interactive Tools</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-4">
+              <h2 className="text-4xl lg:text-5xl font-black text-white mb-4">
                 Know Before You Go
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
                 Two essential tools to check your eligibility and understand the real costs of mistakes.
               </p>
             </div>
