@@ -4,19 +4,19 @@ import { ArrowRight } from 'lucide-react';
 const ARTICLES = [
   {
     title: 'Is Weed Legal in Barcelona in 2026?',
-    slug: 'legal/is-weed-legal',
+    slug: 'is-weed-legal-barcelona-2026',
     category: 'Legal',
     excerpt: 'The real rules, fines, and grey areas explained.',
   },
   {
     title: '5 Mistakes Tourists Make',
-    slug: 'etiquette/5-mistakes-tourists-make',
+    slug: '5-mistakes-tourists-make',
     category: 'Etiquette',
     excerpt: "Don't be that tourist. Learn the local norms.",
   },
   {
     title: 'Edibles Safety Guide',
-    slug: 'safety/edibles-safety-guide',
+    slug: 'edibles-safety-guide',
     category: 'Harm Reduction',
     excerpt: 'Dosing, timing, and avoiding a bad experience.',
   },

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +29,10 @@ import {
   Check,
   AlertCircle,
   Loader2,
+  ArrowLeft,
+  Sparkles,
+  Shield,
+  Cannabis,
 } from 'lucide-react';
 
 interface ClubProfileContentProps {
@@ -94,46 +99,93 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   };
 
   return (
-    <div className="bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <Link href={`/${language}/clubs`}>
-          <Button variant="ghost">← {t('nav.back_to_clubs')}</Button>
-        </Link>
+    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-green-500/5 to-transparent" />
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-teal-500/5 rounded-full blur-3xl" />
+      </div>
+
+      {/* Navigation */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-20">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Link href={`/${language}/clubs`}>
+            <Button 
+              variant="ghost" 
+              className="text-zinc-400 hover:text-white hover:bg-white/5 rounded-full"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t('nav.back_to_clubs')}
+            </Button>
+          </Link>
+        </motion.div>
       </div>
 
       {/* Hero Image Gallery */}
-      <section className="relative h-96 lg:h-[500px] overflow-hidden">
-        <Image
-          src={club.images[currentImageIndex]}
-          alt={club.name}
-          fill
-          className="object-cover"
-        />
+      <section className="relative h-[500px] lg:h-[600px] overflow-hidden mt-4">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentImageIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={club.images[currentImageIndex]}
+              alt={club.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-900/50 to-transparent" />
 
         {/* Image Navigation */}
         {club.images.length > 1 && (
           <>
-            <button
+            <motion.button
               onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="absolute left-6 top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/50 transition-colors border border-white/10"
             >
               <ChevronLeft className="h-6 w-6" />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="absolute right-6 top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/50 transition-colors border border-white/10"
             >
               <ChevronRight className="h-6 w-6" />
-            </button>
+            </motion.button>
+
+            {/* Image Counter */}
+            <div className="absolute top-6 right-6 bg-black/30 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium border border-white/10">
+              {currentImageIndex + 1} / {club.images.length}
+            </div>
 
             {/* Image Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2">
               {club.images.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentImageIndex 
+                      ? 'bg-green-400 w-8' 
+                      : 'bg-white/30 w-2 hover:bg-white/50'
                   }`}
                 />
               ))}
@@ -142,139 +194,233 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         )}
 
         {/* Overlay Info */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
+        <div className="absolute bottom-0 left-0 right-0 p-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-3xl lg:text-4xl font-bold text-white">{club.name}</h1>
+            <motion.div 
+              className="flex items-center gap-3 mb-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h1 className="text-4xl lg:text-6xl font-black text-white">{club.name}</h1>
               <VerificationBadge isVerified={club.isVerified} size="lg" />
-            </div>
-            <div className="flex items-center gap-4 text-white/90">
-              <div className="flex items-center gap-1">
-                <MapPin className="h-5 w-5" />
-                <span>{club.neighborhood}</span>
+            </motion.div>
+            
+            <motion.div 
+              className="flex flex-wrap items-center gap-4 text-white/90"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+                <MapPin className="h-5 w-5 text-green-400" />
+                <span className="font-medium">{club.neighborhood}</span>
               </div>
+              
               {club.rating && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
                   <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  <span>{club.rating}</span>
-                  <span className="text-white/70">({club.reviewCount} {t('club.reviews')})</span>
+                  <span className="font-bold">{club.rating}</span>
+                  <span className="text-white/60">({club.reviewCount} {t('club.reviews')})</span>
                 </div>
               )}
-              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+              
+              <div className="bg-green-500/20 backdrop-blur-sm text-green-400 px-4 py-2 rounded-full font-bold border border-green-500/30">
                 {club.priceRange}
-              </Badge>
-            </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Description */}
-            <div className="bg-card rounded-2xl border border-border p-6">
-              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.about')}</h2>
-              <p className="text-muted-foreground leading-relaxed">{club.description}</p>
-            </div>
+            <motion.div 
+              className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-8 hover:border-green-500/30 transition-colors duration-500"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                  <Sparkles className="h-6 w-6 text-green-400" />
+                </div>
+                <h2 className="text-2xl font-bold text-white">{t('club.about')}</h2>
+              </div>
+              <p className="text-zinc-300 leading-relaxed text-lg">{club.description}</p>
+            </motion.div>
 
             {/* Amenities */}
-            <div className="bg-card rounded-2xl border border-border p-6">
-              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.services')}</h2>
-              <div className="flex flex-wrap gap-2">
+            <motion.div 
+              className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-8 hover:border-green-500/30 transition-colors duration-500"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-blue-400" />
+                </div>
+                <h2 className="text-2xl font-bold text-white">{t('club.services')}</h2>
+              </div>
+              <div className="flex flex-wrap gap-3">
                 {club.amenities.map((amenity, index) => (
-                  <Badge key={index} variant="outline" className="text-sm">
+                  <Badge 
+                    key={index} 
+                    variant="outline" 
+                    className="text-sm px-4 py-2 border-white/10 text-zinc-300 hover:bg-green-500/10 hover:border-green-500/30 hover:text-green-400 transition-all bg-white/5"
+                  >
                     {amenity}
                   </Badge>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Vibe Tags */}
-            <div className="bg-card rounded-2xl border border-border p-6">
-              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.atmosphere')}</h2>
-              <div className="flex flex-wrap gap-2">
+            <motion.div 
+              className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-8 hover:border-purple-500/30 transition-colors duration-500"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center">
+                  <Cannabis className="h-6 w-6 text-purple-400" />
+                </div>
+                <h2 className="text-2xl font-bold text-white">{t('club.atmosphere')}</h2>
+              </div>
+              <div className="flex flex-wrap gap-3">
                 {club.vibeTags.map((vibe, index) => (
-                  <Badge key={index} variant="secondary" className="text-sm">
+                  <Badge 
+                    key={index} 
+                    className="text-sm px-4 py-2 bg-gradient-to-r from-purple-500/20 to-violet-500/20 text-purple-300 border border-purple-500/30 hover:from-purple-500/30 hover:to-violet-500/30 transition-all"
+                  >
                     {vibe}
                   </Badge>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Opening Hours */}
-            <div className="bg-card rounded-2xl border border-border p-6">
-              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.schedule')}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <motion.div 
+              className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-8 hover:border-green-500/30 transition-colors duration-500"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-amber-400" />
+                </div>
+                <h2 className="text-2xl font-bold text-white">{t('club.schedule')}</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {Object.entries(club.openingHours as Record<string, string>).map(([day, hours]) => (
-                  <div key={day} className="flex justify-between">
-                    <span className="font-medium text-foreground capitalize">
+                  <div 
+                    key={day} 
+                    className="flex justify-between items-center py-3 px-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
+                  >
+                    <span className="font-medium text-zinc-300 capitalize">
                       {getDayName(day)}
                     </span>
-                    <span className="text-muted-foreground">{hours}</span>
+                    <span className="text-green-400 font-bold">{hours}</span>
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Pre-registration CTA */}
             {club.allowsPreRegistration && (
-              <div className="bg-card rounded-2xl border border-border p-6 sticky top-24">
-                <div className="text-center mb-4">
-                  <h3 className="text-xl font-bold text-foreground mb-2">{t('club.join_club')}</h3>
-                  <p className="text-muted-foreground text-sm">{t('club.membership_request')}</p>
+              <motion.div 
+                className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-sm rounded-3xl border border-green-500/30 p-8 sticky top-24"
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Sparkles className="h-8 w-8 text-green-400" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">{t('club.join_club')}</h3>
+                  <p className="text-zinc-400">{t('club.membership_request')}</p>
                 </div>
-                  <Button
-                    variant="cannabis"
-                    size="lg"
-                    onClick={() => {
-                      if (!user) {
-                        router.push(`/${language}/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
-                        return;
-                      }
-                      setShowPreRegistrationModal(true);
-                    }}
-                    className="w-full"
-                  >
-                    {t('club.pre_register')}
-                  </Button>
-              </div>
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    if (!user) {
+                      router.push(`/${language}/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+                      return;
+                    }
+                    setShowPreRegistrationModal(true);
+                  }}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-bold py-6 rounded-xl shadow-lg shadow-green-500/25 transition-all duration-300"
+                >
+                  {t('club.pre_register')}
+                </Button>
+              </motion.div>
             )}
 
             {/* Contact Info */}
-            <div className="bg-card rounded-2xl border border-border p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">{t('club.contact')}</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <MapPin className="h-5 w-5 text-green-600" />
+            <motion.div 
+              className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-6"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                  <Mail className="h-4 w-4 text-blue-400" />
+                </div>
+                {t('club.contact')}
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 text-zinc-400">
+                  <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
+                    <MapPin className="h-5 w-5 text-green-400" />
+                  </div>
                   {user ? (
                     <span className="text-sm">{club.address}</span>
                   ) : (
                     <div className="flex flex-col items-start">
                       <span className="text-sm blur-sm select-none">Calle de la Verdad, 123</span>
-                      <Link href={`/${language}/account/login`} className="text-xs text-green-600 hover:underline mt-1">
+                      <Link href={`/${language}/account/login`} className="text-xs text-green-400 hover:text-green-300 mt-1">
                         Log in to view address
                       </Link>
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <Phone className="h-5 w-5 text-green-600" />
+                <div className="flex items-center gap-3 text-zinc-400">
+                  <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
+                    <Phone className="h-5 w-5 text-green-400" />
+                  </div>
                   <span className="text-sm">{club.phoneNumber}</span>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <Mail className="h-5 w-5 text-green-600" />
+                <div className="flex items-center gap-3 text-zinc-400">
+                  <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
+                    <Mail className="h-5 w-5 text-green-400" />
+                  </div>
                   <span className="text-sm">{club.contactEmail}</span>
                 </div>
                 {club.website && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Globe className="h-5 w-5 text-green-600" />
+                  <div className="flex items-center gap-3 text-zinc-400">
+                    <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
+                      <Globe className="h-5 w-5 text-green-400" />
+                    </div>
                     <a
                       href={`https://${club.website}`}
-                      className="text-sm text-green-600 hover:underline"
+                      className="text-sm text-green-400 hover:text-green-300 transition-colors"
                     >
                       {club.website}
                     </a>
@@ -284,12 +430,12 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
 
               {/* Social Media */}
               {club.socialMedia && (
-                <div className="mt-4 pt-4 border-t">
+                <div className="mt-6 pt-6 border-t border-white/10">
                   <div className="flex gap-3">
                     {club.socialMedia.instagram && (
                       <a
                         href={`https://instagram.com/${club.socialMedia.instagram.replace('@', '')}`}
-                        className="text-pink-600 hover:text-pink-700"
+                        className="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl flex items-center justify-center text-pink-400 hover:from-purple-500/30 hover:to-pink-500/30 transition-all"
                       >
                         <Instagram className="h-5 w-5" />
                       </a>
@@ -297,7 +443,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     {club.socialMedia.facebook && (
                       <a
                         href={`https://facebook.com/${club.socialMedia.facebook}`}
-                        className="text-blue-600 hover:text-blue-700"
+                        className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400 hover:bg-blue-500/20 transition-all"
                       >
                         <Facebook className="h-5 w-5" />
                       </a>
@@ -305,131 +451,166 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   </div>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Club Stats */}
-            <div className="bg-card rounded-2xl border border-border p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">{t('club.information')}</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Users className="h-4 w-4" />
+            <motion.div 
+              className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-6"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <div className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center">
+                  <Users className="h-4 w-4 text-amber-400" />
+                </div>
+                {t('club.information')}
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between py-3 px-4 bg-white/5 rounded-xl">
+                  <div className="flex items-center gap-3 text-zinc-400">
+                    <Users className="h-5 w-5" />
                     <span className="text-sm">{t('club.capacity')}</span>
                   </div>
-                  <span className="text-sm font-medium">
+                  <span className="text-white font-bold">
                     {club.capacity} {t('club.people')}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
+                <div className="flex items-center justify-between py-3 px-4 bg-white/5 rounded-xl">
+                  <div className="flex items-center gap-3 text-zinc-400">
+                    <Calendar className="h-5 w-5" />
                     <span className="text-sm">{t('club.founded')}</span>
                   </div>
-                  <span className="text-sm font-medium">{club.foundedYear}</span>
+                  <span className="text-white font-bold">{club.foundedYear}</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
 
       {/* Pre-registration Modal */}
-      {showPreRegistrationModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-card border border-border rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-foreground">
-                  {t('form.pre_registration')} - {club.name}
-                </h3>
-                <button
-                  onClick={() => {
-                    setShowPreRegistrationModal(false);
-                    setFormState(null);
-                  }}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-
-              {/* Form State Message */}
-              {formState && (
-                <div
-                  className={`mb-4 p-4 rounded-lg flex items-start gap-3 ${
-                    formState.success
-                      ? 'bg-green-50 border border-green-200 text-green-800'
-                      : 'bg-red-50 border border-red-200 text-red-800'
-                  }`}
-                >
-                  {formState.success ? (
-                    <Check className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                  ) : (
-                    <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                  )}
-                  <div>
-                    <p className="font-medium">{formState.message}</p>
-                    {formState.errors && (
-                      <ul className="mt-2 text-sm list-disc list-inside">
-                        {Object.entries(formState.errors).map(([field, errors]) =>
-                          errors.map((error, idx) => <li key={`${field}-${idx}`}>{error}</li>)
-                        )}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <form onSubmit={handlePreRegistrationSubmit} className="space-y-4">
-                <input type="hidden" name="clubId" value={club.id} />
-
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1">
-                    {t('form.full_name')} {t('form.required')}
-                  </label>
-                  <input
-                    type="text"
-                    name="message"
-                    required
-                    placeholder={t('form.message_placeholder')}
-                    className="w-full p-2 border border-input rounded-md bg-background focus:ring-green-500 focus:border-green-500"
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
+      <AnimatePresence>
+        {showPreRegistrationModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-zinc-900 border border-white/10 rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <div className="p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold text-white">
+                    {t('form.pre_registration')}
+                  </h3>
+                  <button
                     onClick={() => {
                       setShowPreRegistrationModal(false);
                       setFormState(null);
                     }}
-                    className="flex-1"
-                    disabled={isSubmitting}
+                    className="text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
                   >
-                    {t('form.cancel')}
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="cannabis"
-                    disabled={isSubmitting}
-                    className="flex-1"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        {t('form.submitting')}
-                      </>
-                    ) : (
-                      t('form.submit')
-                    )}
-                  </Button>
+                    <X className="h-6 w-6" />
+                  </button>
                 </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+
+                {/* Club Mini Info */}
+                <div className="flex items-center gap-4 mb-6 p-4 bg-white/5 rounded-2xl">
+                  <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                    <Sparkles className="h-6 w-6 text-green-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold">{club.name}</p>
+                    <p className="text-zinc-400 text-sm">{club.neighborhood}</p>
+                  </div>
+                </div>
+
+                {/* Form State Message */}
+                {formState && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
+                      formState.success
+                        ? 'bg-green-500/10 border border-green-500/30 text-green-400'
+                        : 'bg-red-500/10 border border-red-500/30 text-red-400'
+                    }`}
+                  >
+                    {formState.success ? (
+                      <Check className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                    )}
+                    <div>
+                      <p className="font-medium">{formState.message}</p>
+                      {formState.errors && (
+                        <ul className="mt-2 text-sm list-disc list-inside">
+                          {Object.entries(formState.errors).map(([field, errors]) =>
+                            errors.map((error, idx) => <li key={`${field}-${idx}`}>{error}</li>)
+                          )}
+                        </ul>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
+                <form onSubmit={handlePreRegistrationSubmit} className="space-y-5">
+                  <input type="hidden" name="clubId" value={club.id} />
+
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-300 mb-2">
+                      {t('form.full_name')} <span className="text-green-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="message"
+                      required
+                      placeholder={t('form.message_placeholder')}
+                      className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none"
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowPreRegistrationModal(false);
+                        setFormState(null);
+                      }}
+                      className="flex-1 border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white rounded-xl py-6"
+                      disabled={isSubmitting}
+                    >
+                      {t('form.cancel')}
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-bold rounded-xl py-6 shadow-lg shadow-green-500/25"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          {t('form.submitting')}
+                        </>
+                      ) : (
+                        t('form.submit')
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

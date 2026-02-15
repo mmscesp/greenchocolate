@@ -1,174 +1,262 @@
-import { getArticles } from '@/app/actions/articles';
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, History, Calendar, MapPin, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ArrowLeft, History, Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
 
 interface CulturePageProps {
   params: Promise<{ lang: string }>;
 }
 
-export default async function CulturePage({ params }: CulturePageProps) {
-  const { lang } = await params;
-  const articles = await getArticles({ category: 'Culture' });
+const cultureGuides = [
+  {
+    title: 'The Barcelona Cannabis Club Movement',
+    slug: 'barcelona-cannabis-club-movement',
+    excerpt: 'How a protest movement became a cultural institution. The history behind Spain\'s unique model.',
+    readTime: 12,
+    featured: true,
+  },
+  {
+    title: 'Interview: Club Founders on 20 Years of Change',
+    slug: 'interview-club-founders',
+    excerpt: 'Perspectives from pioneers who shaped the movement from the beginning.',
+    readTime: 15,
+  },
+  {
+    title: 'From Stigma to Acceptance',
+    slug: 'stigma-to-acceptance',
+    excerpt: 'How public perception has evolved over the past two decades.',
+    readTime: 8,
+  },
+  {
+    title: 'The Club as Community Center',
+    slug: 'club-as-community-center',
+    excerpt: 'Beyond cannabis—how clubs serve as hubs for art, music, and social connection.',
+    readTime: 6,
+  },
+  {
+    title: 'Madrid vs Barcelona: A Cultural Comparison',
+    slug: 'madrid-vs-barcelona-comparison',
+    excerpt: 'How the two major cities developed different club cultures and atmospheres.',
+    readTime: 7,
+  },
+];
 
-  const cultureGuides = [
-    {
-      title: 'The Barcelona Cannabis Club Movement',
-      slug: 'culture/barcelona-cannabis-club-movement',
-      excerpt: 'How a protest movement became a cultural institution. The history behind Spain\'s unique model.',
-      readTime: 12,
-      featured: true,
-    },
-    {
-      title: 'Interview: Club Founders on 20 Years of Change',
-      slug: 'culture/interview-club-founders',
-      excerpt: 'Perspectives from pioneers who shaped the movement from the beginning.',
-      readTime: 15,
-    },
-    {
-      title: 'From Stigma to Acceptance',
-      slug: 'culture/stigma-to-acceptance',
-      excerpt: 'How public perception has evolved over the past two decades.',
-      readTime: 8,
-    },
-    {
-      title: 'The Club as Community Center',
-      slug: 'culture/club-as-community-center',
-      excerpt: 'Beyond cannabis—how clubs serve as hubs for art, music, and social connection.',
-      readTime: 6,
-    },
-    {
-      title: 'Madrid vs Barcelona: A Cultural Comparison',
-      slug: 'culture/madrid-vs-barcelona-comparison',
-      excerpt: 'How the two major cities developed different club cultures and atmospheres.',
-      readTime: 7,
-    },
-  ];
+export default function CulturePage({ params }: CulturePageProps) {
+  const [lang, setLang] = useState('en');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    params.then(({ lang: resolvedLang }) => {
+      setLang(resolvedLang);
+      setTimeout(() => setIsLoading(false), 300);
+    });
+  }, [params]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="animate-pulse space-y-8">
+            <div className="h-48 bg-white/5 rounded-3xl" />
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-32 bg-white/5 rounded-2xl" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-purple-500/5 to-transparent" />
+        <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-violet-500/5 rounded-full blur-3xl" />
+      </div>
+
       {/* Hero */}
-      <section className="relative bg-gradient-to-b from-purple-50/50 to-background py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <Button variant="ghost" asChild className="mb-6">
+      <section className="relative py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Button variant="outline" asChild className="mb-6 border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white">
               <Link href={`/${lang}/editorial`}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
                 Back to Knowledge Vault
               </Link>
             </Button>
-            
-            <div className="inline-flex items-center gap-2 bg-purple-50 border border-purple-200 text-purple-700 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+          </motion.div>
+          
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="inline-flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 text-purple-400 px-4 py-1.5 rounded-full text-sm font-medium mb-6"
+            >
               <History className="w-4 h-4" />
               Culture & History
-            </div>
+            </motion.div>
             
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              The Story Behind <span className="text-primary">Spain's Movement</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              Spain's cannabis social clubs didn't emerge in a vacuum. 
+            <motion.h1 
+              className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              The Story Behind{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-violet-400">
+                Spain&apos;s Movement
+              </span>
+            </motion.h1>
+            
+            <motion.p 
+              className="text-lg md:text-xl text-zinc-400 leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              Spain&apos;s cannabis social clubs didn&apos;t emerge in a vacuum. 
               They are the product of decades of activism, cultural shift, 
               and a uniquely Spanish approach to drug policy reform.
-            </p>
+            </motion.p>
           </div>
         </div>
       </section>
 
       {/* Timeline */}
-      <section className="py-12 border-b">
+      <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-xl font-semibold mb-6">A Brief History</h2>
-            <div className="space-y-6">
+          <div className="max-w-3xl">
+            <motion.h2 
+              className="text-xl font-semibold mb-6 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              A Brief History
+            </motion.h2>
+            
+            <motion.div 
+              className="space-y-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                    <Calendar className="w-5 h-5 text-primary" />
+                  <div className="w-10 h-10 bg-purple-500/10 rounded-full flex items-center justify-center shrink-0 border border-purple-500/20">
+                    <Calendar className="w-5 h-5 text-purple-400" />
                   </div>
-                  <div className="w-0.5 h-full bg-border mt-2" />
+                  <div className="w-0.5 h-full bg-white/10 mt-2" />
                 </div>
                 <div className="pb-6">
-                  <span className="text-sm text-muted-foreground">1990s</span>
-                  <h3 className="font-semibold mb-2">The Movement Begins</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <span className="text-sm text-zinc-500">1990s</span>
+                  <h3 className="font-semibold text-white mb-2">The Movement Begins</h3>
+                  <p className="text-sm text-zinc-400">
                     Activists start advocating for cannabis decriminalization. 
-                    The concept of "annabis clubs" emerges from social movements.
+                    The concept of &quot;cannabis clubs&quot; emerges from social movements.
                   </p>
                 </div>
               </div>
+              
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5 text-primary" />
+                  <div className="w-10 h-10 bg-violet-500/10 rounded-full flex items-center justify-center shrink-0 border border-violet-500/20">
+                    <MapPin className="w-5 h-5 text-violet-400" />
                   </div>
-                  <div className="w-0.5 h-full bg-border mt-2" />
+                  <div className="w-0.5 h-full bg-white/10 mt-2" />
                 </div>
                 <div className="pb-6">
-                  <span className="text-sm text-muted-foreground">2006-2010</span>
-                  <h3 className="font-semibold mb-2">Barcelona Emerges</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <span className="text-sm text-zinc-500">2006-2010</span>
+                  <h3 className="font-semibold text-white mb-2">Barcelona Emerges</h3>
+                  <p className="text-sm text-zinc-400">
                     Barcelona becomes the epicenter. The first formal clubs 
                     open, creating a new model for private consumption.
                   </p>
                 </div>
               </div>
+              
               <div className="flex gap-4">
                 <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                    <History className="w-5 h-5 text-primary" />
+                  <div className="w-10 h-10 bg-fuchsia-500/10 rounded-full flex items-center justify-center shrink-0 border border-fuchsia-500/20">
+                    <History className="w-5 h-5 text-fuchsia-400" />
                   </div>
                 </div>
                 <div>
-                  <span className="text-sm text-muted-foreground">Present Day</span>
-                  <h3 className="font-semibold mb-2">A Growing Movement</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <span className="text-sm text-zinc-500">Present Day</span>
+                  <h3 className="font-semibold text-white mb-2">A Growing Movement</h3>
+                  <p className="text-sm text-zinc-400">
                     Thousands of members across Spain. Continued evolution 
                     of the model and ongoing policy discussions.
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Articles Grid */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">Culture & History Articles</h2>
-            <div className="grid gap-6">
-              {cultureGuides.map((article) => (
-                <Link
+          <div className="max-w-4xl">
+            <motion.h2 
+              className="text-2xl md:text-3xl font-bold mb-8 text-white"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              Culture & History Articles
+            </motion.h2>
+            
+            <div className="grid gap-4">
+              {cultureGuides.map((article, index) => (
+                <motion.div
                   key={article.slug}
-                  href={`/${lang}/learn/${article.slug}`}
-                  className="group block bg-card border rounded-xl p-6 hover:border-primary/50 transition-all duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
                 >
-                  <div className="flex flex-col md:flex-row md:items-center gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        {article.featured && (
-                          <Badge variant="default" className="bg-primary">
-                            Featured
-                          </Badge>
-                        )}
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                          <Clock className="w-3.5 h-3.5" />
-                          {article.readTime} min read
+                  <Link
+                    href={`/${lang}/editorial/${article.slug}`}
+                    className="group block rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:border-purple-500/30 hover:bg-white/[0.07] transition-all duration-500"
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          {article.featured && (
+                            <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                              Featured
+                            </Badge>
+                          )}
+                          <div className="flex items-center gap-1.5 text-xs text-zinc-500">
+                            <Clock className="w-3.5 h-3.5" />
+                            {article.readTime} min read
+                          </div>
                         </div>
+                        <h3 className="text-xl font-bold mb-2 text-white group-hover:text-purple-400 transition-colors">
+                          {article.title}
+                        </h3>
+                        <p className="text-zinc-400">
+                          {article.excerpt}
+                        </p>
                       </div>
-                      <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                        {article.title}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {article.excerpt}
-                      </p>
+                      <ArrowRight className="w-5 h-5 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-1 transition-all shrink-0" />
                     </div>
-                    <ArrowLeft className="w-5 h-5 text-muted-foreground rotate-180 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-                  </div>
-                </Link>
+                  </Link>
+                </motion.div>
               ))}
             </div>
           </div>

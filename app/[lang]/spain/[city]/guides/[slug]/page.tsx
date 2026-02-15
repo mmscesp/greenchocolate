@@ -37,7 +37,7 @@ export default async function GuidePage({ params }: PageProps) {
           {related.length > 0 ? related.map((item) => (
             <Link
               key={item.id}
-              href={`/${lang}/learn/${item.slug}`}
+              href={`/${lang}/editorial/${item.slug}`}
               className="block rounded-lg border bg-card p-4 hover:border-primary/50 transition-colors"
             >
               <h3 className="font-medium">{item.title}</h3>

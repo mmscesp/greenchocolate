@@ -139,7 +139,7 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
               >
-                <Link href="/learn">
+                <Link href="/editorial">
                   <Button
                     variant="outline"
                     className="rounded-full px-8 py-6 text-base font-bold border-2 hover:bg-green-50 hover:border-green-300 transition-all group"
@@ -160,15 +160,29 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
         <WhyUsSection />
 
         {/* Coming Soon: Barcelona */}
-        <section className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-24 bg-zinc-900 relative overflow-hidden">
+          {/* Background Effects */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-green-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-3xl" />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <Badge className="mb-6 bg-green-500/10 text-green-700 border-green-200">Launching March 2026</Badge>
-                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-8 leading-tight">
-                  First City: <span className="text-green-600">Barcelona</span>
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <Badge className="mb-6 bg-green-500/10 text-green-400 border-green-500/20 backdrop-blur-sm">Launching March 2026</Badge>
+                <h2 className="text-4xl lg:text-5xl font-black text-white mb-8 leading-tight">
+                  First City:{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
+                    Barcelona
+                  </span>
                 </h2>
-                <p className="text-xl text-gray-600 mb-10 leading-relaxed">
+                <p className="text-xl text-zinc-400 mb-10 leading-relaxed">
                   We're curating the first verified database of Barcelona cannabis social clubs. Launching with 20-40 club profiles and 5-10 verified partners.
                 </p>
                 <div className="space-y-4 mb-10">
@@ -177,44 +191,65 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
                     { date: 'Q2 2026', event: 'Madrid & Valencia Expansion' },
                     { date: 'Q3 2026', event: 'Full Partner Verification System' },
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center shrink-0">
-                        <Calendar className="h-5 w-5 text-green-600" />
+                    <motion.div 
+                      key={i} 
+                      className="flex items-center gap-4 p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 * i }}
+                    >
+                      <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center shrink-0 border border-green-500/20">
+                        <Calendar className="h-5 w-5 text-green-400" />
                       </div>
                       <div>
-                        <div className="font-bold text-gray-900">{item.date}</div>
-                        <div className="text-sm text-gray-500">{item.event}</div>
+                        <div className="font-bold text-white">{item.date}</div>
+                        <div className="text-sm text-zinc-400">{item.event}</div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link href="/waitlist">
-                    <Button className="bg-green-600 text-white hover:bg-green-500 px-8 py-4 rounded-2xl font-bold w-full sm:w-auto">
+                    <Button className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-4 rounded-2xl font-bold w-full sm:w-auto border-0 shadow-lg shadow-green-500/25">
                       Join Early Access Waitlist
                     </Button>
                   </Link>
-                  <Link href="/learn">
-                    <Button variant="outline" className="rounded-2xl px-8 py-4 w-full sm:w-auto">
+                  <Link href="/editorial">
+                    <Button variant="outline" className="rounded-2xl px-8 py-4 w-full sm:w-auto border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white">
                       Browse Knowledge Hub
                     </Button>
                   </Link>
                 </div>
-              </div>
-              <div className="relative">
-                <div className="absolute -inset-4 bg-green-100/50 rounded-3xl blur-2xl"></div>
-                <div className="relative bg-zinc-900 rounded-3xl p-8 min-h-[400px] flex flex-col items-center justify-center">
-                  <MapPin className="h-16 w-16 text-green-500 mb-4" />
-                  <h3 className="text-2xl font-bold text-white mb-2">Barcelona</h3>
-                  <p className="text-zinc-400 text-center max-w-xs">
+              </motion.div>
+              
+              <motion.div 
+                className="relative"
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-3xl blur-2xl"></div>
+                <div className="relative rounded-3xl p-8 min-h-[400px] flex flex-col items-center justify-center border border-white/10 bg-white/5 backdrop-blur-sm">
+                  <div className="w-20 h-20 bg-green-500/10 rounded-2xl flex items-center justify-center mb-6 border border-green-500/20">
+                    <MapPin className="h-10 w-10 text-green-400" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-white mb-4">Barcelona</h3>
+                  <p className="text-zinc-400 text-center max-w-xs text-lg">
                     Spain's most established cannabis social club scene. We're mapping every verified club.
                   </p>
-                  <div className="mt-8 flex items-center gap-2 text-sm text-zinc-500">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span>Launching Soon</span>
+                  <div className="mt-8 flex items-center gap-3 px-6 py-3 rounded-full bg-green-500/10 border border-green-500/20">
+                    <span className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                    <span className="text-green-400 font-medium">Launching Soon</span>
                   </div>
+                  
+                  {/* Decorative elements */}
+                  <div className="absolute top-4 right-4 w-2 h-2 bg-green-400/50 rounded-full"></div>
+                  <div className="absolute top-8 right-8 w-1 h-1 bg-emerald-400/30 rounded-full"></div>
+                  <div className="absolute bottom-4 left-4 w-2 h-2 bg-emerald-400/50 rounded-full"></div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>

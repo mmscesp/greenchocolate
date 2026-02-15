@@ -1,49 +1,205 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getEventBySlug } from '@/app/actions/events';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Calendar, MapPin, Clock, ArrowLeft, ExternalLink } from 'lucide-react';
+
+interface Event {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  cityName?: string;
+  clubName?: string;
+  eventUrl?: string;
+}
 
 interface PageProps {
   params: Promise<{ lang: string; slug: string }>;
 }
 
-export default async function EventPage({ params }: PageProps) {
-  const { lang, slug } = await params;
-  const event = await getEventBySlug(slug);
+// Mock events data
+const mockEvents: Record<string, Event> = {
+  'cannabis-cup-barcelona-2025': {
+    id: '1',
+    slug: 'cannabis-cup-barcelona-2025',
+    name: 'Cannabis Cup Barcelona 2025',
+    description: 'Join the most prestigious cannabis competition in Europe. Top growers and extractors compete for excellence awards across multiple categories including best flower, best concentrate, and best edible. This three-day event features educational workshops, networking opportunities, and an awards ceremony.',
+    startDate: '2025-03-15',
+    endDate: '2025-03-17',
+    location: 'Fira Barcelona, Barcelona',
+    cityName: 'Barcelona',
+    clubName: 'Green Revolution CSC',
+    eventUrl: 'https://example.com/cannabis-cup',
+  },
+  'medical-cannabis-summit': {
+    id: '2',
+    slug: 'medical-cannabis-summit',
+    name: 'Medical Cannabis Summit Europe',
+    description: 'A comprehensive conference bringing together medical professionals, researchers, and patients to discuss therapeutic applications of cannabis. Topics include pain management, epilepsy treatment, and the latest clinical research findings.',
+    startDate: '2025-04-20',
+    endDate: '2025-04-22',
+    location: 'RAI Amsterdam, Amsterdam',
+    cityName: 'Amsterdam',
+    clubName: 'Medical Green CSC',
+  },
+};
+
+export default function EventPage({ params }: PageProps) {
+  const [lang, setLang] = useState('en');
+  const [slug, setSlug] = useState('');
+  const [event, setEvent] = useState<Event | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    params.then(({ lang: resolvedLang, slug: resolvedSlug }) => {
+      setLang(resolvedLang);
+      setSlug(resolvedSlug);
+      // Simulate API call
+      setTimeout(() => {
+        const foundEvent = mockEvents[resolvedSlug] || Object.values(mockEvents)[0];
+        setEvent(foundEvent);
+        setIsLoading(false);
+      }, 300);
+    });
+  }, [params]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-900">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="animate-pulse space-y-8">
+            <div className="h-64 bg-white/5 rounded-3xl" />
+            <div className="h-32 bg-white/5 rounded-2xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!event) {
-    notFound();
+    return (
+      <div className="min-h-screen bg-zinc-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Event Not Found</h1>
+          <Button variant="outline" asChild className="border-white/10 text-zinc-300 hover:bg-white/5">
+            <Link href={`/${lang}/events`}>Back to Events</Link>
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <section className="rounded-2xl border bg-card p-8">
-        <div className="flex flex-wrap gap-2 mb-3">
-          {event.cityName && <Badge variant="outline">{event.cityName}</Badge>}
-          {event.clubName && <Badge variant="secondary">{event.clubName}</Badge>}
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">{event.name}</h1>
-        <p className="text-muted-foreground mb-4">{event.description}</p>
-        <div className="text-sm text-muted-foreground space-y-1">
-          <p>Date: {new Date(event.startDate).toLocaleString()} - {new Date(event.endDate).toLocaleString()}</p>
-          <p>Location: {event.location}</p>
-        </div>
-      </section>
+    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-pink-500/5 rounded-full blur-3xl" />
+      </div>
 
-      <section className="rounded-xl border bg-muted/30 p-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">Always verify venue rules and local regulations before attending.</p>
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href={`/${lang}/events`}>Back to events</Link>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        {/* Back Button */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <Button variant="outline" asChild className="border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white">
+            <Link href={`/${lang}/events`}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Events
+            </Link>
           </Button>
-          {event.eventUrl && (
-            <Button asChild>
-              <a href={event.eventUrl} target="_blank" rel="noreferrer">Official Event Page</a>
-            </Button>
-          )}
-        </div>
-      </section>
+        </motion.div>
+
+        {/* Event Header */}
+        <motion.section 
+          className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 md:p-12 mb-8"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <div className="flex flex-wrap gap-2 mb-6">
+            {event.cityName && (
+              <Badge variant="outline" className="border-white/20 text-zinc-300 bg-white/5">
+                <MapPin className="h-3 w-3 mr-1" />
+                {event.cityName}
+              </Badge>
+            )}
+            {event.clubName && (
+              <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                {event.clubName}
+              </Badge>
+            )}
+          </div>
+
+          <h1 className="text-3xl md:text-5xl font-black text-white mb-6">
+            {event.name}
+          </h1>
+
+          <p className="text-lg text-zinc-400 mb-8 leading-relaxed">
+            {event.description}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="flex items-center gap-3 text-zinc-400 bg-white/5 px-4 py-3 rounded-xl">
+              <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-purple-400" />
+              </div>
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider">Date</p>
+                <p className="text-white font-medium">
+                  {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 text-zinc-400 bg-white/5 px-4 py-3 rounded-xl">
+              <div className="w-10 h-10 bg-pink-500/10 rounded-lg flex items-center justify-center">
+                <MapPin className="h-5 w-5 text-pink-400" />
+              </div>
+              <div>
+                <p className="text-zinc-500 text-xs uppercase tracking-wider">Location</p>
+                <p className="text-white font-medium">{event.location}</p>
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Action Section */}
+        <motion.section 
+          className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="flex items-center gap-3 text-zinc-400">
+            <Clock className="h-5 w-5 text-zinc-500" />
+            <p className="text-sm">Always verify venue rules and local regulations before attending.</p>
+          </div>
+          <div className="flex gap-3">
+            {event.eventUrl && (
+              <Button 
+                asChild
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+              >
+                <a href={event.eventUrl} target="_blank" rel="noreferrer">
+                  Official Event Page
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            )}
+          </div>
+        </motion.section>
+      </div>
     </div>
   );
 }

@@ -52,8 +52,8 @@ test.describe('i18n Routing', () => {
       await expect(page.locator('h1')).toContainText(en['clubs.title']);
     });
     
-    test('blog page renders in Spanish', async ({ page }) => {
-      await page.goto('/es/blog');
+    test('editorial page renders in Spanish', async ({ page }) => {
+      await page.goto('/es/editorial');
       
       await expect(page.locator('html')).toHaveAttribute('lang', 'es');
     });
@@ -99,8 +99,8 @@ test.describe('i18n Routing', () => {
       await page.goto('/en/clubs');
       await expect(page.locator('html')).toHaveAttribute('lang', 'en');
       
-      // Navigate to blog
-      await page.goto('/en/blog');
+      // Navigate to editorial
+      await page.goto('/en/editorial');
       await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     });
   });
@@ -117,8 +117,8 @@ test.describe('i18n Routing', () => {
       await expect(page.locator('html')).toHaveAttribute('lang', 'es');
       await expect(page.locator('h1')).toContainText(es['clubs.title']);
       
-      // Navigate to blog
-      await page.goto('/es/blog');
+      // Navigate to editorial
+      await page.goto('/es/editorial');
       await expect(page.locator('html')).toHaveAttribute('lang', 'es');
     });
     

@@ -58,7 +58,7 @@ export default function HeroSection() {
 
     if (prefersReducedMotion) {
       gsap.set(imageBaseRef.current, { clearProps: 'all', scale: 1.08, y: 0 });
-      gsap.set(imageEdgeRef.current, { clearProps: 'all', scale: 1.15, y: 0, opacity: 0.56 });
+      gsap.set(imageEdgeRef.current, { clearProps: 'all', scale: 1.12, y: 0, opacity: 0.36 });
       gsap.set(imageTrackRef.current, { clearProps: 'all', scale: 1, y: 0 });
       gsap.set(narrativeRef.current, { clearProps: 'all', y: 0, opacity: 1 });
       gsap.set(headlineWrapRef.current, { clearProps: 'all', scale: 0.72, y: 0, opacity: 1 });
@@ -85,13 +85,13 @@ export default function HeroSection() {
     });
     gsap.set(imageBaseRef.current, {
       scale: 1.08,
-      y: () => getInitialY() * 0.7,
+      y: getInitialY,
       transformOrigin: '50% 62%',
     });
     gsap.set(imageEdgeRef.current, {
-      scale: 1.15,
-      y: () => getInitialY() * 0.55,
-      opacity: 0.56,
+      scale: 1.12,
+      y: getInitialY,
+      opacity: 0.36,
       transformOrigin: '50% 62%',
     });
 
@@ -130,7 +130,7 @@ export default function HeroSection() {
       .to(
         imageBaseRef.current,
         {
-          y: () => getAct2Y() * 0.7,
+          y: getAct2Y,
           duration: ACT,
           ease: 'power2.inOut',
         },
@@ -139,8 +139,8 @@ export default function HeroSection() {
       .to(
         imageEdgeRef.current,
         {
-          y: () => getAct2Y() * 0.55,
-          opacity: 0.52,
+          y: getAct2Y,
+          opacity: 0.34,
           duration: ACT,
           ease: 'power2.inOut',
         },
@@ -188,7 +188,7 @@ export default function HeroSection() {
       .to(
         imageBaseRef.current,
         {
-          y: () => getAct3Y() * 0.7,
+          y: getAct3Y,
           duration: ACT,
           ease: 'power1.inOut',
         },
@@ -197,8 +197,8 @@ export default function HeroSection() {
       .to(
         imageEdgeRef.current,
         {
-          y: () => getAct3Y() * 0.5,
-          opacity: 0.5,
+          y: getAct3Y,
+          opacity: 0.32,
           duration: ACT,
           ease: 'power1.inOut',
         },
@@ -246,7 +246,7 @@ export default function HeroSection() {
       .to(
         imageBaseRef.current,
         {
-          y: () => getBottomY() * 0.7,
+          y: getBottomY,
           duration: ACT,
           ease: 'power1.inOut',
         },
@@ -255,8 +255,8 @@ export default function HeroSection() {
       .to(
         imageEdgeRef.current,
         {
-          y: () => getBottomY() * 0.45,
-          opacity: 0.48,
+          y: getBottomY,
+          opacity: 0.3,
           duration: ACT,
           ease: 'power1.inOut',
         },
@@ -388,7 +388,7 @@ export default function HeroSection() {
               priority
               quality={82}
               aria-hidden="true"
-              className="h-full w-full object-cover brightness-[1.03] saturate-[1.04] select-none"
+              className="h-full w-full object-cover brightness-[1.02] saturate-[1.02] select-none"
             />
           </div>
           <div
@@ -409,7 +409,7 @@ export default function HeroSection() {
               priority
               quality={72}
               aria-hidden="true"
-              className="h-full w-full object-cover blur-3xl brightness-[1.08] saturate-[1.08] select-none"
+              className="h-full w-full object-cover blur-xl brightness-[1.02] saturate-[1.02] select-none"
             />
           </div>
           <div ref={imageTrackRef} className="absolute inset-x-0 top-0 will-change-transform">
@@ -426,7 +426,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-black/30 via-black/8 to-black/35" />
+        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-black/20 via-black/4 to-black/24" />
 
         <div className="absolute inset-0 z-20 px-6">
           <div className="relative mx-auto h-full w-full max-w-6xl">

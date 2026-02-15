@@ -12,7 +12,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { BookOpen, Shield, Scale, MapPin } from 'lucide-react';
+import { BookOpen, Shield, Scale, MapPin, Calendar } from 'lucide-react';
 
 export default function MainNavigation() {
   return (
@@ -30,14 +30,23 @@ export default function MainNavigation() {
               <ListItem href="/spain/madrid" title="Madrid Guide" icon={<MapPin className="h-4 w-4" />}>
                 Navigate Madrid's discreet but thriving scene.
               </ListItem>
-              <ListItem href="/editorial" title="Knowledge Vault" icon={<BookOpen className="h-4 w-4" />}>
-                Comprehensive guides on laws, etiquette, and safety.
+              <ListItem href="/events" title="Events" icon={<Calendar className="h-4 w-4" />}>
+                Cultural and industry events across Europe.
               </ListItem>
               <ListItem href="/safety" title="Safety Protocol" icon={<Shield className="h-4 w-4" />}>
                 Essential safety guidelines and best practices.
               </ListItem>
             </ul>
           </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Link href="/editorial" className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50 text-primary hover:text-primary")}>
+            <span className="inline-flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              Guides
+            </span>
+          </Link>
         </NavigationMenuItem>
 
         <NavigationMenuItem>

@@ -35,7 +35,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               </Link>
             </div>
             <div className="flex items-center gap-4">
-              <Link href={`/${language}/learn`}>
+              <Link href={`/${language}/editorial`}>
                 <Button variant="ghost" className="text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-900">
                   <ArrowLeft className="h-3 w-3 mr-2" />
                   {t('nav.back_to_blog')}
@@ -182,7 +182,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
             <h2 className="text-3xl font-black text-zinc-900 mb-12 tracking-tighter uppercase">{t('blog.related_articles')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {relatedArticles.map((related) => (
-                <Link key={related.id} href={`/${language}/learn/${related.slug}`}>
+                <Link key={related.id} href={`/${language}/editorial/${related.slug}`}>
                   <article className="group cursor-pointer">
                     <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-100">
                       {related.heroImage && (

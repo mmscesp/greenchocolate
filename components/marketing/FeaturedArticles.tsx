@@ -32,7 +32,7 @@ function ArticleCard({ article, index }: { article: ArticleCard; index: number }
       viewport={{ once: true, margin: "-50px" }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
     >
-      <Link href={`/learn/${article.slug}`}>
+      <Link href={`/editorial/${article.slug}`}>
         <article className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-zinc-100 h-full flex flex-col">
           {/* Image Container */}
           <div className="relative h-48 overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
