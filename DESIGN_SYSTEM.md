@@ -1,393 +1,812 @@
-# Design System & UI Architecture
-## Cannabis Social Club Platform
+# SocialClubsMaps Design System
 
-**Version:** 2.0 (Production-Ready)  
-**Status:** Refined & Hardened  
-**Focus:** Accessibility, Performance, Consistency
-
----
-
-## 1. Design Philosophy
-
-### "Elevated Underground"
-A sophisticated aesthetic balancing cannabis culture's underground roots with enterprise-grade trust and professionalism.
-
-**Core Keywords:** Professional, Clean, Dark Mode Native, Accessible, Privacy-First
-
-**Inspiration References:**
-- Resident Advisor (RA.co) - Discovery & filtering patterns
-- Soho House - Premium member experience
-- Linear.app - Performance & dark UI excellence
-- Gov.uk - Accessibility-first design patterns
+**Version:** 3.0 - Premium Dark Theme  
+**Status:** Production-Ready  
+**Theme:** "Elevated Trust" - Based on WhyUsSection Premium Aesthetic
 
 ---
 
-## 2. Accessibility-First (WCAG 2.1 AA)
+## 🎨 Design Philosophy
 
-### 2.1 Compliance Standards
-- **Target:** WCAG 2.1 Level AA (minimum), AAA where achievable
-- **Audit Frequency:** Quarterly automated scans + annual manual audit
-- **Tools:** axe-core, Lighthouse CI, manual screen reader testing (NVDA/VoiceOver)
+### "Elevated Underground 2.0"
+An evolution from the original underground aesthetic to a **premium, sophisticated dark theme** that builds trust through transparency and modern design patterns.
 
-### 2.2 Color Contrast Requirements
-| Element | Foreground | Background | Ratio | Min Ratio |
-|---------|-----------|------------|-------|-----------|
-| Primary Text | Slate-50 (#F8FAFC) | Slate-950 (#020617) | 15.8:1 | 4.5:1 ✓ |
-| Secondary Text | Slate-300 (#CBD5E1) | Slate-950 (#020617) | 10.5:1 | 4.5:1 ✓ |
-| Muted Text | Slate-400 (#94A3B8) | Slate-900 (#0F172A) | 5.8:1 | 4.5:1 ✓ |
-| Accent Text | Emerald-400 (#34D399) | Slate-950 (#020617) | 8.9:1 | 4.5:1 ✓ |
+**Core Keywords:** Premium, Transparent, Trustworthy, Modern, Accessible
 
-**⚠️ Avoid:** `Slate-400` on `Slate-900` (4.2:1 - fails WCAG AA for small text)
+**Visual Hierarchy:**
+1. **Deep backgrounds** (`bg-zinc-900`) create sophistication
+2. **Glass morphism** suggests openness and transparency
+3. **Gradient accents** add energy without clutter
+4. **Semantic colors** organize information intuitively
+5. **Micro-interactions** reward engagement
 
-### 2.3 Motion & Animation Safety
+---
+
+## 📊 Color Palette
+
+### Foundation Colors (Always Use These)
+
+| Token | Value | Hex | Usage |
+|-------|-------|-----|-------|
+| `bg-primary` | `bg-zinc-900` | `#18181b` | Main section backgrounds |
+| `bg-secondary` | `bg-zinc-950` | `#09090b` | Deeper contrast, loading screens |
+| `bg-elevated` | `bg-white/5` + `backdrop-blur` | rgba(255,255,255,0.05) | Glass cards |
+| `text-primary` | `text-white` | `#ffffff` | Headlines, important text |
+| `text-secondary` | `text-zinc-300` | `#d4d4d8` | Body text, descriptions |
+| `text-muted` | `text-zinc-400` | `#a1a1aa` | Subtle text, captions |
+| `text-subtle` | `text-zinc-500` | `#71717a` | Disabled, metadata |
+| `border-subtle` | `border-white/10` | rgba(255,255,255,0.1) | Card borders |
+| `border-medium` | `border-white/20` | rgba(255,255,255,0.2) | Interactive borders |
+
+### Semantic Accent Colors
+
+Each major feature area gets a consistent color family:
+
+#### 🟢 Green/Emerald (Trust, Safety, Legal, Verified)
 ```css
-/* Respect user preferences */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+Primary:      #22c55e  (text-green-500)
+Light:        #34d399  (text-green-400)
+Dark:         #16a34a  (text-green-600)
+Background:   bg-green-500/10
+Border:       border-green-500/30
+Text:         text-green-400
+Glow:         shadow-green-500/20
+Gradient:     from-green-400 via-emerald-400 to-green-500
 ```
 
-**Rule:** All animations must be disableable via `prefers-reduced-motion`.
-
-### 2.4 Keyboard Navigation
-- All interactive elements must have visible `:focus` states
-- Tab order must follow visual order (logical flow)
-- Skip links for main content ("Skip to clubs list")
-- Modal focus trapping with `Esc` to close
-
-### 2.5 Screen Reader Support
-- All images: descriptive `alt` text (not "image of...")
-- Form inputs: associated `<label>` elements
-- Icons: `aria-hidden="true"` with text alternatives
-- Live regions for dynamic content updates
-
----
-
-## 3. Color Palette
-
-### 3.1 Semantic Tokens
-```
-Primary Action:     Emerald-500  (#10B981) - CTAs, success states
-Background Base:    Slate-950    (#020617) - Page background
-Surface Elevated:   Slate-900    (#0F172A) - Cards, modals
-Surface Floating:   Slate-800/50 (#1E293B with 50% opacity) - Glassmorphism
-Accent Vibe:        Violet-500   (#8B5CF6) - Tags, premium badges
-Warning:            Amber-500    (#F59E0B) - Alerts, pending states
-Error:              Rose-500     (#F43F5E) - Errors, rejections
-Info:               Sky-500      (#0EA5E9) - Informational
-```
-
-### 3.2 Dark Mode Philosophy
-**Dark Mode is the ONLY mode.** No light mode support required.
-
-Rationale:
-- Cannabis social clubs operate evening hours
-- Reduces eye strain for extended browsing
-- Aligns with "underground" aesthetic
-- Conserves mobile battery life
-
-### 3.3 Glassmorphism Specification
+#### 🔵 Blue/Indigo (Technology, Confidence, UI Systems)
 ```css
-.glass {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
+Primary:      #3b82f6  (text-blue-500)
+Light:        #60a5fa  (text-blue-400)
+Dark:         #2563eb  (text-blue-600)
+Background:   bg-blue-500/10
+Border:       border-blue-500/30
+Text:         text-blue-400
+Glow:         shadow-blue-500/20
+Gradient:     from-blue-400 via-indigo-400 to-blue-500
 ```
 
-**Usage:** Navigation bars, floating search, modals only. Avoid on scrollable content.
+#### 🟣 Purple/Violet (Privacy, Access, Premium Features)
+```css
+Primary:      #8b5cf6  (text-purple-500)
+Light:        #a78bfa  (text-purple-400)
+Dark:         #7c3aed  (text-purple-600)
+Background:   bg-purple-500/10
+Border:       border-purple-500/30
+Text:         text-purple-400
+Glow:         shadow-purple-500/20
+Gradient:     from-purple-400 via-violet-400 to-purple-500
+```
 
----
+#### 🔴 Red/Rose (Warnings, Fines, Alerts, Danger)
+```css
+Primary:      #ef4444  (text-red-500)
+Light:        #f87171  (text-red-400)
+Dark:         #dc2626  (text-red-600)
+Background:   bg-red-500/10
+Border:       border-red-500/30
+Text:         text-red-400
+Glow:         shadow-red-500/20
+Gradient:     from-red-500 to-rose-600
+```
 
-## 4. Typography System
+#### 🟡 Amber/Orange (CTAs, Highlights, Gold, Priority)
+```css
+Primary:      #f59e0b  (text-amber-500)
+Light:        #fbbf24  (text-amber-400)
+Background:   bg-amber-500/10
+Text:         text-amber-400
+Gradient:     from-amber-400 to-orange-500
+```
 
-### 4.1 Font Stack
-- **Primary:** Inter (Google Fonts) - Headings, UI text
-- **Monospace:** JetBrains Mono - Data points, coordinates, technical info
-- **Fallback:** system-ui, -apple-system, sans-serif
+### Gradient Patterns
 
-### 4.2 Type Scale (Tailwind Classes)
-
-| Token | Size | Line Height | Letter Spacing | Weight | Usage |
-|-------|------|-------------|----------------|--------|-------|
-| `text-xs` | 12px | 16px | 0.05em | 400 | Captions, timestamps |
-| `text-sm` | 14px | 20px | 0 | 400 | Body secondary |
-| `text-base` | 16px | 24px | 0 | 400 | Body primary |
-| `text-lg` | 18px | 28px | -0.01em | 500 | Lead paragraphs |
-| `text-xl` | 20px | 28px | -0.02em | 600 | Card titles |
-| `text-2xl` | 24px | 32px | -0.02em | 600 | Section headers |
-| `text-3xl` | 30px | 36px | -0.02em | 700 | Page titles |
-| `text-4xl` | 36px | 40px | -0.03em | 700 | Hero text (mobile) |
-| `text-5xl` | 48px | 48px | -0.03em | 800 | Hero text (desktop) |
-
-### 4.3 Font Loading Strategy
+**Text Gradients (Use for 1-2 key words in headlines):**
 ```tsx
-import { Inter } from 'next/font/google';
+// Green gradient (Trust/Safety)
+className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-green-500"
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap', // Prevent FOIT
-  variable: '--font-inter',
-});
+// Blue gradient (Technology)
+className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500"
+
+// Purple gradient (Premium)
+className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-purple-500"
+
+// Red gradient (Warnings)
+className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-rose-500"
+
+// Multi-color (Special features)
+className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-green-500"
 ```
 
----
-
-## 5. Spacing System
-
-### 5.1 4px Base Grid
-All spacing follows multiples of 4px for visual rhythm.
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `space-1` | 4px | Tight padding, icon gaps |
-| `space-2` | 8px | Inline elements, tight groups |
-| `space-3` | 12px | Default component padding |
-| `space-4` | 16px | Card padding, section gaps |
-| `space-6` | 24px | Major section separations |
-| `space-8` | 32px | Page section padding |
-| `space-12` | 48px | Large section breaks |
-| `space-16` | 64px | Hero section padding |
-
-### 5.2 Layout Grid
-- **Max Width:** 1280px (`max-w-7xl`)
-- **Columns:** 12-column grid
-- **Gutter:** 24px (desktop), 16px (mobile)
-- **Side Padding:** 16px (mobile), 24px (tablet), 32px (desktop)
-
----
-
-## 6. Responsive Breakpoints
-
-### 6.1 Mobile-First Approach
-```css
-/* Base: Mobile (0-639px) */
-/* sm: 640px+ */
-/* md: 768px+ */
-/* lg: 1024px+ */
-/* xl: 1280px+ */
-/* 2xl: 1536px+ */
-```
-
-### 6.2 Component Behavior Matrix
-
-| Component | Mobile | Tablet | Desktop |
-|-----------|--------|--------|---------|
-| **Club Card** | Stacked (image top) | Horizontal | Horizontal with map preview |
-| **Navigation** | Hamburger menu | Hamburger menu | Full horizontal |
-| **Filter Panel** | Bottom sheet | Sidebar (collapsible) | Sidebar (fixed) |
-| **Map View** | Full screen overlay | 50% split | 60/40 split |
-| **Hero Search** | Stacked inputs | Inline with button | Centered floating |
-| **Club Grid** | 1 column | 2 columns | 3 columns |
-
-### 6.3 Touch Target Requirements
-- Minimum: 44x44px (Apple), 48x48px (Material)
-- Spacing between touch targets: minimum 8px
-- All buttons must meet WCAG 2.5.5 (Target Size)
-
----
-
-## 7. Animation Standards
-
-### 7.1 Timing & Easing
-```
-Instant:     0ms      - State changes, hovers
-Fast:        150ms    - Micro-interactions (buttons, toggles)
-Normal:      300ms    - Component transitions (modals, dropdowns)
-Slow:        500ms    - Page transitions, hero animations
-```
-
-**Easing Functions:**
-- `ease-out` - UI feedback (buttons, cards)
-- `ease-in-out` - Symmetrical transitions (modals, panels)
-- `cubic-bezier(0.4, 0, 0.2, 1)` - Standard material motion
-
-### 7.2 Performance Rules
-- Use `transform` and `opacity` only (GPU accelerated)
-- Avoid animating `width`, `height`, `top`, `left`
-- Use `will-change` sparingly, remove after animation
-- Maximum animation duration: 500ms (except hero video)
-
-### 7.3 Hero Video Specification
-**Problem:** 4K video causes performance issues
-
-**Solution:**
+**Background Glows:**
 ```tsx
-<video
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="metadata"
-  poster="/hero-poster.webp"
-  className="object-cover w-full h-full"
+// Large ambient glow (position in corners)
+className="absolute top-0 left-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl"
+
+// Hover glow effect
+className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"
+
+// Card background gradient on hover
+className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 opacity-0 group-hover:opacity-10 transition-opacity duration-500"
+```
+
+---
+
+## 🔤 Typography Hierarchy
+
+### Font Stack
+- **Primary:** Inter (Google Fonts) - All text
+- **Weights Used:** 400 (regular), 500 (medium), 600 (semibold), 700 (bold), 800 (extrabold), 900 (black)
+
+### Type Scale
+
+| Level | Size | Weight | Line Height | Usage |
+|-------|------|--------|-------------|-------|
+| **Hero** | `text-4xl md:text-6xl` | `font-black` | `leading-tight` | Page headlines |
+| **H1** | `text-3xl md:text-5xl` | `font-black` | `leading-tight` | Section titles |
+| **H2** | `text-2xl md:text-4xl` | `font-bold` | `leading-tight` | Sub-sections |
+| **H3** | `text-xl md:text-2xl` | `font-bold` | `leading-snug` | Card titles |
+| **H4** | `text-lg` | `font-bold` | `leading-snug` | Feature titles |
+| **Body Large** | `text-lg` | `font-normal` | `leading-relaxed` | Intro paragraphs |
+| **Body** | `text-base` | `font-normal` | `leading-relaxed` | Standard text |
+| **Small** | `text-sm` | `font-medium` | `leading-normal` | Labels, metadata |
+| **Caption** | `text-xs` | `font-bold` | `leading-normal` | Badges, tracking |
+
+### Text Patterns
+
+**Hero Headline with Gradient:**
+```tsx
+<h1 className="text-4xl md:text-6xl font-black leading-tight">
+  The Verified{' '}
+  <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-green-500">
+    Navigation Layer
+  </span>
+</h1>
+```
+
+**Section Headline:**
+```tsx
+<h2 className="text-3xl md:text-5xl font-black text-white mb-4">
+  Section Title
+</h2>
+```
+
+**Card Title with Hover Gradient:**
+```tsx
+<h3 className="text-2xl font-bold text-white mb-4 text-center 
+  group-hover:text-transparent group-hover:bg-clip-text 
+  group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/80 
+  transition-all">
+  Card Title
+</h3>
+```
+
+**Body Text with Hover State:**
+```tsx
+<p className="text-zinc-400 leading-relaxed text-center 
+  group-hover:text-zinc-300 transition-colors">
+  Description text goes here...
+</p>
+```
+
+---
+
+## 🃏 Card Components
+
+### Glass Morphism Card (Primary Pattern)
+
+This is the signature card style for the premium theme:
+
+```tsx
+<motion.div
+  initial={{ opacity: 0, y: 50 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, margin: "-100px" }}
+  transition={{ delay: index * 0.15, duration: 0.6 }}
+  whileHover={{ y: -10 }}
+  className="group relative"
 >
-  <source src="/hero-1080p.webm" type="video/webm" />
-  <source src="/hero-1080p.mp4" type="video/mp4" />
-</video>
+  <div className="relative p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-500 h-full overflow-hidden">
+    {/* Hover gradient background */}
+    <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+    
+    {/* Hover glow effect */}
+    <div className="absolute -inset-1 bg-gradient-to-r from-green-500 to-emerald-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10" />
+    
+    {/* Content Container */}
+    <div className="relative z-10">
+      {/* Icon Container - Large, centered */}
+      <motion.div 
+        className="relative w-20 h-20 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6 mx-auto"
+        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Icon background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 opacity-20 rounded-2xl" />
+        <Icon className="h-10 w-10 text-white/80" />
+      </motion.div>
+      
+      {/* Title */}
+      <h3 className="text-2xl font-bold text-white mb-4 text-center">
+        Feature Title
+      </h3>
+      
+      {/* Description */}
+      <p className="text-zinc-400 leading-relaxed text-center group-hover:text-zinc-300 transition-colors">
+        Feature description goes here...
+      </p>
+      
+      {/* Optional: Stat Badge (top-right corner) */}
+      <div className="absolute top-4 right-4">
+        <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/10 text-white/80 border border-green-500/30">
+          100%
+        </span>
+      </div>
+    </div>
+    
+    {/* Bottom accent line (animates on hover) */}
+    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full group-hover:w-1/2 transition-all duration-500" />
+  </div>
+</motion.div>
 ```
 
-**Requirements:**
-- Resolution: 1080p max (not 4K)
-- Formats: WebM (VP9) + MP4 (H.264)
-- Size: <5MB total
-- Fallback: Static poster image for mobile data saver
-- Disable on `prefers-reduced-motion`
+**Card Anatomy:**
+1. **Container:** `rounded-3xl`, `border-white/10`, `bg-white/5`, `backdrop-blur-sm`
+2. **Padding:** `p-8` (generous breathing room)
+3. **Icon:** Centered, `w-20 h-20`, gradient background, `rounded-2xl`
+4. **Title:** Centered, `text-2xl font-bold`, gradient on hover
+5. **Description:** Centered, `text-zinc-400`, lightens on hover
+6. **Hover Effects:** Lift (`y: -10`), gradient reveal, glow, bottom line animation
 
----
+### Feature List Item
 
-## 8. Core Components
+For vertical lists of features/benefits:
 
-### 8.1 Component States
-Every interactive component must define these states:
-
-| State | Visual Treatment |
-|-------|-----------------|
-| **Default** | Standard styling |
-| **Hover** | Subtle lift or color shift (+ cursor pointer) |
-| **Active/Pressed** | Scale down slightly (0.98) |
-| **Focus** | 2px ring in Emerald-400 (keyboard only) |
-| **Disabled** | 50% opacity, no-pointer-events |
-| **Loading** | Spinner or skeleton, disabled interactions |
-| **Error** | Rose-500 border/text with error message |
-
-### 8.2 Loading States (Skeletons)
 ```tsx
-// Club Card Skeleton
-<div className="animate-pulse">
-  <div className="h-48 bg-slate-800 rounded-t-lg" />
-  <div className="p-4 space-y-3">
-    <div className="h-4 bg-slate-800 rounded w-3/4" />
-    <div className="h-3 bg-slate-800 rounded w-1/2" />
+<motion.div
+  initial={{ opacity: 0, x: -30 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  viewport={{ once: true }}
+  transition={{ delay: 0.3 }}
+  whileHover={{ x: 10 }}
+  className="flex gap-4 group cursor-pointer"
+>
+  {/* Icon container */}
+  <div className="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 group-hover:bg-green-500/20 transition-colors">
+    <Icon className="h-6 w-6 text-green-400" />
+  </div>
+  
+  {/* Content */}
+  <div>
+    <h4 className="font-bold text-white text-lg mb-1 group-hover:text-green-400 transition-colors">
+      Feature Title
+    </h4>
+    <p className="text-zinc-500 group-hover:text-zinc-400 transition-colors">
+      Feature description...
+    </p>
+  </div>
+</motion.div>
+```
+
+### Compact Card (Stats, Metrics)
+
+```tsx
+<div className="bg-zinc-900/75 backdrop-blur-xl border border-white/25 p-6 md:p-10 rounded-2xl md:rounded-3xl text-center shadow-[0_20px_80px_rgba(0,0,0,0.8)] hover:border-green-500/50 transition-all duration-300">
+  <div className="flex justify-center mb-4">
+    <Icon className="w-7 h-7 md:w-9 md:h-9 text-green-400" />
+  </div>
+  <div className="text-4xl md:text-6xl font-black text-white mb-2">
+    100%
+  </div>
+  <div className="text-xs md:text-sm font-bold text-green-400 uppercase tracking-widest">
+    Metric Label
   </div>
 </div>
 ```
 
-**Animation:** `animate-pulse` (2s cycle, opacity 1→0.5→1)
-
-### 8.3 Empty States
-- Clear icon/visual indicating empty state
-- Helpful message: "No clubs found in this area"
-- Action CTA when applicable: "Adjust filters" or "Browse all clubs"
-- Never show blank/white screens
-
-### 8.4 Error States
-- Inline error messages (not just toast)
-- Red border on invalid form fields
-- Recovery path always provided
-- Generic message: "Something went wrong. Please try again."
-
 ---
 
-## 9. Iconography
+## ✨ Animation System
 
-### 9.1 Icon Library
-- **Primary:** Lucide React (consistent, lightweight)
-- **Size Scale:** 16px (compact), 20px (default), 24px (large)
-- **Stroke Width:** 1.5px (default), 2px (emphasis)
+### Entrance Animations (Scroll-Triggered)
 
-### 9.2 Usage Guidelines
-- Always paired with text label (except universally understood icons: search, menu, close)
-- Use `aria-hidden="true"` when decorative
-- Provide `aria-label` when standalone functional
+```tsx
+// Fade up (most common - use for cards, sections)
+initial={{ opacity: 0, y: 50 }}
+whileInView={{ opacity: 1, y: 0 }}
+viewport={{ once: true, margin: "-100px" }}
+transition={{ delay: index * 0.15, duration: 0.6 }}
 
----
+// Scale in (for hero elements, important visuals)
+initial={{ opacity: 0, scale: 0.8 }}
+whileInView={{ opacity: 1, scale: 1 }}
+transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
 
-## 10. Form Design
+// Slide from left (for lists, sequential items)
+initial={{ opacity: 0, x: -30 }}
+whileInView={{ opacity: 1, x: 0 }}
+transition={{ delay: 0.2 }}
 
-### 10.1 Input Specifications
-- Height: 44px (touch-friendly)
-- Padding: 12px horizontal
-- Border: 1px Slate-700, rounded-lg
-- Focus: Emerald-500 border + subtle ring
-- Error: Rose-500 border
-
-### 10.2 Validation Patterns
-- Inline validation on blur (not just submit)
-- Clear error messages below field
-- Success indicators for valid fields (optional)
-- Never clear user input on error
-
-### 10.3 Endorsement Wizard (Stepper)
-**Layout:**
-- Step indicator at top (progress bar + labels)
-- Content area: Single column, max-width 600px
-- Navigation: "Back" (ghost) + "Continue" (primary)
-- Mobile: Full-screen steps with swipe transitions disabled
-
----
-
-## 11. Directory Structure
-
-```
-components/
-├── ui/                      # shadcn primitives
-│   ├── button.tsx
-│   ├── input.tsx
-│   ├── card.tsx
-│   ├── dialog.tsx
-│   └── ...
-├── features/
-│   ├── clubs/
-│   │   ├── ClubCard.tsx
-│   │   ├── ClubGrid.tsx
-│   │   ├── ClubFilters.tsx
-│   │   ├── ClubMap.tsx      # Lazy loaded
-│   │   └── ClubSkeleton.tsx
-│   ├── membership/
-│   │   ├── RequestWizard.tsx
-│   │   ├── StepIndicator.tsx
-│   │   └── StatusBadge.tsx
-│   └── reviews/
-│       ├── ReviewCard.tsx
-│       └── StarRating.tsx
-├── layout/
-│   ├── Navbar.tsx
-│   ├── Footer.tsx
-│   ├── Sidebar.tsx
-│   └── MobileNav.tsx
-└── shared/
-    ├── LanguageSelector.tsx
-    ├── LoadingSpinner.tsx
-    └── ErrorBoundary.tsx
+// Slide from right
+initial={{ opacity: 0, x: 30 }}
+whileInView={{ opacity: 1, x: 0 }}
+transition={{ delay: 0.2 }}
 ```
 
+### Hover Interactions
+
+```tsx
+// Card lift (standard)
+whileHover={{ y: -10 }}
+
+// Scale up (icons, buttons)
+whileHover={{ scale: 1.1 }}
+
+// Icon rotation (playful interaction)
+whileHover={{ rotate: [0, -10, 10, 0] }}
+transition={{ duration: 0.5 }}
+
+// X-axis shift (list items)
+whileHover={{ x: 10 }}
+
+// Combined effects
+whileHover={{ y: -10, scale: 1.02 }}
+```
+
+### Timing Guidelines
+
+| Animation Type | Duration | Easing | Use Case |
+|----------------|----------|--------|----------|
+| **Micro-interactions** | 150-200ms | `ease-out` | Buttons, toggles |
+| **Hover transitions** | 300-500ms | `ease` or spring | Cards, icons |
+| **Entrance animations** | 600ms | `ease-out` or spring | Sections, cards |
+| **Stagger delay** | 100-150ms | - | Between items |
+| **Loop animations** | 2000-3000ms | `ease-in-out` | Pulses, floats |
+
+### CSS Transitions (Non-Framer)
+
+```tsx
+// Standard transition
+className="transition-all duration-500"
+
+// Color transitions only
+className="transition-colors duration-300"
+
+// Transform transitions
+className="transition-transform duration-300"
+
+// Group hover patterns
+className="opacity-0 group-hover:opacity-10 transition-opacity duration-500"
+
+// Multiple properties
+className="transition-all duration-500 group-hover:bg-green-500/20 group-hover:text-green-400"
+```
+
+### Continuous Animations
+
+```tsx
+// Pulse effect (for live indicators, badges)
+animate={{ 
+  scale: [1, 1.1, 1],
+  opacity: [0.3, 0.5, 0.3]
+}}
+transition={{ duration: 3, repeat: Infinity }}
+
+// Gentle float
+animate={{ y: [0, -10, 0] }}
+transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+
+// Rotation (for decorative elements)
+animate={{ rotate: 360 }}
+transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+```
+
 ---
 
-## 12. Performance Budgets
+## 🧩 Component Library
 
-| Metric | Target | Max |
-|--------|--------|-----|
-| **LCP** (Largest Contentful Paint) | <2.5s | 4.0s |
-| **FCP** (First Contentful Paint) | <1.8s | 3.0s |
-| **TBT** (Total Blocking Time) | <200ms | 600ms |
-| **CLS** (Cumulative Layout Shift) | <0.1 | 0.25 |
-| **Bundle Size** (Initial) | <200KB | 500KB |
-| **Image Size** (Club card) | <100KB | 200KB |
+### Eyebrow Badge (Section Labels)
 
-**Enforcement:** Lighthouse CI in build pipeline
+```tsx
+<div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full text-zinc-400 mb-6 border border-white/10">
+  <Icon className="h-4 w-4" />
+  <span className="text-sm font-bold">Section Label</span>
+</div>
+```
+
+**Variations:**
+
+**Gradient Badge:**
+```tsx
+<div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full text-green-400 border border-green-500/30">
+  <Award className="h-4 w-4" />
+  <span className="text-sm font-bold">Premium</span>
+</div>
+```
+
+**With Accent Color:**
+```tsx
+<div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 rounded-full text-blue-400 border border-blue-500/30">
+  <Icon className="h-4 w-4" />
+  <span className="text-sm font-bold">Technology</span>
+</div>
+```
+
+### Buttons
+
+**Primary CTA:**
+```tsx
+<Button className="bg-green-600 text-white hover:bg-green-500 px-8 py-4 rounded-2xl font-bold transition-colors">
+  Action Text
+</Button>
+```
+
+**Secondary Outline:**
+```tsx
+<Button 
+  variant="outline" 
+  className="rounded-2xl px-8 py-4 font-bold border-2 border-white/20 text-white hover:bg-white/5 hover:border-white/40 transition-all"
+>
+  Secondary Action
+</Button>
+```
+
+**With Icon & Animation:**
+```tsx
+<Button className="group rounded-full px-8 py-6 text-base font-bold bg-white text-zinc-900 hover:bg-zinc-100 transition-all">
+  Browse All
+  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+</Button>
+```
+
+**Gradient Button:**
+```tsx
+<button className="group relative bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-2xl py-4 font-bold text-lg shadow-lg shadow-green-500/25 overflow-hidden">
+  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+  <span className="relative flex items-center justify-center gap-2">
+    <Icon className="h-5 w-5" />
+    Action Text
+  </span>
+</button>
+```
+
+### Icons
+
+**Standard Icon Container:**
+```tsx
+<div className="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+  <Icon className="h-6 w-6 text-green-400" />
+</div>
+```
+
+**Large Icon Container (for cards):**
+```tsx
+<div className="relative w-20 h-20 rounded-2xl bg-green-500/10 flex items-center justify-center">
+  <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 opacity-20 rounded-2xl" />
+  <Icon className="h-10 w-10 text-white/80" />
+</div>
+```
+
+**Icon with Hover Animation:**
+```tsx
+<motion.div 
+  className="relative w-20 h-20 rounded-2xl bg-green-500/10 flex items-center justify-center"
+  whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+  transition={{ duration: 0.5 }}
+>
+  <Icon className="h-10 w-10 text-white/80" />
+</motion.div>
+```
 
 ---
 
-## 13. Z-Index Scale
+## 📐 Layout Patterns
 
-| Layer | Z-Index | Usage |
-|-------|---------|-------|
-| Background | 0 | Page content |
-| Elevated | 10 | Cards, buttons |
-| Floating | 20 | Dropdowns, tooltips |
-| Sticky | 30 | Sticky headers |
-| Overlay | 40 | Backdrops, modals |
-| Modal | 50 | Dialog content |
-| Toast | 60 | Notifications |
-| Tooltip | 70 | Highest priority |
+### Section Structure Template
+
+Every section should follow this structure:
+
+```tsx
+<section className="py-24 bg-zinc-900 relative overflow-hidden">
+  {/* Background Effects */}
+  <div className="absolute inset-0 pointer-events-none">
+    {/* Ambient glows */}
+    <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl" />
+    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+    
+    {/* Dot pattern overlay */}
+    <div className="absolute inset-0 opacity-20" style={{ 
+      backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)', 
+      backgroundSize: '32px 32px' 
+    }} />
+  </div>
+
+  {/* Content Container */}
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    {/* Section Header */}
+    <motion.div 
+      className="text-center mb-20"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      {/* Eyebrow Badge */}
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full text-zinc-400 mb-6 border border-white/10">
+        <Icon className="h-4 w-4" />
+        <span className="text-sm font-bold">Section Label</span>
+      </div>
+      
+      {/* Headline with Gradient */}
+      <h2 className="text-4xl md:text-6xl font-black mb-6">
+        Section{' '}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-green-500">
+          Title
+        </span>
+      </h2>
+      
+      {/* Description */}
+      <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
+        Section description goes here...
+      </p>
+    </motion.div>
+
+    {/* Content Grid */}
+    <div className="grid md:grid-cols-3 gap-8">
+      {/* Cards or Content */}
+    </div>
+  </div>
+</section>
+```
+
+### Grid Patterns
+
+**3-Column Feature Grid:**
+```tsx
+<div className="grid md:grid-cols-3 gap-8">
+  {items.map((item, index) => (
+    <FeatureCard key={item.id} item={item} index={index} />
+  ))}
+</div>
+```
+
+**2-Column Split (Text + Visual):**
+```tsx
+<div className="grid lg:grid-cols-2 gap-12 items-center">
+  {/* Left: Text content */}
+  <div>
+    {/* Content */}
+  </div>
+  
+  {/* Right: Visual/Interactive element */}
+  <div className="relative">
+    {/* Visual content */}
+  </div>
+</div>
+```
+
+**Responsive Single → Multi Column:**
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+  {/* Items */}
+</div>
+```
 
 ---
 
-*Document Version: 2.0*  
-*Last Updated: 2026-02-01*  
-*Review Cycle: Quarterly*
+## 🎯 Background Effects
+
+### Ambient Glows
+
+Place these in section backgrounds for depth:
+
+```tsx
+{/* Top-left glow */}
+<div className="absolute top-0 left-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl" />
+
+{/* Bottom-right glow */}
+<div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+
+{/* Center accent glow */}
+<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-3xl" />
+```
+
+### Dot Pattern Overlay
+
+Adds subtle texture:
+
+```tsx
+<div 
+  className="absolute inset-0 opacity-20 pointer-events-none" 
+  style={{ 
+    backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)', 
+    backgroundSize: '32px 32px' 
+  }} 
+/>
+```
+
+### Gradient Overlays
+
+For hero images or section transitions:
+
+```tsx
+{/* Top fade (for text readability) */}
+<div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-transparent" />
+
+{/* Bottom fade */}
+<div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent" />
+
+{/* Full vignette */}
+<div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/90" />
+
+{/* Side fades (for horizontal content) */}
+<div className="absolute inset-0 bg-gradient-to-r from-zinc-900 via-transparent to-zinc-900" />
+```
+
+---
+
+## ✅ Do's and ❌ Don'ts
+
+### ✅ DO
+
+- **Use generous spacing:** `py-24` for sections, `p-8` for cards, `gap-8` between items
+- **Apply consistent border radius:** `rounded-3xl` for cards, `rounded-2xl` for buttons
+- **Add backdrop blur** to glass cards: `backdrop-blur-sm`
+- **Use semantic colors** consistently for feature areas (green = trust, blue = tech, etc.)
+- **Animate on scroll** with `viewport={{ once: true }}` to prevent re-animation
+- **Hover states** on all interactive elements - cards should lift, icons should animate
+- **Gradient text** for 1-2 key words in headlines only
+- **High contrast** - white text on dark backgrounds
+- **Stagger animations** - delay between items: `delay: index * 0.15`
+- **Pointer events** - background effects need `pointer-events-none`
+- **Z-index layering** - content `z-10`, effects behind
+
+### ❌ DON'T
+
+- **Don't use pure black** (`bg-black`) - always use `bg-zinc-900` or `bg-zinc-950`
+- **Don't mix light sections** without a clear alternating pattern
+- **Don't use solid color backgrounds** without opacity/gradient layers
+- **Don't skip hover states** - every card should react to interaction
+- **Don't use harsh shadows** - use glows and blurs instead
+- **Don't overcrowd** - whitespace is premium and necessary
+- **Don't use more than 3 accent colors** in one section
+- **Don't animate width/height** - use `transform` and `opacity` only
+- **Don't forget reduced motion** - respect `prefers-reduced-motion`
+- **Don't use inconsistent spacing** - stick to the 4px grid
+
+---
+
+## 🚀 Quick Start Templates
+
+### New Section Template
+
+```tsx
+<section className="py-24 bg-zinc-900 relative overflow-hidden">
+  {/* Background Effects */}
+  <div className="absolute inset-0 pointer-events-none">
+    <div className="absolute top-0 left-1/4 w-96 h-96 bg-[COLOR]-500/10 rounded-full blur-3xl" />
+  </div>
+
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    {/* Header */}
+    <motion.div 
+      className="text-center mb-20"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full text-zinc-400 mb-6 border border-white/10">
+        <Icon className="h-4 w-4" />
+        <span className="text-sm font-bold">Eyebrow</span>
+      </div>
+      
+      <h2 className="text-4xl md:text-6xl font-black mb-6">
+        Section{' '}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[COLOR]-400 to-[COLOR]-500">
+          Title
+        </span>
+      </h2>
+      
+      <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
+        Description text...
+      </p>
+    </motion.div>
+
+    {/* Content */}
+    {/* ... */}
+  </div>
+</section>
+```
+
+### New Card Component Template
+
+```tsx
+<motion.div
+  initial={{ opacity: 0, y: 50 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ delay: index * 0.15, duration: 0.6 }}
+  whileHover={{ y: -10 }}
+  className="group relative"
+>
+  <div className="relative p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-500 h-full overflow-hidden">
+    {/* Hover effects */}
+    <div className="absolute inset-0 bg-gradient-to-br from-[COLOR]-500 to-[COLOR]-600 opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+    <div className="absolute -inset-1 bg-gradient-to-r from-[COLOR]-500 to-[COLOR]-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10" />
+    
+    {/* Content */}
+    <div className="relative z-10">
+      {/* Icon */}
+      <div className="relative w-20 h-20 rounded-2xl bg-[COLOR]-500/10 flex items-center justify-center mb-6 mx-auto">
+        <div className="absolute inset-0 bg-gradient-to-br from-[COLOR]-500 to-[COLOR]-600 opacity-20 rounded-2xl" />
+        <Icon className="h-10 w-10 text-white/80" />
+      </div>
+      
+      {/* Title */}
+      <h3 className="text-2xl font-bold text-white mb-4 text-center">
+        Title
+      </h3>
+      
+      {/* Description */}
+      <p className="text-zinc-400 leading-relaxed text-center">
+        Description
+      </p>
+    </div>
+    
+    {/* Bottom accent */}
+    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-[COLOR]-500 to-[COLOR]-600 rounded-full group-hover:w-1/2 transition-all duration-500" />
+  </div>
+</motion.div>
+```
+
+---
+
+## 📁 File References
+
+- **Primary Implementation:** `components/marketing/WhyUsSection.tsx`
+- **Interactive Tools:** `components/marketing/FineCalculator.tsx`, `components/marketing/EligibilityQuiz.tsx`
+- **Color Configuration:** `app/globals.css` (CSS variables)
+- **Accordion Pattern:** `components/ui/faq-accordion.tsx`
+- **Hero Section:** `components/HeroSection.tsx`
+
+---
+
+## 🔄 Migration Guide
+
+When updating existing sections to this design system:
+
+1. **Background:** Change `bg-white` → `bg-zinc-900`
+2. **Text colors:** Change `text-gray-900` → `text-white`
+3. **Secondary text:** Change `text-gray-600` → `text-zinc-400`
+4. **Cards:** Wrap in glass morphism pattern (`bg-white/5`, `backdrop-blur-sm`, `border-white/10`)
+5. **Add hover effects:** `whileHover={{ y: -10 }}` and gradient reveals
+6. **Background effects:** Add ambient glows and dot pattern
+7. **Gradients:** Add gradient text to headlines
+8. **Animations:** Wrap with Framer Motion entrance animations
+
+---
+
+## 🎨 Color Decision Tree
+
+```
+What is the content about?
+├── Trust, Safety, Legal, Verification
+│   └── Use GREEN (#22c55e)
+├── Technology, UI, Confidence, Systems
+│   └── Use BLUE (#3b82f6)
+├── Privacy, Access, Premium Features
+│   └── Use PURPLE (#8b5cf6)
+├── Warnings, Fines, Alerts, Danger
+│   └── Use RED (#ef4444)
+├── CTAs, Highlights, Important
+│   └── Use AMBER (#f59e0b)
+└── General content
+    └── Use ZINC grays
+```
+
+---
+
+*Document Version: 3.0 - Premium Dark Theme*  
+*Last Updated: February 15, 2026*  
+*Based on: WhyUsSection Design Implementation*  
+*Review Cycle: Per-feature implementation*
