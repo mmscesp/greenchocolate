@@ -1,20 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import VerificationBadge from '@/components/VerificationBadge';
-import Footer from '@/components/Footer';
-import LanguageSelector from '@/components/LanguageSelector';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
 import { submitMembershipRequest, ActionState } from '@/app/actions/membership';
 import { useAuth } from '@/components/auth/AuthProvider';
 import {
-  Leaf,
   MapPin,
   Star,
   Phone,
@@ -97,26 +94,12 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href={`/${language}`} className="flex items-center gap-2">
-                <Leaf className="h-8 w-8 text-green-600" />
-                <span className="text-xl font-bold text-gray-900">SocialClubsMaps</span>
-              </Link>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href={`/${language}/clubs`}>
-                <Button variant="ghost">← {t('nav.back_to_clubs')}</Button>
-              </Link>
-              <LanguageSelector />
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <Link href={`/${language}/clubs`}>
+          <Button variant="ghost">← {t('nav.back_to_clubs')}</Button>
+        </Link>
+      </div>
 
       {/* Hero Image Gallery */}
       <section className="relative h-96 lg:h-[500px] overflow-hidden">
@@ -185,19 +168,19 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Description */}
-            <div className="bg-white rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('club.about')}</h2>
-              <p className="text-gray-700 leading-relaxed">{club.description}</p>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.about')}</h2>
+              <p className="text-muted-foreground leading-relaxed">{club.description}</p>
             </div>
 
             {/* Amenities */}
-            <div className="bg-white rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('club.services')}</h2>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.services')}</h2>
               <div className="flex flex-wrap gap-2">
                 {club.amenities.map((amenity, index) => (
                   <Badge key={index} variant="outline" className="text-sm">
@@ -208,8 +191,8 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Vibe Tags */}
-            <div className="bg-white rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('club.atmosphere')}</h2>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.atmosphere')}</h2>
               <div className="flex flex-wrap gap-2">
                 {club.vibeTags.map((vibe, index) => (
                   <Badge key={index} variant="secondary" className="text-sm">
@@ -220,15 +203,15 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Opening Hours */}
-            <div className="bg-white rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('club.schedule')}</h2>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h2 className="text-2xl font-bold text-foreground mb-4">{t('club.schedule')}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {Object.entries(club.openingHours as Record<string, string>).map(([day, hours]) => (
                   <div key={day} className="flex justify-between">
-                    <span className="font-medium text-gray-700 capitalize">
+                    <span className="font-medium text-foreground capitalize">
                       {getDayName(day)}
                     </span>
-                    <span className="text-gray-600">{hours}</span>
+                    <span className="text-muted-foreground">{hours}</span>
                   </div>
                 ))}
               </div>
@@ -239,10 +222,10 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           <div className="space-y-6">
             {/* Pre-registration CTA */}
             {club.allowsPreRegistration && (
-              <div className="bg-white rounded-lg p-6 sticky top-24">
+              <div className="bg-card rounded-2xl border border-border p-6 sticky top-24">
                 <div className="text-center mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{t('club.join_club')}</h3>
-                  <p className="text-gray-600 text-sm">{t('club.membership_request')}</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{t('club.join_club')}</h3>
+                  <p className="text-muted-foreground text-sm">{t('club.membership_request')}</p>
                 </div>
                   <Button
                     variant="cannabis"
@@ -262,10 +245,10 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             )}
 
             {/* Contact Info */}
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">{t('club.contact')}</h3>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">{t('club.contact')}</h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-3 text-gray-700">
+                <div className="flex items-center gap-3 text-muted-foreground">
                   <MapPin className="h-5 w-5 text-green-600" />
                   {user ? (
                     <span className="text-sm">{club.address}</span>
@@ -278,16 +261,16 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-3 text-gray-700">
+                <div className="flex items-center gap-3 text-muted-foreground">
                   <Phone className="h-5 w-5 text-green-600" />
                   <span className="text-sm">{club.phoneNumber}</span>
                 </div>
-                <div className="flex items-center gap-3 text-gray-700">
+                <div className="flex items-center gap-3 text-muted-foreground">
                   <Mail className="h-5 w-5 text-green-600" />
                   <span className="text-sm">{club.contactEmail}</span>
                 </div>
                 {club.website && (
-                  <div className="flex items-center gap-3 text-gray-700">
+                  <div className="flex items-center gap-3 text-muted-foreground">
                     <Globe className="h-5 w-5 text-green-600" />
                     <a
                       href={`https://${club.website}`}
@@ -325,11 +308,11 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Club Stats */}
-            <div className="bg-white rounded-lg p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">{t('club.information')}</h3>
+            <div className="bg-card rounded-2xl border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">{t('club.information')}</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-gray-700">
+                  <div className="flex items-center gap-2 text-muted-foreground">
                     <Users className="h-4 w-4" />
                     <span className="text-sm">{t('club.capacity')}</span>
                   </div>
@@ -338,7 +321,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-gray-700">
+                  <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4" />
                     <span className="text-sm">{t('club.founded')}</span>
                   </div>
@@ -353,10 +336,10 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       {/* Pre-registration Modal */}
       {showPreRegistrationModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-card border border-border rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold text-foreground">
                   {t('form.pre_registration')} - {club.name}
                 </h3>
                 <button
@@ -364,7 +347,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     setShowPreRegistrationModal(false);
                     setFormState(null);
                   }}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -401,7 +384,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <input type="hidden" name="clubId" value={club.id} />
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-foreground mb-1">
                     {t('form.full_name')} {t('form.required')}
                   </label>
                   <input
@@ -409,7 +392,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     name="message"
                     required
                     placeholder={t('form.message_placeholder')}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                    className="w-full p-2 border border-input rounded-md bg-background focus:ring-green-500 focus:border-green-500"
                   />
                 </div>
 
@@ -447,8 +430,6 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           </div>
         </div>
       )}
-
-      <Footer />
     </div>
   );
 }

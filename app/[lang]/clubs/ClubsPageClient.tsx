@@ -24,7 +24,7 @@ export default function ClubsPageClient({
   amenities, 
   vibes 
 }: ClubsPageClientProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [clubs, setClubs] = useState<ClubCardType[]>(initialClubs);
   const [loading, setLoading] = useState(false);
@@ -64,7 +64,7 @@ export default function ClubsPageClient({
         schema={{
           name: t('clubs.title'),
           description: t('clubs.subtitle'),
-          url: 'https://socialclubsmaps.com/clubs',
+          url: `https://socialclubsmaps.com/${language}/clubs`,
           numberOfItems: clubs.length,
         }}
       />
