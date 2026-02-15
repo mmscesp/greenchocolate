@@ -16,11 +16,16 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-export default async function AccountPage() {
+interface AccountPageProps {
+  params: Promise<{ lang: string }>;
+}
+
+export default async function AccountPage({ params }: AccountPageProps) {
+  const { lang } = await params;
   const userProfile = await getCurrentUserProfile();
 
   if (!userProfile) {
-    redirect('/account/login');
+    redirect(`/${lang}/account/login`);
   }
 
   const menuItems = [

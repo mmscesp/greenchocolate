@@ -86,6 +86,10 @@ export async function proxy(request: NextRequest) {
   // Refresh session if expired
   const { data: { user } } = await supabase.auth.getUser();
 
+  const localizedPathname = pathnameLocale
+    ? pathname.replace(new RegExp(`^/${pathnameLocale}`), '') || '/'
+    : pathname;
+
   // Protected routes (require authentication)
   const protectedRoutes = [
     '/profile',
@@ -98,19 +102,19 @@ export async function proxy(request: NextRequest) {
     '/club-panel/dashboard',
   ];
 
-  const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
-  const isAdmin = adminRoutes.some(route => pathname.startsWith(route));
+  const isProtected = protectedRoutes.some(route => localizedPathname.startsWith(route));
+  const isAdmin = adminRoutes.some(route => localizedPathname.startsWith(route));
 
   // Protect authenticated routes
   if (isProtected || isAdmin) {
     if (!user) {
       // Determine which login page to use
-      const loginPath = pathname.startsWith('/club-panel') 
+      const loginPath = localizedPathname.startsWith('/club-panel') 
         ? '/club-panel/login' 
         : '/account/login';
         
       const loginUrl = new URL(`/${pathnameLocale}${loginPath}`, request.url);
-      loginUrl.searchParams.set('redirect', pathname);
+      loginUrl.searchParams.set('redirect', localizedPathname);
       return NextResponse.redirect(loginUrl);
     }
 
@@ -131,7 +135,7 @@ export async function proxy(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   const authRoutes = ['/club-panel/login', '/club-panel/signup', '/account/login', '/account/register'];
-  if (authRoutes.some(route => pathname.startsWith(route)) && user) {
+  if (authRoutes.some(route => localizedPathname.startsWith(route)) && user) {
     // Get user role to redirect appropriately
     const { data: profile } = await supabase
       .from('Profile')

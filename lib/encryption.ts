@@ -45,35 +45,56 @@ export interface EncryptedBundle {
  * Uses AES-256-GCM for authenticated encryption
  */
 export class EncryptionService {
-  /**
-   * Encrypt PII data bundle
-   * Returns base64-encoded JSON string for storage
-   */
-  static encrypt(data: PIIData): string {
+  private static encryptInternal(data: unknown): string {
     const masterKey = getMasterKey();
     const iv = randomBytes(IV_LENGTH);
-    
-    // Create cipher
+
     const cipher = createCipheriv(ALGORITHM, masterKey, iv);
-    
-    // Encrypt the data
     const dataString = JSON.stringify(data);
     const encrypted = Buffer.concat([
       cipher.update(dataString, 'utf8'),
       cipher.final(),
     ]);
-    
-    // Get authentication tag
+
     const authTag = cipher.getAuthTag();
-    
-    // Create bundle
     const bundle: EncryptedBundle = {
       iv: iv.toString('hex'),
       authTag: authTag.toString('hex'),
       ciphertext: encrypted.toString('hex'),
     };
-    
+
     return Buffer.from(JSON.stringify(bundle)).toString('base64');
+  }
+
+  private static decryptInternal(encryptedBundle: string): unknown {
+    const masterKey = getMasterKey();
+
+    const bundle: EncryptedBundle = JSON.parse(
+      Buffer.from(encryptedBundle, 'base64').toString('utf8')
+    );
+
+    const decipher = createDecipheriv(
+      ALGORITHM,
+      masterKey,
+      Buffer.from(bundle.iv, 'hex')
+    );
+
+    decipher.setAuthTag(Buffer.from(bundle.authTag, 'hex'));
+
+    const decrypted = Buffer.concat([
+      decipher.update(Buffer.from(bundle.ciphertext, 'hex')),
+      decipher.final(),
+    ]);
+
+    return JSON.parse(decrypted.toString('utf8'));
+  }
+
+  /**
+   * Encrypt PII data bundle
+   * Returns base64-encoded JSON string for storage
+   */
+  static encrypt(data: PIIData): string {
+    return this.encryptInternal(data);
   }
 
   /**
@@ -87,33 +108,22 @@ export class EncryptionService {
    * Decrypt PII data bundle
    */
   static decrypt(encryptedBundle: string): PIIData {
-    const masterKey = getMasterKey();
-    
     try {
-      // Parse bundle
-      const bundle: EncryptedBundle = JSON.parse(
-        Buffer.from(encryptedBundle, 'base64').toString('utf8')
-      );
-      
-      // Create decipher
-      const decipher = createDecipheriv(
-        ALGORITHM,
-        masterKey,
-        Buffer.from(bundle.iv, 'hex')
-      );
-      
-      // Set auth tag
-      decipher.setAuthTag(Buffer.from(bundle.authTag, 'hex'));
-      
-      // Decrypt
-      const decrypted = Buffer.concat([
-        decipher.update(Buffer.from(bundle.ciphertext, 'hex')),
-        decipher.final(),
-      ]);
-      
-      return JSON.parse(decrypted.toString('utf8'));
+      return this.decryptInternal(encryptedBundle) as PIIData;
     } catch (error) {
       throw new Error('Failed to decrypt data: Invalid or corrupted data');
+    }
+  }
+
+  static encryptPayload(data: Record<string, unknown>): string {
+    return this.encryptInternal(data);
+  }
+
+  static decryptPayload(encryptedBundle: string): Record<string, unknown> {
+    try {
+      return this.decryptInternal(encryptedBundle) as Record<string, unknown>;
+    } catch (error) {
+      throw new Error('Failed to decrypt payload: Invalid or corrupted data');
     }
   }
 

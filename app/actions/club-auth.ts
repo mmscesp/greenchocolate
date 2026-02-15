@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
+import { EncryptionService } from '@/lib/encryption';
 import { z } from 'zod';
 import type { ActionState } from './auth';
 
@@ -147,9 +148,22 @@ export async function clubSignUp(prevState: ActionState, formData: FormData): Pr
         role: 'CLUB_ADMIN',
         displayName: validated.data.clubName,
         hasCompletedOnboarding: true,
-        // @ts-ignore - managedClubId field exists in schema
-        managedClubId: club.id,
+        managedClub: {
+          connect: { id: club.id },
+        },
       },
+    });
+
+    const encryptedRegistrationSnapshot = EncryptionService.encryptPayload({
+      type: 'club_registration',
+      clubData: {
+        name: validated.data.clubName,
+        email: validated.data.email,
+        phone: validated.data.phone,
+        address: validated.data.address,
+        description: validated.data.description,
+      },
+      submittedAt: new Date().toISOString(),
     });
 
     // Step 5: Create verification request for admin review
@@ -161,15 +175,7 @@ export async function clubSignUp(prevState: ActionState, formData: FormData): Pr
         status: 'PENDING',
         message: `New club registration request: ${validated.data.clubName}`,
         encryptedSnapshot: {
-          type: 'club_registration',
-          clubData: {
-            name: validated.data.clubName,
-            email: validated.data.email,
-            phone: validated.data.phone,
-            address: validated.data.address,
-            description: validated.data.description,
-          },
-          submittedAt: new Date().toISOString(),
+          encryptedData: encryptedRegistrationSnapshot,
         },
       },
     });

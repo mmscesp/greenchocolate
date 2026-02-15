@@ -5,6 +5,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 // Use any for JSON fields to avoid Prisma 7 type issues
@@ -457,17 +458,28 @@ export async function getNeighborhoods(citySlug?: string) {
 export async function getAllAmenities(citySlug?: string) {
   try {
     const validatedCitySlug = citySlugSchema.parse(citySlug);
-    
-    // Using unnest for performance on array columns
-    let query = `SELECT DISTINCT unnest("amenities") as item FROM "Club" WHERE "isActive" = true AND "isVerified" = true`;
-    
-    if (validatedCitySlug) {
-      query += ` AND "cityId" = (SELECT id FROM "City" WHERE slug = '${validatedCitySlug}')`;
-    }
-    
-    query += ` ORDER BY item ASC`;
-    
-    const result = await prisma.$queryRawUnsafe<{ item: string }[]>(query);
+
+    const result = validatedCitySlug
+      ? await prisma.$queryRaw<{ item: string }[]>(
+          Prisma.sql`
+            SELECT DISTINCT unnest(c."amenities") as item
+            FROM "Club" c
+            JOIN "City" ci ON c."cityId" = ci.id
+            WHERE c."isActive" = true
+              AND c."isVerified" = true
+              AND ci.slug = ${validatedCitySlug}
+            ORDER BY item ASC
+          `
+        )
+      : await prisma.$queryRaw<{ item: string }[]>(
+          Prisma.sql`
+            SELECT DISTINCT unnest("amenities") as item
+            FROM "Club"
+            WHERE "isActive" = true
+              AND "isVerified" = true
+            ORDER BY item ASC
+          `
+        );
 
     return result.map((r: { item: string }) => r.item);
   } catch (error) {
@@ -482,17 +494,28 @@ export async function getAllAmenities(citySlug?: string) {
 export async function getAllVibes(citySlug?: string) {
   try {
     const validatedCitySlug = citySlugSchema.parse(citySlug);
-    
-    // Using unnest for performance on array columns
-    let query = `SELECT DISTINCT unnest("vibeTags") as item FROM "Club" WHERE "isActive" = true AND "isVerified" = true`;
-    
-    if (validatedCitySlug) {
-      query += ` AND "cityId" = (SELECT id FROM "City" WHERE slug = '${validatedCitySlug}')`;
-    }
-    
-    query += ` ORDER BY item ASC`;
-    
-    const result = await prisma.$queryRawUnsafe<{ item: string }[]>(query);
+
+    const result = validatedCitySlug
+      ? await prisma.$queryRaw<{ item: string }[]>(
+          Prisma.sql`
+            SELECT DISTINCT unnest(c."vibeTags") as item
+            FROM "Club" c
+            JOIN "City" ci ON c."cityId" = ci.id
+            WHERE c."isActive" = true
+              AND c."isVerified" = true
+              AND ci.slug = ${validatedCitySlug}
+            ORDER BY item ASC
+          `
+        )
+      : await prisma.$queryRaw<{ item: string }[]>(
+          Prisma.sql`
+            SELECT DISTINCT unnest("vibeTags") as item
+            FROM "Club"
+            WHERE "isActive" = true
+              AND "isVerified" = true
+            ORDER BY item ASC
+          `
+        );
 
     return result.map((r: { item: string }) => r.item);
   } catch (error) {
