@@ -291,7 +291,7 @@ function VerificationMoat() {
 
 export default function WhyUsSection() {
   return (
-    <section className="py-24 bg-zinc-950 text-white relative overflow-hidden">
+    <section className="py-24 bg-zinc-900 text-white relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-3xl" />

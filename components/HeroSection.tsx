@@ -221,12 +221,12 @@ export default function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-black"
+      className="relative w-full bg-zinc-900"
       style={{ height: HERO_CONFIG.scroll.height }}
     >
       <div
         ref={viewportRef}
-        className="sticky top-0 left-0 w-full h-screen overflow-hidden bg-black"
+        className="sticky top-0 left-0 w-full h-screen overflow-hidden bg-zinc-900"
         style={{ perspective: '2000px' }}
       >
         {/* ──────────────────────────────────────────────────────────────── */}
@@ -341,7 +341,7 @@ export default function HeroSection() {
               return (
                 <div
                   key={i}
-                  className="bg-black/75 backdrop-blur-xl border border-white/25 p-6 md:p-10 rounded-2xl md:rounded-3xl text-center shadow-[0_20px_80px_rgba(0,0,0,0.8)] hover:border-[#E8A838]/50 transition-all duration-300"
+                  className="bg-zinc-900/75 backdrop-blur-xl border border-white/25 p-6 md:p-10 rounded-2xl md:rounded-3xl text-center shadow-[0_20px_80px_rgba(0,0,0,0.8)] hover:border-[#E8A838]/50 transition-all duration-300"
                 >
                   <div className="flex justify-center mb-4">
                     <Icon className="w-7 h-7 md:w-9 md:h-9 text-[#E8A838]" />
@@ -364,7 +364,7 @@ export default function HeroSection() {
 
       {/* Loading Screen */}
       <div
-        className={`fixed inset-0 z-[100] flex items-center justify-center bg-black transition-opacity duration-1000 ${
+        className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900 transition-opacity duration-1000 ${
           imageLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
       >
