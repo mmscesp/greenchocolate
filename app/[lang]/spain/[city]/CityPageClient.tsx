@@ -36,22 +36,79 @@ interface CityDetail {
 }
 
 interface CityPageClientProps {
-  cityDetail: CityDetail;
-  cityClubs: Club[];
-  neighborhoods: string[];
-  featuredClubs: Club[];
   lang: string;
   city: string;
 }
 
-export default function CityPageClient({ 
-  cityDetail, 
-  cityClubs, 
-  neighborhoods, 
-  featuredClubs,
-  lang,
-  city
-}: CityPageClientProps) {
+// Mock data for different cities
+const cityData: Record<string, CityDetail> = {
+  barcelona: {
+    name: 'Barcelona',
+    country: 'Spain',
+    description: 'Experience Barcelona\'s premier cannabis social clubs with verified access and local expertise.',
+  },
+  madrid: {
+    name: 'Madrid',
+    country: 'Spain',
+    description: 'Discover Madrid\'s growing cannabis culture with exclusive access to the city\'s finest private clubs.',
+  },
+  valencia: {
+    name: 'Valencia',
+    country: 'Spain',
+    description: 'Explore Valencia\'s vibrant cannabis scene with Mediterranean flair and welcoming club culture.',
+  },
+  sevilla: {
+    name: 'Sevilla',
+    country: 'Spain',
+    description: 'Join Sevilla\'s intimate cannabis community in the heart of Andalusia.',
+  },
+  malaga: {
+    name: 'Málaga',
+    country: 'Spain',
+    description: 'Experience Málaga\'s laid-back cannabis culture along the beautiful Costa del Sol.',
+  }
+};
+
+const clubsData: Record<string, Club[]> = {
+  barcelona: [
+    { id: '1', slug: 'green-house', name: 'Green House Barcelona', isVerified: true, shortDescription: 'Premium cannabis club', description: 'Premium cannabis club', neighborhood: 'Eixample', priceRange: '$$' },
+    { id: '2', slug: 'ocean-club', name: 'Ocean Club', isVerified: true, shortDescription: 'Beachside lounge', description: 'Beachside lounge', neighborhood: 'Barceloneta', priceRange: '$$$' },
+    { id: '3', slug: 'mountain-high', name: 'Mountain High', isVerified: true, shortDescription: 'Panoramic views', description: 'Panoramic views', neighborhood: 'Gracia', priceRange: '$$' },
+  ],
+  madrid: [
+    { id: '1', slug: 'malasana-green', name: 'Malasaña Green', isVerified: true, shortDescription: 'Trendy spot', description: 'Trendy spot', neighborhood: 'Malasaña', priceRange: '$$' },
+    { id: '2', slug: 'salamanca-spirits', name: 'Salamanca Spirits', isVerified: true, shortDescription: 'Luxury experience', description: 'Luxury experience', neighborhood: 'Salamanca', priceRange: '$$$' },
+    { id: '3', slug: 'latina-lounge', name: 'Latina Lounge', isVerified: true, shortDescription: 'Cozy atmosphere', description: 'Cozy atmosphere', neighborhood: 'La Latina', priceRange: '$' },
+  ],
+  valencia: [
+    { id: '1', slug: 'el-carmen-club', name: 'El Carmen Club', isVerified: true, shortDescription: 'Historic venue', description: 'Historic venue', neighborhood: 'El Carmen', priceRange: '$$' },
+    { id: '2', slug: 'ruzafa-garden', name: 'Ruzafa Garden', isVerified: true, shortDescription: 'Garden style', description: 'Garden style', neighborhood: 'Ruzafa', priceRange: '$$' },
+  ],
+  sevilla: [
+    { id: '1', slug: 'alameda-spirits', name: 'Alameda Spirits', isVerified: true, shortDescription: 'Andalusian style', description: 'Andalusian style', neighborhood: 'Alameda', priceRange: '$' },
+    { id: '2', slug: 'triana-terrace', name: 'Triana Terrace', isVerified: true, shortDescription: 'Riverside views', description: 'Riverside views', neighborhood: 'Triana', priceRange: '$$' },
+  ],
+  malaga: [
+    { id: '1', slug: 'costa-club', name: 'Costa Club Málaga', isVerified: true, shortDescription: 'Beach vibes', description: 'Beach vibes', neighborhood: 'Pedregalejo', priceRange: '$$' },
+    { id: '2', slug: 'soho-green', name: 'Soho Green', isVerified: true, shortDescription: 'Art district', description: 'Art district', neighborhood: 'Soho', priceRange: '$$' },
+  ],
+};
+
+const neighborhoodsData: Record<string, string[]> = {
+  barcelona: ['Eixample', 'Barceloneta', 'Gracia', 'Born', 'Gothic'],
+  madrid: ['Malasaña', 'Chueca', 'Salamanca', 'La Latina', 'Chamberí'],
+  valencia: ['El Carmen', 'Ruzafa', 'Ensanche', 'Malvarrosa', 'Benimaclet'],
+  sevilla: ['Alameda', 'Santa Cruz', 'Triana', 'Nervión', 'Macarena'],
+  malaga: ['Centro', 'Pedregalejo', 'El Palo', 'Soho', 'La Merced'],
+};
+
+export default function CityPageClient({ lang, city }: CityPageClientProps) {
+  const citySlug = city.toLowerCase();
+  const cityDetail = cityData[citySlug] || cityData.barcelona;
+  const cityClubs = clubsData[citySlug] || clubsData.barcelona;
+  const neighborhoods = neighborhoodsData[citySlug] || neighborhoodsData.barcelona;
+  const featuredClubs = cityClubs.slice(0, 3); 
+
   return (
     <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
       {/* Background Effects */}
