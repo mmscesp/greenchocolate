@@ -14,21 +14,22 @@ import { useGSAP } from '@gsap/react';
 // ============================================================================
 const HERO_CONFIG = {
   scroll: {
-    height: '420vh',
-    scrub: 0.35,
+    height: '240vh',
   },
   camera: {
-    focalPoint: '50% 38%',
-    step0Scale: 1.9,
-    step1Scale: 1.35,
-    step2Scale: 1.06,
-    step3Scale: 1.0,
-    panDown: -48,
+    focalPoint: '50% 50%',
+    step0Scale: 1.12,
+    step1Scale: 1.0,
+    step2Scale: 1.02,
+    step3Scale: 1.02,
+    frame0ObjectY: '34%',
+    frame1ObjectY: '38%',
+    frame2ObjectY: '54%',
+    frame3ObjectY: '62%',
   },
-  // Normalized duration for timeline segments
   acts: {
-    DURATION: 1.0, 
-  }
+    DURATION: 1.0,
+  },
 } as const;
 
 export default function HeroSection() {
@@ -37,6 +38,7 @@ export default function HeroSection() {
   const containerRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const bgPlateRef = useRef<HTMLDivElement>(null);
+  const bgImageRef = useRef<HTMLImageElement>(null);
   
   const taglineRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
@@ -57,6 +59,11 @@ export default function HeroSection() {
       transformOrigin: HERO_CONFIG.camera.focalPoint,
       yPercent: 0,
     });
+    if (bgImageRef.current) {
+      gsap.set(bgImageRef.current, {
+        objectPosition: `50% ${HERO_CONFIG.camera.frame0ObjectY}`,
+      });
+    }
 
     // Text: Tagline & Headline Visible
     gsap.set([taglineRef.current, headlineRef.current], {
@@ -101,149 +108,109 @@ export default function HeroSection() {
         scale: HERO_CONFIG.camera.step1Scale,
         yPercent: 0,
       });
+      if (bgImageRef.current) {
+        gsap.set(bgImageRef.current, {
+          objectPosition: `50% ${HERO_CONFIG.camera.frame1ObjectY}`,
+        });
+      }
       return;
     }
 
     gsap.registerPlugin(ScrollTrigger);
-    const snapPoints = [0, 1 / 3, 2 / 3, 1];
+    const ACT = HERO_CONFIG.acts.DURATION;
+    const labels = ['frame0', 'frame1', 'frame2', 'frame3'] as const;
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: HERO_CONFIG.scroll.scrub,
-        snap: {
-          snapTo: snapPoints,
-          directional: true,
-          inertia: false,
-          duration: { min: 0.16, max: 0.32 },
-          delay: 0,
-          ease: 'power3.out',
-        },
-        fastScrollEnd: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      },
-    });
+    const tl = gsap.timeline({ paused: true });
+    tl.addLabel('frame0', 0);
+    tl.addLabel('frame1', ACT);
+    tl.addLabel('frame2', ACT * 2);
+    tl.addLabel('frame3', ACT * 3);
 
-    const lockTrigger = ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: 'top top',
-      end: 'bottom bottom',
-    });
-
-    let currentStep = 0;
+    let currentFrame = 0;
     let isTransitioning = false;
-    let stepLockEnabled = true;
-    let observer: ReturnType<typeof ScrollTrigger.observe> | null = null;
+    let releasedToPage = false;
 
-    const syncObserver = () => {
-      if (!observer) {
-        return;
-      }
-
-      if (stepLockEnabled && !isTransitioning) {
-        observer.enable();
-        return;
-      }
-
-      observer.disable();
+    const isHeroActive = () => {
+      if (!containerRef.current) return false;
+      const rect = containerRef.current.getBoundingClientRect();
+      return rect.top <= 2 && rect.bottom > window.innerHeight * 0.5;
     };
 
-    const getNearestStep = (progress: number) => {
-      let nearest = 0;
-      let minDistance = Number.POSITIVE_INFINITY;
-
-      snapPoints.forEach((point, index) => {
-        const distance = Math.abs(progress - point);
-        if (distance < minDistance) {
-          minDistance = distance;
-          nearest = index;
-        }
-      });
-
-      return nearest;
-    };
-
-    const moveToStep = (nextStep: number) => {
-      if (nextStep < 0 || nextStep > 3 || isTransitioning) {
+    const goToFrame = (nextFrame: number) => {
+      if (nextFrame < 0 || nextFrame > 3 || isTransitioning || nextFrame === currentFrame) {
         return;
       }
-
-      const start = lockTrigger.start;
-      const end = lockTrigger.end;
-      const targetScroll = start + (end - start) * snapPoints[nextStep];
-      const proxy = { value: lockTrigger.scroll() };
 
       isTransitioning = true;
 
-      gsap.to(proxy, {
-        value: targetScroll,
-        duration: 0.62,
-        ease: 'power3.out',
+      tl.tweenTo(labels[nextFrame], {
+        duration: 0.5,
+        ease: 'power2.inOut',
         overwrite: true,
-        onUpdate: () => {
-          lockTrigger.scroll(proxy.value);
-        },
         onComplete: () => {
-          currentStep = nextStep;
+          currentFrame = nextFrame;
           isTransitioning = false;
-          stepLockEnabled = currentStep < 2;
-          syncObserver();
         },
       });
     };
 
-    observer = ScrollTrigger.observe({
-      type: 'wheel,touch,pointer',
-      preventDefault: true,
-      tolerance: 10,
-      onDown: () => {
-        moveToStep(Math.min(3, currentStep + 1));
-      },
-      onUp: () => {
-        if (currentStep === 0) {
-          observer?.disable();
+    const handleWheel = (event: WheelEvent) => {
+      if (!isHeroActive() || releasedToPage) {
+        return;
+      }
+
+      event.preventDefault();
+      if (isTransitioning) {
+        return;
+      }
+
+      if (event.deltaY > 8) {
+        if (currentFrame < 3) {
+          goToFrame(currentFrame + 1);
           return;
         }
-        moveToStep(Math.max(0, currentStep - 1));
-      },
-    });
 
-    syncObserver();
+        releasedToPage = true;
+        window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+        return;
+      }
+
+      if (event.deltaY < -8 && currentFrame > 0) {
+        goToFrame(currentFrame - 1);
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
 
     const activationTrigger = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
       end: 'bottom bottom',
-      onEnter: () => syncObserver(),
-      onEnterBack: () => syncObserver(),
-      onLeave: () => observer?.disable(),
-      onLeaveBack: () => observer?.disable(),
-      onUpdate: (self) => {
-        currentStep = getNearestStep(self.progress);
-        const shouldLockSteps = self.progress < snapPoints[2];
-        if (shouldLockSteps !== stepLockEnabled) {
-          stepLockEnabled = shouldLockSteps;
-          syncObserver();
-        }
+      onEnter: () => {
+        releasedToPage = false;
+      },
+      onEnterBack: () => {
+        releasedToPage = false;
       },
     });
 
-    const ACT = HERO_CONFIG.acts.DURATION;
+    if (!bgImageRef.current) {
+      return;
+    }
 
-    // ──────────────────────────────────────────────────────────────────────
-    // TRANSITION 1: ZOOM OUT & REVEAL BODY (0 → 0.33)
-    // ──────────────────────────────────────────────────────────────────────
     tl.to(bgPlateRef.current, {
       scale: HERO_CONFIG.camera.step1Scale,
       ease: 'power1.inOut',
       duration: ACT,
     }, 0)
+    .to(bgImageRef.current, {
+      objectPosition: `50% ${HERO_CONFIG.camera.frame1ObjectY}`,
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, 0)
     .to([headlineRef.current, taglineRef.current], {
-      scale: 0.78,
-      y: -48,
+      scale: 0.74,
+      y: -4,
       transformOrigin: 'center center',
       ease: 'power1.inOut',
       duration: ACT,
@@ -253,7 +220,7 @@ export default function HeroSection() {
       y: 0,
       ease: 'power2.out',
       duration: ACT * 0.8,
-    }, 0.2); // Slight delay for body reveal
+    }, 0.2);
 
     tl.to(verificationRef.current, {
       opacity: 1,
@@ -262,32 +229,33 @@ export default function HeroSection() {
       duration: ACT * 0.45,
     }, 0.34);
 
-    // ──────────────────────────────────────────────────────────────────────
-    // TRANSITION 2: PAN DOWN & REVEAL CTA (0.33 → 0.66)
-    // ──────────────────────────────────────────────────────────────────────
     tl.to(bgPlateRef.current, {
       scale: HERO_CONFIG.camera.step2Scale,
-      yPercent: HERO_CONFIG.camera.panDown, // Pan to greenery
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, ACT)
+    .to(bgImageRef.current, {
+      objectPosition: `50% ${HERO_CONFIG.camera.frame2ObjectY}`,
       ease: 'power1.inOut',
       duration: ACT,
     }, ACT)
     .to([headlineRef.current, taglineRef.current], {
-      scale: 0.58,
-      y: -176,
-      opacity: 0.92,
+      scale: 0.56,
+      y: -18,
+      opacity: 0.56,
       ease: 'power1.inOut',
       duration: ACT,
     }, ACT)
     .to(bodyRef.current, {
-      scale: 0.8,
-      y: -178,
-      opacity: 0.45,
+      scale: 0.94,
+      y: -8,
+      opacity: 0.92,
       ease: 'power1.inOut',
       duration: ACT,
     }, ACT)
     .to(verificationRef.current, {
-      opacity: 0,
-      y: -56,
+      opacity: 0.88,
+      y: -6,
       ease: 'power1.inOut',
       duration: ACT * 0.55,
     }, ACT)
@@ -298,30 +266,28 @@ export default function HeroSection() {
       duration: ACT * 0.8,
     }, ACT + 0.2);
 
-    // ──────────────────────────────────────────────────────────────────────
-    // TRANSITION 3: REVEAL STATS (0.66 → 1)
-    // ──────────────────────────────────────────────────────────────────────
     tl.to(bgPlateRef.current, {
       scale: HERO_CONFIG.camera.step3Scale,
-      yPercent: HERO_CONFIG.camera.panDown - 8,
+      ease: 'none',
+      duration: ACT,
+    }, ACT * 2)
+    .to(bgImageRef.current, {
+      objectPosition: `50% ${HERO_CONFIG.camera.frame3ObjectY}`,
       ease: 'none',
       duration: ACT,
     }, ACT * 2)
     .to([headlineRef.current, taglineRef.current], {
-      y: -188,
-      opacity: 0.58,
+      opacity: 0.15,
       ease: 'power1.inOut',
       duration: ACT,
     }, ACT * 2)
     .to(bodyRef.current, {
-      y: -165,
-      opacity: 0.7,
+      opacity: 0.5,
       ease: 'power1.inOut',
       duration: ACT,
     }, ACT * 2)
     .to(ctaRef.current, {
-      y: 96,
-      opacity: 0,
+      opacity: 0.85,
       ease: 'power1.inOut',
       duration: ACT * 0.45,
     }, ACT * 2)
@@ -351,10 +317,8 @@ export default function HeroSection() {
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      observer?.kill();
+      window.removeEventListener('wheel', handleWheel);
       activationTrigger.kill();
-      lockTrigger.kill();
-      tl.scrollTrigger?.kill();
       tl.kill();
     };
   }, { scope: containerRef, dependencies: [imageLoaded] });
@@ -365,12 +329,12 @@ export default function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full bg-zinc-900"
+      className="relative w-full"
       style={{ height: HERO_CONFIG.scroll.height }}
     >
       <div
         ref={viewportRef}
-        className="sticky top-0 left-0 w-full h-screen overflow-hidden bg-zinc-900"
+        className="sticky top-0 left-0 w-full h-screen overflow-hidden"
         style={{ perspective: '2000px' }}
       >
         {/* ──────────────────────────────────────────────────────────────── */}
@@ -387,7 +351,10 @@ export default function HeroSection() {
             priority
             quality={95}
             className="object-cover"
-            onLoad={() => setImageLoaded(true)}
+            onLoad={(e) => {
+              bgImageRef.current = e.currentTarget;
+              setImageLoaded(true);
+            }}
           />
         </div>
 
@@ -445,9 +412,9 @@ export default function HeroSection() {
         {/* ──────────────────────────────────────────────────────────────── */}
         <div
           ref={ctaRef}
-          className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none px-4"
+          className="absolute inset-0 z-40 flex items-end justify-center pointer-events-none px-4 pb-20 md:pb-28"
         >
-          <div className="flex flex-col md:flex-row gap-6 pointer-events-auto translate-y-[18vh]">
+          <div className="flex flex-col md:flex-row gap-6 pointer-events-auto">
             <Link href="/safety-guide">
               <Button
                 size="lg"
@@ -473,7 +440,7 @@ export default function HeroSection() {
         {/* ──────────────────────────────────────────────────────────────── */}
         <div
           ref={statsRef}
-          className="absolute bottom-10 md:bottom-16 left-0 right-0 z-50 px-4 md:px-8"
+          className="absolute bottom-8 md:bottom-12 left-0 right-0 z-50 px-4 md:px-8"
         >
           <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {[
@@ -486,7 +453,7 @@ export default function HeroSection() {
               return (
                 <div
                   key={i}
-                  className="bg-zinc-900/75 backdrop-blur-xl border border-white/25 p-6 md:p-10 rounded-2xl md:rounded-3xl text-center shadow-[0_20px_80px_rgba(0,0,0,0.8)] hover:border-[#E8A838]/50 transition-all duration-300"
+                  className="bg-black/45 backdrop-blur-xl border border-white/30 p-6 md:p-10 rounded-2xl md:rounded-3xl text-center shadow-[0_20px_80px_rgba(0,0,0,0.5)] hover:border-[#E8A838]/50 transition-all duration-300"
                 >
                   <div className="flex justify-center mb-4">
                     <Icon className="w-7 h-7 md:w-9 md:h-9 text-[#E8A838]" />
@@ -504,7 +471,7 @@ export default function HeroSection() {
         </div>
 
         {/* Vignette */}
-        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-black/70 via-transparent to-black/90" />
+        <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-black/50 via-transparent to-black/50" />
       </div>
 
       {/* Loading Screen */}
