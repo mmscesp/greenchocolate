@@ -9,8 +9,8 @@ interface ExpertBylineProps {
 
 export default function ExpertByline({ name, role, avatar, date }: ExpertBylineProps) {
   return (
-    <div className="flex items-center gap-3 py-4 border-b border-zinc-100 mb-8">
-      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-zinc-100 border border-zinc-200">
+    <div className="flex items-center gap-3 py-4 border-b border-white/10 mb-8">
+      <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/10 border border-white/20">
         {avatar ? (
           <Image src={avatar} alt={name} fill className="object-cover" />
         ) : (
@@ -20,8 +20,8 @@ export default function ExpertByline({ name, role, avatar, date }: ExpertBylineP
         )}
       </div>
       <div>
-        <p className="text-sm font-bold text-zinc-900 leading-none mb-1">
-          Reviewed by <span className="text-green-600">{name}</span>
+        <p className="text-sm font-bold text-white leading-none mb-1">
+          Reviewed by <span className="text-green-400">{name}</span>
         </p>
         <p className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">
           {role} {date && `• Last Updated ${date}`}

@@ -1,18 +1,21 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Footer from '@/components/Footer';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useLanguage } from '@/hooks/useLanguage';
 import { ArticleDetail, ArticleCard } from '@/app/actions/articles';
-import { Leaf, Calendar, Clock, User, ArrowLeft, Share2, Shield, Info, ExternalLink } from 'lucide-react';
+import { Leaf, Calendar, Clock, User, ArrowLeft, Share2, Shield, Info, ExternalLink, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import ExpertByline from '@/components/trust/ExpertByline';
 import TrustBadge from '@/components/trust/TrustBadge';
 import SafetyKitForm from '@/components/marketing/SafetyKitForm';
+import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 
 interface ArticleContentProps {
   article: ArticleDetail;
@@ -21,22 +24,64 @@ interface ArticleContentProps {
 
 export default function ArticleContent({ article, relatedArticles = [] }: ArticleContentProps) {
   const { t, language } = useLanguage();
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const [showStickyCTA, setShowStickyCTA] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowStickyCTA(window.scrollY > 500);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+      {/* Reading Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500 z-[60] origin-left"
+        style={{ scaleX }}
+      />
+
+      {/* Sticky CTA Banner */}
+      <motion.div
+        initial={{ y: 100 }}
+        animate={{ y: showStickyCTA ? 0 : 100 }}
+        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-zinc-900/95 backdrop-blur-md border-t border-white/10"
+      >
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
+          <p className="text-white font-bold hidden sm:block">Want to visit a club safely?</p>
+          <p className="text-white font-bold sm:hidden">Visit safely?</p>
+          <div className="flex items-center gap-3">
+            <Link href={`/${language}/clubs`}>
+              <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-bold rounded-full">
+                Browse Clubs <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-green-500/5 rounded-full blur-3xl" />
+      </div>
+
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
+      <nav className="bg-zinc-900/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link href={`/${language}`} className="flex items-center gap-2 group">
-                <Leaf className="h-6 w-6 text-green-600 group-hover:rotate-12 transition-transform" />
-                <span className="text-lg font-black tracking-tighter text-zinc-900 uppercase">SocialClubsMaps</span>
+                <Leaf className="h-6 w-6 text-green-500 group-hover:rotate-12 transition-transform" />
+                <span className="text-lg font-black tracking-tighter text-white uppercase">SocialClubsMaps</span>
               </Link>
             </div>
             <div className="flex items-center gap-4">
               <Link href={`/${language}/editorial`}>
-                <Button variant="ghost" className="text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-900">
+                <Button variant="ghost" className="text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-white">
                   <ArrowLeft className="h-3 w-3 mr-2" />
                   {t('nav.back_to_blog')}
                 </Button>
@@ -63,12 +108,12 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16">
           <div className="max-w-4xl mx-auto">
             <div className="flex gap-2 mb-6">
-              <TrustBadge variant="expert" />
+              <TrustBadge variant="expert" theme="dark" />
               <Badge variant="secondary" className="bg-white/10 text-white border-white/20 backdrop-blur-md uppercase tracking-widest text-[10px] font-black">
                 {article.category}
               </Badge>
             </div>
-            <h1 className="text-4xl lg:text-7xl font-black text-white mb-6 leading-[0.95] tracking-tighter">
+            <h1 className="text-4xl lg:text-7xl font-black text-white mb-6 leading-[0.95] tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-100 to-white">
               {article.title}
             </h1>
             <div className="flex items-center gap-8 text-zinc-400 font-bold text-xs uppercase tracking-widest">
@@ -85,12 +130,12 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-32">
         <div className="grid lg:grid-cols-[1fr_350px] gap-20">
           
           {/* Article Main Body */}
           <article>
-            <div className="bg-white">
+            <div className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-8">
               {/* Expert Byline */}
               <ExpertByline 
                 name={article.authorName} 
@@ -99,40 +144,32 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               />
 
               {/* Regulatory Box */}
-              <div className="mb-12 p-8 bg-zinc-50 rounded-3xl border border-zinc-100 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-5">
-                  <Shield className="h-24 w-24" />
+              <div className="mb-12 p-8 bg-blue-500/10 rounded-3xl border border-blue-500/30 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <Shield className="h-24 w-24 text-blue-400" />
                 </div>
-                <div className="flex items-center gap-2 text-zinc-900 font-black text-xs uppercase tracking-widest mb-4">
-                  <Info className="h-4 w-4 text-blue-500" />
+                <div className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-widest mb-4">
+                  <Info className="h-4 w-4" />
                   Compliance Summary
                 </div>
-                <p className="text-zinc-600 font-medium leading-relaxed relative z-10">
+                <p className="text-zinc-300 font-medium leading-relaxed relative z-10">
                   {article.excerpt}
                 </p>
               </div>
 
               {/* Content Render */}
-              <div className="prose prose-zinc prose-lg max-w-none prose-headings:font-black prose-headings:tracking-tighter prose-p:text-zinc-600 prose-p:leading-relaxed prose-strong:text-zinc-900">
-                <div className="space-y-8">
-                  {article.content.split('\n\n').map((paragraph, index) => (
-                    <p key={index}>
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              </div>
+              <ArticleContentRenderer content={article.content} />
 
               {/* Tags & Interaction */}
-              <div className="mt-20 pt-8 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-6">
+              <div className="mt-20 pt-8 border-t border-white/10 flex flex-wrap items-center justify-between gap-6">
                 <div className="flex flex-wrap gap-2">
                   {article.tags.map(tag => (
-                    <Badge key={tag} variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-zinc-50 text-zinc-500 border-zinc-200">
+                    <Badge key={tag} variant="outline" className="text-[10px] font-black uppercase tracking-widest bg-white/5 text-zinc-400 border-white/10">
                       {tag}
                     </Badge>
                   ))}
                 </div>
-                <Button variant="outline" size="sm" className="rounded-full font-black text-[10px] uppercase tracking-widest px-6 group">
+                <Button variant="outline" size="sm" className="rounded-full font-black text-[10px] uppercase tracking-widest px-6 group border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white">
                   <Share2 className="h-3 w-3 mr-2 group-hover:rotate-12 transition-transform" />
                   {t('blog.share')}
                 </Button>
@@ -178,13 +215,16 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
 
         {/* Related Articles */}
         {relatedArticles.length > 0 && (
-          <div className="mt-32 pt-20 border-t border-zinc-100">
-            <h2 className="text-3xl font-black text-zinc-900 mb-12 tracking-tighter uppercase">{t('blog.related_articles')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="mt-32 pt-20 border-t border-white/10">
+            <h2 className="text-3xl font-black text-white mb-12 tracking-tighter uppercase">{t('blog.related_articles')}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map((related) => (
                 <Link key={related.id} href={`/${language}/editorial/${related.slug}`}>
-                  <article className="group cursor-pointer">
-                    <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-100">
+                  <article className="group cursor-pointer relative">
+                    {/* Glow effect */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-green-500/0 via-green-500/10 to-emerald-500/0 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                    
+                    <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-white/5 border border-white/10 group-hover:border-green-500/30 transition-all duration-500">
                       {related.heroImage && (
                         <Image
                           src={related.heroImage}
@@ -193,16 +233,20 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/20 to-transparent opacity-60" />
                     </div>
-                    <Badge variant="outline" className="mb-4 bg-zinc-50 text-zinc-500 text-[10px] font-black uppercase border-zinc-200">
+                    <Badge variant="outline" className="mb-4 bg-white/5 text-zinc-400 text-[10px] font-black uppercase border-white/10">
                       {related.category}
                     </Badge>
-                    <h3 className="text-xl font-bold text-zinc-900 mb-2 group-hover:text-green-600 transition-colors">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-green-400 transition-colors">
                       {related.title}
                     </h3>
-                    <p className="text-zinc-500 text-sm line-clamp-2 leading-relaxed">
+                    <p className="text-zinc-400 text-sm line-clamp-2 leading-relaxed">
                       {related.excerpt}
                     </p>
+                    
+                    {/* Bottom accent line */}
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full group-hover:w-1/4 transition-all duration-500" />
                   </article>
                 </Link>
               ))}

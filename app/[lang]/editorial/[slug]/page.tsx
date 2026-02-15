@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getArticleBySlug, getRelatedArticles, getArticles } from '@/app/actions/articles';
 import { JsonLd } from '@/components/JsonLd';
-import ArticleContent from '@/app/[lang]/learn/[slug]/ArticleContent';
+import ArticleContent from '@/app/[lang]/editorial/[slug]/ArticleContent';
 
 export const revalidate = 3600;
 
