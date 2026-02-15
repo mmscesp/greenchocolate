@@ -10,21 +10,22 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
 // ============================================================================
-// ✅ REFINED CONFIG - TRUE 3 ACTS
+// ✅ REFINED CONFIG - 4 STEP CINEMATIC FLOW
 // ============================================================================
 const HERO_CONFIG = {
   scroll: {
-    height: '400vh', // Increased to give each act more "air"
-    scrub: 1.5,
+    height: '420vh',
+    scrub: 0.35,
   },
   camera: {
     focalPoint: '50% 38%',
-    initialScale: 2.2,
-    midScale: 1.8,     // For Act 1 subtle zoom
-    finalScale: 1.0,
-    panDown: -55,
+    step0Scale: 1.9,
+    step1Scale: 1.35,
+    step2Scale: 1.06,
+    step3Scale: 1.0,
+    panDown: -48,
   },
-  // Normalized 0-3 duration for 3 clear acts
+  // Normalized duration for timeline segments
   acts: {
     DURATION: 1.0, 
   }
@@ -40,40 +41,71 @@ export default function HeroSection() {
   const taglineRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const verificationRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
 
   // ============================================================================
-  // ✅ SET INITIAL STATE - Everything visible from the start
+  // ✅ SET INITIAL STATE - Step 0
   // ============================================================================
   useLayoutEffect(() => {
     if (!bgPlateRef.current) return;
     
-    // Camera initial position
+    // Camera initial position (Step 0)
     gsap.set(bgPlateRef.current, {
-      scale: HERO_CONFIG.camera.initialScale,
+      scale: HERO_CONFIG.camera.step0Scale,
       transformOrigin: HERO_CONFIG.camera.focalPoint,
+      yPercent: 0,
     });
 
-    // ✅ CRITICAL: Text is VISIBLE from the start
-    gsap.set([taglineRef.current, headlineRef.current, bodyRef.current], {
+    // Text: Tagline & Headline Visible
+    gsap.set([taglineRef.current, headlineRef.current], {
       opacity: 1,
       y: 0,
+      scale: 1,
     });
 
-    // CTAs and stats start hidden in state, will animate in via timeline
+    // Body: Hidden initially (Revealed in Step 1)
+    gsap.set(bodyRef.current, {
+      opacity: 0,
+      y: 20,
+    });
+    gsap.set(verificationRef.current, {
+      opacity: 0,
+      y: 12,
+    });
+
+    // CTAs and stats start hidden
     gsap.set([ctaRef.current, statsRef.current], {
       opacity: 0,
+      y: 50,
     });
   }, []);
 
   // ============================================================================
-  // ✅ SCROLL ANIMATION - 3 CLEAR ACTS
+  // ✅ SCROLL ANIMATION - 4 STEPS (3 TRANSITIONS)
   // ============================================================================
   useGSAP(() => {
     if (!imageLoaded) return;
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      gsap.set([taglineRef.current, headlineRef.current, bodyRef.current, verificationRef.current, ctaRef.current, statsRef.current], {
+        clearProps: 'all',
+        opacity: 1,
+        y: 0,
+        scale: 1,
+      });
+      gsap.set(bgPlateRef.current, {
+        scale: HERO_CONFIG.camera.step1Scale,
+        yPercent: 0,
+      });
+      return;
+    }
+
     gsap.registerPlugin(ScrollTrigger);
+    const snapPoints = [0, 1 / 3, 2 / 3, 1];
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -82,126 +114,234 @@ export default function HeroSection() {
         end: 'bottom bottom',
         scrub: HERO_CONFIG.scroll.scrub,
         snap: {
-          snapTo: [0, 0.33, 0.66, 1], // Snap to start of each act + end
-          duration: { min: 0.2, max: 0.5 },
-          delay: 0.1,
-          ease: 'power2.inOut',
+          snapTo: snapPoints,
+          directional: true,
+          inertia: false,
+          duration: { min: 0.16, max: 0.32 },
+          delay: 0,
+          ease: 'power3.out',
         },
+        fastScrollEnd: true,
+        anticipatePin: 1,
         invalidateOnRefresh: true,
+      },
+    });
+
+    const lockTrigger = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: 'top top',
+      end: 'bottom bottom',
+    });
+
+    let currentStep = 0;
+    let isTransitioning = false;
+    let stepLockEnabled = true;
+    let observer: ReturnType<typeof ScrollTrigger.observe> | null = null;
+
+    const syncObserver = () => {
+      if (!observer) {
+        return;
+      }
+
+      if (stepLockEnabled && !isTransitioning) {
+        observer.enable();
+        return;
+      }
+
+      observer.disable();
+    };
+
+    const getNearestStep = (progress: number) => {
+      let nearest = 0;
+      let minDistance = Number.POSITIVE_INFINITY;
+
+      snapPoints.forEach((point, index) => {
+        const distance = Math.abs(progress - point);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearest = index;
+        }
+      });
+
+      return nearest;
+    };
+
+    const moveToStep = (nextStep: number) => {
+      if (nextStep < 0 || nextStep > 3 || isTransitioning) {
+        return;
+      }
+
+      const start = lockTrigger.start;
+      const end = lockTrigger.end;
+      const targetScroll = start + (end - start) * snapPoints[nextStep];
+      const proxy = { value: lockTrigger.scroll() };
+
+      isTransitioning = true;
+
+      gsap.to(proxy, {
+        value: targetScroll,
+        duration: 0.62,
+        ease: 'power3.out',
+        overwrite: true,
+        onUpdate: () => {
+          lockTrigger.scroll(proxy.value);
+        },
+        onComplete: () => {
+          currentStep = nextStep;
+          isTransitioning = false;
+          stepLockEnabled = currentStep < 2;
+          syncObserver();
+        },
+      });
+    };
+
+    observer = ScrollTrigger.observe({
+      type: 'wheel,touch,pointer',
+      preventDefault: true,
+      tolerance: 10,
+      onDown: () => {
+        moveToStep(Math.min(3, currentStep + 1));
+      },
+      onUp: () => {
+        if (currentStep === 0) {
+          observer?.disable();
+          return;
+        }
+        moveToStep(Math.max(0, currentStep - 1));
+      },
+    });
+
+    syncObserver();
+
+    const activationTrigger = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: 'top top',
+      end: 'bottom bottom',
+      onEnter: () => syncObserver(),
+      onEnterBack: () => syncObserver(),
+      onLeave: () => observer?.disable(),
+      onLeaveBack: () => observer?.disable(),
+      onUpdate: (self) => {
+        currentStep = getNearestStep(self.progress);
+        const shouldLockSteps = self.progress < snapPoints[2];
+        if (shouldLockSteps !== stepLockEnabled) {
+          stepLockEnabled = shouldLockSteps;
+          syncObserver();
+        }
       },
     });
 
     const ACT = HERO_CONFIG.acts.DURATION;
 
     // ──────────────────────────────────────────────────────────────────────
-    // ACT 1: THE REALITY CHECK (0 → 1)
+    // TRANSITION 1: ZOOM OUT & REVEAL BODY (0 → 0.33)
     // ──────────────────────────────────────────────────────────────────────
-    // Subtle initial movement to signal scroll is working
-    tl.to(
-      bgPlateRef.current,
-      {
-        scale: HERO_CONFIG.camera.midScale,
-        ease: 'none',
-      },
-      0
-    )
-    .to(
-      headlineRef.current,
-      {
-        y: -40,
-        opacity: 0.9,
-        ease: 'none',
-      },
-      0
-    );
+    tl.to(bgPlateRef.current, {
+      scale: HERO_CONFIG.camera.step1Scale,
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, 0)
+    .to([headlineRef.current, taglineRef.current], {
+      scale: 0.78,
+      y: -48,
+      transformOrigin: 'center center',
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, 0)
+    .to(bodyRef.current, {
+      opacity: 1,
+      y: 0,
+      ease: 'power2.out',
+      duration: ACT * 0.8,
+    }, 0.2); // Slight delay for body reveal
+
+    tl.to(verificationRef.current, {
+      opacity: 1,
+      y: 0,
+      ease: 'power2.out',
+      duration: ACT * 0.45,
+    }, 0.34);
 
     // ──────────────────────────────────────────────────────────────────────
-    // ACT 2: THE REVEAL (1 → 2)
+    // TRANSITION 2: PAN DOWN & REVEAL CTA (0.33 → 0.66)
     // ──────────────────────────────────────────────────────────────────────
-    tl.to(
-      bgPlateRef.current,
-      {
-        scale: HERO_CONFIG.camera.finalScale,
-        ease: 'power1.inOut',
-      },
-      ACT
-    )
-    // Headline parallax & shrink
-    .to(
-      headlineRef.current,
-      {
-        scale: 0.5,
-        y: -160,
-        opacity: 0.8,
-        ease: 'power1.inOut',
-      },
-      ACT
-    )
-    // Tagline and body fade out
-    .to(
-      [taglineRef.current, bodyRef.current],
-      {
-        opacity: 0,
-        y: -120,
-        ease: 'power1.in',
-      },
-      ACT
-    )
-    // CTAs fade in
-    .fromTo(
-      ctaRef.current,
-      { opacity: 0, y: 100 },
-      {
-        opacity: 1,
-        y: 0,
-        ease: 'power1.out',
-      },
-      ACT + 0.2
-    );
+    tl.to(bgPlateRef.current, {
+      scale: HERO_CONFIG.camera.step2Scale,
+      yPercent: HERO_CONFIG.camera.panDown, // Pan to greenery
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, ACT)
+    .to([headlineRef.current, taglineRef.current], {
+      scale: 0.58,
+      y: -176,
+      opacity: 0.92,
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, ACT)
+    .to(bodyRef.current, {
+      scale: 0.8,
+      y: -178,
+      opacity: 0.45,
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, ACT)
+    .to(verificationRef.current, {
+      opacity: 0,
+      y: -56,
+      ease: 'power1.inOut',
+      duration: ACT * 0.55,
+    }, ACT)
+    .to(ctaRef.current, {
+      opacity: 1,
+      y: 0,
+      ease: 'power2.out',
+      duration: ACT * 0.8,
+    }, ACT + 0.2);
 
     // ──────────────────────────────────────────────────────────────────────
-    // ACT 3: THE PROOF (2 → 3)
+    // TRANSITION 3: REVEAL STATS (0.66 → 1)
     // ──────────────────────────────────────────────────────────────────────
-    tl.to(
-      bgPlateRef.current,
-      {
-        yPercent: HERO_CONFIG.camera.panDown,
-        ease: 'power1.inOut',
-      },
-      ACT * 2
-    )
-    // Exit headline and CTAs upward
-    .to(
-      [headlineRef.current, ctaRef.current],
-      {
-        y: -1200,
-        opacity: 0,
-        ease: 'power1.in',
-      },
-      ACT * 2
-    )
-    // Stats rise from bottom
-    .fromTo(
-      statsRef.current,
-      { opacity: 0, y: 400 },
-      {
-        y: 0,
-        opacity: 1,
-        ease: 'power2.out',
-      },
-      ACT * 2 + 0.1
-    );
+    tl.to(bgPlateRef.current, {
+      scale: HERO_CONFIG.camera.step3Scale,
+      yPercent: HERO_CONFIG.camera.panDown - 8,
+      ease: 'none',
+      duration: ACT,
+    }, ACT * 2)
+    .to([headlineRef.current, taglineRef.current], {
+      y: -188,
+      opacity: 0.58,
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, ACT * 2)
+    .to(bodyRef.current, {
+      y: -165,
+      opacity: 0.7,
+      ease: 'power1.inOut',
+      duration: ACT,
+    }, ACT * 2)
+    .to(ctaRef.current, {
+      y: 96,
+      opacity: 0,
+      ease: 'power1.inOut',
+      duration: ACT * 0.45,
+    }, ACT * 2)
+    .to(statsRef.current, {
+      opacity: 1,
+      y: 0,
+      ease: 'power2.out',
+      duration: ACT * 0.8,
+    }, ACT * 2 + 0.2);
 
     // ──────────────────────────────────────────────────────────────────────
-    // MOUSE PARALLAX (Optional - subtle)
+    // MOUSE PARALLAX (Subtle)
     // ──────────────────────────────────────────────────────────────────────
     const handleMouseMove = (e: MouseEvent) => {
       const xPercent = (e.clientX / window.innerWidth - 0.5) * 2;
       const yPercent = (e.clientY / window.innerHeight - 0.5) * 2;
 
       gsap.to(viewportRef.current, {
-        rotationY: xPercent * 1.5,
-        rotationX: -yPercent * 1.5,
+        rotationY: xPercent * 1.0,
+        rotationX: -yPercent * 1.0,
         duration: 1.8,
         ease: 'power2.out',
       });
@@ -211,7 +351,11 @@ export default function HeroSection() {
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      observer?.kill();
+      activationTrigger.kill();
+      lockTrigger.kill();
+      tl.scrollTrigger?.kill();
+      tl.kill();
     };
   }, { scope: containerRef, dependencies: [imageLoaded] });
 
@@ -269,6 +413,7 @@ export default function HeroSection() {
                   BARCELONA
                 </h1>
                 <span
+                  aria-hidden="true"
                   className="text-6xl md:text-8xl lg:text-[10rem] text-[#E8A838] font-black leading-none"
                   style={{
                     filter: 'drop-shadow(0 0 50px rgba(232, 168, 56, 0.8))',
@@ -288,7 +433,7 @@ export default function HeroSection() {
                 Spanish CSCs aren&apos;t coffeeshops. No walk-ins. No menus. No
                 second chances.
               </p>
-              <p className="text-xl md:text-2xl lg:text-3xl text-white font-bold mt-6 tracking-[0.12em] uppercase drop-shadow-2xl">
+              <p ref={verificationRef} className="text-xl md:text-2xl lg:text-3xl text-white font-bold mt-6 tracking-[0.12em] uppercase drop-shadow-2xl">
                 We&apos;re your verification layer.
               </p>
             </div>

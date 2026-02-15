@@ -16,22 +16,17 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       return; // Skip smooth scroll for accessibility
     }
 
-    // ✅ OPTIMIZED for no-snap hero with scrub: 1.5
+    // Tuned for step-snapped hero narrative
     lenisRef.current = new Lenis({
-      // ✅ REDUCED from 0.9 to balance with scrub: 1.5
-      // Math: 0.7 (Lenis) × 1.5 (GSAP scrub) = 1.05 total lag
-      duration: 0.7,
+      duration: 0.45,
       
-      // ✅ SIMPLIFIED easing - standard smooth curve
-      // No need for asymmetric since there's no snap
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       
-      // ✅ REDUCED from 1.4 back to 1.2 (300vh instead of 400vh)
-      wheelMultiplier: 1.2,
+      wheelMultiplier: 1,
       
       // ✅ Mobile touch responsiveness
       touchMultiplier: 2,
