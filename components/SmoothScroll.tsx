@@ -18,7 +18,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     // Tuned for step-snapped hero narrative
     lenisRef.current = new Lenis({
-      duration: 0.45,
+      duration: 0.3,
       
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       
@@ -26,10 +26,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       gestureOrientation: 'vertical',
       smoothWheel: true,
       
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.95,
       
       // ✅ Mobile touch responsiveness
-      touchMultiplier: 2,
+      touchMultiplier: 1.35,
       
       // ✅ Prevent infinite scroll
       infinite: false,
