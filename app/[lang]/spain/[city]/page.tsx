@@ -40,7 +40,7 @@ const CITY_DATA: Record<string, {
 };
 
 export default async function CityPage({ params }: PageProps) {
-  const { city } = await params;
+  const { lang, city } = await params;
   const cityData = CITY_DATA[city.toLowerCase()];
 
   if (!cityData) {
@@ -48,7 +48,7 @@ export default async function CityPage({ params }: PageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <h1 className="text-4xl font-bold">City Not Found</h1>
         <p className="mt-4 text-muted-foreground">We are currently expanding to this location.</p>
-        <Button className="mt-8" asChild><Link href="/">Go Home</Link></Button>
+        <Button className="mt-8" asChild><Link href={`/${lang}`}>Go Home</Link></Button>
       </div>
     );
   }
@@ -112,7 +112,7 @@ export default async function CityPage({ params }: PageProps) {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold">Featured Clubs</h2>
                 <Button variant="outline" asChild>
-                  <Link href={`/en/spain/${city}/clubs`}>View All Clubs</Link>
+                  <Link href={`/${lang}/spain/${city}/clubs`}>View All Clubs</Link>
                 </Button>
               </div>
               <div className="grid gap-6">
@@ -134,7 +134,7 @@ export default async function CityPage({ params }: PageProps) {
                         A high-end social lounge perfect for digital nomads. Features ergonomic seating, fiber optic wifi, and a curated menu of organic strains.
                       </p>
                       <Button size="sm" asChild>
-                        <Link href={`/en/spain/${city}/clubs/club-${i}`}>View Profile</Link>
+                        <Link href={`/${lang}/spain/${city}/clubs/club-${i}`}>View Profile</Link>
                       </Button>
                     </div>
                   </div>

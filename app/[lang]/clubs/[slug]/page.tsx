@@ -10,6 +10,7 @@ export const revalidate = 3600;
 
 interface ClubPageProps {
   params: Promise<{
+    lang: string;
     slug: string;
   }>;
 }
@@ -28,7 +29,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { lang, slug } = await params;
   const clubDetail = await getClubBySlug(slug);
   
   if (!clubDetail) {
@@ -48,13 +49,13 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
       type: 'website',
     },
     alternates: {
-      canonical: `https://socialclubsmaps.com/clubs/${clubDetail.slug}`,
+      canonical: `https://socialclubsmaps.com/${lang}/clubs/${clubDetail.slug}`,
     },
   };
 }
 
 export default async function ClubPage({ params }: ClubPageProps) {
-  const { slug } = await params;
+  const { lang, slug } = await params;
   const clubDetail = await getClubBySlug(slug);
 
   if (!clubDetail) {
@@ -129,25 +130,25 @@ export default async function ClubPage({ params }: ClubPageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://socialclubsmaps.com/',
+        item: `https://socialclubsmaps.com/${lang}`,
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Clubs',
-        item: 'https://socialclubsmaps.com/clubs',
+        item: `https://socialclubsmaps.com/${lang}/clubs`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: clubDetail.cityName,
-        item: `https://socialclubsmaps.com/clubs?city=${clubDetail.citySlug}`,
+        item: `https://socialclubsmaps.com/${lang}/clubs?city=${clubDetail.citySlug}`,
       },
       {
         '@type': 'ListItem',
         position: 4,
         name: club.name,
-        item: `https://socialclubsmaps.com/clubs/${club.slug}`,
+        item: `https://socialclubsmaps.com/${lang}/clubs/${club.slug}`,
       },
     ],
   };

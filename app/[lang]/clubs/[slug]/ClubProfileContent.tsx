@@ -38,7 +38,7 @@ interface ClubProfileContentProps {
 }
 
 export default function ClubProfileContent({ club }: ClubProfileContentProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
   const router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -67,10 +67,10 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       setFormState(result);
 
       if (result.success) {
-        setTimeout(() => {
-          setShowPreRegistrationModal(false);
-          router.push('/profile/requests');
-        }, 1500);
+          setTimeout(() => {
+            setShowPreRegistrationModal(false);
+            router.push(`/${language}/profile/requests`);
+          }, 1500);
       }
     } catch (error) {
       console.error('Submit error:', error);
@@ -103,13 +103,13 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center gap-2">
+              <Link href={`/${language}`} className="flex items-center gap-2">
                 <Leaf className="h-8 w-8 text-green-600" />
                 <span className="text-xl font-bold text-gray-900">SocialClubsMaps</span>
               </Link>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/clubs">
+              <Link href={`/${language}/clubs`}>
                 <Button variant="ghost">← {t('nav.back_to_clubs')}</Button>
               </Link>
               <LanguageSelector />
@@ -249,7 +249,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     size="lg"
                     onClick={() => {
                       if (!user) {
-                        router.push(`/login?callbackUrl=${encodeURIComponent(window.location.pathname)}`);
+                        router.push(`/${language}/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
                         return;
                       }
                       setShowPreRegistrationModal(true);
@@ -272,7 +272,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   ) : (
                     <div className="flex flex-col items-start">
                       <span className="text-sm blur-sm select-none">Calle de la Verdad, 123</span>
-                      <Link href="/login" className="text-xs text-green-600 hover:underline mt-1">
+                      <Link href={`/${language}/account/login`} className="text-xs text-green-600 hover:underline mt-1">
                         Log in to view address
                       </Link>
                     </div>

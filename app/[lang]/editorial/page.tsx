@@ -4,7 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default async function EditorialPage() {
+interface EditorialPageProps {
+  params: Promise<{ lang: string }>;
+}
+
+export default async function EditorialPage({ params }: EditorialPageProps) {
+  const { lang } = await params;
   const [featuredArticles, categories] = await Promise.all([
     getFeaturedArticles(3),
     getCategoriesWithCounts(),
@@ -74,7 +79,7 @@ export default async function EditorialPage() {
             {CATEGORIES.map((category) => (
               <Link
                 key={category.slug}
-                href={`/en/editorial/${category.slug}`}
+                href={`/${lang}/editorial/${category.slug}`}
                 className="group relative overflow-hidden rounded-2xl border bg-card p-6 md:p-8 hover:border-primary/50 transition-all duration-300"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -108,7 +113,7 @@ export default async function EditorialPage() {
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold">Featured Articles</h2>
               <Button variant="ghost" asChild>
-                <Link href="/en/editorial/legal">
+                <Link href={`/${lang}/editorial/legal`}>
                   View all <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
@@ -117,7 +122,7 @@ export default async function EditorialPage() {
               {featuredArticles.map((article) => (
                 <Link
                   key={article.id}
-                  href={`/en/learn/${article.slug}`}
+                  href={`/${lang}/learn/${article.slug}`}
                   className="group block bg-card rounded-xl border overflow-hidden hover:border-primary/50 transition-all duration-300"
                 >
                   {article.heroImage && (

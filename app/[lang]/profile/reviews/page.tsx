@@ -37,7 +37,7 @@ interface Review {
 }
 
 export default function ReviewsPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number>(0);
   
@@ -231,7 +231,7 @@ export default function ReviewsPage() {
                     <div className="flex items-start justify-between">
                       <div>
                         <Link 
-                          href={`/clubs/${review.clubId}`}
+                          href={`/${language}/clubs/${review.clubId}`}
                           className="text-lg font-semibold text-gray-900 hover:text-green-600 transition-colors"
                         >
                           {review.clubName}
@@ -320,7 +320,7 @@ export default function ReviewsPage() {
                 }
               </p>
               {!searchQuery && !ratingFilter && (
-                <Link href="/clubs">
+                <Link href={`/${language}/clubs`}>
                   <Button variant="cannabis">
                     {t('nav.explore')}
                   </Button>

@@ -25,7 +25,7 @@ import {
 import { cn } from '@/lib/utils';
 
 export default function FavoritesPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { clubs } = useClubs();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -217,7 +217,7 @@ export default function FavoritesPage() {
                 </CardContent>
 
                 <CardFooter className="p-4 pt-0 gap-2">
-                  <Link href={`/clubs/${club.slug}`} className="flex-1">
+                  <Link href={`/${language}/clubs/${club.slug}`} className="flex-1">
                     <Button className="w-full">
                       {t('favorites.view_club')}
                     </Button>
@@ -246,7 +246,7 @@ export default function FavoritesPage() {
               }
             </p>
             {!searchQuery && (
-              <Link href="/clubs">
+              <Link href={`/${language}/clubs`}>
                 <Button>
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {t('nav.explore')}

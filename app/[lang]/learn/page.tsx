@@ -17,13 +17,15 @@ export const metadata: Metadata = {
 };
 
 interface BlogPageProps {
+  params: Promise<{ lang: string }>;
   searchParams: {
     category?: string;
     search?: string;
   };
 }
 
-export default async function BlogPage({ searchParams }: BlogPageProps) {
+export default async function BlogPage({ params, searchParams }: BlogPageProps) {
+  const { lang } = await params;
   const category = searchParams.category;
   const searchQuery = searchParams.search || '';
 
@@ -83,7 +85,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                 </h3>
                 <nav className="space-y-1">
                   <Link 
-                    href="/learn" 
+                    href={`/${lang}/learn`}
                     className={`block px-3 py-2 rounded-lg text-sm font-bold transition-colors ${!category ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'}`}
                   >
                     All Documentation
@@ -91,7 +93,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   {categories.map((cat) => (
                     <Link
                       key={cat.name}
-                      href={`/learn?category=${encodeURIComponent(cat.name)}`}
+                      href={`/${lang}/learn?category=${encodeURIComponent(cat.name)}`}
                       className={`block px-3 py-2 rounded-lg text-sm font-bold transition-colors ${category === cat.name ? 'bg-green-50 text-green-700' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'}`}
                     >
                       {cat.name}
@@ -121,13 +123,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                 categories={categories}
                 currentCategory={category}
                 currentSearch={searchQuery}
+                currentLang={lang}
               />
             </div>
 
             {/* Featured Section */}
             {featuredArticle && !category && !searchQuery && (
               <div className="mb-16 group cursor-pointer">
-                <Link href={`/learn/${featuredArticle.slug}`}>
+                <Link href={`/${lang}/learn/${featuredArticle.slug}`}>
                   <div className="bg-zinc-50 rounded-3xl overflow-hidden border border-zinc-100 transition-all hover:border-green-500 hover:shadow-2xl">
                     <div className="lg:flex items-stretch">
                       <div className="lg:w-1/2 relative h-64 lg:h-auto">
@@ -173,7 +176,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             {/* Wiki Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {regularArticles.map((article) => (
-                <Link key={article.id} href={`/learn/${article.slug}`}>
+                <Link key={article.id} href={`/${lang}/learn/${article.slug}`}>
                   <article className="group bg-white rounded-2xl border border-zinc-100 p-6 transition-all hover:border-green-500 hover:shadow-xl flex flex-col h-full">
                     <div className="flex justify-between items-start mb-6">
                       <Badge variant="outline" className="bg-zinc-50 text-zinc-500 text-[10px] font-black border-zinc-200 uppercase tracking-widest px-2">
@@ -206,7 +209,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                 <Search className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-zinc-900 mb-2">No matching entries</h3>
                 <p className="text-zinc-500 mb-8">Try adjusting your search criteria or category filter.</p>
-                <Link href="/learn">
+                <Link href={`/${lang}/learn`}>
                   <Button variant="outline" className="rounded-full px-8">Reset Hub</Button>
                 </Link>
               </div>

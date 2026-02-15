@@ -12,18 +12,20 @@ interface BlogFiltersProps {
   categories: Category[];
   currentCategory?: string;
   currentSearch?: string;
+  currentLang: string;
 }
 
 export default function BlogFilters({
   categories,
   currentCategory,
   currentSearch = '',
+  currentLang,
 }: BlogFiltersProps) {
   return (
     <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Search */}
-        <form action="/learn" method="GET" className="flex-1 relative">
+        <form action={`/${currentLang}/learn`} method="GET" className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             type="text"
@@ -38,7 +40,7 @@ export default function BlogFilters({
         {/* Category Filter */}
         <div className="flex items-center gap-2">
           <Filter className="h-5 w-5 text-gray-400" />
-          <form action="/learn" method="GET">
+          <form action={`/${currentLang}/learn`} method="GET">
             <select
               name="category"
               defaultValue={currentCategory || ''}
@@ -59,7 +61,7 @@ export default function BlogFilters({
       {/* Category Tags */}
       <div className="flex flex-wrap gap-2 mt-4">
         <Link
-          href="/learn"
+          href={`/${currentLang}/learn`}
           className={`px-3 py-1 rounded-full text-sm border transition-colors ${
             !currentCategory
               ? 'bg-green-100 border-green-300 text-green-800'
@@ -71,7 +73,7 @@ export default function BlogFilters({
         {categories.map((cat) => (
           <Link
             key={cat.name}
-            href={`/learn?category=${encodeURIComponent(cat.name)}`}
+            href={`/${currentLang}/learn?category=${encodeURIComponent(cat.name)}`}
             className={`px-3 py-1 rounded-full text-sm border transition-colors ${
               currentCategory === cat.name
                 ? 'bg-green-100 border-green-300 text-green-800'

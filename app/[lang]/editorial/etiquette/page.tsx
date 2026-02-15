@@ -4,7 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Heart, Users, Camera, Smartphone, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default async function EtiquettePage() {
+interface EtiquettePageProps {
+  params: Promise<{ lang: string }>;
+}
+
+export default async function EtiquettePage({ params }: EtiquettePageProps) {
+  const { lang } = await params;
   const articles = await getArticles({ category: 'Etiquette' });
 
   const etiquetteGuides = [
@@ -48,7 +53,7 @@ export default async function EtiquettePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <Button variant="ghost" asChild className="mb-6">
-              <Link href="/en/editorial">
+              <Link href={`/${lang}/editorial`}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
                 Back to Knowledge Vault
               </Link>
@@ -124,7 +129,7 @@ export default async function EtiquettePage() {
               {etiquetteGuides.map((article) => (
                 <Link
                   key={article.slug}
-                  href={`/en/learn/${article.slug}`}
+                  href={`/${lang}/learn/${article.slug}`}
                   className="group block bg-card border rounded-xl p-6 hover:border-primary/50 transition-all duration-300"
                 >
                   <div className="flex flex-col md:flex-row md:items-center gap-4">

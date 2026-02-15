@@ -20,7 +20,7 @@ interface ArticleContentProps {
 }
 
 export default function ArticleContent({ article, relatedArticles = [] }: ArticleContentProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   return (
     <div className="min-h-screen bg-white">
@@ -29,13 +29,13 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center gap-2 group">
+              <Link href={`/${language}`} className="flex items-center gap-2 group">
                 <Leaf className="h-6 w-6 text-green-600 group-hover:rotate-12 transition-transform" />
                 <span className="text-lg font-black tracking-tighter text-zinc-900 uppercase">SocialClubsMaps</span>
               </Link>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/learn">
+              <Link href={`/${language}/learn`}>
                 <Button variant="ghost" className="text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-zinc-900">
                   <ArrowLeft className="h-3 w-3 mr-2" />
                   {t('nav.back_to_blog')}
@@ -166,7 +166,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                     House Rules & Etiquette Review
                   </li>
                 </ul>
-                <Link href="/mission">
+                <Link href={`/${language}/mission`}>
                   <Button variant="link" className="mt-8 p-0 text-white font-black text-[10px] uppercase tracking-widest hover:text-green-400 transition-colors">
                     Learn about vetting <ExternalLink className="h-3 w-3 ml-2" />
                   </Button>
@@ -182,7 +182,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
             <h2 className="text-3xl font-black text-zinc-900 mb-12 tracking-tighter uppercase">{t('blog.related_articles')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {relatedArticles.map((related) => (
-                <Link key={related.id} href={`/learn/${related.slug}`}>
+                <Link key={related.id} href={`/${language}/learn/${related.slug}`}>
                   <article className="group cursor-pointer">
                     <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-100">
                       {related.heroImage && (

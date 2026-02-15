@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 export default function UserRequestsPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [requests, setRequests] = useState<MembershipRequestCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -211,7 +211,7 @@ export default function UserRequestsPage() {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('requests.empty_title')}</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">{t('requests.empty_description')}</p>
-            <Link href="/clubs">
+            <Link href={`/${language}/clubs`}>
               <Button variant="cannabis">{t('requests.explore_clubs')}</Button>
             </Link>
           </CardContent>
@@ -260,7 +260,7 @@ export default function UserRequestsPage() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <Link href={`/clubs/${request.clubSlug}`}>
+                    <Link href={`/${language}/clubs/${request.clubSlug}`}>
                       <Button variant="outline" size="sm">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         {t('common.view')}
