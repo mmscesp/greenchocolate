@@ -2,6 +2,7 @@
 // Simplified for MVP: Single bundle encryption per user
 
 import { createCipheriv, createDecipheriv, createHash, randomBytes, scryptSync } from 'crypto';
+import { getServerEnv } from '@/lib/env';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
@@ -11,13 +12,11 @@ const KEY_LENGTH = 32;
 
 // Get master key from environment (never stored in DB)
 function getMasterKey(): Buffer {
-  const key = process.env.APP_MASTER_KEY;
-  if (!key) {
-    throw new Error('APP_MASTER_KEY environment variable is not set');
-  }
+  const env = getServerEnv();
+  const key = env.APP_MASTER_KEY;
 
   // Derive a proper 32-byte key from the hex string with unique salt
-  const salt = process.env.ENCRYPTION_SALT || 'default-salt-change-in-production';
+  const salt = env.ENCRYPTION_SALT;
   return scryptSync(key, salt, KEY_LENGTH);
 }
 
