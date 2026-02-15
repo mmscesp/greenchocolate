@@ -1,9 +1,64 @@
-import React from 'react';
-import Link from 'next/link';
 import { getCitiesWithClubs, getPopularCities } from '@/app/actions/cities';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MapPin, Building2, ArrowRight } from 'lucide-react';
+import SpainPageClient from './SpainPageClient';
+import { Metadata } from 'next';
+
+const OG_LOCALE_BY_LANG: Record<string, string> = {
+  es: 'es_ES',
+  en: 'en_US',
+  fr: 'fr_FR',
+  de: 'de_DE',
+  it: 'it_IT',
+  pl: 'pl_PL',
+  ru: 'ru_RU',
+  pt: 'pt_PT',
+};
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+
+  const titles: Record<string, string> = {
+    es: 'Cannabis Social Clubs en España | Barcelona, Madrid, Valencia | SocialClubsMaps',
+    en: 'Cannabis Social Clubs in Spain | Barcelona, Madrid, Valencia | SocialClubsMaps',
+    fr: 'Clubs Sociaux Cannabis en Espagne | Barcelone, Madrid, Valence | SocialClubsMaps',
+    de: 'Cannabis Social Clubs in Spanien | Barcelona, Madrid, Valencia | SocialClubsMaps',
+    it: 'Club Sociali Cannabis in Spagna | Barcellona, Madrid, Valencia | SocialClubsMaps',
+    pl: 'Społecznościowe Kluby Konopi w Hiszpanii | Barcelona, Madryt, Walencja | SocialClubsMaps',
+    ru: 'Социальные Клубы Конопли в Испании | Барселона, Мадрид, Валенсия | SocialClubsMaps',
+    pt: 'Clubes Sociais de Cânhamo em Espanha | Barcelona, Madrid, Valência | SocialClubsMaps',
+  };
+
+  const descriptions: Record<string, string> = {
+    es: 'Explora cannabis social clubs en las principales ciudades de España. Barcelona, Madrid, Valencia, Sevilla, Málaga. Directorio verificado con información actualizada.',
+    en: 'Explore cannabis social clubs in major Spanish cities. Barcelona, Madrid, Valencia, Seville, Málaga. Verified directory with up-to-date information.',
+    fr: 'Explorez les clubs sociaux cannabis dans les grandes villes espagnoles. Barcelone, Madrid, Valence, Séville, Málaga. Annuaire vérifié avec informations actualisées.',
+    de: 'Erkunden Sie Cannabis-Social-Clubs in großen spanischen Städten. Barcelona, Madrid, Valencia, Sevilla, Málaga. Verifiziertes Verzeichnis mit aktuellen Informationen.',
+    it: 'Esplora club sociali cannabis nelle principali città spagnole. Barcellona, Madrid, Valencia, Siviglia, Malaga. Directory verificato con informazioni aggiornate.',
+    pl: 'Odkryj społecznościowe kluby konopi w głównych miastach Hiszpanii. Barcelona, Madryt, Walencja, Sewilla, Malaga. Zweryfikowany katalog z aktualnymi informacjami.',
+    ru: 'Изучите социальные клубы конопли в крупных городах Испании. Барселона, Мадрид, Валенсия, Севилья, Малага. Проверенный каталог с актуальной информацией.',
+    pt: 'Explore clubes sociais de cânhamo nas principais cidades espanholas. Barcelona, Madrid, Valência, Sevilha, Málaga. Diretório verificado com informações atualizadas.',
+  };
+
+  return {
+    title: titles[lang] || titles.en,
+    description: descriptions[lang] || descriptions.en,
+    keywords: ['cannabis social clubs Spain', 'Barcelona cannabis clubs', 'Madrid marijuana clubs', 'Valencia cannabis', 'Spain cannabis directory', 'cannabis tourism Spain'],
+    openGraph: {
+      title: titles[lang] || titles.en,
+      description: descriptions[lang] || descriptions.en,
+      type: 'website',
+      locale: OG_LOCALE_BY_LANG[lang] || 'es_ES',
+      url: `https://socialclubsmaps.com/${lang}/spain`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: titles[lang] || titles.en,
+      description: descriptions[lang] || descriptions.en,
+    },
+    alternates: {
+      canonical: `https://socialclubsmaps.com/${lang}/spain`,
+    },
+  };
+}
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -17,55 +72,10 @@ export default async function SpainPage({ params }: PageProps) {
   ]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-      <section className="rounded-2xl border bg-card p-8 md:p-10">
-        <Badge variant="outline" className="mb-4">Country Hub</Badge>
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">Cannabis Social Clubs in Spain</h1>
-        <p className="text-muted-foreground max-w-3xl">
-          Explore city-by-city guidance, neighborhood context, and verified club listings. Public pages stay educational; sensitive operational details remain gated.
-        </p>
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Popular Cities</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {popularCities.length > 0 ? popularCities.map((city) => (
-            <Link
-              key={city.id}
-              href={`/${lang}/spain/${city.slug}`}
-              className="rounded-xl border p-5 bg-card hover:border-primary/50 transition-colors"
-            >
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                <MapPin className="h-4 w-4" /> {city.region || city.country}
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{city.name}</h3>
-              <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{city.description || 'City-level trust and etiquette guidance.'}</p>
-              <div className="flex items-center justify-between text-sm">
-                <span className="inline-flex items-center gap-1 text-muted-foreground">
-                  <Building2 className="h-4 w-4" /> {city.clubCount} clubs
-                </span>
-                <span className="inline-flex items-center gap-1 text-primary font-medium">Open <ArrowRight className="h-4 w-4" /></span>
-              </div>
-            </Link>
-          )) : (
-            <div className="col-span-full rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
-              No cities are available yet. Publish city records to activate this hub.
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="rounded-2xl border p-6 bg-muted/30">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-semibold">Need broad comparison first?</h3>
-            <p className="text-sm text-muted-foreground">Use the full directory to compare verified clubs across cities.</p>
-          </div>
-          <Button asChild>
-            <Link href={`/${lang}/clubs`}>Open Full Directory</Link>
-          </Button>
-        </div>
-      </section>
-    </div>
+    <SpainPageClient 
+      cities={cities} 
+      popularCities={popularCities} 
+      lang={lang} 
+    />
   );
 }

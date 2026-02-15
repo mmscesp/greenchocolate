@@ -1,7 +1,43 @@
+import { Metadata } from 'next';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Shield, CheckCircle, Eye, Lock } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/Footer';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+
+  const titles: Record<string, string> = {
+    es: 'Nuestra Misión | Confianza y Transparencia | SocialClubsMaps',
+    en: 'Our Mission | Trust & Transparency | SocialClubsMaps',
+    fr: 'Notre Mission | Confiance et Transparence | SocialClubsMaps',
+    de: 'Unsere Mission | Vertrauen und Transparenz | SocialClubsMaps',
+    it: 'La Nostra Missione | Fiducia e Trasparenza | SocialClubsMaps',
+  };
+
+  const descriptions: Record<string, string> = {
+    es: 'Nuestra misión es proporcionar una capa de navegación segura y cumplimiento normativo para la cultura de clubs sociales de cannabis en España.',
+    en: 'Our mission is to provide a safe, compliance-first navigation layer for Spain\'s cannabis social club culture.',
+    fr: 'Notre mission est de fournir une couche de navigation sécurisée et conforme pour la culture des clubs sociaux cannabis en Espagne.',
+    de: 'Unsere Mission ist es, eine sichere, compliance-first Navigationsschicht für Spaniens Cannabis-Social-Club-Kultur zu bieten.',
+    it: 'La nostra missione è fornire uno strato di navigazione sicuro e conforme per la cultura dei club sociali cannabis in Spagna.',
+  };
+
+  return {
+    title: titles[lang] || titles.en,
+    description: descriptions[lang] || descriptions.en,
+    openGraph: {
+      title: titles[lang] || titles.en,
+      description: descriptions[lang] || descriptions.en,
+      type: 'website',
+      locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : `${lang}_${lang.toUpperCase()}`,
+      url: `https://socialclubsmaps.com/${lang}/mission`,
+    },
+    alternates: {
+      canonical: `https://socialclubsmaps.com/${lang}/mission`,
+    },
+  };
+}
 
 export default function MissionPage() {
   // Use a simple t function or wait for translation update
