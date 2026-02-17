@@ -17,28 +17,32 @@ export default function SafetyKitForm() {
 
   if (status === 'success') {
     return (
-      <div className="relative p-8 rounded-3xl border border-green-500/30 bg-green-500/10 backdrop-blur-sm animate-in fade-in zoom-in duration-300">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-transparent rounded-3xl" />
+      <div className="relative p-10 rounded-3xl border border-primary/30 bg-midnight-charcoal/80 backdrop-blur-md animate-in fade-in zoom-in duration-500 text-center">
         <div className="relative">
-          <div className="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
-            <CheckCircle2 className="h-8 w-8" />
+          <div className="w-20 h-20 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/20">
+            <CheckCircle2 className="h-10 w-10" />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-2">You&apos;re on the list!</h3>
-          <p className="text-zinc-400 mb-0">Check your email for the Visitor Safety Kit.</p>
+          <h3 className="text-3xl font-serif text-white mb-3">Transmission Successful</h3>
+          <p className="text-muted-foreground mb-0">Your Visitor Safety Kit is being securely delivered to your inbox.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm">
-      {/* Glow effect */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-green-500/0 via-green-500/10 to-emerald-500/0 rounded-3xl blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500 -z-10" />
+    <div className="relative p-10 rounded-3xl border border-white/5 bg-midnight-charcoal/50 backdrop-blur-md overflow-hidden">
+      {/* Decorative background element */}
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
       
-      <div className="relative">
-        <div className="mb-6">
-          <h3 className="text-2xl font-bold text-white mb-2">Get the Visitor Safety Kit</h3>
-          <p className="text-zinc-400">Avoid €600+ fines and navigate Spain&apos;s culture like a local friend.</p>
+      <div className="relative z-10">
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-4">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">2026 Safety Protocol</span>
+          </div>
+          <h3 className="text-3xl font-serif text-white mb-3">The Visitor Safety Kit</h3>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            Avoid €600+ fines and navigate Barcelona&apos;s legal grey market with forensic precision.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -46,26 +50,26 @@ export default function SafetyKitForm() {
             <input
               type="email"
               required
-              placeholder="Enter your email"
+              placeholder="Enter your secure email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-6 py-4 bg-zinc-900/50 border border-white/10 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500/50 transition-all outline-none text-white placeholder:text-zinc-500"
+              className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary/50 transition-all outline-none text-white placeholder:text-zinc-600 font-sans"
             />
           </div>
           <button
             disabled={status === 'loading'}
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:from-green-400 hover:to-emerald-500 transition-all disabled:opacity-50 shadow-lg shadow-green-500/20"
+            className="w-full bg-primary text-primary-foreground py-5 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-primary/90 transition-all disabled:opacity-50 shadow-xl shadow-primary/10 uppercase tracking-widest text-xs"
           >
             {status === 'loading' ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <>
-                Download Free Kit <ArrowRight className="h-5 w-5" />
+                Initiate Download <ArrowRight className="h-4 w-4" />
               </>
             )}
           </button>
-          <p className="text-[10px] text-zinc-500 text-center uppercase tracking-widest font-bold">
-            Privacy first. No spam. Ever.
+          <p className="text-[10px] text-muted-foreground text-center uppercase tracking-widest font-bold mt-4">
+            AES-256 Encrypted • Privacy Guaranteed
           </p>
         </form>
       </div>

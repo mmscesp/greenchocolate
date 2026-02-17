@@ -10,56 +10,61 @@ interface Props {
 
 export default function ClubContactSection({ club, isVerified }: Props) {
   if (!isVerified) {
-    return <GatedContent label="Contact Details Locked" />;
+    return (
+      <GatedContent 
+        label="Forensic Access Required" 
+        description="Legal contact details and exact coordinates are restricted to verified members only."
+      />
+    );
   }
 
   return (
-    <div className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-6 hover:border-green-500/30 transition-colors duration-500">
-      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-        <div className="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center">
-          <Mail className="h-4 w-4 text-green-400" />
+    <div className="bg-midnight-charcoal/50 backdrop-blur-md rounded-3xl border border-white/5 p-8 hover:border-primary/30 transition-all duration-500">
+      <h3 className="text-xl font-serif text-white mb-6 flex items-center gap-3">
+        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
+          <Mail className="h-5 w-5 text-primary" />
         </div>
         Contact Information
       </h3>
-      <div className="space-y-4">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
-            <MapPin className="h-5 w-5 text-green-400" />
+      <div className="space-y-6">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+            <MapPin className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <span className="block text-sm font-medium text-zinc-300">Address</span>
-            <span className="text-sm text-zinc-400">{club.address}</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Address</span>
+            <span className="text-sm text-white font-medium">{club.address}</span>
           </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
-            <Phone className="h-5 w-5 text-green-400" />
+        <div className="flex items-center gap-4">
+          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+            <Phone className="h-5 w-5 text-primary" />
           </div>
            <div>
-            <span className="block text-sm font-medium text-zinc-300">Phone</span>
-            <span className="text-sm text-zinc-400">{club.phoneNumber}</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Phone</span>
+            <span className="text-sm text-white font-medium">{club.phoneNumber}</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
-            <Mail className="h-5 w-5 text-green-400" />
+        <div className="flex items-center gap-4">
+          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+            <Mail className="h-5 w-5 text-primary" />
           </div>
            <div>
-            <span className="block text-sm font-medium text-zinc-300">Email</span>
-            <span className="text-sm text-zinc-400">{club.contactEmail}</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Email</span>
+            <span className="text-sm text-white font-medium">{club.contactEmail}</span>
           </div>
         </div>
 
         {club.website && (
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
-              <Globe className="h-5 w-5 text-green-400" />
+          <div className="flex items-center gap-4">
+            <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+              <Globe className="h-5 w-5 text-primary" />
             </div>
              <div>
-              <span className="block text-sm font-medium text-zinc-300">Website</span>
-              <a href={`https://${club.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-green-400 hover:text-green-300 transition-colors">
+              <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Website</span>
+              <a href={`https://${club.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary/80 transition-colors font-medium">
                 {club.website}
               </a>
             </div>

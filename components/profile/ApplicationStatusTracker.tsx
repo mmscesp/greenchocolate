@@ -1,0 +1,190 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { CheckCircle2, Clock, FileSearch, Shield, UserCheck, AlertCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress';
+
+type ApplicationStatus = 'draft' | 'submitted' | 'reviewing' | 'background_check' | 'approved' | 'rejected';
+
+interface ApplicationStatusTrackerProps {
+  status: ApplicationStatus;
+  submittedAt?: Date;
+  estimatedCompletion?: Date;
+  className?: string;
+}
+
+interface Stage {
+  id: ApplicationStatus;
+  label: string;
+  description: string;
+  icon: typeof CheckCircle2;
+}
+
+const stages: Stage[] = [
+  {
+    id: 'submitted',
+    label: 'Application Submitted',
+    description: 'Your documents have been received',
+    icon: FileSearch
+  },
+  {
+    id: 'reviewing',
+    label: 'Document Review',
+    description: 'Verifying ID and eligibility',
+    icon: Shield
+  },
+  {
+    id: 'background_check',
+    label: 'Background Verification',
+    description: 'Final compliance checks',
+    icon: UserCheck
+  },
+  {
+    id: 'approved',
+    label: 'Access Granted',
+    description: 'Your membership is active',
+    icon: CheckCircle2
+  }
+];
+
+export default function ApplicationStatusTracker({
+  status,
+  submittedAt = new Date(),
+  estimatedCompletion,
+  className
+}: ApplicationStatusTrackerProps) {
+  const getStageIndex = (s: ApplicationStatus) => {
+    if (s === 'draft') return -1;
+    if (s === 'rejected') return stages.length;
+    return stages.findIndex(stage => stage.id === s);
+  };
+
+  const currentStageIndex = getStageIndex(status);
+  const progressPercentage = Math.max(0, Math.min(100, (currentStageIndex / (stages.length - 1)) * 100));
+
+  const isRejected = status === 'rejected';
+
+  return (
+    <div className={cn("bg-midnight-charcoal rounded-3xl border border-white/5 p-8", className)}>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <Clock className="h-5 w-5 text-primary" />
+          </div>
+          <h3 className="text-xl font-serif text-white">Application Status</h3>
+        </div>
+        <p className="text-muted-foreground text-sm">
+          Track your membership verification progress
+        </p>
+      </div>
+
+      {/* Progress Bar */}
+      {isRejected ? (
+        <div className="mb-8 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+            <div>
+              <p className="text-destructive font-bold">Application Rejected</p>
+              <p className="text-destructive/80 text-sm">Please contact support for more information</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">Progress</span>
+            <span className="text-xs font-mono text-primary">{Math.round(progressPercentage)}%</span>
+          </div>
+          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercentage}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full"
+            />
+          </div>
+          {estimatedCompletion && (
+            <p className="text-[10px] text-muted-foreground mt-2 text-right">
+              Est. completion: {estimatedCompletion.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Stages */}
+      <div className="space-y-4">
+        {stages.map((stage, index) => {
+          const Icon = stage.icon;
+          const isCompleted = index < currentStageIndex;
+          const isCurrent = index === currentStageIndex;
+          const isPending = index > currentStageIndex;
+
+          return (
+            <motion.div
+              key={stage.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className={cn(
+                "flex items-start gap-4 p-4 rounded-xl border transition-all duration-300",
+                isCompleted && "bg-primary/5 border-primary/20",
+                isCurrent && "bg-accent/5 border-accent/30 ring-1 ring-accent/20",
+                isPending && "bg-white/5 border-white/5 opacity-60"
+              )}
+            >
+              <div className={cn(
+                "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                isCompleted && "bg-primary text-primary-foreground",
+                isCurrent && "bg-accent text-accent-foreground",
+                isPending && "bg-white/10 text-muted-foreground"
+              )}>
+                {isCompleted ? (
+                  <CheckCircle2 className="h-5 w-5" />
+                ) : (
+                  <Icon className="h-5 w-5" />
+                )}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className={cn(
+                    "font-bold text-sm",
+                    isCurrent ? "text-accent" : "text-white"
+                  )}>
+                    {stage.label}
+                  </h4>
+                  {isCurrent && (
+                    <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] uppercase tracking-wider rounded-full font-bold">
+                      Current
+                    </span>
+                  )}
+                </div>
+                <p className="text-muted-foreground text-xs">{stage.description}</p>
+              </div>
+
+              {isCurrent && (
+                <motion.div
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-2 h-2 bg-accent rounded-full shrink-0 mt-2"
+                />
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Timeline */}
+      <div className="mt-8 pt-6 border-t border-white/5">
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground uppercase tracking-wider">
+          <span>Submitted: {submittedAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+          {currentStageIndex >= 0 && currentStageIndex < stages.length && (
+            <span>Stage {currentStageIndex + 1} of {stages.length}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

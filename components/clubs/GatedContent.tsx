@@ -1,41 +1,68 @@
 import React from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, ShieldAlert, Fingerprint, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 interface Props {
   blurLevel?: 'medium' | 'heavy';
   label?: string;
+  description?: string;
 }
 
-export default function GatedContent({ blurLevel = 'medium', label = 'Members Only' }: Props) {
-  const blurClass = blurLevel === 'heavy' ? 'blur-lg' : 'blur-md';
+export default function GatedContent({ 
+  blurLevel = 'heavy', 
+  label = 'Restricted Access',
+  description = 'Sensitive club details are only visible to verified members.'
+}: Props) {
+  const blurClass = blurLevel === 'heavy' ? 'blur-xl' : 'blur-lg';
   
   return (
-    <div className="relative overflow-hidden rounded-lg group">
-      <div className={`${blurClass} select-none pointer-events-none opacity-50 bg-gray-100 p-4`}>
-        <div className="space-y-3">
-           <div className="h-4 w-3/4 bg-gray-300 rounded"></div>
-           <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
-           <div className="h-4 w-full bg-gray-300 rounded"></div>
+    <div className="relative overflow-hidden rounded-2xl group border border-white/5">
+      {/* Blurred Background Content */}
+      <div className={`${blurClass} select-none pointer-events-none opacity-20 bg-midnight-charcoal p-8`}>
+        <div className="space-y-4">
+           <div className="h-6 w-3/4 bg-white/10 rounded-lg"></div>
+           <div className="h-4 w-1/2 bg-white/10 rounded-lg"></div>
+           <div className="h-4 w-full bg-white/10 rounded-lg"></div>
+           <div className="h-4 w-5/6 bg-white/10 rounded-lg"></div>
+           <div className="h-10 w-full bg-white/10 rounded-xl mt-6"></div>
         </div>
       </div>
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 z-10 p-4 text-center">
-         <div className="bg-background/95 backdrop-blur-sm p-6 rounded-xl border shadow-lg max-w-sm w-full">
-            <div className="mx-auto w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-3 text-primary">
-              <Lock className="h-5 w-5" />
-            </div>
-            <h3 className="font-semibold text-lg mb-1">{label}</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Join the community to view sensitive details like address and contact info.
-            </p>
-            <div className="grid gap-2">
-              <Button size="sm" asChild>
-                <Link href="/login">Log In</Link>
-              </Button>
-              <Button size="sm" variant="outline" asChild>
-                 <Link href="/register">Get Visitor Pass</Link>
-              </Button>
+
+      {/* Overlay */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-midnight-charcoal/40 backdrop-blur-[2px] z-10 p-6 text-center">
+         <div className="bg-midnight-charcoal/90 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl max-w-md w-full relative overflow-hidden">
+            {/* Decorative background element */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl" />
+            
+            <div className="relative z-10">
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 border border-primary/20">
+                <Fingerprint className="h-8 w-8 text-primary" />
+              </div>
+              
+              <h3 className="font-serif text-2xl text-white mb-3">{label}</h3>
+              <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                {description}
+              </p>
+              
+              <div className="grid gap-4">
+                <Button className="w-full py-6 bg-primary text-primary-foreground font-bold rounded-xl uppercase tracking-widest text-xs group/btn" asChild>
+                  <Link href="/register">
+                    <span>Initiate Verification</span>
+                    <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+                
+                <div className="flex items-center justify-center gap-4 mt-2">
+                  <Link href="/login" className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
+                    Member Login
+                  </Link>
+                  <div className="w-1 h-1 bg-white/10 rounded-full" />
+                  <Link href="/faq" className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
+                    Legal FAQ
+                  </Link>
+                </div>
+              </div>
             </div>
          </div>
       </div>

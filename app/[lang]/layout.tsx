@@ -5,6 +5,7 @@ import { AuthProvider } from '@/components/auth/AuthProvider';
 import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/Footer';
+import LegalDisclaimerModal from '@/components/trust/LegalDisclaimerModal';
 
 export async function generateStaticParams() {
   return i18n.locales.map((lang) => ({ lang }));
@@ -27,6 +28,7 @@ export default async function LocaleLayout({
       <AuthProvider>
         <SmoothScroll>
           <div className="min-h-screen flex flex-col">
+            <LegalDisclaimerModal />
             <Navbar />
             <main className="flex-1">
               {children}

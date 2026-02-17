@@ -1,8 +1,22 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Playfair_Display, Instrument_Sans } from 'next/font/google';
+import { LegalDisclaimer } from '@/components/LegalDisclaimer';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+});
+
+const instrumentSans = Instrument_Sans({
+  subsets: ['latin'],
+  variable: '--font-instrument',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://socialclubsmaps.com'),
@@ -77,8 +91,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
-      <body className={inter.className}>
+    <html lang="en" className={`${inter.variable} ${playfair.variable} ${instrumentSans.variable}`}>
+      <body className="font-sans antialiased">
+        <LegalDisclaimer />
         {children}
       </body>
     </html>

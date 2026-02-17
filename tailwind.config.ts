@@ -22,9 +22,15 @@ const config: Config = {
         '2xl': 'calc(var(--radius) + 8px)',
         '3xl': 'calc(var(--radius) + 12px)',
       },
+      fontFamily: {
+        sans: ['var(--font-instrument)', 'var(--font-inter)', 'ui-sans-serif', 'system-ui'],
+        serif: ['var(--font-playfair)', 'ui-serif', 'Georgia'],
+      },
       colors: {
         'regulatory-slate': '#1A1A1B',
-        'verification-emerald': '#22c55e',
+        'verification-emerald': '#10B981',
+        'elite-gold': '#F59E0B',
+        'midnight-charcoal': '#121212',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

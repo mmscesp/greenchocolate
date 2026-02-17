@@ -1,64 +1,82 @@
-import { ShieldCheck, Lock, CheckCircle2 } from 'lucide-react';
+'use client';
+
+import { Shield, Lock, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type BadgeVariant = 'verified' | 'expert' | 'privacy';
-type BadgeTheme = 'light' | 'dark';
-
 interface TrustBadgeProps {
-  variant: BadgeVariant;
-  theme?: BadgeTheme;
+  type: 'encrypted' | 'verified' | 'legal' | 'warning';
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
-const variants = {
-  light: {
+export default function TrustBadge({ type, size = 'md', className }: TrustBadgeProps) {
+  const configs = {
+    encrypted: {
+      icon: Lock,
+      text: 'AES-256 ENCRYPTED',
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/20',
+      text_color: 'text-emerald-500',
+      pulse: true
+    },
     verified: {
       icon: CheckCircle2,
-      text: 'License Verified',
-      className: 'bg-green-100 text-green-800 border-green-200'
+      text: 'VERIFIED CLUB',
+      bg: 'bg-blue-500/10',
+      border: 'border-blue-500/20',
+      text_color: 'text-blue-500',
+      pulse: false
     },
-    expert: {
-      icon: ShieldCheck,
-      text: 'Expert Reviewed',
-      className: 'bg-blue-100 text-blue-800 border-blue-200'
+    legal: {
+      icon: Shield,
+      text: 'LEGAL COMPLIANCE',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/20',
+      text_color: 'text-amber-500',
+      pulse: false
     },
-    privacy: {
-      icon: Lock,
-      text: 'Privacy Guaranteed',
-      className: 'bg-zinc-100 text-zinc-800 border-zinc-200'
+    warning: {
+      icon: AlertTriangle,
+      text: 'SCAM ALERT',
+      bg: 'bg-red-500/10',
+      border: 'border-red-500/20',
+      text_color: 'text-red-500',
+      pulse: true
     }
-  },
-  dark: {
-    verified: {
-      icon: CheckCircle2,
-      text: 'License Verified',
-      className: 'bg-green-500/20 text-green-400 border-green-500/30'
-    },
-    expert: {
-      icon: ShieldCheck,
-      text: 'Expert Reviewed',
-      className: 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-    },
-    privacy: {
-      icon: Lock,
-      text: 'Privacy Guaranteed',
-      className: 'bg-white/10 text-zinc-300 border-white/20'
-    }
-  }
-};
+  };
 
-export default function TrustBadge({ variant, theme = 'light', className }: TrustBadgeProps) {
-  const config = variants[theme][variant];
+  const config = configs[type];
   const Icon = config.icon;
+  
+  const sizeClasses = {
+    sm: 'text-[10px] py-0.5 px-2 gap-1',
+    md: 'text-xs py-1 px-3 gap-1.5',
+    lg: 'text-sm py-1.5 px-4 gap-2'
+  };
 
   return (
     <div className={cn(
-      "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all hover:shadow-sm cursor-default",
-      config.className,
+      "inline-flex items-center rounded-full border font-mono tracking-wider font-semibold select-none",
+      config.bg,
+      config.border,
+      config.text_color,
+      sizeClasses[size],
       className
     )}>
-      <Icon className="h-3.5 w-3.5" />
+      <Icon className={cn(
+        "relative z-10",
+        size === 'sm' ? 'w-3 h-3' : size === 'md' ? 'w-3.5 h-3.5' : 'w-4 h-4'
+      )} />
+      
       <span>{config.text}</span>
+      
+      {config.pulse && (
+        <span className="relative flex h-2 w-2 ml-1">
+          <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75", config.text_color, "bg-current")}></span>
+          <span className={cn("relative inline-flex rounded-full h-2 w-2", config.text_color, "bg-current")}></span>
+        </span>
+      )}
     </div>
   );
 }
+

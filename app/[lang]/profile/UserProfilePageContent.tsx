@@ -29,6 +29,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { UserProfile } from '@/app/actions/users';
 import { useLanguage } from '@/hooks/useLanguage';
 import { updateUserProfile } from '@/app/actions/users';
+import MemberPassport from '@/components/profile/MemberPassport';
+import ApplicationStatusTracker from '@/components/profile/ApplicationStatusTracker';
+import TrustBadge from '@/components/trust/TrustBadge';
 import { 
   Edit3, 
   Save, 
@@ -41,13 +44,35 @@ import {
   Check,
   Star,
   MapPin,
-  Loader2
+  Loader2,
+  Wallet,
+  FileCheck,
+  Clock,
+  ArrowRight,
+  Heart,
+  TrendingUp,
+  CreditCard
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 interface UserProfilePageContentProps {
   userProfile: UserProfile | null;
 }
+
+// Mock data - replace with real data from your backend
+const mockApplicationStatus = {
+  status: 'reviewing' as const,
+  submittedAt: new Date('2026-02-10'),
+  estimatedCompletion: new Date('2026-02-20')
+};
+
+const mockStats = {
+  clubsViewed: 12,
+  favoritesCount: 3,
+  reviewsWritten: 2,
+  memberSince: '2026'
+};
 
 const profileFormSchema = z.object({
   displayName: z.string().min(2, {
@@ -62,6 +87,7 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
   const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'passport' | 'status'>('overview');
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -70,6 +96,9 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
       bio: userProfile?.bio || '',
     },
   });
+
+  const displayName = userProfile?.displayName || userProfile?.email?.split('@')[0] || 'Member';
+  const verificationId = `SMC-2026-${userProfile?.id?.slice(0, 8).toUpperCase() || 'UNKNOWN'}`;
 
   if (!userProfile) {
     return (
@@ -328,6 +357,95 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
           </div>
         </form>
       </Form>
+
+      {/* Member Passport Section - New Feature */}
+      <div className="mt-12 pt-12 border-t border-border">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-2xl font-serif text-foreground flex items-center gap-3">
+              <Wallet className="h-6 w-6 text-primary" />
+              Member Passport
+            </h3>
+            <p className="text-muted-foreground mt-1">Your digital membership credentials</p>
+          </div>
+          
+          <div className="flex bg-muted rounded-lg p-1">
+            {(['overview', 'passport', 'status'] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  activeTab === tab 
+                    ? 'bg-background text-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {activeTab === 'overview' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <p className="text-muted-foreground">
+                Your Member Passport is your digital credential for accessing verified clubs in Barcelona. 
+                Keep your profile information up to date to ensure smooth entry.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: MapPin, label: 'Clubs Viewed', value: mockStats.clubsViewed },
+                  { icon: Heart, label: 'Favorites', value: mockStats.favoritesCount },
+                  { icon: Star, label: 'Reviews', value: mockStats.reviewsWritten },
+                  { icon: Calendar, label: 'Member Since', value: mockStats.memberSince },
+                ].map((stat, idx) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="p-4 rounded-xl bg-muted border text-center"
+                  >
+                    <stat.icon className="h-5 w-5 text-primary mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <MemberPassport 
+              email={userProfile.email}
+              verificationId={verificationId}
+              verifiedAt={new Date(userProfile.createdAt)}
+              tier={userProfile.tier === 'premium' ? 'premium' : 'standard'}
+            />
+          </div>
+        )}
+
+        {activeTab === 'passport' && (
+          <div className="max-w-md mx-auto">
+            <MemberPassport 
+              email={userProfile.email}
+              verificationId={verificationId}
+              verifiedAt={new Date(userProfile.createdAt)}
+              tier={userProfile.tier === 'premium' ? 'premium' : 'standard'}
+            />
+          </div>
+        )}
+
+        {activeTab === 'status' && (
+          <div className="max-w-2xl mx-auto">
+            <ApplicationStatusTracker 
+              status={mockApplicationStatus.status}
+              submittedAt={mockApplicationStatus.submittedAt}
+              estimatedCompletion={mockApplicationStatus.estimatedCompletion}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
