@@ -31,7 +31,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
       }
     }
     fetchData();
-  }, [club?.id]);
+  }, [club]);
 
   // Show message if no club assigned
   if (!club) {

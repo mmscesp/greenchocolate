@@ -43,6 +43,20 @@ function createSupabaseBrowserClient() {
   );
 }
 
+async function logAuthEvent(operation: string, status: 'success' | 'failed', metadata?: Record<string, unknown>) {
+  try {
+    await fetch('/api/auth/audit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ operation, status, metadata }),
+    });
+  } catch (error) {
+    console.error('Failed to log auth event:', error);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -136,14 +150,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         toast.error(error.message);
+        await logAuthEvent('SIGN_IN_CLIENT', 'failed');
         return { error: new Error(error.message) };
       }
 
       router.refresh();
+      await logAuthEvent('SIGN_IN_CLIENT', 'success');
       return { error: null };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error signing in';
       toast.error(message);
+      await logAuthEvent('SIGN_IN_CLIENT', 'failed');
       return { error: new Error(message) };
     }
   };
@@ -170,20 +187,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         toast.error(error.message);
+        await logAuthEvent('SIGN_UP_CLIENT', 'failed');
         return { error: new Error(error.message) };
       }
 
       // Check if email confirmation is required
       if (!data.session) {
         toast.success('Please check your email for verification');
+        await logAuthEvent('SIGN_UP_CLIENT', 'success', { emailConfirmationRequired: true });
         return { error: null, needsEmailConfirmation: true };
       }
 
       router.refresh();
+      await logAuthEvent('SIGN_UP_CLIENT', 'success', { emailConfirmationRequired: false });
       return { error: null };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error creating account';
       toast.error(message);
+      await logAuthEvent('SIGN_UP_CLIENT', 'failed');
       return { error: new Error(message) };
     }
   };
@@ -194,8 +215,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut();
       router.refresh();
       router.push('/');
+      await logAuthEvent('SIGN_OUT_CLIENT', 'success');
     } catch (error) {
       console.error('Error signing out:', error);
+      await logAuthEvent('SIGN_OUT_CLIENT', 'failed');
     }
   };
 
@@ -208,14 +231,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         toast.error(error.message);
+        await logAuthEvent('RESET_PASSWORD_CLIENT', 'failed');
         return { error: new Error(error.message) };
       }
 
       toast.success('Password reset email sent');
+      await logAuthEvent('RESET_PASSWORD_CLIENT', 'success');
       return { error: null };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error sending email';
       toast.error(message);
+      await logAuthEvent('RESET_PASSWORD_CLIENT', 'failed');
       return { error: new Error(message) };
     }
   };
@@ -229,14 +255,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         toast.error(error.message);
+        await logAuthEvent('UPDATE_PASSWORD_CLIENT', 'failed');
         return { error: new Error(error.message) };
       }
 
       toast.success('Password updated successfully');
+      await logAuthEvent('UPDATE_PASSWORD_CLIENT', 'success');
       return { error: null };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Error updating password';
       toast.error(message);
+      await logAuthEvent('UPDATE_PASSWORD_CLIENT', 'failed');
       return { error: new Error(message) };
     }
   };

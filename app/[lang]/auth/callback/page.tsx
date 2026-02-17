@@ -19,6 +19,15 @@ export default function AuthCallbackPage() {
   const [message, setMessage] = useState('Verifying your email...');
 
   useEffect(() => {
+    const clearAuthHash = () => {
+      if (!window.location.hash) {
+        return;
+      }
+
+      const cleanUrl = `${window.location.pathname}${window.location.search}`;
+      window.history.replaceState({}, document.title, cleanUrl);
+    };
+
     const handleAuthCallback = async () => {
       try {
         const supabase = createClient();
@@ -30,6 +39,7 @@ export default function AuthCallbackPage() {
           // Email confirmation flow - tokens are in hash
           // Supabase automatically handles the token exchange
           const { data: { session }, error } = await supabase.auth.getSession();
+          clearAuthHash();
           
             if (error) {
               console.error('Auth callback error:', error);

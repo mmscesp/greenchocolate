@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Clock, ArrowRight, BookOpen, Calendar, User } from 'lucide-react';
 import type { ArticleCard } from '@/app/actions/articles';
 
@@ -37,12 +38,12 @@ function ArticleCard({ article, index }: { article: ArticleCard; index: number }
           {/* Image Container */}
           <div className="relative h-48 overflow-hidden bg-gradient-to-br from-zinc-100 to-zinc-200">
             {article.heroImage ? (
-              <motion.img
+              <Image
                 src={article.heroImage}
                 alt={article.title}
-                className="w-full h-full object-cover"
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.6 }}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
@@ -84,11 +85,13 @@ function ArticleCard({ article, index }: { article: ArticleCard; index: number }
               {/* Author */}
               <div className="flex items-center gap-2">
                 {article.authorAvatar ? (
-                  <img 
-                    src={article.authorAvatar} 
-                    alt={article.authorName}
-                    className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
-                  />
+                   <Image
+                     src={article.authorAvatar}
+                     alt={article.authorName}
+                     width={32}
+                     height={32}
+                     className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
+                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-xs">
                     <User className="h-4 w-4" />

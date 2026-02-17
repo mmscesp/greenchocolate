@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -194,10 +195,12 @@ export default function EventsPage() {
             {upcomingEvents.map((event) => (
               <Card key={event.id} className="overflow-hidden group hover:shadow-lg transition-all duration-300">
                 <div className="relative aspect-video">
-                  <img 
-                    src={event.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'} 
-                    alt={event.title} 
-                    className="w-full h-full object-cover" 
+                  <Image
+                    src={event.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'}
+                    alt={event.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    className="object-cover"
                   />
                   <div className="absolute top-4 left-4">
                     {getStatusBadge(event.date)}
@@ -270,10 +273,12 @@ export default function EventsPage() {
               {pastEvents.slice(0, 3).map((event) => (
                 <Card key={event.id} className="overflow-hidden">
                   <div className="relative aspect-video grayscale">
-                    <img 
-                      src={event.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'} 
-                      alt={event.title} 
-                      className="w-full h-full object-cover" 
+                    <Image
+                      src={event.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'}
+                      alt={event.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="object-cover"
                     />
                     <div className="absolute top-4 left-4">
                       {getStatusBadge(event.date)}
@@ -311,7 +316,13 @@ export default function EventsPage() {
               <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/50 hover:bg-muted/80 transition-colors group cursor-pointer">
                 {formData.image ? (
                   <>
-                    <img src={formData.image} alt="Preview" className="h-full w-full object-cover" />
+                     <Image
+                       src={formData.image}
+                       alt="Preview"
+                       fill
+                       sizes="100vw"
+                       className="object-cover"
+                     />
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, image: '' })}

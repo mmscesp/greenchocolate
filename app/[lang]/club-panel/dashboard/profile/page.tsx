@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -106,7 +107,13 @@ export default function ClubProfilePage() {
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/50 hover:bg-muted/80 transition-colors group cursor-pointer">
                   {coverImage ? (
                     <>
-                      <img src={coverImage} alt="Cover" className="h-full w-full object-cover transition-opacity group-hover:opacity-75" />
+                      <Image
+                        src={coverImage}
+                        alt="Cover"
+                        fill
+                        sizes="100vw"
+                        className="object-cover transition-opacity group-hover:opacity-75"
+                      />
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="bg-background/80 backdrop-blur-sm p-3 rounded-full shadow-lg">
                           <Upload className="h-6 w-6 text-foreground" />
@@ -297,4 +304,3 @@ export default function ClubProfilePage() {
     </div>
   );
 }
-

@@ -52,7 +52,7 @@ export const useClubs = (filters?: ClubFilters) => {
     }
     
     fetchClubs();
-  }, [filters?.neighborhood, filters?.amenities, filters?.vibes, filters?.priceRange, filters?.isVerified]);
+  }, [filters]);
 
   return { clubs, loading };
 };

@@ -10,6 +10,14 @@ import { prisma } from '@/lib/prisma';
 import { EncryptionService, type PIIData } from '@/lib/encryption';
 import { z } from 'zod';
 import { getLandingPageByRole } from '@/lib/auth-utils';
+import { logAuthAuditEvent } from '@/lib/security/auth-audit';
+
+const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one number')
+  .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character');
 
 // ==========================================
 // ZOD SCHEMAS
@@ -17,7 +25,7 @@ import { getLandingPageByRole } from '@/lib/auth-utils';
 
 const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().optional(),
   birthDate: z.string().optional(),
@@ -50,6 +58,38 @@ export type ActionState = {
 };
 
 export type OAuthProvider = 'google' | 'apple';
+
+const AUTH_FAILURE_MIN_DELAY_MS = 600;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function enforceFailureDelay(startTime: number): Promise<void> {
+  const elapsed = Date.now() - startTime;
+  const remaining = AUTH_FAILURE_MIN_DELAY_MS - elapsed;
+  if (remaining > 0) {
+    await sleep(remaining);
+  }
+}
+
+function getSafeRedirectPath(rawRedirect: string | null, role: string): string {
+  if (!rawRedirect) {
+    return getLandingPageByRole(role, 'en');
+  }
+
+  const normalized = rawRedirect.trim();
+
+  if (!normalized.startsWith('/') || normalized.startsWith('//')) {
+    return getLandingPageByRole(role, 'en');
+  }
+
+  if (normalized.includes('://')) {
+    return getLandingPageByRole(role, 'en');
+  }
+
+  return normalized;
+}
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -113,6 +153,12 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
     const error = signUpResult.error;
 
     if (error || !user) {
+      await logAuthAuditEvent({
+        operation: 'SIGN_UP',
+        changedBy: 'anonymous',
+        recordId: validated.data.email,
+        changeData: { status: 'failed', reason: error?.message ?? 'unknown' },
+      });
       return {
         success: false,
         message: error?.message || 'Signup failed. Please try again.',
@@ -191,11 +237,24 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
     // Check if email confirmation is required
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
+      await logAuthAuditEvent({
+        operation: 'SIGN_UP',
+        changedBy: user.id,
+        recordId: user.id,
+        changeData: { status: 'success', emailConfirmationRequired: true },
+      });
       return {
         success: true,
         message: 'Please check your email to confirm your account.',
       };
     }
+
+    await logAuthAuditEvent({
+      operation: 'SIGN_UP',
+      changedBy: user.id,
+      recordId: user.id,
+      changeData: { status: 'success', emailConfirmationRequired: false },
+    });
     
     redirect(landingPage);
   } catch (error) {
@@ -215,6 +274,7 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
  * Handles authentication with optional "Remember Me" functionality
  */
 export async function login(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  const failureStartTime = Date.now();
   const supabase = await createClient();
 
   const data = {
@@ -225,6 +285,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
   const validated = loginSchema.safeParse(data);
 
   if (!validated.success) {
+    await enforceFailureDelay(failureStartTime);
     return {
       success: false,
       errors: validated.error.flatten().fieldErrors,
@@ -240,9 +301,16 @@ export async function login(prevState: ActionState, formData: FormData): Promise
     });
 
     if (error) {
+      await enforceFailureDelay(failureStartTime);
+      await logAuthAuditEvent({
+        operation: 'LOGIN',
+        changedBy: 'anonymous',
+        recordId: validated.data.email,
+        changeData: { status: 'failed' },
+      });
       return {
         success: false,
-        message: error.message || 'Invalid credentials',
+        message: 'Invalid email or password',
       };
     }
 
@@ -252,14 +320,28 @@ export async function login(prevState: ActionState, formData: FormData): Promise
         where: { authId: authData.user.id },
         data: { lastActiveAt: new Date() },
       });
+
+      await logAuthAuditEvent({
+        operation: 'LOGIN',
+        changedBy: authData.user.id,
+        recordId: authData.user.id,
+        changeData: { status: 'success' },
+      });
     }
 
     revalidatePath('/', 'layout');
   } catch (error) {
     console.error('Login error:', error);
+    await enforceFailureDelay(failureStartTime);
+    await logAuthAuditEvent({
+      operation: 'LOGIN',
+      changedBy: 'anonymous',
+      recordId: validated.data.email,
+      changeData: { status: 'failed', reason: 'exception' },
+    });
     return {
       success: false,
-      message: 'An unexpected error occurred. Please try again.',
+      message: 'Invalid email or password',
     };
   }
 
@@ -267,10 +349,8 @@ export async function login(prevState: ActionState, formData: FormData): Promise
   const userRole = profile?.role || 'USER';
   
   // Get redirect URL from form or default based on role
-  const formDataRedirect = formData.get('redirect') as string;
-  const redirectUrl = formDataRedirect && formDataRedirect !== '/dashboard' 
-    ? formDataRedirect 
-    : getLandingPageByRole(userRole, 'en');
+  const formDataRedirect = formData.get('redirect') as string | null;
+  const redirectUrl = getSafeRedirectPath(formDataRedirect, userRole);
 
   redirect(redirectUrl);
 }
@@ -281,7 +361,16 @@ export async function login(prevState: ActionState, formData: FormData): Promise
  */
 export async function signOut() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
   await supabase.auth.signOut();
+
+  await logAuthAuditEvent({
+    operation: 'SIGN_OUT',
+    changedBy: user?.id ?? 'anonymous',
+    recordId: user?.id ?? 'anonymous',
+    changeData: { status: 'success' },
+  });
+
   redirect('/');
 }
 
@@ -366,8 +455,21 @@ export async function signInWithOAuth(provider: OAuthProvider) {
   });
 
   if (error) {
+    await logAuthAuditEvent({
+      operation: 'OAUTH_START',
+      changedBy: 'anonymous',
+      recordId: provider,
+      changeData: { status: 'failed', provider },
+    });
     return { success: false, message: error.message };
   }
+
+  await logAuthAuditEvent({
+    operation: 'OAUTH_START',
+    changedBy: 'anonymous',
+    recordId: provider,
+    changeData: { status: 'success', provider },
+  });
 
   // Return the URL to redirect to
   return { success: true, data: data.url };
@@ -420,98 +522,6 @@ export async function decryptUserPII(userId: string): Promise<ActionState> {
     return {
       success: false,
       message: 'Failed to decrypt user data',
-    };
-  }
-}
-
-// ==========================================
-// CLUB ADMIN ACTIONS
-// ==========================================
-
-/**
- * Assign a club to a user (make them a CLUB_ADMIN)
- * Only admins can perform this action
- */
-export async function assignClubAdmin(userId: string, clubId: string): Promise<ActionState> {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser || currentUser.role !== 'ADMIN') {
-    return {
-      success: false,
-      message: 'Unauthorized: Only admins can assign club admins',
-    };
-  }
-
-  try {
-    // Verify club exists
-    const club = await prisma.club.findUnique({
-      where: { id: clubId },
-    });
-
-    if (!club) {
-      return {
-        success: false,
-        message: 'Club not found',
-      };
-    }
-
-    // Update profile with managedClubId and set role to CLUB_ADMIN
-    await prisma.profile.update({
-      where: { id: userId },
-      data: {
-        managedClubId: clubId,
-        role: 'CLUB_ADMIN',
-      },
-    });
-
-    revalidatePath('/admin/clubs');
-
-    return {
-      success: true,
-      message: `Successfully assigned ${club.name} to user`,
-    };
-  } catch (error) {
-    console.error('assignClubAdmin error:', error);
-    return {
-      success: false,
-      message: 'Failed to assign club admin',
-    };
-  }
-}
-
-/**
- * Remove club admin from a user
- */
-export async function removeClubAdmin(userId: string): Promise<ActionState> {
-  const currentUser = await getCurrentUser();
-
-  if (!currentUser || currentUser.role !== 'ADMIN') {
-    return {
-      success: false,
-      message: 'Unauthorized: Only admins can remove club admins',
-    };
-  }
-
-  try {
-    await prisma.profile.update({
-      where: { id: userId },
-      data: {
-        managedClubId: null,
-        role: 'USER',
-      },
-    });
-
-    revalidatePath('/admin/clubs');
-
-    return {
-      success: true,
-      message: 'Successfully removed club admin',
-    };
-  } catch (error) {
-    console.error('removeClubAdmin error:', error);
-    return {
-      success: false,
-      message: 'Failed to remove club admin',
     };
   }
 }

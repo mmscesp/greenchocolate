@@ -1,8 +1,5 @@
-'use client';
-
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { getCityBySlug } from '@/app/actions/cities';
 import { getArticles } from '@/app/actions/articles';
 import { Badge } from '@/components/ui/badge';
@@ -33,11 +30,8 @@ export default async function CityGuidesPage({ params }: PageProps) {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Hero Section */}
-        <motion.section 
+        <section
           className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 md:p-12 mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
         >
           <div className="flex items-center gap-2 mb-6">
             <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center">
@@ -78,21 +72,17 @@ export default async function CityGuidesPage({ params }: PageProps) {
               <div className="text-sm text-zinc-500 uppercase tracking-wider">Safe</div>
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* Guides Grid */}
-        <motion.section 
+        <section
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
         >
           {guides.length > 0 ? guides.map((guide, index) => (
-            <motion.div
+            <div
               key={guide.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              style={{ animationDelay: `${index * 100}ms` }}
+              className="animate-in fade-in slide-in-from-bottom-2 duration-500"
             >
               <Link
                 href={`/${lang}/spain/${city}/guides/${guide.slug}`}
@@ -128,7 +118,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
                 {/* Bottom accent line */}
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full group-hover:w-1/4 transition-all duration-500" />
               </Link>
-            </motion.div>
+            </div>
           )) : (
             <div className="col-span-full rounded-2xl border border-dashed border-white/10 p-8 text-center">
               <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -137,7 +127,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
               <p className="text-zinc-400">No city-specific guides are published for {cityDetail.name} yet.</p>
             </div>
           )}
-        </motion.section>
+        </section>
       </div>
     </div>
   );

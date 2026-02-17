@@ -31,8 +31,13 @@ export function LanguageProvider({ children, locale, dictionary }: LanguageProvi
   const setLanguage = (newLang: Locale) => {
     if (newLang === locale) return;
 
-    // Persist preference via cookie (valid for 1 year)
-    document.cookie = `NEXT_LOCALE=${newLang};path=/;max-age=31536000`;
+    void fetch('/api/locale', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ locale: newLang }),
+    });
 
     // Construct new path: Replace /es/about with /en/about
     // We assume the first segment is always the locale due to middleware

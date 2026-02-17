@@ -22,15 +22,26 @@ export default function ResetPasswordPage() {
   const { updatePassword, session } = useAuth();
 
   useEffect(() => {
+    const clearAuthHash = () => {
+      if (!window.location.hash) {
+        return;
+      }
+
+      const cleanUrl = `${window.location.pathname}${window.location.search}`;
+      window.history.replaceState({}, document.title, cleanUrl);
+    };
+
     const checkSession = async () => {
       if (!session) {
         const hash = window.location.hash;
         if (hash && hash.includes('access_token')) {
+          clearAuthHash();
           setIsValidating(false);
         } else {
           setError('Invalid session. Please request a new reset link.');
         }
       } else {
+        clearAuthHash();
         setIsValidating(false);
       }
     };

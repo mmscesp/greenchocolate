@@ -11,6 +11,13 @@ import { EncryptionService } from '@/lib/encryption';
 import { z } from 'zod';
 import type { ActionState } from './auth';
 
+const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one number')
+  .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character');
+
 // ==========================================
 // ZOD SCHEMAS
 // ==========================================
@@ -18,7 +25,7 @@ import type { ActionState } from './auth';
 const clubSignUpSchema = z.object({
   clubName: z.string().min(2, 'Club name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   address: z.string().min(5, 'Address is required'),
   phone: z.string().min(5, 'Phone number is required'),
   description: z.string().min(20, 'Description must be at least 20 characters'),
