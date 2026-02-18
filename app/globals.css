@@ -3,125 +3,143 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
+  /* Premium Color System */
+  --brand: 174 81% 26%;
+  --brand-light: 175 79% 35%;
+  --brand-dark: 175 81% 20%;
+  
+  --gold: 42 60% 58%;
+  --gold-light: 42 63% 65%;
+  --gold-dark: 42 52% 48%;
+  
+  --background: 0 0% 98%;
+  --foreground: 240 10% 10%;
+  
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 10%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 10%;
+  
+  --primary: 174 81% 26%;
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 240 5% 96%;
+  --secondary-foreground: 240 6% 10%;
+  
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+  
+  --accent: 42 60% 58%;
+  --accent-foreground: 240 6% 10%;
+  
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 174 81% 26%;
+  
+  --radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 10, 10, 15;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-@layer base {
-  :root {
-    /* Midnight Charcoal & Elite Gold Theme */
-    --background: 240 10% 98%;
-    --foreground: 240 10% 4%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
-    
-    --primary: 158 45% 40%; /* Sophisticated Green */
-    --primary-foreground: 0 0% 98%;
-    
-    --secondary: 215 20% 90%;
-    --secondary-foreground: 215 25% 15%;
-    
-    --muted: 215 20% 90%;
-    --muted-foreground: 215 10% 45%;
-    
-    --accent: 45 40% 50%; /* Antique Gold */
-    --accent-foreground: 0 0% 10%;
-    
-    --destructive: 0 60% 40%;
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 158 45% 40%;
-    
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    /* Deep "Nightlife" Mode */
-    --background: 225 15% 6%; /* Deep Charcoal, not black */
-    --foreground: 210 20% 98%;
-    
-    --card: 225 15% 8%;
-    --card-foreground: 210 20% 98%;
-    
-    --popover: 225 15% 8%;
-    --popover-foreground: 210 20% 98%;
-    
-    --primary: 158 50% 50%; /* Emerald */
-    --primary-foreground: 225 15% 6%;
-    
-    --secondary: 225 15% 12%;
-    --secondary-foreground: 210 20% 98%;
-    
-    --muted: 225 15% 12%;
-    --muted-foreground: 215 15% 65%;
-    
-    --accent: 45 60% 55%; /* Gold Leaf */
-    --accent-foreground: 225 15% 6%;
-    
-    --destructive: 0 60% 30%;
-    --destructive-foreground: 210 20% 98%;
-    
-    --border: 225 15% 12%;
-    --input: 225 15% 12%;
-    --ring: 158 50% 50%;
-  }
+.dark {
+  --background: 240 10% 4%;
+  --foreground: 0 0% 98%;
+  
+  --card: 240 10% 6%;
+  --card-foreground: 0 0% 98%;
+  
+  --popover: 240 10% 6%;
+  --popover-foreground: 0 0% 98%;
+  
+  --primary: 175 79% 35%;
+  --primary-foreground: 240 10% 4%;
+  
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 98%;
+  
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
+  
+  --accent: 42 60% 58%;
+  --accent-foreground: 240 6% 10%;
+  
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+  
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 175 79% 35%;
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-  /* Typography Upgrade: Serif Headings */
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif tracking-tight font-medium;
-  }
+  
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl;
+    @apply text-4xl font-bold tracking-tight text-foreground;
+  }
+  
+  h2 {
+    @apply text-3xl font-semibold tracking-tight text-foreground;
+  }
+  
+  h3 {
+    @apply text-2xl font-semibold tracking-tight text-foreground;
+  }
+  
+  h4 {
+    @apply text-xl font-semibold tracking-tight text-foreground;
+  }
+  
+  h5 {
+    @apply text-lg font-semibold tracking-tight text-foreground;
+  }
+  
+  h6 {
+    @apply text-base font-semibold tracking-tight text-foreground;
   }
 }
 
-/* Forensic/Tech Aesthetic Utilities */
-.glass-panel {
-  @apply bg-background/60 backdrop-blur-md border border-white/10 shadow-xl;
+@layer components {
+  .card-default {
+    @apply bg-card text-card-foreground rounded-lg border border-border shadow-sm;
+  }
+  
+  .card-elevated {
+    @apply bg-card text-card-foreground rounded-lg border border-border shadow-md;
+  }
+  
+  .card-interactive {
+    @apply bg-card text-card-foreground rounded-lg border border-border shadow-sm transition-all duration-200 hover:shadow-md hover:border-brand/20;
+  }
+  
+  .badge-verified {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gold/10 text-gold border border-gold/20;
+  }
+  
+  .badge-info {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand/10 text-brand border border-brand/20;
+  }
+  
+  .badge-neutral {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground;
+  }
 }
 
-.text-gold {
-  color: hsl(var(--accent));
-}
-
-.border-gold {
-  border-color: hsl(var(--accent));
-}
-
-.bg-gold-gradient {
-  background: linear-gradient(135deg, hsl(45, 60%, 55%), hsl(40, 50%, 45%));
-}
-
-.scam-warning-pattern {
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255, 0, 0, 0.05),
-    rgba(255, 0, 0, 0.05) 10px,
-    transparent 10px,
-    transparent 20px
-  );
+@layer utilities {
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-brand to-brand-light bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent;
+  }
 }

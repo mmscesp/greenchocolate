@@ -1,21 +1,12 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter, Playfair_Display, Instrument_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import { LegalDisclaimer } from '@/components/LegalDisclaimer';
 
-const inter = Inter({ 
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-});
-
-const instrumentSans = Instrument_Sans({
-  subsets: ['latin'],
-  variable: '--font-instrument',
+  variable: '--font-primary',
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -91,7 +82,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} ${instrumentSans.variable}`}>
+    <html lang="en" className={`${plusJakarta.variable}`}>
       <body className="font-sans antialiased">
         <LegalDisclaimer />
         {children}
