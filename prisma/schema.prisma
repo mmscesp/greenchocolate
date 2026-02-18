@@ -105,8 +105,8 @@ model Profile {
 }
 
 model MembershipRequest {
-  id                String        @id @default(uuid())
-  status            RequestStatus @default(PENDING)
+  id                String                    @id @default(uuid())
+  status            RequestStatus             @default(PENDING)
   message           String?
   appointmentDate   DateTime?
   appointmentNotes  String?
@@ -116,10 +116,11 @@ model MembershipRequest {
   reviewedBy        String?
   reviewedAt        DateTime?
   rejectionReason   String?
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  club              Club          @relation(fields: [clubId], references: [id])
-  user              Profile       @relation(fields: [userId], references: [id])
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  club              Club                      @relation(fields: [clubId], references: [id])
+  user              Profile                   @relation(fields: [userId], references: [id])
+  stageHistory      ApplicationStageHistory[]
 
   @@unique([userId, clubId])
   @@index([clubId, status])
@@ -239,6 +240,21 @@ model Notification {
   user      Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@index([userId, isRead])
+}
+
+model ApplicationStageHistory {
+  id            String   @id @default(uuid())
+  applicationId String
+  fromStage     String?
+  toStage       String
+  changedBy     String
+  notes         String?
+  createdAt     DateTime @default(now())
+  
+  application   MembershipRequest @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  
+  @@index([applicationId, createdAt])
+  @@index([changedBy])
 }
 
 model AuditLog {
