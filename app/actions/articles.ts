@@ -1,14 +1,11 @@
 'use server';
 
-// Article Data Access Layer
-// Server Actions for fetching articles
-
-import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-
-// ==========================================
-// VALIDATION SCHEMAS
-// ==========================================
+import {
+  type BlogArticleRecord,
+  getAllBlogArticles,
+  getBlogArticleBySlug,
+} from '@/lib/blog-content';
 
 const articleFiltersSchema = z.object({
   category: z.string().optional(),
@@ -19,33 +16,7 @@ const articleFiltersSchema = z.object({
 
 const slugSchema = z.string().min(1);
 const limitSchema = z.number().int().min(1).max(100).optional();
-const idSchema = z.string().uuid();
-
-interface ArticleWithRelations {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  tags: string[];
-  heroImage: string | null;
-  heroImageAlt: string | null;
-  authorName: string;
-  authorAvatar: string | null;
-  authorBio: string | null;
-  publishedAt: Date | null;
-  readTime: number;
-  isPublished: boolean;
-  metaTitle: string | null;
-  metaDescription: string | null;
-  city: { name: string | null; slug: string | null } | null;
-}
-
-interface ArticleCategoryCount {
-  category: string;
-  _count: { id: number };
-}
+const idSchema = z.string().min(1);
 
 export interface ArticleCard {
   id: string;
@@ -72,13 +43,24 @@ export interface ArticleDetail extends ArticleCard {
   metaDescription: string | null;
 }
 
-// ==========================================
-// ACTIONS
-// ==========================================
+function toArticleCard(article: BlogArticleRecord): ArticleCard {
+  return {
+    id: article.id,
+    title: article.title,
+    slug: article.slug,
+    excerpt: article.excerpt,
+    category: article.category,
+    tags: article.tags,
+    heroImage: article.heroImage,
+    authorName: article.authorName,
+    authorAvatar: article.authorAvatar,
+    publishedAt: article.publishedAt,
+    readTime: article.readTime,
+    cityName: article.cityName,
+    citySlug: article.citySlug,
+  };
+}
 
-/**
- * Get All Published Articles
- */
 export async function getArticles(filters?: {
   category?: string;
   citySlug?: string;
@@ -87,96 +69,44 @@ export async function getArticles(filters?: {
 }): Promise<ArticleCard[]> {
   try {
     const validatedFilters = filters ? articleFiltersSchema.parse(filters) : undefined;
-    const where: Record<string, unknown> = {
-      isPublished: true,
-    };
+    const all = await getAllBlogArticles();
 
-    if (validatedFilters?.category) {
-      where.category = validatedFilters.category;
-    }
-
-    if (validatedFilters?.citySlug) {
-      const city = await prisma.city.findUnique({
-        where: { slug: validatedFilters.citySlug },
-        select: { id: true },
-      });
-      if (city) {
-        where.cityId = city.id;
+    const filtered = all.filter((article) => {
+      if (validatedFilters?.category && article.category !== validatedFilters.category) {
+        return false;
       }
-    }
 
-    const articles = await prisma.article.findMany({
-      where,
-      include: {
-        city: {
-          select: { name: true, slug: true },
-        },
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: validatedFilters?.limit,
-      skip: validatedFilters?.offset || 0,
+      if (validatedFilters?.citySlug && article.citySlug !== validatedFilters.citySlug) {
+        return false;
+      }
+
+      return true;
     });
 
-    return articles.map((article: ArticleWithRelations) => ({
-      id: article.id,
-      title: article.title,
-      slug: article.slug,
-      excerpt: article.excerpt,
-      category: article.category,
-      tags: article.tags,
-      heroImage: article.heroImage,
-      authorName: article.authorName,
-      authorAvatar: article.authorAvatar,
-      publishedAt: article.publishedAt?.toISOString() || null,
-      readTime: article.readTime,
-      cityName: article.city?.name || null,
-      citySlug: article.city?.slug || null,
-    }));
+    const offset = validatedFilters?.offset ?? 0;
+    const limit = validatedFilters?.limit;
+    const paged = limit ? filtered.slice(offset, offset + limit) : filtered.slice(offset);
+    return paged.map((article) => toArticleCard(article));
   } catch (error) {
     console.error('getArticles error:', error);
     return [];
   }
 }
 
-/**
- * Get Article by Slug
- */
 export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
   try {
     const validatedSlug = slugSchema.parse(slug);
-    const article = await prisma.article.findUnique({
-      where: { slug: validatedSlug, isPublished: true },
-      include: {
-        city: {
-          select: { name: true, slug: true },
-        },
-        club: {
-          select: { id: true, name: true, slug: true },
-        },
-      },
-    });
+    const article = await getBlogArticleBySlug(validatedSlug);
 
     if (!article) {
       return null;
     }
 
     return {
-      id: article.id,
-      title: article.title,
-      slug: article.slug,
-      excerpt: article.excerpt,
+      ...toArticleCard(article),
       content: article.content,
-      category: article.category,
-      tags: article.tags,
-      heroImage: article.heroImage,
       heroImageAlt: article.heroImageAlt,
-      authorName: article.authorName,
-      authorAvatar: article.authorAvatar,
       authorBio: article.authorBio,
-      publishedAt: article.publishedAt?.toISOString() || null,
-      readTime: article.readTime,
-      cityName: article.city?.name || null,
-      citySlug: article.city?.slug || null,
       isPublished: article.isPublished,
       metaTitle: article.metaTitle,
       metaDescription: article.metaDescription,
@@ -187,121 +117,78 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
   }
 }
 
-/**
- * Get Featured Articles
- */
 export async function getFeaturedArticles(limit = 3): Promise<ArticleCard[]> {
   try {
-    const validatedLimit = limitSchema.parse(limit);
-    const articles = await prisma.article.findMany({
-      where: {
-        isPublished: true,
-        featuredOrder: { gt: 0 },
-      },
-      include: {
-        city: {
-          select: { name: true, slug: true },
-        },
-      },
-      orderBy: { featuredOrder: 'asc' },
-      take: validatedLimit,
-    });
+    const validatedLimit = limitSchema.parse(limit) ?? 3;
+    const all = await getAllBlogArticles();
 
-    return articles.map((article: ArticleWithRelations) => ({
-      id: article.id,
-      title: article.title,
-      slug: article.slug,
-      excerpt: article.excerpt,
-      category: article.category,
-      tags: article.tags,
-      heroImage: article.heroImage,
-      authorName: article.authorName,
-      authorAvatar: article.authorAvatar,
-      publishedAt: article.publishedAt?.toISOString() || null,
-      readTime: article.readTime,
-      cityName: article.city?.name || null,
-      citySlug: article.city?.slug || null,
-    }));
+    const featured = all
+      .filter((article) => article.featuredOrder > 0)
+      .sort((a, b) => a.featuredOrder - b.featuredOrder)
+      .slice(0, validatedLimit);
+
+    if (featured.length >= validatedLimit) {
+      return featured.map((article) => toArticleCard(article));
+    }
+
+    const excluded = new Set(featured.map((article) => article.id));
+    const fallback = all
+      .filter((article) => !excluded.has(article.id))
+      .slice(0, Math.max(0, validatedLimit - featured.length));
+
+    return [...featured, ...fallback].map((article) => toArticleCard(article));
   } catch (error) {
     console.error('getFeaturedArticles error:', error);
     return [];
   }
 }
 
-/**
- * Get Related Articles
- */
-export async function getRelatedArticles(
-  articleId: string,
-  limit = 3
-): Promise<ArticleCard[]> {
+export async function getRelatedArticles(articleId: string, limit = 3): Promise<ArticleCard[]> {
   try {
     const validatedId = idSchema.parse(articleId);
-    const validatedLimit = limitSchema.parse(limit);
-    const article = await prisma.article.findUnique({
-      where: { id: validatedId },
-      select: { category: true, cityId: true },
-    });
+    const validatedLimit = limitSchema.parse(limit) ?? 3;
+    const all = await getAllBlogArticles();
+    const reference = all.find((article) => article.id === validatedId);
 
-    if (!article) {
+    if (!reference) {
       return [];
     }
 
-    const articles = await prisma.article.findMany({
-      where: {
-        isPublished: true,
-        id: { not: validatedId },
-        OR: [
-          { category: article.category },
-          { cityId: article.cityId },
-        ],
-      },
-      include: {
-        city: {
-          select: { name: true, slug: true },
-        },
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: validatedLimit,
-    });
+    const related = all
+      .filter((article) => article.id !== reference.id)
+      .filter((article) => {
+        if (article.category === reference.category) {
+          return true;
+        }
 
-    return articles.map((art: ArticleWithRelations) => ({
-      id: art.id,
-      title: art.title,
-      slug: art.slug,
-      excerpt: art.excerpt,
-      category: art.category,
-      tags: art.tags,
-      heroImage: art.heroImage,
-      authorName: art.authorName,
-      authorAvatar: art.authorAvatar,
-      publishedAt: art.publishedAt?.toISOString() || null,
-      readTime: art.readTime,
-      cityName: art.city?.name || null,
-      citySlug: art.city?.slug || null,
-    }));
+        if (reference.citySlug && article.citySlug === reference.citySlug) {
+          return true;
+        }
+
+        return false;
+      })
+      .slice(0, validatedLimit);
+
+    return related.map((article) => toArticleCard(article));
   } catch (error) {
     console.error('getRelatedArticles error:', error);
     return [];
   }
 }
 
-/**
- * Get Article Categories with Counts
- */
-export async function getCategoriesWithCounts() {
+export async function getCategoriesWithCounts(): Promise<{ name: string; count: number }[]> {
   try {
-    const categories = await prisma.article.groupBy({
-      by: ['category'],
-      where: { isPublished: true },
-      _count: { id: true },
-      orderBy: { category: 'asc' },
-    });
+    const all = await getAllBlogArticles();
+    const counts = new Map<string, number>();
 
-    return categories.map((cat: ArticleCategoryCount) => ({
-      name: cat.category,
-      count: cat._count.id,
-    }));
+    for (const article of all) {
+      const current = counts.get(article.category) ?? 0;
+      counts.set(article.category, current + 1);
+    }
+
+    return Array.from(counts.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   } catch (error) {
     console.error('getCategoriesWithCounts error:', error);
     return [];
