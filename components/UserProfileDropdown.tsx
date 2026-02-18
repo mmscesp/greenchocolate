@@ -24,6 +24,7 @@ import {
   LayoutDashboard,
   Users,
   ClipboardList,
+  PanelTop,
 } from 'lucide-react';
 
 interface UserProfileDropdownProps {
@@ -186,6 +187,19 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
             </div>
 
             {/* Role-based Navigation */}
+            {isAdmin && (
+              <div className="px-4 py-3 border-b border-border bg-destructive/5">
+                <Link
+                  href="/admin"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                >
+                  <PanelTop className="h-4 w-4" />
+                  <span className="font-medium">Platform Admin Portal</span>
+                </Link>
+              </div>
+            )}
+
             {isClubAdmin && (
               <div className="px-4 py-3 border-b border-border bg-primary/5">
                 <Link
