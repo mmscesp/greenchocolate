@@ -85,18 +85,7 @@ async function getCurrentProfile(): Promise<CurrentProfile | null> {
   };
 }
 
-function mapRequestStatus(status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED'): ApplicationStatus {
-  if (status === 'APPROVED') return 'APPROVED';
-  if (status === 'REJECTED') return 'REJECTED';
-  if (status === 'SCHEDULED') return 'BACKGROUND_CHECK';
-  return 'UNDER_REVIEW';
-}
-
-function mapStatusToStage(status: ApplicationStatus): ApplicationStage {
-  if (status === 'BACKGROUND_CHECK') return 'BACKGROUND_CHECK';
-  if (status === 'APPROVED') return 'FINAL_APPROVAL';
-  return 'DOCUMENT_VERIFICATION';
-}
+import { mapRequestStatus, mapStatusToStage } from '@/lib/application-utils';
 
 function estimateCompletion(status: ApplicationStatus, submittedAt: Date): Date | undefined {
   const estimate = new Date(submittedAt);

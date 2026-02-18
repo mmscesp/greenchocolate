@@ -35,20 +35,19 @@ import {
   advanceApplicationStage,
   rejectApplication,
   getClubApplications,
-  mapRequestStatus,
-  mapStatusToStage,
 } from '@/app/actions/applications';
+import { mapRequestStatus, mapStatusToStage } from '@/lib/application-utils';
 
 describe('Application Actions', () => {
-  const mockUser = { id: 'user-123', email: 'test@example.com' };
+  const mockUser = { id: '550e8400-e29b-41d4-a716-446655440001', email: 'test@example.com' };
   const mockProfile = {
-    id: 'profile-123',
-    authId: 'user-123',
+    id: '550e8400-e29b-41d4-a716-446655440002',
+    authId: '550e8400-e29b-41d4-a716-446655440001',
     role: 'USER',
     managedClubId: null,
   };
-  const mockClubId = 'club-123';
-  const mockRequestId = 'request-123';
+  const mockClubId = '550e8400-e29b-41d4-a716-446655440003';
+  const mockRequestId = '550e8400-e29b-41d4-a716-446655440004';
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -129,7 +128,6 @@ describe('Application Actions', () => {
         clubId: mockClubId,
         createdAt: new Date(),
       });
-      (prisma.applicationStageHistory.create as any).mockResolvedValue({ id: 'history-1' });
       (prisma.notification.create as any).mockResolvedValue({ id: 'notification-1' });
 
       const result = await submitMembershipApplication({
@@ -141,14 +139,16 @@ describe('Application Actions', () => {
       expect(result.success).toBe(true);
       expect(result.applicationId).toBe(mockRequestId);
       expect(prisma.membershipRequest.create).toHaveBeenCalled();
-      expect(prisma.applicationStageHistory.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({
-          applicationId: mockRequestId,
-          fromStage: null,
-          toStage: 'INTAKE',
-          changedBy: mockUser.id,
-          notes: 'Application submitted',
-        }),
+      // Stage history is stored in encryptedSnapshot JSON field, not separate table
+      const createCall = (prisma.membershipRequest.create as any).mock.calls[0][0];
+      expect(createCall.data.encryptedSnapshot).toMatchObject({
+        stage: 'INTAKE',
+        stageHistory: expect.arrayContaining([
+          expect.objectContaining({
+            stage: 'INTAKE',
+            changedBy: mockUser.id,
+          }),
+        ]),
       });
       expect(prisma.notification.create).toHaveBeenCalled();
     });
@@ -167,18 +167,21 @@ describe('Application Actions', () => {
 
     it('should return application with stage history from DB', async () => {
       const mockHistory = [
-        { toStage: 'INTAKE', createdAt: new Date('2026-01-01'), changedBy: 'user-123', notes: null },
-        { toStage: 'DOCUMENT_VERIFICATION', createdAt: new Date('2026-01-02'), changedBy: 'admin-1', notes: 'Docs verified' },
+        { stage: 'INTAKE', changedAt: '2026-01-01T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440001', notes: undefined },
+        { stage: 'DOCUMENT_VERIFICATION', changedAt: '2026-01-02T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440005', notes: 'Docs verified' },
       ];
 
       (prisma.membershipRequest.findFirst as any).mockResolvedValue({
         id: mockRequestId,
         status: 'PENDING',
         createdAt: new Date('2026-01-01'),
-        stageHistory: mockHistory,
+        encryptedSnapshot: {
+          stage: 'DOCUMENT_VERIFICATION',
+          stageHistory: mockHistory,
+        },
       });
 
-      const result = await getApplicationStatus('user-123');
+      const result = await getApplicationStatus('550e8400-e29b-41d4-a716-446655440001');
 
       expect(result.application).not.toBeNull();
       expect(result.stageHistory).toHaveLength(2);
@@ -198,29 +201,35 @@ describe('Application Actions', () => {
     });
 
     it('should advance stage and create history entry', async () => {
-      (prisma.profile.findUnique as any).mockResolvedValue({ ...mockProfile, role: 'CLUB_ADMIN', managedClubId: mockClubId });
+      const adminProfile = { ...mockProfile, role: 'CLUB_ADMIN', managedClubId: mockClubId };
+      (prisma.profile.findUnique as any).mockResolvedValue(adminProfile);
       (prisma.membershipRequest.findUnique as any).mockResolvedValue({
         id: mockRequestId,
         clubId: mockClubId,
-        userId: 'user-456',
+        userId: '550e8400-e29b-41d4-a716-446655440006',
+        status: 'PENDING',
+        encryptedSnapshot: {
+          stage: 'INTAKE',
+          stageHistory: [
+            { stage: 'INTAKE', changedAt: '2026-01-01T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440006' },
+          ],
+        },
       });
-      (prisma.applicationStageHistory.findFirst as any).mockResolvedValue({ toStage: 'INTAKE' });
       (prisma.membershipRequest.update as any).mockResolvedValue({});
-      (prisma.applicationStageHistory.create as any).mockResolvedValue({ id: 'history-2' });
       (prisma.notification.create as any).mockResolvedValue({ id: 'notification-2' });
 
       const result = await advanceApplicationStage(mockRequestId, 'BACKGROUND_CHECK', 'Moving to background check');
 
       expect(result.success).toBe(true);
       expect(prisma.membershipRequest.update).toHaveBeenCalled();
-      expect(prisma.applicationStageHistory.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({
-          applicationId: mockRequestId,
-          fromStage: 'INTAKE',
-          toStage: 'BACKGROUND_CHECK',
-          changedBy: mockUser.id,
-          notes: 'Moving to background check',
-        }),
+      // Stage history is stored in encryptedSnapshot JSON field, not separate table
+      const updateCall = (prisma.membershipRequest.update as any).mock.calls[0][0];
+      expect(updateCall.data.encryptedSnapshot).toMatchObject({
+        stage: 'BACKGROUND_CHECK',
+        stageHistory: expect.arrayContaining([
+          expect.objectContaining({ stage: 'INTAKE' }),
+          expect.objectContaining({ stage: 'BACKGROUND_CHECK', notes: 'Moving to background check' }),
+        ]),
       });
       expect(prisma.notification.create).toHaveBeenCalled();
     });
@@ -232,12 +241,17 @@ describe('Application Actions', () => {
       (prisma.membershipRequest.findUnique as any).mockResolvedValue({
         id: mockRequestId,
         clubId: mockClubId,
-        userId: 'user-456',
+        userId: '550e8400-e29b-41d4-a716-446655440006',
         status: 'PENDING',
+        encryptedSnapshot: {
+          stage: 'DOCUMENT_VERIFICATION',
+          stageHistory: [
+            { stage: 'INTAKE', changedAt: '2026-01-01T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440006' },
+            { stage: 'DOCUMENT_VERIFICATION', changedAt: '2026-01-02T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440001' },
+          ],
+        },
       });
-      (prisma.applicationStageHistory.findFirst as any).mockResolvedValue({ toStage: 'DOCUMENT_VERIFICATION' });
       (prisma.membershipRequest.update as any).mockResolvedValue({});
-      (prisma.applicationStageHistory.create as any).mockResolvedValue({ id: 'history-3' });
       (prisma.notification.create as any).mockResolvedValue({ id: 'notification-3' });
 
       const result = await rejectApplication(mockRequestId, 'Missing required documents');
@@ -250,7 +264,13 @@ describe('Application Actions', () => {
           rejectionReason: 'Missing required documents',
         }),
       });
-      expect(prisma.applicationStageHistory.create).toHaveBeenCalled();
+      // Stage history is stored in encryptedSnapshot JSON field, not separate table
+      const updateCall = (prisma.membershipRequest.update as any).mock.calls[0][0];
+      expect(updateCall.data.encryptedSnapshot).toMatchObject({
+        stageHistory: expect.arrayContaining([
+          expect.objectContaining({ notes: 'Missing required documents' }),
+        ]),
+      });
     });
   });
 
