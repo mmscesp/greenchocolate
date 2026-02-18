@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getAdminArticleIndex } from '@/app/actions/admin-content';
+import PublishArticleForm from './PublishArticleForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,6 +41,8 @@ export default async function AdminContentArticlesPage() {
           </div>
         </CardContent>
       </Card>
+
+      <PublishArticleForm />
     </div>
   );
 }

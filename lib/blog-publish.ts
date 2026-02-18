@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { createHash } from 'crypto';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -35,6 +36,13 @@ export interface PublishArticleResult {
   path: string;
   mode: 'local' | 'github';
   commitSha?: string;
+  contentHash: string;
+  rollback: {
+    existed: boolean;
+    previousHash: string | null;
+    backupPath?: string;
+    previousCommitSha?: string;
+  };
 }
 
 interface GitHubEnv {
@@ -83,6 +91,10 @@ function toIsoDate(value?: string): string {
   return parsed.toISOString();
 }
 
+function hashContent(content: string): string {
+  return createHash('sha256').update(content, 'utf8').digest('hex');
+}
+
 function buildFrontmatter(input: PublishArticleInput): string {
   const lines = [
     '---',
@@ -116,6 +128,24 @@ function buildContentPath(input: PublishArticleInput): string {
 async function publishLocally(filePath: string, content: string): Promise<PublishArticleResult> {
   const absolutePath = path.join(process.cwd(), filePath);
   const directory = path.dirname(absolutePath);
+  let previousContent: string | null = null;
+
+  try {
+    previousContent = await fs.readFile(absolutePath, 'utf8');
+  } catch {
+    previousContent = null;
+  }
+
+  let backupPath: string | undefined;
+  if (previousContent !== null) {
+    const historyDir = path.join(process.cwd(), 'data/content/.history', path.basename(filePath, '.mdx'));
+    await fs.mkdir(historyDir, { recursive: true });
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupFile = `${stamp}.mdx`;
+    const backupAbsolutePath = path.join(historyDir, backupFile);
+    await fs.writeFile(backupAbsolutePath, previousContent, 'utf8');
+    backupPath = path.relative(process.cwd(), backupAbsolutePath).replace(/\\/g, '/');
+  }
 
   await fs.mkdir(directory, { recursive: true });
   await fs.writeFile(absolutePath, content, 'utf8');
@@ -123,6 +153,12 @@ async function publishLocally(filePath: string, content: string): Promise<Publis
   return {
     path: filePath,
     mode: 'local',
+    contentHash: hashContent(content),
+    rollback: {
+      existed: previousContent !== null,
+      previousHash: previousContent ? hashContent(previousContent) : null,
+      ...(backupPath ? { backupPath } : {}),
+    },
   };
 }
 
@@ -204,6 +240,12 @@ async function publishToGitHub(filePath: string, content: string): Promise<Publi
     path: filePath,
     mode: 'github',
     commitSha: body.commit?.sha,
+    contentHash: hashContent(content),
+    rollback: {
+      existed: currentSha !== null,
+      previousHash: currentSha,
+      ...(currentSha ? { previousCommitSha: currentSha } : {}),
+    },
   };
 }
 
@@ -230,5 +272,32 @@ export function getSupportedBlogCategories(): string[] {
 export async function ensureBlogContentDirectories(): Promise<void> {
   await fs.mkdir(CONTENT_ROOT, { recursive: true });
   const categories = Object.values(CATEGORY_PATH_MAP);
-  await Promise.all(categories.map((category) => fs.mkdir(path.join(CONTENT_ROOT, category), { recursive: true })));
+  await Promise.all([
+    ...categories.map((category) => fs.mkdir(path.join(CONTENT_ROOT, category), { recursive: true })),
+    fs.mkdir(path.join(CONTENT_ROOT, '.history'), { recursive: true }),
+  ]);
+}
+
+export function createPublishContentHash(input: PublishArticleInput): string {
+  const canonical = {
+    slug: input.slug,
+    title: input.title,
+    excerpt: input.excerpt,
+    category: input.category,
+    content: input.content,
+    tags: [...input.tags],
+    authorName: input.authorName,
+    authorBio: input.authorBio ?? null,
+    heroImage: input.heroImage ?? null,
+    heroImageAlt: input.heroImageAlt ?? null,
+    citySlug: input.citySlug ?? null,
+    cityName: input.cityName ?? null,
+    readTime: input.readTime ?? null,
+    featuredOrder: input.featuredOrder ?? null,
+    metaTitle: input.metaTitle ?? null,
+    metaDescription: input.metaDescription ?? null,
+    publishedAt: input.publishedAt ?? null,
+  };
+
+  return hashContent(JSON.stringify(canonical));
 }
