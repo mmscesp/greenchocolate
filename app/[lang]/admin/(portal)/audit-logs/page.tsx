@@ -1,0 +1,80 @@
+import { prisma } from '@/lib/prisma';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+export const dynamic = 'force-dynamic';
+
+interface AuditLogsPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+function getString(value: string | string[] | undefined, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
+}
+
+export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPageProps) {
+  const query = await searchParams;
+  const tableName = getString(query.table);
+
+  const logs = await prisma.auditLog.findMany({
+    where: tableName ? { tableName } : undefined,
+    orderBy: { createdAt: 'desc' },
+    take: 100,
+  });
+
+  const tableNames = await prisma.auditLog.findMany({
+    distinct: ['tableName'],
+    select: { tableName: true },
+    orderBy: { tableName: 'asc' },
+  });
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
+        <p className="text-muted-foreground mt-1">Security and admin action trail (latest 100 records).</p>
+      </div>
+
+      <Card>
+        <CardContent className="pt-6">
+          <form className="flex gap-3 items-center">
+            <label className="text-sm text-muted-foreground">Filter by table</label>
+            <select name="table" defaultValue={tableName} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+              <option value="">All tables</option>
+              {tableNames.map((table) => (
+                <option key={table.tableName} value={table.tableName}>{table.tableName}</option>
+              ))}
+            </select>
+            <button className="h-10 px-4 rounded-md bg-primary text-primary-foreground text-sm" type="submit">
+              Apply
+            </button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Logs</CardTitle>
+          <CardDescription>{logs.length} records</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {logs.map((log) => (
+              <div key={log.id} className="border rounded-md p-3">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="outline">{log.tableName}</Badge>
+                    <Badge>{log.operation}</Badge>
+                    <span className="text-xs text-muted-foreground">record: {log.recordId}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</span>
+                </div>
+                <div className="text-xs text-muted-foreground mt-2">changedBy: {log.changedBy}</div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
