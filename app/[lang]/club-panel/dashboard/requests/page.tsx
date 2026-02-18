@@ -18,11 +18,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  getClubMembershipRequests,
-  approveMembershipRequest,
-  rejectMembershipRequest,
-  ActionState,
-} from '@/app/actions/membership';
+  advanceApplicationStage,
+  getClubApplications,
+  rejectApplication,
+  type ClubApplicationItem,
+  type ApplicationStage,
+} from '@/app/actions/applications';
 import { toast } from 'sonner';
 import {
   Check,
@@ -39,24 +40,11 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface ClubRequest {
-  id: string;
-  status: string;
-  message: string | null;
-  createdAt: string;
-  user: {
-    id: string;
-    displayName: string | null;
-    email: string;
-    avatarUrl: string | null;
-  };
-}
-
 export default function ClubRequestsPage() {
-  const [requests, setRequests] = useState<ClubRequest[]>([]);
+  const [requests, setRequests] = useState<ClubApplicationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedRequest, setSelectedRequest] = useState<ClubRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<ClubApplicationItem | null>(null);
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -69,7 +57,7 @@ export default function ClubRequestsPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getClubMembershipRequests();
+      const data = await getClubApplications();
       setRequests(data);
     } catch (err) {
       setError('Failed to load membership requests');
@@ -88,22 +76,28 @@ export default function ClubRequestsPage() {
 
     setActionLoading(true);
     try {
-      const result: ActionState = await approveMembershipRequest(
-        selectedRequest.id,
-        undefined,
-        approvalNotes
-      );
+      const nextStage: ApplicationStage = selectedRequest.status === 'BACKGROUND_CHECK'
+        ? 'FINAL_APPROVAL'
+        : 'BACKGROUND_CHECK';
+
+      const result = await advanceApplicationStage(selectedRequest.id, nextStage, approvalNotes);
       if (result.success) {
-        toast.success(result.message || 'Request approved');
+        toast.success(nextStage === 'FINAL_APPROVAL' ? 'Application approved' : 'Application moved to background check');
         setRequests((prev) =>
           prev.map((r) =>
-            r.id === selectedRequest.id ? { ...r, status: 'APPROVED' } : r
+            r.id === selectedRequest.id
+              ? {
+                  ...r,
+                  stage: nextStage,
+                  status: nextStage === 'FINAL_APPROVAL' ? 'APPROVED' : 'BACKGROUND_CHECK',
+                }
+              : r
           )
         );
         setIsApproveDialogOpen(false);
         setApprovalNotes('');
       } else {
-        toast.error(result.message || 'Failed to approve request');
+        toast.error(result.error || 'Failed to advance application stage');
       }
     } catch (err) {
       console.error('Approve error:', err);
@@ -119,13 +113,9 @@ export default function ClubRequestsPage() {
 
     setActionLoading(true);
     try {
-      const result: ActionState = await rejectMembershipRequest(
-        selectedRequest.id,
-        undefined,
-        rejectionReason
-      );
+      const result = await rejectApplication(selectedRequest.id, rejectionReason || 'Rejected by club admin');
       if (result.success) {
-        toast.success(result.message || 'Request rejected');
+        toast.success('Application rejected');
         setRequests((prev) =>
           prev.map((r) =>
             r.id === selectedRequest.id ? { ...r, status: 'REJECTED' } : r
@@ -134,7 +124,7 @@ export default function ClubRequestsPage() {
         setIsRejectDialogOpen(false);
         setRejectionReason('');
       } else {
-        toast.error(result.message || 'Failed to reject request');
+        toast.error(result.error || 'Failed to reject request');
       }
     } catch (err) {
       console.error('Reject error:', err);
@@ -157,11 +147,18 @@ export default function ClubRequestsPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'PENDING':
+      case 'UNDER_REVIEW':
         return (
           <Badge variant="secondary" className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            Pending
+            Under Review
+          </Badge>
+        );
+      case 'BACKGROUND_CHECK':
+        return (
+          <Badge variant="secondary" className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            Background Check
           </Badge>
         );
       case 'APPROVED':
@@ -183,7 +180,7 @@ export default function ClubRequestsPage() {
     }
   };
 
-  const pendingRequests = requests.filter((r) => r.status === 'PENDING');
+  const pendingRequests = requests.filter((r) => r.status === 'UNDER_REVIEW');
   const approvedRequests = requests.filter((r) => r.status === 'APPROVED');
   const rejectedRequests = requests.filter((r) => r.status === 'REJECTED');
 
@@ -287,9 +284,10 @@ export default function ClubRequestsPage() {
                 className="px-3 py-2 border rounded-md text-sm bg-background"
               >
                 <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
+                 <option value="under_review">Under Review</option>
+                 <option value="background_check">Background Check</option>
+                 <option value="approved">Approved</option>
+                 <option value="rejected">Rejected</option>
               </select>
             </div>
           </div>
@@ -335,6 +333,7 @@ export default function ClubRequestsPage() {
                             {request.user.displayName || 'Anonymous'}
                           </h3>
                           {getStatusBadge(request.status)}
+                          <Badge variant="outline">{request.stage.replaceAll('_', ' ')}</Badge>
                         </div>
                         
                         <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
@@ -358,7 +357,7 @@ export default function ClubRequestsPage() {
                   </div>
 
                   <div className="flex items-center gap-2 md:self-center ml-14 md:ml-0">
-                    {request.status === 'PENDING' ? (
+                    {request.status === 'UNDER_REVIEW' || request.status === 'BACKGROUND_CHECK' ? (
                       <>
                         <Button
                           variant="outline"
@@ -380,8 +379,8 @@ export default function ClubRequestsPage() {
                           }}
                           className="bg-green-600 hover:bg-green-700 text-white"
                         >
-                          <Check className="h-4 w-4 mr-1.5" />
-                          Approve
+                           <Check className="h-4 w-4 mr-1.5" />
+                           {request.status === 'BACKGROUND_CHECK' ? 'Approve' : 'Move to Background Check'}
                         </Button>
                       </>
                     ) : (

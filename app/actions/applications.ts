@@ -41,6 +41,20 @@ type CurrentProfile = {
   managedClubId: string | null;
 };
 
+export interface ClubApplicationItem {
+  id: string;
+  status: ApplicationStatus;
+  stage: ApplicationStage;
+  createdAt: string;
+  message: string | null;
+  user: {
+    id: string;
+    displayName: string | null;
+    email: string;
+    avatarUrl: string | null;
+  };
+}
+
 async function getCurrentProfile(): Promise<CurrentProfile | null> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -92,6 +106,14 @@ function estimateCompletion(status: ApplicationStatus, submittedAt: Date): Date 
   }
 
   return undefined;
+}
+
+function resolveStageFromSnapshot(snapshot: Record<string, unknown> | null, status: ApplicationStatus): ApplicationStage {
+  const snapshotStage = snapshot?.stage;
+  if (snapshotStage === 'INTAKE' || snapshotStage === 'DOCUMENT_VERIFICATION' || snapshotStage === 'BACKGROUND_CHECK' || snapshotStage === 'FINAL_APPROVAL') {
+    return snapshotStage;
+  }
+  return mapStatusToStage(status);
 }
 
 /**
@@ -291,4 +313,104 @@ export async function advanceApplicationStage(
   });
 
   return { success: true, newStage: validated.data.toStage };
+}
+
+export async function rejectApplication(
+  requestId: string,
+  reason: string
+): Promise<{ success: boolean; error?: string }> {
+  const profile = await getCurrentProfile();
+
+  if (!profile || (profile.role !== 'ADMIN' && profile.role !== 'CLUB_ADMIN')) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  const request = await prisma.membershipRequest.findUnique({
+    where: { id: requestId },
+  });
+
+  if (!request) {
+    return { success: false, error: 'Application not found' };
+  }
+
+  if (profile.role === 'CLUB_ADMIN' && profile.managedClubId !== request.clubId) {
+    return { success: false, error: 'Unauthorized for this club' };
+  }
+
+  const snapshot = (request.encryptedSnapshot as Record<string, unknown> | null) || {};
+  const previousHistory: ApplicationStageHistoryJsonItem[] = Array.isArray(snapshot.stageHistory)
+    ? (snapshot.stageHistory as ApplicationStageHistoryJsonItem[])
+    : [];
+
+  const nextHistory: ApplicationStageHistoryJsonItem[] = [
+    ...previousHistory,
+    {
+      stage: resolveStageFromSnapshot(snapshot, mapRequestStatus(request.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED')),
+      changedAt: new Date().toISOString(),
+      changedBy: profile.authId,
+      notes: reason,
+    },
+  ];
+
+  await prisma.membershipRequest.update({
+    where: { id: requestId },
+    data: {
+      status: 'REJECTED',
+      reviewedAt: new Date(),
+      reviewedBy: profile.id,
+      rejectionReason: reason,
+      encryptedSnapshot: {
+        ...snapshot,
+        stageHistory: nextHistory,
+      } as unknown as Prisma.InputJsonValue,
+    },
+  });
+
+  return { success: true };
+}
+
+export async function getClubApplications(): Promise<ClubApplicationItem[]> {
+  const profile = await getCurrentProfile();
+
+  if (!profile || (!profile.managedClubId && profile.role !== 'ADMIN')) {
+    return [];
+  }
+
+  const where = profile.role === 'ADMIN' ? {} : { clubId: profile.managedClubId as string };
+
+  const requests = await prisma.membershipRequest.findMany({
+    where,
+    include: {
+      user: {
+        select: {
+          id: true,
+          displayName: true,
+          email: true,
+          avatarUrl: true,
+        },
+      },
+    },
+    orderBy: [{ createdAt: 'desc' }],
+    take: 200,
+  });
+
+  return requests.map((request) => {
+    const status = mapRequestStatus(request.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED');
+    const snapshot = (request.encryptedSnapshot as Record<string, unknown> | null) || null;
+    const stage = resolveStageFromSnapshot(snapshot, status);
+
+    return {
+      id: request.id,
+      status,
+      stage,
+      createdAt: request.createdAt.toISOString(),
+      message: request.message,
+      user: {
+        id: request.user.id,
+        displayName: request.user.displayName,
+        email: request.user.email,
+        avatarUrl: request.user.avatarUrl,
+      },
+    };
+  });
 }

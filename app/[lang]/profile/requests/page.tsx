@@ -14,6 +14,7 @@ import {
   MembershipRequestCard,
   ActionState,
 } from '@/app/actions/membership';
+import { getProfileBackendStatus, type UserProfileBackendStatus } from '@/app/actions/users';
 import Link from 'next/link';
 import {
   Check,
@@ -33,6 +34,7 @@ export default function UserRequestsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [backendStatus, setBackendStatus] = useState<UserProfileBackendStatus | null>(null);
 
   const loadRequests = useCallback(async () => {
     setLoading(true);
@@ -40,6 +42,8 @@ export default function UserRequestsPage() {
     try {
       const data = await getUserMembershipRequests();
       setRequests(data);
+      const status = await getProfileBackendStatus();
+      setBackendStatus(status);
     } catch (err) {
       setError(t('requests.error_load'));
       console.error(err);
@@ -201,6 +205,27 @@ export default function UserRequestsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {backendStatus && (
+        <Card>
+          <CardContent className="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <p className="text-sm text-gray-600">Current Application Stage</p>
+              <p className="text-xl font-semibold text-gray-900 mt-1">
+                {backendStatus.application.status.replaceAll('_', ' ')}
+              </p>
+            </div>
+            <div className="text-sm text-gray-600">
+              Passport: <span className="font-medium text-gray-900">{backendStatus.passport.verificationId}</span>
+            </div>
+            {backendStatus.application.estimatedCompletion && (
+              <div className="text-sm text-gray-600">
+                Est. completion: {new Date(backendStatus.application.estimatedCompletion).toLocaleDateString('es-ES')}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Requests List */}
       {requests.length === 0 ? (
