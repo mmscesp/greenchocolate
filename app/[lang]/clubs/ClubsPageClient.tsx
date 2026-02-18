@@ -59,7 +59,7 @@ export default function ClubsPageClient({
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+    <div className="min-h-screen bg-background">
       {/* JSON-LD Structured Data */}
       <CollectionPageStructuredData
         schema={{
@@ -70,21 +70,7 @@ export default function ClubsPageClient({
         }}
       />
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Ambient glows */}
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-green-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-teal-500/5 rounded-full blur-3xl" />
-        
-        {/* Dot pattern */}
-        <div className="absolute inset-0 opacity-10" style={{ 
-          backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0)', 
-          backgroundSize: '40px 40px' 
-        }} />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Header */}
         <motion.div 
           className="mb-12 text-center"
@@ -94,7 +80,7 @@ export default function ClubsPageClient({
         >
           {/* Eyebrow Badge */}
           <motion.div 
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-full text-green-400 mb-6 border border-green-500/20"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary mb-6 border border-primary/20"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
@@ -105,13 +91,13 @@ export default function ClubsPageClient({
 
           {/* Main Title */}
           <motion.h1 
-            className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight"
+            className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground mb-6 leading-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
             Discover{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-teal-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
               Premium Clubs
             </span>
           </motion.h1>
@@ -134,18 +120,18 @@ export default function ClubsPageClient({
             transition={{ delay: 0.5 }}
           >
             <div className="text-center">
-              <div className="text-3xl font-black text-white">{clubs.length}+</div>
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">{t('clubs.clubs_count') || 'Clubs'}</div>
+              <div className="text-3xl font-black text-foreground">{clubs.length}+</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('clubs.clubs_count') || 'Clubs'}</div>
             </div>
-            <div className="w-px h-12 bg-white/10" />
+            <div className="w-px h-12 bg-border" />
             <div className="text-center">
-              <div className="text-3xl font-black text-green-400">100%</div>
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">{t('clubs.verified') || 'Verified'}</div>
+              <div className="text-3xl font-black text-primary">100%</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('clubs.verified') || 'Verified'}</div>
             </div>
-            <div className="w-px h-12 bg-white/10" />
+            <div className="w-px h-12 bg-border" />
             <div className="text-center">
-              <div className="text-3xl font-black text-white">{neighborhoods.length}</div>
-              <div className="text-sm text-zinc-500 uppercase tracking-wider">{t('clubs.neighborhoods') || 'Areas'}</div>
+              <div className="text-3xl font-black text-foreground">{neighborhoods.length}</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('clubs.neighborhoods') || 'Areas'}</div>
             </div>
           </motion.div>
         </motion.div>
@@ -159,13 +145,13 @@ export default function ClubsPageClient({
         >
           {/* View Mode Toggle */}
           <div className="flex justify-center mb-6">
-            <div className="inline-flex bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-1">
+            <div className="inline-flex bg-muted rounded-2xl border p-1">
               <button
                 onClick={() => setViewMode('grid')}
                 className={`px-6 py-3 flex items-center gap-2 text-sm font-bold rounded-xl transition-all duration-300 ${
                   viewMode === 'grid'
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-primary text-primary-foreground shadow-lg'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 <Grid className="h-4 w-4" />
@@ -175,8 +161,8 @@ export default function ClubsPageClient({
                 onClick={() => setViewMode('map')}
                 className={`px-6 py-3 flex items-center gap-2 text-sm font-bold rounded-xl transition-all duration-300 ${
                   viewMode === 'map'
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-primary text-primary-foreground shadow-lg'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 <Map className="h-4 w-4" />
@@ -204,12 +190,12 @@ export default function ClubsPageClient({
                 {[1, 2, 3, 4, 5, 6].map(i => (
                   <motion.div 
                     key={i} 
-                    className="bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 h-[500px]"
+                    className="bg-card rounded-3xl border h-[500px]"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <div className="h-64 bg-white/5 animate-pulse rounded-t-3xl" />
+                    <div className="h-64 bg-muted animate-pulse rounded-t-3xl" />
                     <div className="p-6 space-y-4">
                       <div className="h-6 bg-white/5 animate-pulse rounded-lg w-3/4" />
                       <div className="h-4 bg-white/5 animate-pulse rounded-lg w-1/2" />
@@ -238,14 +224,14 @@ export default function ClubsPageClient({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 max-w-lg mx-auto border border-white/10">
-                  <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <List className="h-10 w-10 text-zinc-500" />
+                <div className="bg-muted rounded-3xl p-12 max-w-lg mx-auto border">
+                  <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                    <List className="h-10 w-10 text-muted-foreground" />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                  <h3 className="text-2xl font-bold text-foreground mb-3">
                     {t('clubs.no_results.title')}
                   </h3>
-                  <p className="text-zinc-400 mb-6">
+                  <p className="text-muted-foreground mb-6">
                     {t('clubs.no_results.subtitle')}
                   </p>
                   <Button
@@ -258,7 +244,7 @@ export default function ClubsPageClient({
                       priceRange: [],
                       rating: 0
                     })}
-                    className="border-white/20 text-white hover:bg-white/10 rounded-full px-8"
+                    className="border-border text-foreground hover:bg-muted rounded-full px-8"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
                     {t('clubs.clear_filters')}
@@ -269,17 +255,17 @@ export default function ClubsPageClient({
           </div>
         ) : (
           <motion.div 
-            className="bg-white/5 backdrop-blur-sm rounded-3xl p-12 text-center border border-white/10"
+            className="bg-muted rounded-3xl p-12 text-center border"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="w-24 h-24 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Map className="h-12 w-12 text-green-400" />
+            <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Map className="h-12 w-12 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-3">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
               {t('clubs.view_mode.map')}
             </h3>
-            <p className="text-zinc-400 max-w-md mx-auto">
+            <p className="text-muted-foreground max-w-md mx-auto">
               {t('clubs.map.coming_soon')}
             </p>
           </motion.div>

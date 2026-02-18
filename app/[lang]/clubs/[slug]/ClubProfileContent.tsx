@@ -104,12 +104,15 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-green-500/5 to-transparent" />
-        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-teal-500/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-background relative">
+      {/* Navigation */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <Link href={`/${language}/clubs`}>
+          <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('common.back')}
+          </Button>
+        </Link>
       </div>
 
       {/* Navigation */}
@@ -122,7 +125,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           <Link href={`/${language}/clubs`}>
             <Button 
               variant="ghost" 
-              className="text-zinc-400 hover:text-white hover:bg-white/5 rounded-full"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-full"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('nav.back_to_clubs')}
@@ -153,8 +156,8 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         </AnimatePresence>
 
         {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/30 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-900/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/50 to-transparent" />
 
         {/* Image Navigation */}
         {club.images.length > 1 && (
@@ -163,7 +166,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               onClick={prevImage}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="absolute left-6 top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/50 transition-colors border border-white/10"
+              className="absolute left-6 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm text-foreground p-3 rounded-full hover:bg-muted transition-colors border border-border"
             >
               <ChevronLeft className="h-6 w-6" />
             </motion.button>
@@ -171,7 +174,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               onClick={nextImage}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className="absolute right-6 top-1/2 -translate-y-1/2 bg-black/30 backdrop-blur-sm text-white p-3 rounded-full hover:bg-black/50 transition-colors border border-white/10"
+              className="absolute right-6 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm text-foreground p-3 rounded-full hover:bg-muted transition-colors border border-border"
             >
               <ChevronRight className="h-6 w-6" />
             </motion.button>
