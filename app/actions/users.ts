@@ -262,10 +262,17 @@ export async function isClubAdmin(): Promise<boolean> {
   }
 }
 
-function mapRequestStatusToApplicationStatus(status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED'): ProfileApplicationStatus {
+function resolveProfileStatusFromSnapshot(
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED',
+  snapshot: Record<string, unknown> | null
+): ProfileApplicationStatus {
   if (status === 'APPROVED') return 'approved';
   if (status === 'REJECTED') return 'rejected';
   if (status === 'SCHEDULED') return 'background_check';
+
+  const stage = snapshot?.stage;
+  if (stage === 'INTAKE') return 'submitted';
+  if (stage === 'BACKGROUND_CHECK') return 'background_check';
   return 'reviewing';
 }
 
@@ -312,9 +319,9 @@ export async function getProfileBackendStatus(): Promise<UserProfileBackendStatu
       };
     }
 
-    const applicationStatus = mapRequestStatusToApplicationStatus(
-      latestRequest.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED'
-    );
+    const requestStatus = latestRequest.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED';
+    const snapshot = (latestRequest.encryptedSnapshot as Record<string, unknown> | null) || null;
+    const applicationStatus = resolveProfileStatusFromSnapshot(requestStatus, snapshot);
 
     let estimatedCompletion: Date | undefined;
     if (applicationStatus === 'reviewing') {
@@ -328,7 +335,7 @@ export async function getProfileBackendStatus(): Promise<UserProfileBackendStatu
     return {
       passport,
       application: {
-        status: latestRequest.status === 'PENDING' ? 'submitted' : applicationStatus,
+        status: applicationStatus,
         submittedAt: latestRequest.createdAt,
         estimatedCompletion,
       },

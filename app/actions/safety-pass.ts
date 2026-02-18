@@ -81,6 +81,20 @@ export async function generateSafetyPass(data: {
     },
   });
 
+  await prisma.notification.create({
+    data: {
+      userId: profile.id,
+      type: 'SYSTEM_ALERT',
+      title: 'Safety pass generated',
+      message: `Your safety pass ${passNumber} is active until ${expiresAt.toISOString().slice(0, 10)}.`,
+      data: {
+        passNumber,
+        tier,
+        expiresAt: expiresAt.toISOString(),
+      },
+    },
+  });
+
   return {
     success: true,
     pass: {

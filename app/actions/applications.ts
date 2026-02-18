@@ -22,6 +22,12 @@ interface ApplicationStageHistoryJsonItem {
   notes?: string;
 }
 
+type AppNotificationType =
+  | 'APPLICATION_SUBMITTED'
+  | 'APPLICATION_STAGE_CHANGED'
+  | 'APPLICATION_APPROVED'
+  | 'APPLICATION_REJECTED';
+
 const submitSchema = z.object({
   targetClubId: z.string().uuid(),
   eligibilityAnswers: z.record(z.string(), z.unknown()).default({}),
@@ -116,6 +122,24 @@ function resolveStageFromSnapshot(snapshot: Record<string, unknown> | null, stat
   return mapStatusToStage(status);
 }
 
+async function createApplicationNotification(input: {
+  userId: string;
+  type: AppNotificationType;
+  title: string;
+  message: string;
+  data?: Record<string, unknown>;
+}): Promise<void> {
+  await prisma.notification.create({
+    data: {
+      userId: input.userId,
+      type: input.type,
+      title: input.title,
+      message: input.message,
+      data: (input.data || {}) as unknown as Prisma.InputJsonValue,
+    },
+  });
+}
+
 /**
  * Transitional pipeline submit action implemented on top of MembershipRequest.
  */
@@ -173,6 +197,18 @@ export async function submitMembershipApplication(data: {
 
   const completion = new Date(created.createdAt);
   completion.setDate(completion.getDate() + 10);
+
+  await createApplicationNotification({
+    userId: profile.id,
+    type: 'APPLICATION_SUBMITTED',
+    title: 'Application submitted',
+    message: 'Your membership application has been received and is now under review.',
+    data: {
+      applicationId: created.id,
+      clubId: created.clubId,
+      stage: 'INTAKE',
+    },
+  });
 
   return {
     success: true,
@@ -312,6 +348,30 @@ export async function advanceApplicationStage(
     },
   });
 
+  if (nextStatus === 'APPROVED') {
+    await createApplicationNotification({
+      userId: request.userId,
+      type: 'APPLICATION_APPROVED',
+      title: 'Application approved',
+      message: 'Your membership application has been approved.',
+      data: {
+        applicationId: request.id,
+        stage: validated.data.toStage,
+      },
+    });
+  } else {
+    await createApplicationNotification({
+      userId: request.userId,
+      type: 'APPLICATION_STAGE_CHANGED',
+      title: 'Application stage updated',
+      message: `Your application moved to ${validated.data.toStage.replaceAll('_', ' ').toLowerCase()}.`,
+      data: {
+        applicationId: request.id,
+        stage: validated.data.toStage,
+      },
+    });
+  }
+
   return { success: true, newStage: validated.data.toStage };
 }
 
@@ -363,6 +423,17 @@ export async function rejectApplication(
         ...snapshot,
         stageHistory: nextHistory,
       } as unknown as Prisma.InputJsonValue,
+    },
+  });
+
+  await createApplicationNotification({
+    userId: request.userId,
+    type: 'APPLICATION_REJECTED',
+    title: 'Application rejected',
+    message: 'Your membership application was rejected. Please review notes and contact support if needed.',
+    data: {
+      applicationId: request.id,
+      reason,
     },
   });
 
