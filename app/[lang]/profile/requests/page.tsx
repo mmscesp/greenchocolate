@@ -237,7 +237,7 @@ export default function UserRequestsPage() {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('requests.empty_title')}</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">{t('requests.empty_description')}</p>
             <Link href={`/${language}/clubs`}>
-              <Button variant="cannabis">{t('requests.explore_clubs')}</Button>
+              <Button variant="primary">{t('requests.explore_clubs')}</Button>
             </Link>
           </CardContent>
         </Card>

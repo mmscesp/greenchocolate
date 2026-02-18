@@ -108,7 +108,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-16">
           <div className="max-w-4xl mx-auto">
             <div className="flex gap-2 mb-6">
-              <TrustBadge variant="expert" theme="dark" />
+              <TrustBadge type="legal" size="sm" className="bg-gold/10 border-gold/20 text-gold" />
               <Badge variant="secondary" className="bg-white/10 text-white border-white/20 backdrop-blur-md uppercase tracking-widest text-[10px] font-black">
                 {article.category}
               </Badge>

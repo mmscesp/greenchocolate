@@ -321,7 +321,7 @@ export default function ReviewsPage() {
               </p>
               {!searchQuery && !ratingFilter && (
                 <Link href={`/${language}/clubs`}>
-                  <Button variant="cannabis">
+                  <Button variant="primary">
                     {t('nav.explore')}
                   </Button>
                 </Link>

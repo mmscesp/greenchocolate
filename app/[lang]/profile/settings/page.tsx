@@ -113,7 +113,7 @@ export default function SettingsPage() {
         </div>
 
         <Button
-          variant="cannabis"
+          variant="primary"
           onClick={handleSave}
           disabled={isSaving}
           className="flex items-center gap-2"
@@ -312,7 +312,7 @@ export default function SettingsPage() {
                 </Badge>
               )}
               <Button
-                variant={settings.security.twoFactor ? "outline" : "cannabis"}
+                variant={settings.security.twoFactor ? "outline" : "primary"}
                 size="sm"
                 onClick={() => updateSecuritySetting('twoFactor', !settings.security.twoFactor)}
               >
