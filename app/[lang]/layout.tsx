@@ -4,7 +4,7 @@ import { LanguageProvider } from '@/hooks/useLanguage';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/Footer';
+import ConditionalFooter from '@/components/layout/ConditionalFooter';
 import LegalDisclaimerModal from '@/components/trust/LegalDisclaimerModal';
 
 export async function generateStaticParams() {
@@ -33,7 +33,7 @@ export default async function LocaleLayout({
             <main className="flex-1">
               {children}
             </main>
-            <Footer />
+            <ConditionalFooter />
           </div>
         </SmoothScroll>
       </AuthProvider>

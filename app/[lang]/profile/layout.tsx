@@ -1,19 +1,13 @@
 'use client';
 
 import { ProfileSidebar, ProfileMobileNav } from '@/components/profile/ProfileSidebar';
-import LanguageSelector from '@/components/LanguageSelector';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { useLanguage } from '@/hooks/useLanguage';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 
 export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { t } = useLanguage();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
@@ -24,24 +18,11 @@ export default function ProfileLayout({
       />
 
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
-        <header className="sticky top-16 z-20 bg-background/80 backdrop-blur-sm border-b h-16 flex items-center justify-between px-4 lg:px-8">
-          <div className="flex items-center gap-4">
-            <ProfileMobileNav />
-            
-            <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="text-sm font-medium">{t('nav.back_to_site')}</span>
-            </Link>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:block text-sm text-muted-foreground font-medium">
-              SocialClubsMaps
-            </div>
-            <LanguageSelector />
-          </div>
-        </header>
+        {/* Mobile Navigation Toggle - Only visible on small screens */}
+        <div className="lg:hidden sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b px-4 py-3 flex items-center gap-3">
+          <ProfileMobileNav />
+          <span className="font-semibold text-foreground">Menu</span>
+        </div>
 
         {/* Page content */}
         <main className="flex-1 p-4 lg:p-8">

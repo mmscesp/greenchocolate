@@ -73,13 +73,13 @@ export default function ProfileNotificationsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
-          <p className="text-gray-600 mt-2">Track all membership and account alerts.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Notifications</h1>
+          <p className="text-muted-foreground mt-1">Track all membership and account alerts.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start">
           <Button variant="outline" onClick={loadNotifications} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -95,23 +95,23 @@ export default function ProfileNotificationsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+      <div className="grid grid-cols-3 gap-4">
+        <Card className="shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm text-gray-600">Total</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{notifications.length}</p>
+            <p className="text-sm font-medium text-muted-foreground">Total</p>
+            <p className="text-2xl font-bold text-foreground mt-1">{notifications.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm text-gray-600">Unread</p>
-            <p className="text-2xl font-bold text-orange-600 mt-1">{unreadIds.length}</p>
+            <p className="text-sm font-medium text-muted-foreground">Unread</p>
+            <p className="text-2xl font-bold text-foreground mt-1">{unreadIds.length}</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm text-gray-600">Read</p>
-            <p className="text-2xl font-bold text-green-600 mt-1">{notifications.length - unreadIds.length}</p>
+            <p className="text-sm font-medium text-muted-foreground">Read</p>
+            <p className="text-2xl font-bold text-foreground mt-1">{notifications.length - unreadIds.length}</p>
           </CardContent>
         </Card>
       </div>

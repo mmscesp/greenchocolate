@@ -108,12 +108,12 @@ export default function UserRequestsPage() {
     return (
       <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.requests')}</h1>
-          <p className="text-gray-600 mt-2">{t('requests.subtitle')}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('dashboard.requests')}</h1>
+          <p className="text-muted-foreground mt-1">{t('requests.subtitle')}</p>
         </div>
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-          <span className="ml-3 text-gray-600">{t('common.loading')}</span>
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="ml-3 text-muted-foreground">{t('common.loading')}</span>
         </div>
       </div>
     );
@@ -123,17 +123,21 @@ export default function UserRequestsPage() {
     return (
       <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.requests')}</h1>
-          <p className="text-gray-600 mt-2">{t('requests.subtitle')}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('dashboard.requests')}</h1>
+          <p className="text-muted-foreground mt-1">{t('requests.subtitle')}</p>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-red-900 mb-2">{error}</h3>
-          <Button onClick={loadRequests} variant="outline" className="mt-4">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            {t('common.retry')}
-          </Button>
-        </div>
+        <Card className="border-destructive/30">
+          <CardContent className="p-8 text-center">
+            <div className="bg-destructive/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="h-8 w-8 text-destructive" />
+            </div>
+            <h3 className="text-lg font-semibold text-destructive mb-2">{error}</h3>
+            <Button onClick={loadRequests} variant="outline" className="mt-4">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              {t('common.retry')}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -142,64 +146,64 @@ export default function UserRequestsPage() {
   const rejectedCount = requests.filter((r) => r.status === 'REJECTED').length;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.requests')}</h1>
-          <p className="text-gray-600 mt-2">{t('requests.subtitle')}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('dashboard.requests')}</h1>
+          <p className="text-muted-foreground mt-1">{t('requests.subtitle')}</p>
         </div>
-        <Button variant="outline" onClick={loadRequests} disabled={loading}>
+        <Button variant="outline" onClick={loadRequests} disabled={loading} className="self-start">
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           {t('common.refresh')}
         </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="shadow-sm">
+          <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('requests.total')}</p>
-              <p className="text-2xl font-bold text-gray-900">{requests.length}</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('requests.total')}</p>
+              <p className="text-2xl font-bold text-foreground">{requests.length}</p>
             </div>
-            <div className="bg-blue-100 p-3 rounded-full">
+            <div className="bg-blue-500/10 p-3 rounded-xl">
               <Calendar className="h-6 w-6 text-blue-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+        <Card className="shadow-sm">
+          <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('requests.pending')}</p>
-              <p className="text-2xl font-bold text-orange-600">{pendingCount}</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('requests.pending')}</p>
+              <p className="text-2xl font-bold text-foreground">{pendingCount}</p>
             </div>
-            <div className="bg-yellow-100 p-3 rounded-full">
-              <Clock className="h-6 w-6 text-yellow-600" />
+            <div className="bg-amber-500/10 p-3 rounded-xl">
+              <Clock className="h-6 w-6 text-amber-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+        <Card className="shadow-sm">
+          <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('requests.approved')}</p>
-              <p className="text-2xl font-bold text-green-600">{approvedCount}</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('requests.approved')}</p>
+              <p className="text-2xl font-bold text-foreground">{approvedCount}</p>
             </div>
-            <div className="bg-green-100 p-3 rounded-full">
+            <div className="bg-green-500/10 p-3 rounded-xl">
               <Check className="h-6 w-6 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+        <Card className="shadow-sm">
+          <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{t('requests.rejected')}</p>
-              <p className="text-2xl font-bold text-red-600">{rejectedCount}</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('requests.rejected')}</p>
+              <p className="text-2xl font-bold text-foreground">{rejectedCount}</p>
             </div>
-            <div className="bg-red-100 p-3 rounded-full">
+            <div className="bg-red-500/10 p-3 rounded-xl">
               <X className="h-6 w-6 text-red-600" />
             </div>
           </CardContent>
@@ -207,20 +211,20 @@ export default function UserRequestsPage() {
       </div>
 
       {backendStatus && (
-        <Card>
-          <CardContent className="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <Card className="shadow-sm border-primary/20 bg-primary/5">
+          <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <p className="text-sm text-gray-600">Current Application Stage</p>
-              <p className="text-xl font-semibold text-gray-900 mt-1">
+              <p className="text-sm text-muted-foreground">Current Application Stage</p>
+              <p className="text-xl font-semibold text-foreground mt-1 capitalize">
                 {backendStatus.application.status.replaceAll('_', ' ')}
               </p>
             </div>
-            <div className="text-sm text-gray-600">
-              Passport: <span className="font-medium text-gray-900">{backendStatus.passport.verificationId}</span>
+            <div className="text-sm text-muted-foreground">
+              Passport: <span className="font-medium text-foreground font-mono">{backendStatus.passport.verificationId}</span>
             </div>
             {backendStatus.application.estimatedCompletion && (
-              <div className="text-sm text-gray-600">
-                Est. completion: {new Date(backendStatus.application.estimatedCompletion).toLocaleDateString('es-ES')}
+              <div className="text-sm text-muted-foreground">
+                Est. completion: <span className="font-medium text-foreground">{new Date(backendStatus.application.estimatedCompletion).toLocaleDateString('es-ES')}</span>
               </div>
             )}
           </CardContent>
@@ -229,15 +233,15 @@ export default function UserRequestsPage() {
 
       {/* Requests List */}
       {requests.length === 0 ? (
-        <Card className="text-center">
-          <CardContent className="p-12">
-            <div className="bg-gray-100 p-6 rounded-full w-fit mx-auto mb-6">
-              <Calendar className="h-12 w-12 text-gray-400" />
+        <Card className="text-center py-16 shadow-sm">
+          <CardContent>
+            <div className="bg-muted w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Calendar className="h-10 w-10 text-muted-foreground/50" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('requests.empty_title')}</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">{t('requests.empty_description')}</p>
+            <h3 className="text-xl font-semibold text-foreground mb-2">{t('requests.empty_title')}</h3>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto">{t('requests.empty_description')}</p>
             <Link href={`/${language}/clubs`}>
-              <Button variant="primary">{t('requests.explore_clubs')}</Button>
+              <Button>{t('requests.explore_clubs')}</Button>
             </Link>
           </CardContent>
         </Card>
@@ -248,43 +252,43 @@ export default function UserRequestsPage() {
               key={request.id}
               className="hover:shadow-md transition-shadow"
             >
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <CardContent className="p-5">
+                <div className="flex flex-col md:flex-row md:items-center gap-5">
                   {/* Club Image */}
-                  <Avatar className="w-full md:w-32 h-24 rounded-lg">
+                  <Avatar className="w-full md:w-28 h-24 rounded-xl border">
                     <AvatarImage src={request.clubImage || undefined} alt={request.clubName} className="object-cover" />
-                    <AvatarFallback className="rounded-lg">
-                      <MapPin className="h-8 w-8 text-gray-400" />
+                    <AvatarFallback className="rounded-xl bg-muted">
+                      <MapPin className="h-8 w-8 text-muted-foreground/50" />
                     </AvatarFallback>
                   </Avatar>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{request.clubName}</h3>
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <h3 className="text-lg font-semibold text-foreground">{request.clubName}</h3>
                       {getStatusBadge(request.status)}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="h-4 w-4 text-primary/70" />
                         <span>{request.clubNeighborhood}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="h-4 w-4 text-primary/70" />
                         <span>{new Date(request.createdAt).toLocaleDateString('es-ES')}</span>
                       </div>
                     </div>
 
                     {request.message && (
-                      <p className="text-sm text-gray-600 line-clamp-2 italic">
+                      <p className="text-sm text-muted-foreground line-clamp-2 italic bg-muted/50 p-2 rounded-lg">
                         &ldquo;{request.message}&rdquo;
                       </p>
                     )}
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <Link href={`/${language}/clubs/${request.clubSlug}`}>
                       <Button variant="outline" size="sm">
                         <ExternalLink className="h-4 w-4 mr-2" />

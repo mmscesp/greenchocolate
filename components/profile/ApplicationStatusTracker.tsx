@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, Clock, FileSearch, Shield, UserCheck, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Progress } from '@/components/ui/progress';
 
 type ApplicationStatus = 'draft' | 'submitted' | 'reviewing' | 'background_check' | 'approved' | 'rejected';
 
@@ -66,14 +65,14 @@ export default function ApplicationStatusTracker({
   const isRejected = status === 'rejected';
 
   return (
-    <div className={cn("bg-midnight-charcoal rounded-3xl border border-white/5 p-8", className)}>
+    <div className={cn("bg-card rounded-2xl border border-border shadow-lg p-6", className)}>
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-primary/10 rounded-lg">
+          <div className="p-2 bg-primary/10 rounded-xl">
             <Clock className="h-5 w-5 text-primary" />
           </div>
-          <h3 className="text-xl font-serif text-white">Application Status</h3>
+          <h3 className="text-xl font-bold text-foreground">Application Status</h3>
         </div>
         <p className="text-muted-foreground text-sm">
           Track your membership verification progress
@@ -82,27 +81,27 @@ export default function ApplicationStatusTracker({
 
       {/* Progress Bar */}
       {isRejected ? (
-        <div className="mb-8 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+        <div className="mb-6 p-4 rounded-xl bg-destructive/10 border border-destructive/20">
           <div className="flex items-center gap-3">
             <AlertCircle className="h-5 w-5 text-destructive" />
             <div>
               <p className="text-destructive font-bold">Application Rejected</p>
-              <p className="text-destructive/80 text-sm">Please contact support for more information</p>
+              <p className="text-destructive/70 text-sm">Please contact support for more information</p>
             </div>
           </div>
         </div>
       ) : (
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs uppercase tracking-widest text-muted-foreground">Progress</span>
-            <span className="text-xs font-mono text-primary">{Math.round(progressPercentage)}%</span>
+            <span className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Progress</span>
+            <span className="text-xs font-mono font-bold text-primary">{Math.round(progressPercentage)}%</span>
           </div>
-          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+          <div className="h-2 bg-muted rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progressPercentage}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full"
+              className="h-full bg-gradient-to-r from-primary to-emerald-500 rounded-full"
             />
           </div>
           {estimatedCompletion && (
@@ -114,7 +113,7 @@ export default function ApplicationStatusTracker({
       )}
 
       {/* Stages */}
-      <div className="space-y-4">
+      <div className="space-y-3">
         {stages.map((stage, index) => {
           const Icon = stage.icon;
           const isCompleted = index < currentStageIndex;
@@ -130,15 +129,15 @@ export default function ApplicationStatusTracker({
               className={cn(
                 "flex items-start gap-4 p-4 rounded-xl border transition-all duration-300",
                 isCompleted && "bg-primary/5 border-primary/20",
-                isCurrent && "bg-accent/5 border-accent/30 ring-1 ring-accent/20",
-                isPending && "bg-white/5 border-white/5 opacity-60"
+                isCurrent && "bg-amber-500/5 border-amber-500/30",
+                isPending && "bg-muted/30 border-border/50 opacity-60"
               )}
             >
               <div className={cn(
                 "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
                 isCompleted && "bg-primary text-primary-foreground",
-                isCurrent && "bg-accent text-accent-foreground",
-                isPending && "bg-white/10 text-muted-foreground"
+                isCurrent && "bg-amber-500 text-white",
+                isPending && "bg-muted text-muted-foreground"
               )}>
                 {isCompleted ? (
                   <CheckCircle2 className="h-5 w-5" />
@@ -151,12 +150,14 @@ export default function ApplicationStatusTracker({
                 <div className="flex items-center gap-2 mb-1">
                   <h4 className={cn(
                     "font-bold text-sm",
-                    isCurrent ? "text-accent" : "text-white"
+                    isCompleted && "text-foreground",
+                    isCurrent && "text-amber-600",
+                    isPending && "text-muted-foreground"
                   )}>
                     {stage.label}
                   </h4>
                   {isCurrent && (
-                    <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] uppercase tracking-wider rounded-full font-bold">
+                    <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] uppercase tracking-wider rounded-full font-bold">
                       Current
                     </span>
                   )}
@@ -168,7 +169,7 @@ export default function ApplicationStatusTracker({
                 <motion.div
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="w-2 h-2 bg-accent rounded-full shrink-0 mt-2"
+                  className="w-2 h-2 bg-amber-500 rounded-full shrink-0 mt-2"
                 />
               )}
             </motion.div>
@@ -177,7 +178,7 @@ export default function ApplicationStatusTracker({
       </div>
 
       {/* Timeline */}
-      <div className="mt-8 pt-6 border-t border-white/5">
+      <div className="mt-6 pt-5 border-t border-border/50">
         <div className="flex items-center justify-between text-[10px] text-muted-foreground uppercase tracking-wider">
           <span>Submitted: {submittedAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
           {currentStageIndex >= 0 && currentStageIndex < stages.length && (

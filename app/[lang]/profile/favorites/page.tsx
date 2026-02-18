@@ -43,58 +43,58 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('user.favorites')}</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('user.favorites')}</h1>
+        <p className="text-muted-foreground mt-1">
           {t('favorites.subtitle')}
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardContent className="flex items-center justify-between p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="shadow-sm">
+          <CardContent className="flex items-center justify-between p-5">
             <div>
               <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.total')}</p>
-              <p className="text-2xl font-bold text-red-600">{favoriteClubs.length}</p>
+              <p className="text-2xl font-bold text-foreground">{favoriteClubs.length}</p>
             </div>
-            <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-full">
-              <Heart className="h-6 w-6 text-red-600 dark:text-red-400" />
+            <div className="bg-red-500/10 p-3 rounded-xl">
+              <Heart className="h-6 w-6 text-red-500" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="flex items-center justify-between p-6">
+        <Card className="shadow-sm">
+          <CardContent className="flex items-center justify-between p-5">
             <div>
               <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.visited')}</p>
-              <p className="text-2xl font-bold text-green-600">3</p>
+              <p className="text-2xl font-bold text-foreground">3</p>
             </div>
-            <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-full">
-              <MapPin className="h-6 w-6 text-green-600 dark:text-green-400" />
+            <div className="bg-green-500/10 p-3 rounded-xl">
+              <MapPin className="h-6 w-6 text-green-600" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="flex items-center justify-between p-6">
+        <Card className="shadow-sm">
+          <CardContent className="flex items-center justify-between p-5">
             <div>
               <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.upcoming')}</p>
-              <p className="text-2xl font-bold text-blue-600">2</p>
+              <p className="text-2xl font-bold text-foreground">2</p>
             </div>
-            <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
-              <Calendar className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <div className="bg-blue-500/10 p-3 rounded-xl">
+              <Calendar className="h-6 w-6 text-blue-600" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Controls */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col lg:flex-row gap-4 justify-between">
+      <Card className="shadow-sm">
+        <CardContent className="p-5">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between">
             {/* Search */}
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -103,16 +103,16 @@ export default function FavoritesPage() {
                 placeholder={t('favorites.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
+                className="pl-10"
               />
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex bg-muted p-1 rounded-md">
+            <div className="flex bg-muted p-1 rounded-lg">
               <button
                 onClick={() => setViewMode('grid')}
                 className={cn(
-                  "px-3 py-1.5 flex items-center gap-2 text-sm font-medium rounded-sm transition-all",
+                  "px-4 py-2 flex items-center gap-2 text-sm font-medium rounded-md transition-all",
                   viewMode === 'grid'
                     ? "bg-background shadow-sm text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -124,7 +124,7 @@ export default function FavoritesPage() {
               <button
                 onClick={() => setViewMode('list')}
                 className={cn(
-                  "px-3 py-1.5 flex items-center gap-2 text-sm font-medium rounded-sm transition-all",
+                  "px-4 py-2 flex items-center gap-2 text-sm font-medium rounded-md transition-all",
                   viewMode === 'list'
                     ? "bg-background shadow-sm text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -231,24 +231,24 @@ export default function FavoritesPage() {
           ))}
         </div>
       ) : (
-        <Card className="py-12 text-center">
+        <Card className="py-16 text-center shadow-sm">
           <CardContent>
-            <div className="bg-muted/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Heart className="h-8 w-8 text-muted-foreground" />
+            <div className="bg-muted w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Heart className="h-10 w-10 text-muted-foreground/50" />
             </div>
-            <h3 className="text-lg font-medium mb-2">
+            <h3 className="text-xl font-semibold mb-2 text-foreground">
               {searchQuery ? t('favorites.no_results_search') : t('favorites.no_results_empty')}
             </h3>
-            <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-              {searchQuery 
+            <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+              {searchQuery
                 ? t('favorites.no_results_search_desc') || 'Try adjusting your search terms'
                 : t('favorites.no_results_empty_desc') || 'Explore clubs and add them to your favorites'
               }
             </p>
             {!searchQuery && (
               <Link href={`/${language}/clubs`}>
-                <Button>
-                  <ExternalLink className="h-4 w-4 mr-2" />
+                <Button className="gap-2">
+                  <ExternalLink className="h-4 w-4" />
                   {t('nav.explore')}
                 </Button>
               </Link>
