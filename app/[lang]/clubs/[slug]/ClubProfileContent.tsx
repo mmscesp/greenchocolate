@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import VerificationBadge from '@/components/VerificationBadge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
-import { submitMembershipRequest, ActionState } from '@/app/actions/membership';
+import { submitMembershipApplication } from '@/app/actions/applications';
 import { useAuth } from '@/components/auth/AuthProvider';
 import {
   MapPin,
@@ -46,7 +46,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formState, setFormState] = useState<ActionState | null>(null);
+  const [formState, setFormState] = useState<{ success: boolean; message?: string; errors?: Record<string, string[]> } | null>(null);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % club.images.length);
@@ -63,10 +63,15 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
 
     try {
       const formData = new FormData(e.currentTarget);
-      formData.append('clubId', club.id);
+      const message = (formData.get('message') as string | null) || undefined;
 
-      const result = await submitMembershipRequest({ success: false }, formData);
-      setFormState(result);
+      const result = await submitMembershipApplication({
+        targetClubId: club.id,
+        message,
+        eligibilityAnswers: {},
+      });
+
+      setFormState({ success: result.success, message: result.error ?? 'Application submitted successfully.' });
 
       if (result.success) {
           setTimeout(() => {
@@ -390,13 +395,13 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
                     <MapPin className="h-5 w-5 text-green-400" />
                   </div>
-                  {user ? (
+                  {club.address ? (
                     <span className="text-sm">{club.address}</span>
                   ) : (
                     <div className="flex flex-col items-start">
-                      <span className="text-sm blur-sm select-none">Calle de la Verdad, 123</span>
-                      <Link href={`/${language}/account/login`} className="text-xs text-green-400 hover:text-green-300 mt-1">
-                        Log in to view address
+                      <span className="text-sm blur-sm select-none">Address hidden</span>
+                      <Link href={`/${language}/profile/requests`} className="text-xs text-green-400 hover:text-green-300 mt-1">
+                        Request membership to unlock details
                       </Link>
                     </div>
                   )}
@@ -405,13 +410,13 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
                     <Phone className="h-5 w-5 text-green-400" />
                   </div>
-                  <span className="text-sm">{club.phoneNumber}</span>
+                  <span className="text-sm">{club.phoneNumber || 'Hidden until approved membership'}</span>
                 </div>
                 <div className="flex items-center gap-3 text-zinc-400">
                   <div className="p-2 bg-green-500/10 rounded-lg shrink-0">
                     <Mail className="h-5 w-5 text-green-400" />
                   </div>
-                  <span className="text-sm">{club.contactEmail}</span>
+                  <span className="text-sm">{club.contactEmail || 'Hidden until approved membership'}</span>
                 </div>
                 {club.website && (
                   <div className="flex items-center gap-3 text-zinc-400">

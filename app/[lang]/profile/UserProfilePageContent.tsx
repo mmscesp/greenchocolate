@@ -26,7 +26,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { UserProfile } from '@/app/actions/users';
+import type { UserProfile, UserProfileBackendStatus } from '@/app/actions/users';
 import { useLanguage } from '@/hooks/useLanguage';
 import { updateUserProfile } from '@/app/actions/users';
 import MemberPassport from '@/components/profile/MemberPassport';
@@ -58,14 +58,8 @@ import { motion } from 'framer-motion';
 
 interface UserProfilePageContentProps {
   userProfile: UserProfile | null;
+  backendStatus: UserProfileBackendStatus | null;
 }
-
-// Mock data - replace with real data from your backend
-const mockApplicationStatus = {
-  status: 'reviewing' as const,
-  submittedAt: new Date('2026-02-10'),
-  estimatedCompletion: new Date('2026-02-20')
-};
 
 const mockStats = {
   clubsViewed: 12,
@@ -83,7 +77,7 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-export default function UserProfilePageContent({ userProfile }: UserProfilePageContentProps) {
+export default function UserProfilePageContent({ userProfile, backendStatus }: UserProfilePageContentProps) {
   const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -98,7 +92,7 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
   });
 
   const displayName = userProfile?.displayName || userProfile?.email?.split('@')[0] || 'Member';
-  const verificationId = `SMC-2026-${userProfile?.id?.slice(0, 8).toUpperCase() || 'UNKNOWN'}`;
+  const verificationId = backendStatus?.passport.verificationId || `SMC-2026-${userProfile?.id?.slice(0, 8).toUpperCase() || 'UNKNOWN'}`;
 
   if (!userProfile) {
     return (
@@ -419,8 +413,8 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
             <MemberPassport 
               email={userProfile.email}
               verificationId={verificationId}
-              verifiedAt={new Date(userProfile.createdAt)}
-              tier={userProfile.tier === 'premium' ? 'premium' : 'standard'}
+              verifiedAt={backendStatus?.passport.verifiedAt || new Date(userProfile.createdAt)}
+              tier={backendStatus?.passport.tier || (userProfile.tier === 'premium' ? 'premium' : 'standard')}
             />
           </div>
         )}
@@ -430,8 +424,8 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
             <MemberPassport 
               email={userProfile.email}
               verificationId={verificationId}
-              verifiedAt={new Date(userProfile.createdAt)}
-              tier={userProfile.tier === 'premium' ? 'premium' : 'standard'}
+              verifiedAt={backendStatus?.passport.verifiedAt || new Date(userProfile.createdAt)}
+              tier={backendStatus?.passport.tier || (userProfile.tier === 'premium' ? 'premium' : 'standard')}
             />
           </div>
         )}
@@ -439,9 +433,9 @@ export default function UserProfilePageContent({ userProfile }: UserProfilePageC
         {activeTab === 'status' && (
           <div className="max-w-2xl mx-auto">
             <ApplicationStatusTracker 
-              status={mockApplicationStatus.status}
-              submittedAt={mockApplicationStatus.submittedAt}
-              estimatedCompletion={mockApplicationStatus.estimatedCompletion}
+              status={backendStatus?.application.status || 'draft'}
+              submittedAt={backendStatus?.application.submittedAt}
+              estimatedCompletion={backendStatus?.application.estimatedCompletion}
             />
           </div>
         )}

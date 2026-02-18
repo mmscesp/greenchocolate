@@ -39,6 +39,25 @@ export interface UserMembershipRequest {
   createdAt: Date;
 }
 
+export type ProfileApplicationStatus = 'draft' | 'submitted' | 'reviewing' | 'background_check' | 'approved' | 'rejected';
+
+export interface UserPassportStatus {
+  verificationId: string;
+  tier: 'standard' | 'premium' | 'elite';
+  verifiedAt: Date;
+  validUntil: Date;
+  isActive: boolean;
+}
+
+export interface UserProfileBackendStatus {
+  passport: UserPassportStatus;
+  application: {
+    status: ProfileApplicationStatus;
+    submittedAt?: Date;
+    estimatedCompletion?: Date;
+  };
+}
+
 // ==========================================
 // ZOD SCHEMAS
 // ==========================================
@@ -240,5 +259,82 @@ export async function isClubAdmin(): Promise<boolean> {
   } catch (error) {
     console.error('isClubAdmin error:', error);
     return false;
+  }
+}
+
+function mapRequestStatusToApplicationStatus(status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED'): ProfileApplicationStatus {
+  if (status === 'APPROVED') return 'approved';
+  if (status === 'REJECTED') return 'rejected';
+  if (status === 'SCHEDULED') return 'background_check';
+  return 'reviewing';
+}
+
+function mapTier(tier: string): 'standard' | 'premium' | 'elite' {
+  if (tier === 'premium') return 'premium';
+  if (tier === 'elite') return 'elite';
+  return 'standard';
+}
+
+/**
+ * Get passport + application status data used by profile dashboard widgets.
+ */
+export async function getProfileBackendStatus(): Promise<UserProfileBackendStatus | null> {
+  try {
+    const profile = await getUserProfile();
+
+    if (!profile) {
+      return null;
+    }
+
+    const latestRequest = await prisma.membershipRequest.findFirst({
+      where: { userId: profile.id },
+      orderBy: [{ updatedAt: 'desc' }, { createdAt: 'desc' }],
+    });
+
+    const verifiedAt = profile.createdAt;
+    const validUntil = new Date(verifiedAt);
+    validUntil.setFullYear(validUntil.getFullYear() + 1);
+
+    const passport: UserPassportStatus = {
+      verificationId: `SMC-2026-${profile.id.slice(0, 8).toUpperCase()}`,
+      tier: mapTier(profile.tier),
+      verifiedAt,
+      validUntil,
+      isActive: Boolean(profile.isVerified),
+    };
+
+    if (!latestRequest) {
+      return {
+        passport,
+        application: {
+          status: 'draft',
+        },
+      };
+    }
+
+    const applicationStatus = mapRequestStatusToApplicationStatus(
+      latestRequest.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED'
+    );
+
+    let estimatedCompletion: Date | undefined;
+    if (applicationStatus === 'reviewing') {
+      estimatedCompletion = new Date(latestRequest.createdAt);
+      estimatedCompletion.setDate(estimatedCompletion.getDate() + 10);
+    } else if (applicationStatus === 'background_check') {
+      estimatedCompletion = new Date(latestRequest.createdAt);
+      estimatedCompletion.setDate(estimatedCompletion.getDate() + 4);
+    }
+
+    return {
+      passport,
+      application: {
+        status: latestRequest.status === 'PENDING' ? 'submitted' : applicationStatus,
+        submittedAt: latestRequest.createdAt,
+        estimatedCompletion,
+      },
+    };
+  } catch (error) {
+    console.error('getProfileBackendStatus error:', error);
+    return null;
   }
 }

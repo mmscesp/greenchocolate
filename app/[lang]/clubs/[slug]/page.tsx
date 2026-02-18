@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import ClubProfileContent from './ClubProfileContent';
 import { getClubBySlug, getCityNeighbors, getClubs } from '@/app/actions/clubs';
+import { getClubDetailsWithAccess } from '@/app/actions/gated-content';
 import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
 
@@ -62,6 +63,8 @@ export default async function ClubPage({ params }: ClubPageProps) {
     notFound();
   }
 
+  const gatedClub = await getClubDetailsWithAccess(clubDetail.id);
+
   const neighboringClubs = await getCityNeighbors(clubDetail.id, 4);
 
   // Map ClubDetail to Club type expected by ClubProfileContent
@@ -78,9 +81,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
     openingHours: clubDetail.openingHours,
     allowsPreRegistration: true, // Default value
     coordinates: clubDetail.coordinates,
-    address: clubDetail.addressDisplay,
-    contactEmail: clubDetail.contactEmail,
-    phoneNumber: clubDetail.phoneNumber || '',
+    address: gatedClub.accessLevel === 'FULL' ? clubDetail.addressDisplay : undefined,
+    contactEmail: gatedClub.club?.contactEmail || '',
+    phoneNumber: gatedClub.club?.phoneNumber || '',
     website: clubDetail.website || undefined,
     socialMedia: clubDetail.socialMedia || undefined,
     rating: clubDetail.rating || undefined,

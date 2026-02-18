@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { getUnreadNotificationCount } from '@/app/actions/notifications';
 import {
   User,
   Settings,
@@ -33,6 +34,7 @@ interface UserProfileDropdownProps {
 export default function UserProfileDropdown({ className = '' }: UserProfileDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const { t } = useLanguage();
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -82,6 +84,31 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
   const memberSince = profile?.createdAt
     ? new Date(profile.createdAt).getFullYear().toString()
     : new Date().getFullYear().toString();
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadUnreadCount = async () => {
+      try {
+        const count = await getUnreadNotificationCount();
+        if (mounted) {
+          setUnreadNotifications(count);
+        }
+      } catch (error) {
+        if (mounted) {
+          setUnreadNotifications(0);
+        }
+      }
+    };
+
+    if (user) {
+      loadUnreadCount();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
 
   return (
     <div className={`relative ${className}`}>
@@ -247,7 +274,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
                 </div>
                 <div>
                   <div className="font-medium">Notifications</div>
-                  <div className="text-xs text-muted-foreground">3 new notifications</div>
+                  <div className="text-xs text-muted-foreground">
+                    {unreadNotifications} new notification{unreadNotifications === 1 ? '' : 's'}
+                  </div>
                 </div>
               </Link>
 

@@ -11,6 +11,102 @@ The frontend is "God Level" but it's running on mock data. To make this a real b
 Effort Estimate: 2-3 weeks (surgical, not sloppy)
 Priority: HIGH (without this, the "God Level" UI is just a demo)
 ---
+0. DOC-TO-CODE GAP MATRIX (Task 1)
+
+| Area | Plan Claim (Section) | Status | Evidence in Codebase | Gap Note |
+|---|---|---|---|---|
+| Data model | Add `SafetyPass`, `MembershipApplication`, `ApplicationStageHistory`, `ClubAdminNotification` (`1. THE DATA MODELS`) | MISSING | `prisma/schema.prisma` defines `MembershipRequest`, `Notification`, `AuditLog`; none of the four planned models exist | Major schema gap before pipeline/pass features can be implemented. |
+| Data model | Current baseline includes `Profile`, `Club`, `MembershipRequest` (`1. THE DATA MODELS` current state) | MATCH | `prisma/schema.prisma` has `model Profile`, `model Club`, `model MembershipRequest` | Baseline statement is accurate. |
+| Data model | Notification model is multi-channel with delivery lifecycle (`1. THE DATA MODELS` Notification) | DRIFT | `prisma/schema.prisma` `model Notification` has `type`, `title`, `message`, `isRead`, `data` but no `channel`, delivery timestamps, or `applicationId` relation | Existing notification shape is simpler than planned workflow. |
+| API/action layer | New actions in `app/actions/safety-pass.ts`, `applications.ts`, `notifications.ts`, `gated-content.ts` (`2. SERVER ACTIONS`) | MISSING | `app/actions` currently includes `auth.ts`, `membership.ts`, `clubs.ts`, etc.; planned action files are absent | Planned backend action surface is not implemented yet. |
+| API/action layer | Membership pipeline is stage-driven (`submitMembershipApplication`, `advanceApplicationStage`) (`2.B`) | DRIFT | `app/actions/membership.ts` implements `submitMembershipRequest`, `approveClubMembershipRequest`, `rejectClubMembershipRequest` on `MembershipRequest` | Existing flow is request approve/reject, not multi-stage application pipeline. |
+| Infra/provider | Hosting stack assumes Netlify + Supabase free-tier baseline (`INFRASTRUCTURE.md`) vs plan cost table (`9. INFRASTRUCTURE COSTS`) | OVER-SCOPED | `INFRASTRUCTURE.md` states Netlify Free Tier + Supabase Free Tier; this doc budgets Supabase Pro + Vercel Pro + Resend (~$55/month) | Current plan exceeds zero-cost Netlify-first objective and introduces provider drift. |
+| Security posture | Encrypt sensitive applicant/user data (`8. THE "SURGICAL" APPROACH`) | MATCH | `app/actions/auth.ts` uses `EncryptionService.encrypt`; `app/actions/membership.ts` uses `EncryptionService.encryptPII` for snapshots | Encryption-at-write behavior is present in current server actions. |
+| Security posture | Full audit trail for stage transitions (`8. THE "SURGICAL" APPROACH`) | DRIFT | `prisma/schema.prisma` has `AuditLog`; `app/actions/auth.ts` logs auth via `logAuthAuditEvent`, but no `ApplicationStageHistory` model/action usage exists | Audit exists for auth events, not for planned application-stage transitions. |
+
+---
+0.1 FREE-TIER OPERATIONAL GUARDRAILS (Task 2)
+
+Zero-cost policy: treat Free tier quotas as a hard budget. Keep Netlify auto-recharge disabled and react before you hit vendor-enforced pauses/limits.
+
+Operational rule: hitting `Warn Threshold` triggers the fallback action within 24 hours; hitting `Hard Stop` triggers immediate degradation (reduce load first; do not upgrade plans to "solve" quota).
+
+| Area | Provider | Current Free Limit | Warn Threshold | Hard Stop | Fallback Action |
+|---|---|---|---|---|---|
+| DB size | Supabase (Postgres) | 500 MB per project | 350 MB (~70%) | 450 MB (~90%) | Stop storing large JSON snapshots; shorten retention (notifications, audit-like logs); move blobs to Storage and keep pointers only; delete abandoned drafts and run periodic cleanup jobs. |
+| Storage size | Supabase (Storage) | 1 GB | 700 MB (~70%) | 900 MB (~90%) | Enforce max upload size + image dimensions; compress client-side; auto-expire temporary uploads; keep only required documents; delete unreferenced files on application cancel/reject. |
+| Egress / bandwidth | Supabase (DB+Storage+Functions) | 5 GB / month (org-wide) | 3.5 GB (~70%) | 4.5 GB (~90%) | Add aggressive caching (ETag/Cache-Control); paginate/field-select API responses; stop returning base64 blobs; move public media behind Netlify CDN; temporarily disable realtime on high-traffic pages. |
+| Realtime peak connections | Supabase (Realtime) | 200 | 140 (~70%) | 180 (~90%) | Unsubscribe on tab blur; require auth before opening sockets; reduce channel fanout; disable Presence/Broadcast except admin; switch user dashboards to polling (30-60s). |
+| Realtime messages | Supabase (Realtime) | 2,000,000 / month | 1,400,000 (~70%) | 1,800,000 (~90%) | Batch/coalesce updates; dedupe events; throttle noisy tables; avoid per-keystroke broadcasts; switch to polling for non-critical UI until next cycle. |
+| Edge/functions (invocations) | Supabase (Edge Functions) | 500,000 / month (org-wide) | 350,000 (~70%) | 450,000 (~90%) | Cache reads; consolidate endpoints; avoid calling functions on every navigation; disable non-critical scheduled/background jobs; rate-limit expensive endpoints and return 429/503 when throttled. |
+| Edge/functions (runtime) | Supabase (Edge Functions) | 150s max duration per request | 120s | 140s | Add hard timeouts + early exits; chunk work (pagination/batching); move long tasks to async (queue table + polling); return partial results with continuation tokens. |
+| Monthly credits (all metered usage) | Netlify (Credits-based Free plan) | 300 credits / month total | 150 credits used (~50%) | 255 credits used (~85%) | Freeze production deploy cadence; turn off non-essential functions/edge; serve static cached pages; tighten rate limiting/traffic rules for expensive endpoints until credits reset. |
+| Bandwidth (credits) | Netlify | 10 credits / GB (~30 GB if all 300 credits used on bandwidth) | ~15 GB (150 credits) | ~25.5 GB (255 credits) | Enable long-lived caching headers; compress assets/images; remove large downloads; avoid large function responses; gate heavy media behind auth and cache. |
+| Web requests (credits) | Netlify | 3 credits / 10k requests (~1,000,000 if all 300 credits used on requests) | ~500,000 requests (150 credits) | ~850,000 requests (255 credits) | Add caching; debounce client polling; reduce API chatter; block obvious bots; return 304/204 where possible to cut compute and bandwidth. |
+| Compute (Functions) (credits) | Netlify | 5 credits / GB-hour (~60 GB-hr if all 300 credits used on compute) | ~30 GB-hr (150 credits) | ~51 GB-hr (255 credits) | Reduce memory/time; cache upstream calls; avoid cold-start-heavy bundles; offload heavy work; cap concurrency and reject excess with 429/503. |
+| Production deploys (credits) | Netlify | 15 credits / deploy (~20 deploys if all 300 credits used on deploys) | 10 deploys (150 credits) | 17 deploys (255 credits) | Batch releases; deploy only tagged releases; keep PR previews but avoid auto-deploy on every commit to main. |
+
+---
+0.2 NOW vs DEFERRED CAPABILITY BOUNDARY (Task 3)
+
+Rule: NOW means required for zero-cost launch and current member journey reliability. DEFERRED means explicitly postponed until measurable trigger is reached.
+
+| Capability | Scope | Why | Trigger to Move from DEFERRED to NOW |
+|---|---|---|---|
+| Core membership request submit/approve/reject | NOW | Already implemented around `MembershipRequest`; directly powers current product flows. | N/A |
+| Auth, profile sync, and encrypted sensitive snapshots | NOW | Security baseline already exists and must remain non-negotiable. | N/A |
+| In-app notification basics (`Notification`) | NOW | Needed for dashboard state and member communication without paid channels. | N/A |
+| Multi-stage application pipeline (`MembershipApplication`, `ApplicationStageHistory`) | DEFERRED | Adds heavy schema and workflow complexity beyond current baseline. | Activate when active applications > 500/month or support tickets from status ambiguity > 30/month. |
+| Safety Pass full issuance/renewal system | DEFERRED | Valuable but not critical for first zero-cost operational phase. | Activate when clubs require pass verification for entry in at least 3 live partnerships. |
+| Multi-channel outbound messaging (SMS/push) | DEFERRED | Increases cost/ops burden and needs robust queueing + deliverability controls. | Activate when in-app + email no longer meets SLA (delivery/read goals missed for 2 consecutive months). |
+| Full outbound webhook platform for clubs | DEFERRED | Requires signing, retries, observability, and partner support overhead. | Activate when 5+ clubs request machine-to-machine integration and commit to endpoint ownership. |
+| Realtime fan-out across non-critical UI surfaces | DEFERRED | Realtime quota pressure on free tier is high; polling is cheaper for non-critical views. | Activate when monthly realtime message volume remains < 35% for 3 months after launch and user latency complaints persist. |
+
+Boundary enforcement:
+- No DEFERRED item enters implementation scope without its trigger being met and documented.
+- If budget pressure appears, prioritize reliability of NOW flows over feature expansion.
+
+---
+0.3 DEPLOYMENT TARGET POLICY (Task 4)
+
+Netlify is the only deployment target in NOW scope.
+
+Netlify-first rules:
+- Runtime policy: Next.js App Router + server actions must be validated on Netlify runtime behavior before production rollout.
+- Environment policy: keep runtime and build env variables explicit (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `DIRECT_URL`, `APP_MASTER_KEY`, `ENCRYPTION_SALT`).
+- Cost policy: stay on Netlify Free; no paid upgrade assumptions for launch.
+- Compatibility policy: if a feature behaves differently on Netlify, choose the Netlify-safe implementation path rather than introducing provider-specific branching.
+
+Out of scope for NOW:
+- Any Vercel-specific deployment assumptions.
+- Any architecture that requires Vercel Pro features.
+
+---
+0.4 TEST STRATEGY + SMOKE GATE (Task 5)
+
+Testing mode for this execution cycle: `tests-after`.
+
+Policy:
+- Implement first in small slices, then add/adjust tests immediately after each slice.
+- No task is considered complete without at least one automated verification artifact.
+- Prefer targeted tests tied to changed backend surface (server action/route/policy section), not broad test churn.
+
+Minimum smoke gate (required for each backend implementation change):
+1. One automated test covering the changed action/route happy path.
+2. One automated test covering a key failure path (validation, auth, or quota fallback).
+3. One contract check on returned shape/status (or documented response contract for planning tasks).
+
+Non-UI verification baseline (fast checks):
+- `npm test` for existing backend smoke tests.
+- Targeted grep/read checks for policy and guardrail sections in this plan doc.
+- Command outputs stored as evidence before marking a task done.
+
+Fail conditions:
+- Missing smoke tests for changed backend behavior.
+- Using optional wording to skip verification.
+- Declaring completion without evidence.
+
+---
 1. THE DATA MODELS (Prisma Schema Updates)
 Current State
 We have basic Profile, Club, MembershipRequest models.
@@ -484,7 +580,7 @@ Week 1: Foundation
 - [ ] Update Prisma schema with new models
 - [ ] Run database migrations
 - [ ] Implement Safety Pass generation logic
-- [ ] Create basic email templates (Resend integration)
+- [ ] Create basic email templates (free-tier compatible; paid providers remain deferred)
 Week 2: Pipeline & Notifications
 - [ ] Build application stage management system
 - [ ] Implement stage transition logging
@@ -560,10 +656,11 @@ Anti-Patterns We're Avoiding
 9. INFRASTRUCTURE COSTS
 | Service | Purpose | Est. Monthly Cost |
 |---------|---------|------------------|
-| Supabase | Database + Realtime | $25 (Pro plan) |
-| Resend | Email delivery | ~$10 (1k emails) |
-| Vercel | Hosting | $20 (Pro plan) |
-| Total | | ~$55/month |
+| Supabase (Free) | Database + Auth + Realtime + Edge | $0 |
+| Netlify (Free) | Hosting + Functions (credit budget) | $0 |
+| Email channel (NOW) | In-app + product messaging only | $0 |
+| Email provider (DEFERRED) | Transactional provider after monetization triggers | $0 in NOW scope |
+| Total (NOW scope) | | $0/month |
 ---
 10. SUCCESS METRICS TO TRACK
 // analytics/events.ts
