@@ -112,8 +112,9 @@ export default function RegisterForm() {
       <div className="space-y-3 mb-6">
         <Button
           type="button"
-          variant="outline"
-          className="w-full flex items-center justify-center gap-3 h-12"
+          variant="secondary"
+          size="lg"
+          className="w-full"
           onClick={() => handleOAuthSignIn('google')}
           disabled={isGoogleLoading || isAppleLoading}
         >
@@ -127,15 +128,16 @@ export default function RegisterForm() {
         
         <Button
           type="button"
-          variant="outline"
-          className="w-full flex items-center justify-center gap-3 h-12"
+          variant="secondary"
+          size="lg"
+          className="w-full"
           onClick={() => handleOAuthSignIn('apple')}
           disabled={isGoogleLoading || isAppleLoading}
         >
           {isAppleLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
-            <FaApple className="h-5 w-5 text-foreground" />
+            <FaApple className="h-5 w-5" />
           )}
           Sign up with Apple
         </Button>
@@ -289,7 +291,7 @@ export default function RegisterForm() {
 
         <Button
           type="submit"
-          variant="cannabis"
+          variant="primary"
           size="lg"
           className="w-full"
           disabled={isPending || !allRequirementsMet || !passwordsMatch || !consent}
