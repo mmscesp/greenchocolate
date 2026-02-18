@@ -20,6 +20,16 @@ export interface NotificationInput {
   metadata?: Record<string, unknown>;
 }
 
+export interface NotificationItem {
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+  data?: Record<string, unknown>;
+}
+
 async function getCurrentProfileId(): Promise<string | null> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -92,4 +102,28 @@ export async function getUnreadNotificationCount(userId?: string): Promise<numbe
       isRead: false,
     },
   });
+}
+
+export async function getUserNotifications(limit = 50): Promise<NotificationItem[]> {
+  const profileId = await getCurrentProfileId();
+
+  if (!profileId) {
+    return [];
+  }
+
+  const notifications = await prisma.notification.findMany({
+    where: { userId: profileId },
+    orderBy: { createdAt: 'desc' },
+    take: Math.max(1, Math.min(limit, 200)),
+  });
+
+  return notifications.map((item) => ({
+    id: item.id,
+    type: item.type,
+    title: item.title,
+    message: item.message,
+    isRead: item.isRead,
+    createdAt: item.createdAt.toISOString(),
+    data: (item.data as Record<string, unknown> | null) || undefined,
+  }));
 }
