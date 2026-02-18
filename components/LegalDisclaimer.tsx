@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,14 +13,13 @@ import {
 import { ShieldAlert, Scale, Gavel } from 'lucide-react';
 
 export function LegalDisclaimer() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const hasAccepted = localStorage.getItem('legal-disclaimer-accepted');
-    if (!hasAccepted) {
-      setIsOpen(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeof window === 'undefined') {
+      return false;
     }
-  }, []);
+
+    return !localStorage.getItem('legal-disclaimer-accepted');
+  });
 
   const handleAccept = () => {
     localStorage.setItem('legal-disclaimer-accepted', 'true');

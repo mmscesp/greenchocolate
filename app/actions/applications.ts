@@ -164,7 +164,6 @@ export async function submitMembershipApplication(data: {
   const created = await prisma.membershipRequest.create({
     // Prisma JSON input requires plain JSON-safe values.
     // We intentionally persist this as a transitional snapshot structure.
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     data: {
       userId: profile.id,
       clubId: validated.data.targetClubId,

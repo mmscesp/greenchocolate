@@ -1,21 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, AlertOctagon, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function LegalDisclaimerModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [hasAgreed, setHasAgreed] = useState(false);
-
-  useEffect(() => {
-    // Check local storage
-    const agreed = localStorage.getItem('legal_consent_v1');
-    if (!agreed) {
-      setIsOpen(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeof window === 'undefined') {
+      return false;
     }
-  }, []);
+
+    return !localStorage.getItem('legal_consent_v1');
+  });
+  const [hasAgreed, setHasAgreed] = useState(false);
+  const [sessionId] = useState(() => {
+    if (typeof window === 'undefined') {
+      return 'INIT';
+    }
+
+    return crypto.randomUUID().slice(0, 8);
+  });
 
   const handleAgree = () => {
     setHasAgreed(true);
@@ -106,7 +111,7 @@ export default function LegalDisclaimerModal() {
               </div>
               
               <p className="text-[10px] text-center text-muted-foreground/50 mt-6 font-mono">
-                ID: {typeof window !== 'undefined' ? crypto.randomUUID().slice(0, 8) : 'INIT'} • SECURE CONNECTION
+                ID: {sessionId} • SECURE CONNECTION
               </p>
             </div>
           </motion.div>

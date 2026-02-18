@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { getUnreadNotificationCount } from '@/app/actions/notifications';
 import {
@@ -35,9 +34,33 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const { t } = useLanguage();
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadUnreadCount = async () => {
+      try {
+        const count = await getUnreadNotificationCount();
+        if (mounted) {
+          setUnreadNotifications(count);
+        }
+      } catch {
+        if (mounted) {
+          setUnreadNotifications(0);
+        }
+      }
+    };
+
+    if (user) {
+      loadUnreadCount();
+    }
+
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
 
   const handleLogout = async () => {
     setLoading(true);
@@ -84,31 +107,6 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
   const memberSince = profile?.createdAt
     ? new Date(profile.createdAt).getFullYear().toString()
     : new Date().getFullYear().toString();
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadUnreadCount = async () => {
-      try {
-        const count = await getUnreadNotificationCount();
-        if (mounted) {
-          setUnreadNotifications(count);
-        }
-      } catch (error) {
-        if (mounted) {
-          setUnreadNotifications(0);
-        }
-      }
-    };
-
-    if (user) {
-      loadUnreadCount();
-    }
-
-    return () => {
-      mounted = false;
-    };
-  }, [user]);
 
   return (
     <div className={`relative ${className}`}>

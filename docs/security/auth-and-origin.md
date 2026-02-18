@@ -1,4 +1,4 @@
-# Auth Security Hardening Notes
+# Auth and Origin Security
 
 ## CSRF and Origin Validation Strategy
 

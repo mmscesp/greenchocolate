@@ -57,6 +57,14 @@ export default function EligibilityQuiz() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
+  const [verificationId] = useState(() => {
+    if (typeof window === 'undefined') {
+      return 'SMC-2026-INIT0000';
+    }
+
+    const randomPart = crypto.randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase();
+    return `SMC-2026-${randomPart}`;
+  });
 
   const handleAnswer = (answer: boolean) => {
     setDirection(answer ? 1 : -1);
@@ -114,7 +122,7 @@ export default function EligibilityQuiz() {
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Verification ID</p>
-              <p className="text-white font-mono text-xs">SMC-2026-{Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
+              <p className="text-white font-mono text-xs">{verificationId}</p>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">Registered Email</p>
