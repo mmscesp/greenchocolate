@@ -5,7 +5,8 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Leaf, LogIn, UserPlus, Shield } from 'lucide-react';
+import { Logo, LogoIcon } from '@/components/ui/logo';
+import { LogIn, UserPlus, Shield } from 'lucide-react';
 
 export default function ClubPanelChooser() {
   return (
@@ -14,7 +15,7 @@ export default function ClubPanelChooser() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <Link href="/" className="flex items-center gap-2">
-              <Leaf className="h-8 w-8 text-green-600" />
+              <LogoIcon size="md" />
               <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 SocialClubsMaps
               </span>

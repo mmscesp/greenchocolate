@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Leaf, Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Logo, LogoIcon } from '@/components/ui/logo';
+import { Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { clubSignUp } from '@/app/actions/club-auth';
 import { signInWithOAuth } from '@/app/actions/auth';
 import { FcGoogle } from 'react-icons/fc';
@@ -129,7 +130,7 @@ export default function ClubSignupPage() {
         <Card className="p-8 shadow-xl">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <Leaf className="h-10 w-10 text-green-600" />
+              <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 SocialClubsMaps
               </span>

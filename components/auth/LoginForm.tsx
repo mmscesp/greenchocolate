@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Leaf, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
+import { LogoIcon } from '@/components/ui/logo';
+import { Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 
@@ -47,7 +48,7 @@ export default function LoginForm() {
     <div className="w-full max-w-md mx-auto">
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-          <Leaf className="h-8 w-8 text-primary" />
+          <LogoIcon size="lg" />
         </div>
         <h1 className="text-3xl font-bold text-foreground">Welcome Back</h1>
         <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>

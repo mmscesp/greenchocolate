@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { BarChart3, Users, Calendar, Settings, LogOut, Leaf, Home } from 'lucide-react';
+import { Logo, LogoIcon } from '@/components/ui/logo';
+import { BarChart3, Users, Calendar, Settings, LogOut, Home } from 'lucide-react';
 
 const navItems = [
   { href: '/club-panel/dashboard', label: 'Overview', icon: BarChart3 },
@@ -19,7 +20,7 @@ export function DashboardSidebar() {
     <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
       <div className="p-6 border-b">
         <Link href="/club-panel" className="flex items-center gap-2">
-          <Leaf className="h-8 w-8 text-green-600" />
+          <LogoIcon size="md" />
           <span className="font-bold text-gray-900">Club Admin</span>
         </Link>
       </div>

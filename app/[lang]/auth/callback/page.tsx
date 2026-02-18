@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Loader2, CheckCircle, AlertCircle, Leaf } from 'lucide-react';
+import { Logo, LogoIcon } from '@/components/ui/logo';
+import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { getLandingPageByRole } from '@/lib/auth-utils';
 
@@ -122,7 +123,7 @@ export default function AuthCallbackPage() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
       <Card className="p-8 max-w-md w-full text-center shadow-xl">
         <Link href="/" className="inline-flex items-center gap-2 mb-6">
-          <Leaf className="h-10 w-10 text-green-600" />
+          <LogoIcon size="lg" />
           <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             SocialClubsMaps
           </span>

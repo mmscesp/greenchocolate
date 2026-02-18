@@ -15,7 +15,6 @@ import {
   CreditCard,
   Home,
   LogOut,
-  Leaf,
   Menu,
   ChevronRight,
   ChevronLeft
@@ -31,6 +30,7 @@ import {
 } from "@/components/ui/sheet";
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Logo, LogoIcon } from '@/components/ui/logo';
 
 interface ProfileSidebarProps {
   className?: string;
@@ -70,7 +70,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
       {isMobile && (
         <div className="flex items-center gap-2 h-16 border-b bg-background/50 backdrop-blur-md sticky top-0 z-10 px-6">
           <div className="bg-primary/10 p-1.5 rounded-lg shrink-0">
-            <Leaf className="h-6 w-6 text-primary" />
+            <LogoIcon size="sm" />
           </div>
           <span className="text-lg font-bold tracking-tight">SocialClubsMaps</span>
         </div>

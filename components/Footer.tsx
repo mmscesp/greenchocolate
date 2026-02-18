@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
 import LanguageSelector from './LanguageSelector';
-import { Leaf, MapPin, BookOpen, Users, Shield, Mail, Instagram, Twitter } from 'lucide-react';
+import { Logo, LogoIcon } from '@/components/ui/logo';
+import { MapPin, BookOpen, Users, Shield, Mail, Instagram, Twitter } from 'lucide-react';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -16,7 +17,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand/10">
-                <Leaf className="h-5 w-5 text-brand" />
+                <LogoIcon size="sm" />
               </div>
               <span className="text-lg font-semibold text-foreground">SocialClubsMaps</span>
             </div>

@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Leaf, Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Logo, LogoIcon } from '@/components/ui/logo';
+import { Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 
 export default function ResendConfirmationPage() {
@@ -66,7 +67,7 @@ export default function ResendConfirmationPage() {
         <Card className="p-8 shadow-xl border-2">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <Leaf className="h-10 w-10 text-green-600" />
+              <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 SocialClubsMaps
               </span>

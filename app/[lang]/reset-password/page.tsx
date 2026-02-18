@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Leaf, Lock, ArrowLeft, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Logo, LogoIcon } from '@/components/ui/logo';
+import { Lock, ArrowLeft, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
 
 export default function ResetPasswordPage() {
@@ -132,7 +133,7 @@ export default function ResetPasswordPage() {
         <Card className="p-8 shadow-xl border-2">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <Leaf className="h-10 w-10 text-green-600" />
+              <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 SocialClubsMaps
               </span>

@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import MainNavigation from './MainNavigation';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
 import LanguageSelector from '@/components/LanguageSelector';
-import { Leaf } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 import { cn } from '@/lib/utils';
 
 export default function Navbar() {
@@ -43,7 +43,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
-              <Leaf className="h-8 w-8 text-primary" />
+              <Logo size="md" showText={false} href="" className="" imageClassName="h-8 w-8" />
               <span className="text-xl font-bold text-foreground">
                 SocialClubsMaps
               </span>
