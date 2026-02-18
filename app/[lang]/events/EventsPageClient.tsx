@@ -101,13 +101,13 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+      <div className="min-h-screen bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse">
-            <div className="h-64 bg-white/5 rounded-3xl mb-12" />
+            <div className="h-64 bg-muted rounded-3xl mb-12" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-80 bg-white/5 rounded-2xl" />
+                <div key={i} className="h-80 bg-muted rounded-2xl" />
               ))}
             </div>
           </div>
@@ -117,36 +117,36 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+    <div className="min-h-screen bg-background relative">
+      {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-pink-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
         <motion.section 
-          className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm p-8 md:p-12 mb-12"
+          className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-8 md:p-12 mb-12"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center">
-              <Calendar className="h-5 w-5 text-purple-400" />
+            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+              <Calendar className="h-5 w-5 text-primary" />
             </div>
-            <Badge variant="outline" className="border-white/20 text-zinc-400 bg-white/5">
+            <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
               Community
             </Badge>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-6">
+          <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6">
             Europe{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-rose-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
               Events
             </span>
           </h1>
           
-          <p className="text-xl text-zinc-400 max-w-3xl leading-relaxed">
+          <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
             Cultural and industry events connected to the platform&apos;s trust-and-education mission.
           </p>
         </motion.section>
@@ -166,56 +166,54 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
             >
               <Link
                 href={`/${lang}/events/${event.slug}`}
-                className="group block rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:border-purple-500/30 hover:bg-white/[0.07] transition-all duration-500 h-full relative"
+                className="group block rounded-2xl border bg-card p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 h-full relative"
               >
-                <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/0 to-pink-500/0 rounded-2xl blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 -z-10" />
-                
                 <div className="flex flex-wrap gap-2 mb-4">
                   {event.cityName && (
-                    <Badge variant="outline" className="border-white/10 text-zinc-300 bg-white/5">
+                    <Badge variant="outline" className="border-border text-muted-foreground bg-muted">
                       <MapPin className="h-3 w-3 mr-1" /> {event.cityName}
                     </Badge>
                   )}
                   {event.clubName && (
-                    <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                    <Badge className="bg-primary/10 text-primary border-primary/20">
                       <Star className="h-3 w-3 mr-1" /> {event.clubName}
                     </Badge>
                   )}
                 </div>
                 
-                <h2 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors line-clamp-2">
+                <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2">
                   {event.name}
                 </h2>
                 
-                <p className="text-sm text-zinc-400 mb-4 line-clamp-3">
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
                   {event.description}
                 </p>
                 
                 <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />
                     <span>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-zinc-500">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <MapPin className="h-3 w-3" />
                     <span>{event.location}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                  <span className="text-xs text-zinc-500 font-medium">View Details</span>
-                  <ArrowRight className="h-4 w-4 text-purple-400 group-hover:translate-x-1 transition-transform" />
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  <span className="text-xs text-muted-foreground font-medium">View Details</span>
+                  <ArrowRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
                 </div>
 
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full group-hover:w-1/4 transition-all duration-500" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
               </Link>
             </motion.div>
           )) : (
-            <div className="col-span-full rounded-2xl border border-dashed border-white/10 p-8 text-center">
-              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="h-8 w-8 text-zinc-500" />
+            <div className="col-span-full rounded-2xl border border-dashed border-border p-8 text-center">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Calendar className="h-8 w-8 text-muted-foreground" />
               </div>
-              <p className="text-zinc-400">No upcoming published events yet.</p>
+              <p className="text-muted-foreground">No upcoming published events yet.</p>
             </div>
           )}
         </motion.section>
