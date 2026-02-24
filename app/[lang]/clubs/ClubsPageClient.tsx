@@ -155,7 +155,7 @@ export default function ClubsPageClient({
               <div className="sticky top-24 space-y-8">
                 <div className="bg-white rounded-[2rem] p-8 border border-zinc-200 shadow-sm">
                   <div className="mb-8">
-                    <EditorialHeading size="xs" className="text-zinc-900 uppercase tracking-widest border-b border-zinc-100 pb-4 mb-8">Advanced Filters</EditorialHeading>
+                    <EditorialHeading size="sm" className="text-zinc-900 uppercase tracking-widest border-b border-zinc-100 pb-4 mb-8">Advanced Filters</EditorialHeading>
                   </div>
                   
                   {/* FilterBar Integration (Wrapped or Modified) */}
@@ -190,6 +190,7 @@ export default function ClubsPageClient({
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   <button 
+                    type="button"
                     onClick={() => setViewMode('grid')}
                     className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
                       viewMode === 'grid' ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:bg-zinc-200'
@@ -197,13 +198,14 @@ export default function ClubsPageClient({
                   >
                     <Grid className="h-4 w-4" /> Grid View
                   </button>
-                  <button 
-                    onClick={() => setViewMode('map')}
-                    className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
-                      viewMode === 'map' ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:bg-zinc-200'
-                    }`}
+                  <button
+                    type="button"
+                    disabled
+                    aria-disabled="true"
+                    title="Map view is in development"
+                    className="flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-400 bg-zinc-100 cursor-not-allowed"
                   >
-                    <Map className="h-4 w-4" /> Map View
+                    <Map className="h-4 w-4" /> Map View (Soon)
                   </button>
                 </div>
                 
@@ -277,15 +279,7 @@ export default function ClubsPageClient({
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="bg-white rounded-[2rem] border border-zinc-200 h-[600px] flex items-center justify-center">
-                   <div className="text-center">
-                    <Map className="h-12 w-12 text-zinc-200 mx-auto mb-6" />
-                    <EditorialHeading size="sm" className="mb-2">Interactive Map coming soon</EditorialHeading>
-                    <ConciergeLabel size="xs" emphasis="low">Precision location intelligence in development</ConciergeLabel>
-                   </div>
-                </div>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
@@ -293,4 +287,3 @@ export default function ClubsPageClient({
     </div>
   );
 }
-

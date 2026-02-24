@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { PREMIUM_SPRING } from '../motion/config';
 import { ShieldCheck, AlertTriangle, MapPin } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
 const ICONS = {
   ShieldCheck,
@@ -31,12 +32,22 @@ export function StickyAccordion({ items }: StickyAccordionProps) {
         const isActive = activeIndex === i;
         
         return (
-          <motion.div
+          <motion.button
             key={i}
+            type="button"
             layout
-            onClick={() => setActiveIndex(isActive ? null : i)}
+            onClick={() => {
+              const nextOpen = isActive ? null : i;
+              setActiveIndex(nextOpen);
+              trackEvent('landing_reality_card_toggle', {
+                title: item.title,
+                opened: nextOpen === i,
+              });
+            }}
+            aria-expanded={isActive}
+            aria-label={`${item.title} details`}
             className={cn(
-              "relative p-8 rounded-[2.5rem] border bg-zinc-950 flex flex-col transition-all duration-700 cursor-pointer group overflow-hidden",
+              'relative p-8 rounded-[2.5rem] border bg-zinc-950 flex flex-col transition-all duration-700 cursor-pointer group overflow-hidden text-left',
               isActive ? 'lg:col-span-2 border-zinc-700' : 'lg:col-span-1 border-zinc-800'
             )}
             initial={false}
@@ -115,7 +126,7 @@ export function StickyAccordion({ items }: StickyAccordionProps) {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </motion.button>
         );
       })}
     </div>

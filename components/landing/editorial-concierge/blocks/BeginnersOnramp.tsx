@@ -1,13 +1,31 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 // import { MagneticButton } from '../interactive/MagneticButton';
 import { ArrowRight, BookOpen, ShieldAlert, Heart } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
-export function BeginnersOnramp() {
+type OnrampExperimentArm = 'control' | 'benefit';
+
+interface BeginnersOnrampProps {
+  experimentArm?: OnrampExperimentArm;
+}
+
+export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampProps) {
+  const heading =
+    experimentArm === 'benefit'
+      ? 'Avoid mistakes. Stay safe. Start here.'
+      : 'First time smoking weed? Start here.';
+
+  const description =
+    experimentArm === 'benefit'
+      ? 'Get the essentials fast: legal boundaries, etiquette, and harm-reduction basics so your first experience stays safe and respectful.'
+      : "Navigating Barcelona's social clubs requires respect, discretion, and preparation. Follow our safety-first guide for a seamless introduction to the culture.";
+
   return (
     <SectionWrapper className="bg-white">
       <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
@@ -15,25 +33,34 @@ export function BeginnersOnramp() {
         <div className="space-y-12">
           <div>
             <ConciergeLabel className="text-emerald-600 mb-6">New Member Onboarding</ConciergeLabel>
-            <EditorialHeading size="xl" className="mb-8">First time smoking weed? <br />Start here.</EditorialHeading>
+            <EditorialHeading size="xl" className="mb-8">{heading}</EditorialHeading>
             <p className="text-lg text-zinc-500 leading-relaxed max-w-xl">
-              Navigating Barcelona's social clubs requires respect, discretion, and preparation. 
-              Follow our safety-first guide for a seamless introduction to the culture.
+              {description}
             </p>
           </div>
 
           <div className="space-y-6">
             {[
-              { title: 'Legal Framework', desc: 'Public vs Private: understanding the grey zone.', icon: ShieldAlert },
-              { title: 'Club Etiquette', desc: 'The unwritten rules of association membership.', icon: Heart },
-              { title: 'Harm Reduction', desc: 'Onset times, dosing, and responsible choices.', icon: BookOpen },
+              { title: 'Legal Framework', desc: 'Public vs Private: understanding the grey zone.', icon: ShieldAlert, href: '/editorial/legal' },
+              { title: 'Club Etiquette', desc: 'The unwritten rules of association membership.', icon: Heart, href: '/editorial/etiquette' },
+              { title: 'Harm Reduction', desc: 'Onset times, dosing, and responsible choices.', icon: BookOpen, href: '/safety' },
             ].map((item, i) => (
-              <motion.div 
-                key={i} 
-                className="group relative flex items-start gap-6 p-6 rounded-[2rem] bg-zinc-50/50 border border-zinc-200/50 transition-all duration-500 hover:border-emerald-500/30 hover:bg-zinc-50 cursor-pointer overflow-hidden"
-                whileHover={{ y: -4 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              <Link
+                key={i}
+                href={item.href}
+                className="block"
+                onClick={() => {
+                  trackEvent('landing_onramp_topic_click', {
+                    topic: item.title,
+                    destination: item.href,
+                  });
+                }}
               >
+                <motion.div
+                  className="group relative flex items-start gap-6 p-6 rounded-[2rem] bg-zinc-50/50 border border-zinc-200/50 transition-all duration-500 hover:border-emerald-500/30 hover:bg-zinc-50 overflow-hidden"
+                  whileHover={{ y: -4 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
                 {/* Ambient Glow */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/0 to-emerald-500/0 rounded-[2.5rem] blur-xl opacity-0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 group-hover:opacity-100 transition-all duration-500 -z-10" />
 
@@ -48,7 +75,8 @@ export function BeginnersOnramp() {
 
                 {/* Expanding Accent Line */}
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full group-hover:w-1/3 transition-all duration-500 z-20" />
-              </motion.div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
@@ -72,10 +100,18 @@ export function BeginnersOnramp() {
             <p className="text-white/70 text-lg mb-8 max-w-sm">
               Stay highly informed. A detailed harm-reduction explainer on effects, anxiety, and safer decision making.
             </p>
-            <button className="pointer-events-auto bg-white text-black font-bold px-10 py-5 rounded-full hover:bg-emerald-50 transition-colors duration-500 flex items-center gap-3 group/btn">
+            <Link
+              href="/safety"
+              className="pointer-events-auto bg-white text-black font-bold px-10 py-5 rounded-full hover:bg-emerald-50 transition-colors duration-500 flex items-center gap-3 group/btn"
+              onClick={() => {
+                trackEvent('landing_onramp_read_guide_click', {
+                  destination: '/safety',
+                });
+              }}
+            >
               Read the Guide
               <ArrowRight className="w-4 h-4 text-black/40 group-hover/btn:text-emerald-600 group-hover/btn:translate-x-1 transition-all duration-500" />
-            </button>
+            </Link>
           </div>
 
           {/* Expanding Accent Line */}

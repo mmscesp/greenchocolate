@@ -1,10 +1,31 @@
+'use client';
+
 import React from 'react';
+import { useState } from 'react';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { Check } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
 export function NewsletterDrop() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!email.trim()) return;
+    trackEvent('landing_newsletter_submit_attempt', {
+      email_length: email.trim().length,
+    });
+    setStatus('loading');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setStatus('success');
+    trackEvent('landing_newsletter_submit_success', {
+      source: 'newsletter_drop',
+    });
+  };
+
   return (
     <SectionWrapper dark className="bg-[#0A0A0A]">
       {/* Background Animated Gradient Placeholder */}
@@ -21,19 +42,29 @@ export function NewsletterDrop() {
           Zero promotion. Pure, high-trust intelligence for the informed member.
         </p>
 
-        <form className="relative max-w-2xl mx-auto mb-16 flex flex-col md:block">
+        <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto mb-16 flex flex-col md:block">
+          <label htmlFor="newsletter-drop-email" className="sr-only">Email address</label>
           <input 
+            id="newsletter-drop-email"
             type="email" 
+            required
             placeholder="Email address..."
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
             className="w-full bg-transparent border-b-2 border-zinc-800 py-4 md:py-6 px-2 md:px-4 text-xl md:text-3xl text-white font-serif focus:outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
           />
           <button 
             type="submit"
+            disabled={status === 'loading'}
             className="mt-6 md:mt-0 md:absolute md:right-0 md:bottom-6 text-emerald-500 hover:text-emerald-400 font-bold uppercase tracking-widest text-sm md:text-xs flex items-center justify-center md:justify-start gap-2"
           >
-            Subscribe <ArrowRight className="w-4 h-4" />
+            {status === 'success' ? 'Subscribed' : status === 'loading' ? 'Subscribing...' : 'Subscribe'} <ArrowRight className="w-4 h-4" />
           </button>
         </form>
+
+        {status === 'success' && (
+          <p className="mb-8 text-emerald-400 text-sm font-bold uppercase tracking-widest">You are in. Watch your inbox.</p>
+        )}
 
         <div className="flex flex-wrap justify-center gap-8">
           {[
@@ -52,5 +83,3 @@ export function NewsletterDrop() {
     </SectionWrapper>
   );
 }
-
-import { ArrowRight } from 'lucide-react';

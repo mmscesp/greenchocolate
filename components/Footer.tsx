@@ -26,21 +26,25 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3">
               <a 
-                href="#" 
+                href="https://www.instagram.com/socialclubsmaps"
+                target="_blank"
+                rel="noreferrer"
                 className="flex items-center justify-center w-9 h-9 rounded-lg bg-neutral-100 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
               </a>
               <a 
-                href="#" 
+                href="https://x.com/socialclubsmaps"
+                target="_blank"
+                rel="noreferrer"
                 className="flex items-center justify-center w-9 h-9 rounded-lg bg-neutral-100 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a 
-                href="#" 
+                href="mailto:hello@socialclubsmaps.com"
                 className="flex items-center justify-center w-9 h-9 rounded-lg bg-neutral-100 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
                 aria-label="Email"
               >
@@ -88,24 +92,24 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-foreground mb-4">{t('footer.support')}</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/editorial" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.help_center')}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <a href="mailto:hello@socialclubsmaps.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.contact')}
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.terms')}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.privacy')}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

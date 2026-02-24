@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
@@ -34,9 +35,9 @@ export function ConciergeTools() {
           </div>
           
           <div className="p-10 pt-0">
-            <button className="w-full py-5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl transition-colors uppercase tracking-widest text-xs">
+            <Link href="/editorial/legal" className="block w-full py-5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl transition-colors uppercase tracking-widest text-xs text-center">
               Read the Legal Basics
-            </button>
+            </Link>
           </div>
         </div>
 

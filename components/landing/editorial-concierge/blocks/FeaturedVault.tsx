@@ -1,46 +1,67 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock, User } from 'lucide-react';
 import { type ArticleCard } from '@/app/actions/articles';
+import { trackEvent } from '@/lib/analytics';
 
 interface FeaturedVaultProps {
   articles: ArticleCard[];
 }
 
 export function FeaturedVault({ articles }: FeaturedVaultProps) {
-  const displayArticles = articles.length > 0 ? articles : [
+  const fallbackArticles: ArticleCard[] = [
     {
       id: '1',
       title: 'Navigating the 2026 Spanish Regulatory Landscape',
+      slug: 'is-weed-legal-barcelona-2026',
       excerpt: 'A detailed analysis of consumption regulations, administrative protocols, and member protections under current law.',
       category: 'Legal Framework',
+      tags: ['legal', 'spain'],
       readTime: 12,
       authorName: 'Editorial Team',
+      authorAvatar: null,
       heroImage: null,
+      publishedAt: null,
+      cityName: null,
+      citySlug: null,
     },
     {
       id: '2',
       title: 'Health Protocols & Responsible Consumption',
+      slug: 'safety-and-harm-reduction-basics',
       excerpt: 'Evidence-based guidelines on dosage, interaction risks, and maintaining a safe environment within private associations.',
       category: 'Harm Reduction',
+      tags: ['safety', 'harm-reduction'],
       readTime: 10,
       authorName: 'Editorial Team',
+      authorAvatar: null,
       heroImage: null,
+      publishedAt: null,
+      cityName: null,
+      citySlug: null,
     },
     {
       id: '3',
       title: 'Data Protection & Member Anonymity',
+      slug: 'privacy-and-member-anonymity',
       excerpt: 'Understanding how social clubs manage sensitive information and your rights regarding personal data in the digital age.',
       category: 'Privacy',
+      tags: ['privacy', 'trust'],
       readTime: 7,
       authorName: 'Editorial Team',
+      authorAvatar: null,
       heroImage: null,
+      publishedAt: null,
+      cityName: null,
+      citySlug: null,
     }
   ];
+  const displayArticles = articles.length > 0 ? articles : fallbackArticles;
 
   return (
     <SectionWrapper>
@@ -49,19 +70,38 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
           <ConciergeLabel className="mb-4 text-emerald-600">Knowledge Base</ConciergeLabel>
           <EditorialHeading size="xl">Safety, Law & Harm Reduction</EditorialHeading>
         </div>
-        <button className="flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-emerald-600 transition-colors">
+        <Link
+          href="/editorial"
+          className="flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-emerald-600 transition-colors"
+          onClick={() => {
+            trackEvent('landing_featured_explore_archive_click', {
+              destination: '/editorial',
+            });
+          }}
+        >
           Explore Archive <ArrowRight className="w-4 h-4" />
-        </button>
+        </Link>
       </div>
 
       <div className="grid md:grid-cols-3 gap-8">
         {displayArticles.map((article) => (
-          <motion.div 
-            key={article.id} 
-            className="group relative p-6 rounded-[2.5rem] bg-white border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 cursor-pointer overflow-hidden"
-            whileHover={{ y: -6 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          <Link
+            key={article.id}
+            href={article.slug ? `/editorial/${article.slug}` : '/editorial'}
+            className="block"
+            onClick={() => {
+              trackEvent('landing_featured_article_click', {
+                article_id: article.id,
+                article_title: article.title,
+                destination: article.slug ? `/editorial/${article.slug}` : '/editorial',
+              });
+            }}
           >
+            <motion.div
+              className="group relative p-6 rounded-[2.5rem] bg-white border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden"
+              whileHover={{ y: -6 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            >
             {/* Ambient Glow */}
             <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/0 to-emerald-500/0 rounded-[3rem] blur-xl opacity-0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 group-hover:opacity-100 transition-all duration-500 -z-10" />
 
@@ -103,7 +143,8 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
 
             {/* Expanding Accent Line */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full group-hover:w-1/3 transition-all duration-500 z-20" />
-          </motion.div>
+            </motion.div>
+          </Link>
         ))}
       </div>
     </SectionWrapper>

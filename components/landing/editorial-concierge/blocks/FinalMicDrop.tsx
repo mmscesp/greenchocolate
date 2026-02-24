@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
@@ -19,12 +20,12 @@ export function FinalMicDrop() {
         <EditorialHeading size="2xl" className="text-white mb-12">Education first. <br />Privacy always.</EditorialHeading>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-          <button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-lg uppercase tracking-widest">
+          <Link href="/safety" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-lg uppercase tracking-widest">
             Get the Visitor Safety Kit
-          </button>
-          <button className="w-full sm:w-auto bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 text-lg uppercase tracking-widest">
+          </Link>
+          <Link href="/editorial" className="w-full sm:w-auto bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 text-lg uppercase tracking-widest">
             Join the Weekly Drop
-          </button>
+          </Link>
         </div>
         
         <p className="mt-16 text-zinc-500 font-mono text-xs uppercase tracking-widest">

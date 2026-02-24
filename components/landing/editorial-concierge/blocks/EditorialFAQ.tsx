@@ -1,8 +1,13 @@
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { Plus } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
 const FAQS = [
   { q: "What is a Cannabis Social Club?", a: "A private, non-profit association where members consume cannabis in a social setting. They are not shops; they are member-only establishments with strict protocols." },
@@ -13,6 +18,8 @@ const FAQS = [
 ];
 
 export function EditorialFAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
   return (
     <SectionWrapper>
       <div className="max-w-4xl mx-auto">
@@ -23,20 +30,35 @@ export function EditorialFAQ() {
 
         <div className="space-y-4">
           {FAQS.map((faq, i) => (
-            <div key={i} className="group border-b border-zinc-200 py-8 cursor-pointer">
-              <div className="flex items-center justify-between gap-8">
+            <div key={i} className="group border-b border-zinc-200 py-8">
+              <button
+                type="button"
+                onClick={() => {
+                  const nextOpen = openIndex === i ? null : i;
+                  setOpenIndex(nextOpen);
+                  trackEvent('landing_faq_toggle', {
+                    question: faq.q,
+                    opened: nextOpen === i,
+                  });
+                }}
+                className="w-full flex items-center justify-between gap-8 text-left"
+                aria-expanded={openIndex === i}
+                aria-controls={`editorial-faq-panel-${i}`}
+              >
                 <h4 className="text-xl md:text-2xl font-serif font-bold text-zinc-900 group-hover:text-emerald-600 transition-colors">
                   {faq.q}
                 </h4>
                 <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-emerald-50 transition-colors">
-                  <Plus className="w-4 h-4 text-zinc-400 group-hover:text-emerald-600 transition-transform duration-500" />
+                  <Plus className={`w-4 h-4 text-zinc-400 group-hover:text-emerald-600 transition-transform duration-500 ${openIndex === i ? 'rotate-45' : ''}`} />
                 </div>
-              </div>
-              <div className="mt-6 max-w-3xl overflow-hidden hidden group-hover:block animate-in fade-in slide-in-from-top-2 duration-500">
-                <p className="text-lg text-zinc-500 leading-relaxed">
-                  {faq.a}
-                </p>
-              </div>
+              </button>
+              {openIndex === i && (
+                <div id={`editorial-faq-panel-${i}`} className="mt-6 max-w-3xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-500">
+                  <p className="text-lg text-zinc-500 leading-relaxed">
+                    {faq.a}
+                  </p>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -44,9 +66,17 @@ export function EditorialFAQ() {
         <div className="mt-20 p-12 rounded-[2.5rem] bg-emerald-50 border border-emerald-100 text-center">
           <EditorialHeading size="sm" className="text-emerald-900 mb-4">Still have questions?</EditorialHeading>
           <p className="text-emerald-700 mb-8">Subscribe to the Intelligence Briefing or download the Safety Kit for deeper intelligence.</p>
-          <button className="bg-emerald-600 text-white font-bold px-8 py-4 rounded-full hover:bg-emerald-700 transition-colors">
+          <Link
+            href="/safety"
+            className="inline-block bg-emerald-600 text-white font-bold px-8 py-4 rounded-full hover:bg-emerald-700 transition-colors"
+            onClick={() => {
+              trackEvent('landing_faq_safety_kit_click', {
+                destination: '/safety',
+              });
+            }}
+          >
             Get the Safety Kit
-          </button>
+          </Link>
         </div>
       </div>
     </SectionWrapper>

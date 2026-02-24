@@ -45,10 +45,8 @@ export function CommunityRoadmap() {
           </div>
         </div>
         <div className="mt-24 text-center">
-        <Link href="/account/register" className="inline-block">
-          <button className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-lg uppercase tracking-widest">
-            Begin Your Evolution
-          </button>
+        <Link href="/account/register" className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-lg uppercase tracking-widest">
+          Begin Your Evolution
         </Link>
           <p className="mt-6 text-zinc-500 text-sm italic">
             Start with the Intelligence Hub. Access is earned through education.

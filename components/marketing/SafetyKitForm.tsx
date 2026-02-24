@@ -2,17 +2,29 @@
 
 import { useState } from 'react';
 import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
-export default function SafetyKitForm() {
+interface SafetyKitFormProps {
+  source?: string;
+}
+
+export default function SafetyKitForm({ source = 'safety_kit_page' }: SafetyKitFormProps) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [email, setEmail] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    trackEvent('safety_kit_submit_attempt', {
+      source,
+      email_length: email.trim().length,
+    });
     setStatus('loading');
     // Simulate API call
     await new Promise(r => setTimeout(r, 1500));
     setStatus('success');
+    trackEvent('safety_kit_submit_success', {
+      source,
+    });
   };
 
   if (status === 'success') {
@@ -47,7 +59,9 @@ export default function SafetyKitForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
+            <label htmlFor="safety-kit-email" className="sr-only">Secure email address</label>
             <input
+              id="safety-kit-email"
               type="email"
               required
               placeholder="Enter your secure email"

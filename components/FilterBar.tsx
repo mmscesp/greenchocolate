@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { EditorialHeading } from './landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
+import { trackEvent } from '@/lib/analytics';
 
 interface FilterBarProps {
   filters: FilterOptions;
@@ -45,8 +46,12 @@ export default function FilterBar({
   const { t } = useLanguage();
   const [showFilters, setShowFilters] = useState(false);
 
-  const updateFilter = (key: keyof FilterOptions, value: any) => {
+  const updateFilter = (key: keyof FilterOptions, value: FilterOptions[keyof FilterOptions]) => {
     onFiltersChange({ ...filters, [key]: value });
+    trackEvent('clubs_filter_update', {
+      key,
+      value_type: Array.isArray(value) ? 'array' : typeof value,
+    });
   };
 
   const toggleArrayFilter = (key: 'amenities' | 'vibes' | 'priceRange', value: string) => {
@@ -55,6 +60,11 @@ export default function FilterBar({
       ? currentArray.filter(item => item !== value)
       : [...currentArray, value];
     updateFilter(key, newArray);
+    trackEvent('clubs_filter_toggle', {
+      key,
+      option: value,
+      active: !currentArray.includes(value),
+    });
   };
 
   const clearAllFilters = () => {
@@ -66,6 +76,7 @@ export default function FilterBar({
       priceRange: [],
       rating: 0
     });
+    trackEvent('clubs_filter_clear_all');
   };
 
   const hasActiveFilters = filters.neighborhood || 
@@ -93,7 +104,7 @@ export default function FilterBar({
             <Search className="h-4 w-4 text-emerald-500" />
           </div>
           <div>
-            <EditorialHeading size="xs" className="text-zinc-900">
+            <EditorialHeading size="sm" className="text-zinc-900">
               {totalResults} clubs found
             </EditorialHeading>
             <ConciergeLabel size="xs" emphasis="low">Precision Directory Screening</ConciergeLabel>
@@ -102,6 +113,7 @@ export default function FilterBar({
         
         {hasActiveFilters && (
           <button 
+            type="button"
             onClick={clearAllFilters}
             className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-red-500 transition-colors flex items-center gap-2"
           >
@@ -117,11 +129,12 @@ export default function FilterBar({
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-zinc-400" />
-            <EditorialHeading size="xs" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Neighborhood</EditorialHeading>
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Neighborhood</EditorialHeading>
           </div>
           <div className="flex flex-wrap gap-2">
             {neighborhoods.map((neighborhood) => (
               <button
+                type="button"
                 key={neighborhood}
                 onClick={() => updateFilter('neighborhood',
                   filters.neighborhood === neighborhood ? '' : neighborhood
@@ -142,11 +155,12 @@ export default function FilterBar({
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <LayoutGrid className="h-4 w-4 text-zinc-400" />
-            <EditorialHeading size="xs" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Services & Amenities</EditorialHeading>
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Services & Amenities</EditorialHeading>
           </div>
           <div className="flex flex-wrap gap-2">
             {amenities.map((amenity) => (
               <button
+                type="button"
                 key={amenity}
                 onClick={() => toggleArrayFilter('amenities', amenity)}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
@@ -165,11 +179,12 @@ export default function FilterBar({
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-zinc-400" />
-            <EditorialHeading size="xs" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Vibe & Style</EditorialHeading>
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Vibe & Style</EditorialHeading>
           </div>
           <div className="flex flex-wrap gap-2">
             {vibes.map((vibe) => (
               <button
+                type="button"
                 key={vibe}
                 onClick={() => toggleArrayFilter('vibes', vibe)}
                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
@@ -189,6 +204,7 @@ export default function FilterBar({
           
           {/* Verified Only */}
           <button
+            type="button"
             onClick={() => updateFilter('isVerified', !filters.isVerified)}
             className="flex items-center justify-between group"
           >
@@ -216,11 +232,12 @@ export default function FilterBar({
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-zinc-400" />
-              <EditorialHeading size="xs" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Price range:</EditorialHeading>
+              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Price range:</EditorialHeading>
             </div>
             <div className="flex gap-2">
               {['$', '$$', '$$$'].map(price => (
                 <button
+                  type="button"
                   key={price}
                   onClick={() => toggleArrayFilter('priceRange', price)}
                   className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${
@@ -239,11 +256,12 @@ export default function FilterBar({
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Star className="h-4 w-4 text-zinc-400" />
-              <EditorialHeading size="xs" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Minimum rating:</EditorialHeading>
+              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Minimum rating:</EditorialHeading>
             </div>
             <div className="flex gap-2">
               {[4, 4.5, 5].map(rating => (
                 <button
+                  type="button"
                   key={rating}
                   onClick={() => updateFilter('rating', filters.rating === rating ? 0 : rating)}
                   className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${

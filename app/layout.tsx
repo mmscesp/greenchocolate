@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';
 import { LegalDisclaimer } from '@/components/LegalDisclaimer';
+import AnalyticsDebugListener from '@/components/dev/AnalyticsDebugListener';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -97,6 +98,7 @@ export default function RootLayout({
     <html lang="en" className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
         <LegalDisclaimer />
+        <AnalyticsDebugListener />
         {children}
       </body>
     </html>
