@@ -132,10 +132,10 @@ export default function Footer() {
         
         {/* Bottom Bar */}
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground text-center md:text-left">
             &copy; {new Date().getFullYear()} SocialClubsMaps. {t('footer.copyright')}
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-2">
             <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               Terms
             </Link>

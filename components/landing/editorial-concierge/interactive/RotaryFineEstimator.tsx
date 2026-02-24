@@ -132,7 +132,7 @@ export function RotaryFineEstimator() {
                 key={i}
                 onClick={() => setLevel(i)}
                 className={`
-                  w-5 h-5 rounded-full border-2 transition-all duration-300 flex items-center justify-center
+                  min-h-11 min-w-11 sm:min-h-5 sm:min-w-5 rounded-full border-2 transition-all duration-300 flex items-center justify-center
                   ${i <= level 
                     ? `${l.bgColor} ${l.borderColor} border-2` 
                     : 'bg-muted border-border hover:border-muted-foreground/30'
@@ -151,7 +151,7 @@ export function RotaryFineEstimator() {
               key={i} 
               onClick={() => setLevel(i)}
               className={`
-                font-mono text-[9px] uppercase tracking-widest transition-all duration-300 px-2 py-1 rounded-lg
+                font-mono text-xs uppercase tracking-wide transition-all duration-300 px-2 py-1 rounded-lg
                 ${level === i 
                   ? `${l.bgColor} ${l.color} font-bold` 
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'

@@ -203,13 +203,13 @@ export default function ReviewsPage() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex w-full sm:w-auto items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
               <Select
                 value={ratingFilter.toString()}
                 onValueChange={(value) => setRatingFilter(Number(value))}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40 min-h-11">
                   <SelectValue placeholder={t('reviews.filter.all')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -264,14 +264,14 @@ export default function ReviewsPage() {
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {review.isEditable && (
                           <>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button variant="ghost" size="icon" className="h-11 w-11">
                               <Edit3 className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() => deleteReview(review.id)}
-                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              className="h-11 w-11 text-destructive hover:text-destructive hover:bg-destructive/10"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -303,7 +303,7 @@ export default function ReviewsPage() {
                 </p>
 
                 {/* Review Stats */}
-                <div className="flex items-center gap-6 pt-4 border-t border-border/50">
+                <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-4 border-t border-border/50">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <ThumbsUp className="h-4 w-4" />
                     <span>{review.likes} {t('reviews.likes')}</span>

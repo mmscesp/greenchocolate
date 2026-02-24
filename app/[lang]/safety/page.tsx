@@ -101,12 +101,12 @@ export default function SafetyPage({ params }: SafetyPageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero with Quiz */}
         <motion.section 
-          className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-8 md:p-12 mb-12"
+          className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-6 sm:p-8 md:p-12 mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -140,7 +140,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               </div>
             </div>
 
-            <div className="lg:w-[380px] shrink-0">
+            <div className="w-full lg:w-[380px] shrink-0">
               <EligibilityFlow />
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                className="rounded-2xl border bg-card p-6 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                className="rounded-2xl border bg-card p-5 sm:p-6 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
               >
                 <div className="flex items-start gap-4 mb-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${category.color}`}>
@@ -198,7 +198,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
 
         {/* Emergency */}
         <motion.section 
-          className="rounded-3xl border border-red-500/20 bg-red-500/5 p-8 md:p-12"
+          className="rounded-3xl border border-red-500/20 bg-red-500/5 p-6 sm:p-8 md:p-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -216,7 +216,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-card rounded-xl p-6 border border-red-500/10">
+            <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <Phone className="h-5 w-5 text-red-600" />
                 <H3 className="font-bold">EU Emergency</H3>
@@ -225,7 +225,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               <Text size="sm" variant="muted">Ambulance, Police, Fire</Text>
             </div>
 
-            <div className="bg-card rounded-xl p-6 border border-red-500/10">
+            <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <MapPin className="h-5 w-5 text-red-600" />
                 <H3 className="font-bold">Barcelona Hospitals</H3>
@@ -236,7 +236,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               </ul>
             </div>
 
-            <div className="bg-card rounded-xl p-6 border border-red-500/10">
+            <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <Users className="h-5 w-5 text-red-600" />
                 <H3 className="font-bold">Mossos d'Esquadra</H3>
@@ -249,13 +249,13 @@ export default function SafetyPage({ params }: SafetyPageProps) {
 
         {/* CTA */}
         <motion.section 
-          className="mt-12 rounded-3xl border bg-gradient-to-br from-primary/5 to-background p-8"
+          className="mt-12 rounded-3xl border bg-gradient-to-br from-primary/5 to-background p-6 sm:p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex items-start sm:items-center gap-4">
               <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
                 <Leaf className="h-7 w-7 text-primary" />
               </div>
@@ -264,8 +264,8 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 <Text variant="muted">Browse verified cannabis social clubs.</Text>
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button asChild className="bg-primary hover:bg-primary/90">
+            <div className="flex w-full sm:w-auto gap-3">
+              <Button asChild className="w-full sm:w-auto min-h-11 bg-primary hover:bg-primary/90">
                 <Link href={`/${lang}/clubs`}>
                   Browse Clubs <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

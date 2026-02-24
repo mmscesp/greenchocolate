@@ -98,7 +98,7 @@ export default function FilterBar({
   return (
     <div className="space-y-8">
       {/* Search Result Summary */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-zinc-900 rounded-full flex items-center justify-center">
             <Search className="h-4 w-4 text-emerald-500" />
@@ -115,7 +115,7 @@ export default function FilterBar({
           <button 
             type="button"
             onClick={clearAllFilters}
-            className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-red-500 transition-colors flex items-center gap-2"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-red-500 transition-colors"
           >
             <X className="h-3 w-3" /> Clear All
           </button>
@@ -139,7 +139,7 @@ export default function FilterBar({
                 onClick={() => updateFilter('neighborhood',
                   filters.neighborhood === neighborhood ? '' : neighborhood
                 )}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
                   filters.neighborhood === neighborhood
                     ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
                     : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400'
@@ -163,7 +163,7 @@ export default function FilterBar({
                 type="button"
                 key={amenity}
                 onClick={() => toggleArrayFilter('amenities', amenity)}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
                   filters.amenities.includes(amenity)
                     ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
                     : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400'
@@ -187,7 +187,7 @@ export default function FilterBar({
                 type="button"
                 key={vibe}
                 onClick={() => toggleArrayFilter('vibes', vibe)}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
                   filters.vibes.includes(vibe)
                     ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
                     : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400'
@@ -206,7 +206,7 @@ export default function FilterBar({
           <button
             type="button"
             onClick={() => updateFilter('isVerified', !filters.isVerified)}
-            className="flex items-center justify-between group"
+            className="flex items-center justify-between gap-4 group"
           >
             <div className="flex items-center gap-4">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${

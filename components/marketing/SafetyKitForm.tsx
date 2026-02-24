@@ -29,12 +29,12 @@ export default function SafetyKitForm({ source = 'safety_kit_page' }: SafetyKitF
 
   if (status === 'success') {
     return (
-      <div className="relative p-10 rounded-3xl border border-primary/30 bg-midnight-charcoal/80 backdrop-blur-md animate-in fade-in zoom-in duration-500 text-center">
+      <div className="relative p-6 sm:p-8 md:p-10 rounded-3xl border border-primary/30 bg-midnight-charcoal/80 backdrop-blur-md animate-in fade-in zoom-in duration-500 text-center">
         <div className="relative">
           <div className="w-20 h-20 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-6 border border-primary/20">
             <CheckCircle2 className="h-10 w-10" />
           </div>
-          <h3 className="text-3xl font-serif text-white mb-3">Transmission Successful</h3>
+          <h3 className="text-2xl sm:text-3xl font-serif text-white mb-3">Transmission Successful</h3>
           <p className="text-muted-foreground mb-0">Your Visitor Safety Kit is being securely delivered to your inbox.</p>
         </div>
       </div>
@@ -42,7 +42,7 @@ export default function SafetyKitForm({ source = 'safety_kit_page' }: SafetyKitF
   }
 
   return (
-    <div className="relative p-10 rounded-3xl border border-white/5 bg-midnight-charcoal/50 backdrop-blur-md overflow-hidden">
+    <div className="relative p-6 sm:p-8 md:p-10 rounded-3xl border border-white/5 bg-midnight-charcoal/50 backdrop-blur-md overflow-hidden">
       {/* Decorative background element */}
       <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl" />
       
@@ -51,7 +51,7 @@ export default function SafetyKitForm({ source = 'safety_kit_page' }: SafetyKitF
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-4">
             <span className="text-[10px] font-bold uppercase tracking-widest text-primary">2026 Safety Protocol</span>
           </div>
-          <h3 className="text-3xl font-serif text-white mb-3">The Visitor Safety Kit</h3>
+          <h3 className="text-2xl sm:text-3xl font-serif text-white mb-3">The Visitor Safety Kit</h3>
           <p className="text-muted-foreground text-sm leading-relaxed">
             Avoid €600+ fines and navigate Barcelona&apos;s legal grey market with forensic precision.
           </p>

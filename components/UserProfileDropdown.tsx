@@ -115,16 +115,16 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
         variant="ghost"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 hover:bg-accent"
+        className="flex min-h-11 items-center gap-2 px-2 hover:bg-accent"
       >
-        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
           {user.user_metadata?.avatar_url ? (
             <Image
               src={user.user_metadata.avatar_url}
               alt={displayName}
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full object-cover"
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full object-cover"
             />
           ) : (
             <User className="h-4 w-4 text-primary" />
@@ -145,7 +145,7 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
           />
 
           {/* Dropdown Menu */}
-          <div className="absolute top-full right-0 mt-2 w-80 bg-background rounded-xl shadow-lg border border-border py-4 z-50 animate-in slide-in-from-top-2 duration-200">
+          <div className="absolute top-full right-0 mt-2 w-[min(20rem,calc(100vw-1rem))] bg-background rounded-xl shadow-lg border border-border py-4 z-50 animate-in slide-in-from-top-2 duration-200">
             {/* User Info Header */}
             <div className="px-4 pb-4 border-b border-border">
               <div className="flex items-center gap-3">
@@ -192,7 +192,7 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
                 <Link
                   href="/admin"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                  className="flex min-h-11 items-center gap-3 px-3 py-2 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
                 >
                   <PanelTop className="h-4 w-4" />
                   <span className="font-medium">Platform Admin Portal</span>
@@ -205,7 +205,7 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
                 <Link
                   href="/club-panel/dashboard"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                  className="flex min-h-11 items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   <span className="font-medium">Club Dashboard</span>
@@ -218,9 +218,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               <Link
                 href="/profile"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                className="flex min-h-11 items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
                   <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -232,9 +232,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               <Link
                 href="/profile/favorites"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                className="flex min-h-11 items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
                   <Heart className="h-4 w-4 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
@@ -246,9 +246,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               <Link
                 href="/profile/reviews"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                className="flex min-h-11 items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
                   <Star className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
@@ -260,9 +260,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               <Link
                 href="/profile/requests"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                className="flex min-h-11 items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
                   <ClipboardList className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
@@ -279,9 +279,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               <Link
                 href="/profile/notifications"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                className="flex min-h-11 items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
                   <Bell className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
@@ -295,9 +295,9 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               <Link
                 href="/profile/settings"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                className="flex min-h-11 items-center gap-3 px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
-                <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
                   <Settings className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                 </div>
                 <div>
@@ -312,13 +312,13 @@ export default function UserProfileDropdown({ className = '' }: UserProfileDropd
               <button
                 onClick={handleLogout}
                 disabled={loading}
-                className="flex items-center gap-3 px-4 py-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full disabled:opacity-50"
+                className="flex min-h-11 items-center gap-3 px-4 py-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full disabled:opacity-50"
               >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
-                    <div className="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
                       <LogOut className="h-4 w-4 text-red-600 dark:text-red-400" />
                     </div>
                     <div className="font-medium">Log out</div>

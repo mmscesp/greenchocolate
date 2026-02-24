@@ -17,7 +17,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
           <div className="absolute bottom-0 left-0 w-[460px] h-[460px] bg-teal-500/10 blur-[120px] rounded-full" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24">
           <div className="grid lg:grid-cols-2 gap-14 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-300 text-xs font-bold uppercase tracking-widest mb-6">
@@ -93,7 +93,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
 
         <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6">
           <p className="text-zinc-300">Need deeper context before downloading?</p>
-          <Link href={`/${lang}/editorial/legal`} className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-bold uppercase tracking-widest text-xs">
+          <Link href={`/${lang}/editorial/legal`} className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-emerald-400 hover:text-emerald-300 font-bold uppercase tracking-widest text-xs">
             Read Legal Basics <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

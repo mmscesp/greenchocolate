@@ -15,15 +15,15 @@ export function FinalMicDrop() {
         <div className="w-full h-full bg-zinc-900" />
       </div>
 
-      <div className="relative z-20 max-w-5xl px-6">
+      <div className="relative z-20 max-w-5xl px-4 sm:px-6">
         <ConciergeLabel emphasis="high" size="md" className="mb-8 block tracking-[0.4em]">The Standard</ConciergeLabel>
         <EditorialHeading size="2xl" className="text-white mb-12">Education first. <br />Privacy always.</EditorialHeading>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-          <Link href="/safety" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-lg uppercase tracking-widest">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+          <Link href="/safety" className="w-full sm:w-auto min-h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 sm:px-12 py-3 sm:py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-base sm:text-lg uppercase tracking-widest text-center">
             Get the Visitor Safety Kit
           </Link>
-          <Link href="/editorial" className="w-full sm:w-auto bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold px-12 py-6 rounded-full transition-all hover:scale-105 active:scale-95 text-lg uppercase tracking-widest">
+          <Link href="/editorial" className="w-full sm:w-auto min-h-11 bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold px-8 sm:px-12 py-3 sm:py-6 rounded-full transition-all hover:scale-105 active:scale-95 text-base sm:text-lg uppercase tracking-widest text-center">
             Join the Weekly Drop
           </Link>
         </div>

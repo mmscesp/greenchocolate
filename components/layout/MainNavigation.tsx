@@ -23,7 +23,7 @@ export default function MainNavigation() {
             Explore
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] glass-liquid rounded-md">
+            <ul className="grid gap-3 p-4 w-[min(92vw,20rem)] sm:w-[24rem] md:w-[26rem] lg:w-[31rem] glass-liquid rounded-md">
               <ListItem href="/spain/barcelona" title="Barcelona Guide" icon={<MapPin className="h-4 w-4" />}>
                 The complete hub for Barcelona's cannabis culture and clubs.
               </ListItem>

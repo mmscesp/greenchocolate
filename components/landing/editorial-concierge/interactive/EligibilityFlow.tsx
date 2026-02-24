@@ -46,7 +46,7 @@ export function EligibilityFlow() {
   };
 
   return (
-    <div className="w-full min-h-[320px] flex flex-col items-center justify-center px-6">
+    <div className="w-full min-h-[320px] flex flex-col items-center justify-center px-4 sm:px-6">
       <AnimatePresence mode="wait">
         {!isComplete ? (
           <motion.div
@@ -90,12 +90,12 @@ export function EligibilityFlow() {
               <button 
                 onClick={() => handleAnswer(true)}
                 className="
-                  flex-1 py-5 px-4 
+                  flex-1 min-h-11 py-4 sm:py-5 px-4 
                   bg-emerald-600 hover:bg-emerald-500 
                   text-white font-bold rounded-2xl 
                   transition-all duration-200
                   flex items-center justify-center gap-2 
-                  uppercase tracking-wider text-[11px]
+                  uppercase tracking-wide text-sm
                   shadow-lg shadow-emerald-900/20
                   border border-emerald-500/30
                 "
@@ -105,12 +105,12 @@ export function EligibilityFlow() {
               <button 
                 onClick={() => handleAnswer(false)}
                 className="
-                  flex-1 py-5 px-4 
+                  flex-1 min-h-11 py-4 sm:py-5 px-4 
                   bg-zinc-700 hover:bg-zinc-600 
                   text-white font-bold rounded-2xl 
                   transition-all duration-200
                   flex items-center justify-center gap-2 
-                  uppercase tracking-wider text-[11px]
+                  uppercase tracking-wide text-sm
                   border border-zinc-600
                 "
               >

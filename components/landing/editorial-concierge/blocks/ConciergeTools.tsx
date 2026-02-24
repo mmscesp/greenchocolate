@@ -10,7 +10,7 @@ import { Calculator, ClipboardCheck } from 'lucide-react';
 export function ConciergeTools() {
   return (
     <SectionWrapper className="bg-zinc-900 text-white" dark>
-      <div className="text-center mb-20">
+      <div className="text-center mb-14 sm:mb-20">
         <ConciergeLabel className="text-emerald-500 mb-6 block">Precision Intelligence</ConciergeLabel>
         <EditorialHeading size="xl" className="text-white">Know Before You Go</EditorialHeading>
         <p className="text-zinc-400 text-lg mt-6 max-w-2xl mx-auto">
@@ -19,10 +19,10 @@ export function ConciergeTools() {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-12">
+      <div className="grid lg:grid-cols-2 gap-8 sm:gap-12">
         {/* Tool A: Fine Estimator */}
         <div className="bg-zinc-950 rounded-[2.5rem] border border-white/5 overflow-hidden flex flex-col">
-          <div className="p-10 border-b border-white/5 bg-gradient-to-br from-red-500/10 to-transparent">
+          <div className="p-6 sm:p-8 lg:p-10 border-b border-white/5 bg-gradient-to-br from-red-500/10 to-transparent">
             <div className="flex items-center gap-3 mb-6">
               <Calculator className="w-5 h-5 text-red-500" />
               <ConciergeLabel emphasis="high">Risk Radar: Fine Estimator</ConciergeLabel>
@@ -30,12 +30,12 @@ export function ConciergeTools() {
             <EditorialHeading size="md" className="text-white">The Cost of Ignorance</EditorialHeading>
           </div>
           
-          <div className="p-10 flex-1 flex flex-col items-center justify-center min-h-[350px]">
+          <div className="p-6 sm:p-8 lg:p-10 flex-1 flex flex-col items-center justify-center min-h-[260px] sm:min-h-[320px] lg:min-h-[350px]">
             <RotaryFineEstimator />
           </div>
           
-          <div className="p-10 pt-0">
-            <Link href="/editorial/legal" className="block w-full py-5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl transition-colors uppercase tracking-widest text-xs text-center">
+          <div className="p-6 sm:p-8 lg:p-10 pt-0">
+            <Link href="/editorial/legal" className="block w-full min-h-11 py-3 sm:py-5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl transition-colors uppercase tracking-widest text-xs text-center">
               Read the Legal Basics
             </Link>
           </div>
@@ -43,7 +43,7 @@ export function ConciergeTools() {
 
         {/* Tool B: Eligibility Flow */}
         <div className="bg-zinc-950 rounded-[2.5rem] border border-white/5 overflow-hidden flex flex-col">
-          <div className="p-10 border-b border-white/5 bg-gradient-to-br from-emerald-500/10 to-transparent">
+          <div className="p-6 sm:p-8 lg:p-10 border-b border-white/5 bg-gradient-to-br from-emerald-500/10 to-transparent">
             <div className="flex items-center gap-3 mb-6">
               <ClipboardCheck className="w-5 h-5 text-emerald-500" />
               <ConciergeLabel emphasis="high">Preparedness Screening</ConciergeLabel>
@@ -51,11 +51,11 @@ export function ConciergeTools() {
             <EditorialHeading size="md" className="text-white">Eligibility Protocol</EditorialHeading>
           </div>
           
-          <div className="p-10 flex-1 flex flex-col items-center justify-center min-h-[350px]">
+          <div className="p-6 sm:p-8 lg:p-10 flex-1 flex flex-col items-center justify-center min-h-[260px] sm:min-h-[320px] lg:min-h-[350px]">
             <EligibilityFlow />
           </div>
           
-          <div className="p-10 pt-0 grid grid-cols-1">
+          <div className="p-6 sm:p-8 lg:p-10 pt-0 grid grid-cols-1">
              <ConciergeLabel size="xs" emphasis="low" className="text-center opacity-50 mb-4 italic">Result generated after screening</ConciergeLabel>
           </div>
         </div>

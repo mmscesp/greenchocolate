@@ -86,7 +86,7 @@ export default function ClubsPageClient({
           <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-zinc-800/20 rounded-full blur-[100px] translate-y-1/2" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div 
             variants={STAGGER_CONTAINER}
             initial="initial"
@@ -147,13 +147,13 @@ export default function ClubsPageClient({
 
       {/* Interactive Controls Section */}
       <section className="bg-zinc-50 py-12">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col lg:flex-row gap-8">
             
             {/* Left Column: Filter Sidebar */}
             <div className="lg:w-80 flex-shrink-0">
               <div className="sticky top-24 space-y-8">
-                <div className="bg-white rounded-[2rem] p-8 border border-zinc-200 shadow-sm">
+                <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
                   <div className="mb-8">
                     <EditorialHeading size="sm" className="text-zinc-900 uppercase tracking-widest border-b border-zinc-100 pb-4 mb-8">Advanced Filters</EditorialHeading>
                   </div>
@@ -169,7 +169,7 @@ export default function ClubsPageClient({
                   />
                 </div>
 
-                <div className="bg-zinc-900 rounded-[2rem] p-8 text-white relative overflow-hidden">
+                <div className="bg-zinc-900 rounded-[2rem] p-6 sm:p-8 text-white relative overflow-hidden">
                   <div className="relative z-10">
                     <ConciergeLabel size="xs" className="text-emerald-500 mb-4 block">Concierge Tip</ConciergeLabel>
                     <p className="text-zinc-400 text-sm leading-relaxed mb-6 font-serif italic">
@@ -187,12 +187,12 @@ export default function ClubsPageClient({
             {/* Right Column: Grid and Results */}
             <div className="flex-1">
               {/* View Toggle */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+                <div className="flex flex-wrap items-center gap-3">
                   <button 
                     type="button"
                     onClick={() => setViewMode('grid')}
-                    className={`flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
+                    className={`inline-flex min-h-11 items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
                       viewMode === 'grid' ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:bg-zinc-200'
                     }`}
                   >
@@ -203,7 +203,7 @@ export default function ClubsPageClient({
                     disabled
                     aria-disabled="true"
                     title="Map view is in development"
-                    className="flex items-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-400 bg-zinc-100 cursor-not-allowed"
+                    className="inline-flex min-h-11 items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-400 bg-zinc-100 cursor-not-allowed"
                   >
                     <Map className="h-4 w-4" /> Map View (Soon)
                   </button>
@@ -254,7 +254,7 @@ export default function ClubsPageClient({
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white rounded-[2rem] border border-zinc-200 p-20 text-center">
+                    <div className="bg-white rounded-[2rem] border border-zinc-200 p-8 sm:p-12 lg:p-20 text-center">
                       <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-zinc-100">
                         <Search className="h-8 w-8 text-zinc-300" />
                       </div>
@@ -272,7 +272,7 @@ export default function ClubsPageClient({
                           priceRange: [],
                           rating: 0
                         })}
-                        className="rounded-full px-12 py-6 font-bold uppercase tracking-widest text-xs"
+                        className="rounded-full min-h-11 px-8 sm:px-12 py-3 sm:py-6 font-bold uppercase tracking-widest text-xs"
                       >
                         Reset All Filters
                       </Button>

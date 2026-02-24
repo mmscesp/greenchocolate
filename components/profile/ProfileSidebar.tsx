@@ -101,7 +101,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
-                className="overflow-hidden whitespace-nowrap"
+                className="overflow-hidden"
               >
                 <h3 className="font-bold truncate leading-none mb-1">{displayName}</h3>
                 <p className="text-xs text-muted-foreground truncate">{t('user.member_since')} {memberSince}</p>
@@ -123,7 +123,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
                 onClick={onClose}
                 title={isCollapsed && !isMobile ? item.name : undefined}
                 className={cn(
-                  "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                  "group relative flex min-h-11 items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -141,7 +141,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: 'auto' }}
                       exit={{ opacity: 0, width: 0 }}
-                      className="flex-1 overflow-hidden whitespace-nowrap"
+                      className="flex-1 overflow-hidden"
                     >
                       {item.name}
                     </motion.span>
@@ -169,7 +169,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
           <Button 
             variant="ghost" 
             className={cn(
-              "w-full justify-start gap-3 rounded-xl hover:bg-accent",
+              "w-full min-h-11 justify-start gap-3 rounded-xl hover:bg-accent",
               isCollapsed && !isMobile ? "justify-center px-0" : ""
             )} 
             size="sm"
@@ -183,7 +183,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
           variant="ghost" 
           onClick={() => signOut()}
           className={cn(
-            "w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl",
+            "w-full min-h-11 justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl",
             isCollapsed && !isMobile ? "justify-center px-0" : ""
           )} 
           size="sm"
@@ -220,7 +220,7 @@ export function ProfileSidebar({
           variant="ghost"
           size="icon"
           onClick={onToggle}
-          className="absolute -right-3 top-4 h-6 w-6 rounded-full border bg-background shadow-md hover:bg-accent z-40 text-muted-foreground hover:text-foreground"
+          className="absolute -right-4 top-4 h-8 w-8 rounded-full border bg-background shadow-md hover:bg-accent z-40 text-muted-foreground hover:text-foreground"
         >
           {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
         </Button>
@@ -235,12 +235,12 @@ export function ProfileMobileNav() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden hover:bg-accent rounded-full transition-colors">
+        <Button variant="ghost" size="icon" className="lg:hidden h-11 w-11 hover:bg-accent rounded-full transition-colors">
           <Menu className="h-6 w-6 text-muted-foreground" />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-72 border-r-0 shadow-2xl">
+      <SheetContent side="left" className="p-0 w-[85vw] max-w-80 border-r-0 shadow-2xl">
         <SheetHeader className="sr-only">
           <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>

@@ -41,11 +41,11 @@ export function EditorialFAQ() {
                     opened: nextOpen === i,
                   });
                 }}
-                className="w-full flex items-center justify-between gap-8 text-left"
+                className="w-full flex items-center justify-between gap-4 sm:gap-8 text-left"
                 aria-expanded={openIndex === i}
                 aria-controls={`editorial-faq-panel-${i}`}
               >
-                <h4 className="text-xl md:text-2xl font-serif font-bold text-zinc-900 group-hover:text-emerald-600 transition-colors">
+                <h4 className="text-lg sm:text-xl md:text-2xl font-serif font-bold text-zinc-900 group-hover:text-emerald-600 transition-colors">
                   {faq.q}
                 </h4>
                 <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-emerald-50 transition-colors">
@@ -63,12 +63,12 @@ export function EditorialFAQ() {
           ))}
         </div>
         
-        <div className="mt-20 p-12 rounded-[2.5rem] bg-emerald-50 border border-emerald-100 text-center">
+        <div className="mt-20 p-6 sm:p-8 md:p-12 rounded-[2.5rem] bg-emerald-50 border border-emerald-100 text-center">
           <EditorialHeading size="sm" className="text-emerald-900 mb-4">Still have questions?</EditorialHeading>
           <p className="text-emerald-700 mb-8">Subscribe to the Intelligence Briefing or download the Safety Kit for deeper intelligence.</p>
           <Link
             href="/safety"
-            className="inline-block bg-emerald-600 text-white font-bold px-8 py-4 rounded-full hover:bg-emerald-700 transition-colors"
+            className="inline-flex min-h-11 items-center justify-center bg-emerald-600 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-emerald-700 transition-colors"
             onClick={() => {
               trackEvent('landing_faq_safety_kit_click', {
                 destination: '/safety',

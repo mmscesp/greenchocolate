@@ -48,16 +48,16 @@ import { PREMIUM_SPRING, FADE_UP, STAGGER_CONTAINER } from '@/components/landing
 
 function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAudit?: string }) {
   return (
-    <div className="sticky top-0 z-50 w-full h-12 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center">
-      <div className="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
-        <div className="flex items-center gap-6">
+    <div className="sticky top-0 z-50 w-full min-h-12 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center py-1">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 sm:gap-6 min-w-0">
           <div className="flex items-center gap-2">
             {isVerified ? (
               <PulsingStatusDot />
             ) : (
               <div className="w-2 h-2 rounded-full bg-zinc-500" />
             )}
-            <ConciergeLabel size="xs" emphasis="high">
+            <ConciergeLabel size="xs" emphasis="high" className="truncate">
               Status: {isVerified ? 'Verified' : 'Pending Audit'}
             </ConciergeLabel>
           </div>
@@ -70,7 +70,7 @@ function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAu
           )}
         </div>
         
-        <div className="flex items-center gap-2 text-zinc-500">
+        <div className="hidden sm:flex items-center gap-2 text-zinc-500">
           <ConciergeLabel size="xs">We do not broker access</ConciergeLabel>
         </div>
       </div>
@@ -192,7 +192,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div 
             variants={STAGGER_CONTAINER}
             initial="initial"
@@ -217,7 +217,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               </EditorialHeading>
             </motion.div>
 
-            <motion.div variants={FADE_UP} className="flex flex-wrap gap-4">
+            <motion.div variants={FADE_UP} className="flex flex-wrap gap-3 sm:gap-4">
               {club.allowsPreRegistration && (
                 <Button
                   size="xl"
@@ -228,7 +228,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     }
                     setShowPreRegistrationModal(true);
                   }}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-auto py-4 px-8 rounded-full text-lg shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] transition-all hover:scale-105"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold min-h-11 h-auto py-3 sm:py-4 px-6 sm:px-8 rounded-full text-base sm:text-lg shadow-[0_0_40px_-10px_rgba(16,185,129,0.5)] transition-all hover:scale-105"
                 >
                   {t('club.pre_register')}
                 </Button>
@@ -236,14 +236,14 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               
               {/* Image Navigation Dots */}
               {club.images.length > 1 && (
-                <div className="flex items-center gap-2 ml-4 bg-black/40 backdrop-blur-md px-4 rounded-full border border-white/10">
-                  <button onClick={prevImage} className="p-2 hover:text-emerald-400 transition-colors text-white">
+                <div className="flex items-center gap-2 sm:ml-4 bg-black/40 backdrop-blur-md px-3 sm:px-4 rounded-full border border-white/10">
+                  <button onClick={prevImage} className="min-h-11 min-w-11 p-2 hover:text-emerald-400 transition-colors text-white">
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <span className="text-sm font-mono text-white/80">
                     {currentImageIndex + 1} / {club.images.length}
                   </span>
-                  <button onClick={nextImage} className="p-2 hover:text-emerald-400 transition-colors text-white">
+                  <button onClick={nextImage} className="min-h-11 min-w-11 p-2 hover:text-emerald-400 transition-colors text-white">
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </div>
@@ -258,7 +258,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
           
           {/* About Card - Large */}
-          <div className="md:col-span-2 bg-white rounded-[2rem] p-8 border border-zinc-200 shadow-sm">
+          <div className="md:col-span-2 bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
                 <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -281,7 +281,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           {/* Info Column */}
           <div className="space-y-6">
             {/* Location Card (Blurred) */}
-            <div className="relative bg-white rounded-[2rem] p-8 border border-zinc-200 shadow-sm overflow-hidden group">
+            <div className="relative bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm overflow-hidden group">
               <div className="flex items-center gap-3 mb-6 relative z-10">
                 <MapPin className="h-5 w-5 text-zinc-400" />
                 <h3 className="font-bold text-zinc-900">Location</h3>
@@ -326,7 +326,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Hours Card */}
-            <div className="bg-white rounded-[2rem] p-8 border border-zinc-200 shadow-sm">
+            <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <Clock className="h-5 w-5 text-zinc-400" />
                 <h3 className="font-bold text-zinc-900">Opening Hours</h3>
@@ -342,7 +342,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Stats Card */}
-            <div className="bg-zinc-900 text-white rounded-[2rem] p-8 shadow-xl relative overflow-hidden">
+            <div className="bg-zinc-900 text-white rounded-[2rem] p-6 sm:p-8 shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 p-8 opacity-10">
                 <Cannabis className="h-32 w-32" />
               </div>
@@ -367,7 +367,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           </div>
 
           {/* Amenities - Full Width */}
-          <div className="md:col-span-3 bg-white rounded-[2rem] p-8 border border-zinc-200 shadow-sm mt-6">
+          <div className="md:col-span-3 bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm mt-6">
             <div className="flex items-center gap-3 mb-6">
               <Shield className="h-5 w-5 text-zinc-400" />
               <EditorialHeading size="md" className="text-zinc-900">Services & Amenities</EditorialHeading>
@@ -376,7 +376,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               {club.amenities.map((amenity, i) => (
                 <div key={i} className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-100">
                   <Check className="h-4 w-4 text-emerald-500" />
-                  <span className="text-zinc-700 font-medium">{amenity}</span>
+                  <span className="text-zinc-700 text-sm sm:text-base font-medium">{amenity}</span>
                 </div>
               ))}
             </div>
@@ -408,13 +408,13 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 </div>
               </div>
               
-              <div className="bg-zinc-100 rounded-[2rem] p-8 flex flex-col justify-center items-center text-center">
+              <div className="bg-zinc-100 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-center items-center text-center">
                 <ConciergeLabel className="mb-4 text-zinc-500">Ready to join?</ConciergeLabel>
                 <EditorialHeading size="md" className="mb-6">Apply for Membership</EditorialHeading>
                 <Button
                   size="lg"
                   onClick={() => setShowPreRegistrationModal(true)}
-                  className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-full px-8"
+                  className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-full min-h-11 px-6 sm:px-8"
                 >
                   Start Application
                 </Button>
@@ -453,7 +453,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     setShowPreRegistrationModal(false);
                     setFormState(null);
                   }}
-                  className="absolute top-4 right-4 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors"
+                  className="absolute top-4 right-4 min-h-11 min-w-11 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>

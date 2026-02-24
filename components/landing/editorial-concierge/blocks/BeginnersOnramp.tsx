@@ -28,7 +28,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
 
   return (
     <SectionWrapper className="bg-white">
-      <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-24 items-center">
         {/* Left Side: Curated Path */}
         <div className="space-y-12">
           <div>
@@ -57,7 +57,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
                 }}
               >
                 <motion.div
-                  className="group relative flex items-start gap-6 p-6 rounded-[2rem] bg-zinc-50/50 border border-zinc-200/50 transition-all duration-500 hover:border-emerald-500/30 hover:bg-zinc-50 overflow-hidden"
+                  className="group relative flex items-start gap-4 sm:gap-6 p-5 sm:p-6 rounded-[2rem] bg-zinc-50/50 border border-zinc-200/50 transition-all duration-500 hover:border-emerald-500/30 hover:bg-zinc-50 overflow-hidden"
                   whileHover={{ y: -4 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 >
@@ -94,7 +94,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
           {/* Image Placeholder */}
           <div className="absolute inset-0 bg-zinc-200 group-hover:scale-105 transition-transform duration-1000 z-0" />
           
-          <div className="absolute inset-0 z-20 p-12 flex flex-col justify-end items-start text-left pointer-events-none">
+          <div className="absolute inset-0 z-20 p-6 sm:p-8 lg:p-12 flex flex-col justify-end items-start text-left pointer-events-none">
             <ConciergeLabel emphasis="high" className="mb-4">The Experience</ConciergeLabel>
             <EditorialHeading size="lg" className="text-white mb-6">What does it feel like to be high?</EditorialHeading>
             <p className="text-white/70 text-lg mb-8 max-w-sm">
@@ -102,7 +102,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
             </p>
             <Link
               href="/safety"
-              className="pointer-events-auto bg-white text-black font-bold px-10 py-5 rounded-full hover:bg-emerald-50 transition-colors duration-500 flex items-center gap-3 group/btn"
+              className="pointer-events-auto min-h-11 w-full sm:w-auto bg-white text-black font-bold px-6 sm:px-10 py-3 sm:py-5 rounded-full hover:bg-emerald-50 transition-colors duration-500 flex items-center justify-center gap-3 group/btn"
               onClick={() => {
                 trackEvent('landing_onramp_read_guide_click', {
                   destination: '/safety',

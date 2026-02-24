@@ -83,7 +83,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
         </Link>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-3 gap-6 md:gap-8">
         {displayArticles.map((article) => (
           <Link
             key={article.id}
@@ -98,7 +98,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
             }}
           >
             <motion.div
-              className="group relative p-6 rounded-[2.5rem] bg-white border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden"
+              className="group relative p-5 sm:p-6 rounded-[2.5rem] bg-white border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden"
               whileHover={{ y: -6 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >

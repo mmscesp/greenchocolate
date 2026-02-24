@@ -47,7 +47,7 @@ export function StickyAccordion({ items }: StickyAccordionProps) {
             aria-expanded={isActive}
             aria-label={`${item.title} details`}
             className={cn(
-              'relative p-8 rounded-[2.5rem] border bg-zinc-950 flex flex-col transition-all duration-700 cursor-pointer group overflow-hidden text-left',
+              'relative p-6 sm:p-8 rounded-[2.5rem] border bg-zinc-950 flex flex-col transition-all duration-700 cursor-pointer group overflow-hidden text-left min-h-11',
               isActive ? 'lg:col-span-2 border-zinc-700' : 'lg:col-span-1 border-zinc-800'
             )}
             initial={false}
@@ -80,7 +80,7 @@ export function StickyAccordion({ items }: StickyAccordionProps) {
                 layout
                 className={cn(
                   "font-serif font-bold text-white transition-all duration-500",
-                  isActive ? 'text-4xl mb-6' : 'text-2xl mb-4'
+                  isActive ? 'text-3xl sm:text-4xl mb-6' : 'text-2xl mb-4'
                 )}
               >
                 {item.title}

@@ -19,7 +19,7 @@ const ICONS: Record<string, React.ElementType> = {
 export function VerificationStandard() {
   return (
     <SectionWrapper>
-      <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-20 items-center">
         <div>
           <ConciergeLabel className="text-emerald-600 mb-6">Our Standard</ConciergeLabel>
           <EditorialHeading size="xl" className="mb-8">The Verification Moat</EditorialHeading>
@@ -46,7 +46,7 @@ export function VerificationStandard() {
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden min-h-[480px] flex flex-col justify-center">
+        <div className="bg-zinc-900 rounded-[3rem] p-6 sm:p-8 lg:p-14 text-white relative overflow-hidden min-h-[320px] sm:min-h-[420px] lg:min-h-[480px] flex flex-col justify-center">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{ 
               backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0)', 
