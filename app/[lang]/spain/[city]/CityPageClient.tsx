@@ -17,6 +17,7 @@ import {
   Cannabis,
   CheckCircle
 } from 'lucide-react';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface Club {
   id: string;
@@ -135,16 +136,16 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
             </Badge>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+          <H1 className="mb-6">
             Cannabis Clubs in{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/80">
               {cityDetail.name}
             </span>
-          </h1>
+          </H1>
           
-          <p className="text-xl text-muted-foreground max-w-3xl mb-8 leading-relaxed">
+          <Lead className="max-w-3xl mb-8">
             {cityDetail.description || `Verified navigation for ${cityDetail.name}: local etiquette, neighborhoods, and club discovery.`}
-          </p>
+          </Lead>
           
           <div className="flex flex-wrap items-center gap-6 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground bg-muted px-4 py-2 rounded-full">
@@ -179,7 +180,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
               <Building2 className="h-6 w-6 text-primary" />
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Club Directory</h2>
-            <p className="text-sm text-muted-foreground">Browse verified clubs with public safety-first previews.</p>
+            <Text size="sm" variant="muted">Browse verified clubs with public safety-first previews.</Text>
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
           </Link>
           
@@ -191,7 +192,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
               <Compass className="h-6 w-6 text-primary" />
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Neighborhoods</h2>
-            <p className="text-sm text-muted-foreground">Compare local zones by activity and available club coverage.</p>
+            <Text size="sm" variant="muted">Compare local zones by activity and available club coverage.</Text>
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
           </Link>
           
@@ -203,7 +204,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
               <BookOpen className="h-6 w-6 text-primary" />
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Guides</h2>
-            <p className="text-sm text-muted-foreground">Read city-specific legal, etiquette, and safety content.</p>
+            <Text size="sm" variant="muted">Read city-specific legal, etiquette, and safety content.</Text>
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
           </Link>
         </motion.section>
@@ -219,7 +220,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
               <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
                 <Star className="h-5 w-5 text-amber-500" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground">Featured Verified Clubs</h2>
+              <H2>Featured Verified Clubs</H2>
             </div>
             <Button 
               variant="outline" 
@@ -243,14 +244,14 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
                   className="group block rounded-2xl border bg-card p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
                 >
                   <div className="flex flex-wrap items-center gap-3 mb-3">
-                    <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">{club.name}</h3>
+                    <H3 className="group-hover:text-primary transition-colors">{club.name}</H3>
                     {club.isVerified && (
                       <Badge className="bg-primary/10 text-primary border-primary/20">
                         <CheckCircle className="h-3 w-3 mr-1" /> Verified
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{club.shortDescription || club.description}</p>
+                  <Text variant="muted" size="sm" className="mb-4 line-clamp-2">{club.shortDescription || club.description}</Text>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-4">
                       <span className="text-muted-foreground bg-muted px-3 py-1.5 rounded-full">
@@ -272,7 +273,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <Building2 className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <p className="text-muted-foreground">No verified clubs found for this city yet.</p>
+                <Text variant="muted">No verified clubs found for this city yet.</Text>
               </div>
             )}
           </div>

@@ -3,6 +3,7 @@ import { getArticles, getCategoriesWithCounts, getFeaturedArticles } from '@/app
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface EditorialPageProps {
   params: Promise<{ lang: string }>;
@@ -56,17 +57,17 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       <section className="relative bg-gradient-to-b from-muted/50 to-background py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm">
-              <BookOpen className="w-4 h-4 mr-2" />
+            <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
               Knowledge Vault
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+            </Eyebrow>
+            <H1 size="xl" className="mb-6">
               Navigate Spain's Cannabis Culture <span className="text-primary">Confidently</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
-              Authoritative guides on legal compliance, club etiquette, and harm reduction. 
+            </H1>
+            <Lead className="mb-8">
+              Authoritative guides on legal compliance, club etiquette, and harm reduction.
               Built by experts, verified by lawyers, designed for responsible adults.
-            </p>
+            </Lead>
           </div>
         </div>
       </section>
@@ -74,7 +75,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       {/* Category Grid */}
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">Browse by Topic</h2>
+          <H2 className="mb-8">Browse by Topic</H2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {CATEGORIES.map((category) => (
               <Link
@@ -87,16 +88,16 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                   <div className={`inline-flex p-3 rounded-xl ${category.color} mb-4`}>
                     <category.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary transition-colors">
+                  <H3 className="mb-2 group-hover:text-primary transition-colors">
                     {category.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
+                  </H3>
+                  <Text variant="muted" className="mb-4">
                     {category.description}
-                  </p>
+                  </Text>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
+                    <Text size="sm" variant="muted">
                       {category.articleCount} {category.articleCount === 1 ? 'article' : 'articles'}
-                    </span>
+                    </Text>
                     <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>
                 </div>
@@ -111,7 +112,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
         <section className="py-16 md:py-24 bg-muted/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold">Featured Articles</h2>
+              <H2>Featured Articles</H2>
               <Button variant="ghost" asChild>
                 <Link href={`/${lang}/editorial/legal`}>
                   View all <ArrowRight className="ml-2 w-4 h-4" />
@@ -134,12 +135,12 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                     </div>
                   )}
                   <div className="p-5">
-                    <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                    <H3 size="sm" className="mb-2 group-hover:text-primary transition-colors line-clamp-2">
                       {article.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
+                    </H3>
+                    <Text variant="muted" size="sm" className="line-clamp-2 mb-4">
                       {article.excerpt}
-                    </p>
+                    </Text>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
@@ -161,37 +162,37 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Our Editorial Standards</h2>
-            <p className="text-muted-foreground mb-10">
+            <H2 className="mb-6">Our Editorial Standards</H2>
+            <Text variant="muted" className="mb-10">
               Every article in our Knowledge Vault is researched, fact-checked, and reviewed by legal experts and harm reduction specialists.
-            </p>
+            </Text>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Scale className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Legally Verified</h3>
-                <p className="text-sm text-muted-foreground">
+                <H4 className="mb-2">Legally Verified</H4>
+                <Text size="sm" variant="muted">
                   Reviewed by legal professionals familiar with Spanish cannabis law
-                </p>
+                </Text>
               </div>
               <div className="text-center">
                 <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Harm Reduction Focused</h3>
-                <p className="text-sm text-muted-foreground">
+                <H4 className="mb-2">Harm Reduction Focused</H4>
+                <Text size="sm" variant="muted">
                   Prioritizing safety and responsible consumption above all
-                </p>
+                </Text>
               </div>
               <div className="text-center">
                 <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <BookOpen className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">Regularly Updated</h3>
-                <p className="text-sm text-muted-foreground">
+                <H4 className="mb-2">Regularly Updated</H4>
+                <Text size="sm" variant="muted">
                   Laws change. We monitor updates and revise content accordingly
-                </p>
+                </Text>
               </div>
             </div>
           </div>

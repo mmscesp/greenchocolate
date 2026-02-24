@@ -107,7 +107,7 @@ export default function EligibilityQuiz() {
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/20">
             <FileCheck className="h-10 w-10 text-primary" />
           </div>
-          <h3 className="text-3xl font-serif text-white mb-2">Verified Safety Pass</h3>
+          <h3 className="text-3xl font-serif text-white mb-2">Preparedness Certificate</h3>
           <p className="text-muted-foreground text-sm uppercase tracking-widest">Barcelona 2026 • Legal Compliance</p>
         </div>
 
@@ -157,7 +157,7 @@ export default function EligibilityQuiz() {
           <h3 className="text-2xl font-serif text-white mb-2">Secure Your Results</h3>
           <p className="text-muted-foreground">
             {isEligible 
-              ? "You've passed the initial screening. Enter your email to receive your Verified Safety Pass and access the directory."
+              ? "You've passed the initial screening. Enter your email to receive your Preparedness Certificate and access the directory."
               : "We need to send you a detailed guide on how to meet the requirements."}
           </p>
         </div>

@@ -4,10 +4,22 @@ import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { CheckCircle2, ShieldCheck, Fingerprint, Lock } from 'lucide-react';
 
+const VERIFY_ITEMS = [
+  { title: 'Legal Compliance Audit', desc: 'Verified non-profit status and registration.', iconName: 'ShieldCheck' },
+  { title: 'Privacy Protection', desc: 'GDPR-compliant handling of member data.', iconName: 'Lock' },
+  { title: 'Transparency Policy', desc: 'Clear communication of rules and statutes.', iconName: 'Fingerprint' },
+];
+
+const ICONS: Record<string, React.ElementType> = {
+  ShieldCheck,
+  Lock,
+  Fingerprint,
+};
+
 export function VerificationStandard() {
   return (
     <SectionWrapper>
-      <div className="grid lg:grid-cols-2 gap-16 lg:gap-32 items-start">
+      <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         <div>
           <ConciergeLabel className="text-emerald-600 mb-6">Our Standard</ConciergeLabel>
           <EditorialHeading size="xl" className="mb-8">The Verification Moat</EditorialHeading>
@@ -17,25 +29,24 @@ export function VerificationStandard() {
           </p>
           
           <div className="space-y-8">
-            {[
-              { title: 'Legal Compliance Audit', desc: 'Verified non-profit status and registration.', icon: ShieldCheck },
-              { title: 'Privacy Protection', desc: 'GDPR-compliant handling of member data.', icon: Lock },
-              { title: 'Transparency Policy', desc: 'Clear communication of rules and statutes.', icon: Fingerprint },
-            ].map((item, i) => (
-              <div key={i} className="flex gap-6">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                  <item.icon className="w-5 h-5 text-emerald-600" />
+            {VERIFY_ITEMS.map((item, i) => {
+              const Icon = ICONS[item.iconName] || ShieldCheck;
+              return (
+                <div key={i} className="flex gap-6">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                    <Icon className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-zinc-900 mb-1">{item.title}</h4>
+                    <p className="text-sm text-zinc-500">{item.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-zinc-900 mb-1">{item.title}</h4>
-                  <p className="text-sm text-zinc-500">{item.desc}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        <div className="bg-zinc-900 rounded-[3rem] p-12 text-white relative overflow-hidden">
+        <div className="bg-zinc-900 rounded-[3rem] p-10 lg:p-14 text-white relative overflow-hidden min-h-[480px] flex flex-col justify-center">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" style={{ 
               backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0)', 

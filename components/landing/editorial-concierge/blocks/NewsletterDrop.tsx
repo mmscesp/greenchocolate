@@ -14,22 +14,22 @@ export function NewsletterDrop() {
       </div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        <ConciergeLabel emphasis="medium" className="mb-6 block text-emerald-500">Stay Highly Informed</ConciergeLabel>
-        <EditorialHeading size="xl" className="mb-8 text-white">Get weekly cannabis news for Spain in your inbox.</EditorialHeading>
+        <ConciergeLabel emphasis="medium" className="mb-6 block text-emerald-500">Strategic Intelligence</ConciergeLabel>
+        <EditorialHeading size="xl" className="mb-8 text-white">The definitive weekly briefing on the Spanish cannabis landscape.</EditorialHeading>
         <p className="text-zinc-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto">
-          Law updates, scam patterns, harm reduction reminders, and culture highlights. 
-          No product promotion. Just high-trust intelligence.
+          Critical legal updates, emerging scam patterns, and harm reduction protocols. 
+          Zero promotion. Pure, high-trust intelligence for the informed member.
         </p>
 
-        <form className="relative max-w-2xl mx-auto mb-16">
+        <form className="relative max-w-2xl mx-auto mb-16 flex flex-col md:block">
           <input 
             type="email" 
-            placeholder="Enter your email for the weekly drop..."
-            className="w-full bg-transparent border-b-2 border-zinc-800 py-6 px-4 text-2xl md:text-3xl text-white font-serif focus:outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
+            placeholder="Email address..."
+            className="w-full bg-transparent border-b-2 border-zinc-800 py-4 md:py-6 px-2 md:px-4 text-xl md:text-3xl text-white font-serif focus:outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
           />
           <button 
             type="submit"
-            className="absolute right-0 bottom-6 text-emerald-500 hover:text-emerald-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2"
+            className="mt-6 md:mt-0 md:absolute md:right-0 md:bottom-6 text-emerald-500 hover:text-emerald-400 font-bold uppercase tracking-widest text-sm md:text-xs flex items-center justify-center md:justify-start gap-2"
           >
             Subscribe <ArrowRight className="w-4 h-4" />
           </button>
@@ -40,7 +40,7 @@ export function NewsletterDrop() {
             'Legal Intelligence',
             'Scam Alerts',
             'Harm Reduction',
-            'Culture Drops'
+            'Regulatory Analysis'
           ].map((item) => (
             <div key={item} className="flex items-center gap-2 text-zinc-500">
               <Check className="w-4 h-4 text-emerald-500" />

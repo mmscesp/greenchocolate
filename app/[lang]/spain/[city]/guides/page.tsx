@@ -4,6 +4,7 @@ import { getCityBySlug } from '@/app/actions/cities';
 import { getArticles } from '@/app/actions/articles';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, Clock, ArrowRight, MapPin, Shield } from 'lucide-react';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
@@ -36,16 +37,16 @@ export default async function CityGuidesPage({ params }: PageProps) {
             </Badge>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+          <H1 className="mb-6">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/80">
               {cityDetail.name}
             </span>{' '}
             Guides
-          </h1>
+          </H1>
           
-          <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
+          <Lead className="max-w-3xl">
             City-specific legal, etiquette, and safety content curated for responsible visitors.
-          </p>
+          </Lead>
 
           {/* Stats */}
           <div className="flex items-center gap-8 mt-8 pt-8 border-t border-border">
@@ -93,13 +94,13 @@ export default async function CityGuidesPage({ params }: PageProps) {
                   </div>
                 </div>
                 
-                <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                <H3 className="mb-3 group-hover:text-primary transition-colors line-clamp-2">
                   {guide.title}
-                </h2>
+                </H3>
                 
-                <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+                <Text variant="muted" size="sm" className="line-clamp-3 mb-4">
                   {guide.excerpt}
-                </p>
+                </Text>
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
                   <span className="text-xs text-muted-foreground font-medium">Read Guide</span>
@@ -112,7 +113,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="h-8 w-8 text-muted-foreground" />
               </div>
-              <p className="text-muted-foreground">No city-specific guides are published for {cityDetail.name} yet.</p>
+              <Text variant="muted">No city-specific guides are published for {cityDetail.name} yet.</Text>
             </div>
           )}
         </section>

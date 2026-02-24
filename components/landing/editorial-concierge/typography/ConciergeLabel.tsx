@@ -14,9 +14,9 @@ const sizes = {
 };
 
 const emphases = {
-  low: 'text-zinc-500',
-  medium: 'text-zinc-400',
-  high: 'text-white/80'
+  low: 'text-muted-foreground/60',
+  medium: 'text-muted-foreground',
+  high: 'text-foreground'
 };
 
 export const ConciergeLabel = React.forwardRef<HTMLSpanElement, ConciergeLabelProps>(

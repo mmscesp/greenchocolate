@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Scale, AlertTriangle, Clock, ArrowRight } from 'lucide-react';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface LegalPageProps {
   params: Promise<{ lang: string }>;
@@ -104,31 +105,33 @@ export default function LegalPage({ params }: LegalPageProps) {
               className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"
             >
               <Scale className="w-4 h-4" />
-              Legal Framework
+              <Label size="sm">Legal Framework</Label>
             </motion.div>
             
-            <motion.h1 
-              className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 text-foreground"
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Understanding Spain&apos;s{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                Cannabis Laws
-              </span>
-            </motion.h1>
+              <H1 className="mb-6">
+                Understanding Spain&apos;s{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
+                  Cannabis Laws
+                </span>
+              </H1>
+            </motion.div>
             
-            <motion.p 
-              className="text-lg md:text-xl text-muted-foreground leading-relaxed"
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              Spain&apos;s relationship with cannabis is nuanced. Unlike Amsterdam&apos;s coffee shops, 
-              Spain operates under a private association model. Learn what this means for you, 
-              your rights, and how to stay compliant.
-            </motion.p>
+              <Lead>
+                Spain&apos;s relationship with cannabis is nuanced. Unlike Amsterdam&apos;s coffee shops,
+                Spain operates under a private association model. Learn what this means for you,
+                your rights, and how to stay compliant.
+              </Lead>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -147,11 +150,11 @@ export default function LegalPage({ params }: LegalPageProps) {
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-foreground mb-2">Public Consumption is Illegal</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Consuming in public spaces can result in fines starting at €601. 
+                    <H4 className="mb-2">Public Consumption is Illegal</H4>
+                    <Text size="sm" variant="muted">
+                      Consuming in public spaces can result in fines starting at €601.
                       Always consume inside the private club premises only.
-                    </p>
+                    </Text>
                   </div>
                 </div>
               </div>
@@ -159,11 +162,11 @@ export default function LegalPage({ params }: LegalPageProps) {
                 <div className="flex items-start gap-3">
                   <Scale className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-foreground mb-2">Private Associations are Legal</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Clubs operate as private, non-profit associations. Members can 
+                    <H4 className="mb-2">Private Associations are Legal</H4>
+                    <Text size="sm" variant="muted">
+                      Clubs operate as private, non-profit associations. Members can
                       consume on premises when following house rules.
-                    </p>
+                    </Text>
                   </div>
                 </div>
               </div>
@@ -176,14 +179,9 @@ export default function LegalPage({ params }: LegalPageProps) {
       <section className="py-16 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <motion.h2 
-              className="text-2xl md:text-3xl font-bold mb-8 text-foreground"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
+            <H2 className="mb-8">
               Legal Guides & Resources
-            </motion.h2>
+            </H2>
             
             <div className="grid gap-4">
               {legalGuides.map((article, index) => (
@@ -210,12 +208,12 @@ export default function LegalPage({ params }: LegalPageProps) {
                             {article.readTime} min read
                           </div>
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
+                        <H3 className="mb-2 group-hover:text-primary transition-colors">
                           {article.title}
-                        </h3>
-                        <p className="text-muted-foreground">
+                        </H3>
+                        <Text variant="muted">
                           {article.excerpt}
-                        </p>
+                        </Text>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                     </div>
@@ -236,11 +234,11 @@ export default function LegalPage({ params }: LegalPageProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <p className="text-sm text-muted-foreground">
-              <strong className="text-foreground">Disclaimer:</strong> This information is for educational purposes only 
-              and does not constitute legal advice. Laws may change. Consult with a qualified 
+            <Text size="sm" variant="muted" className="text-center">
+              <strong className="text-foreground">Disclaimer:</strong> This information is for educational purposes only
+              and does not constitute legal advice. Laws may change. Consult with a qualified
               legal professional for advice specific to your situation.
-            </p>
+            </Text>
           </motion.div>
         </div>
       </section>

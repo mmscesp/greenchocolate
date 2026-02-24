@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Heart, Users, Camera, Smartphone, Clock, ArrowRight } from 'lucide-react';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface EtiquettePageProps {
   params: Promise<{ lang: string }>;
@@ -104,30 +105,32 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"
             >
               <Heart className="w-4 h-4" />
-              Club Etiquette
+              <Label size="sm">Club Etiquette</Label>
             </motion.div>
             
-            <motion.h1 
-              className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 text-foreground"
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Be a Respectful{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                Club Guest
-              </span>
-            </motion.h1>
+              <H1 className="mb-6">
+                Be a Respectful{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
+                  Club Guest
+                </span>
+              </H1>
+            </motion.div>
             
-            <motion.p 
-              className="text-lg md:text-xl text-muted-foreground leading-relaxed"
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              Every club has its own culture and rules. Learn the unwritten norms, 
-              respect the space, and connect with the community like a local.
-            </motion.p>
+              <Lead>
+                Every club has its own culture and rules. Learn the unwritten norms,
+                respect the space, and connect with the community like a local.
+              </Lead>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -146,11 +149,11 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
                 <div className="flex items-start gap-3">
                   <Smartphone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-foreground mb-2">Phones Away</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Most clubs ask you to keep your phone in your pocket. 
+                    <H4 className="mb-2">Phones Away</H4>
+                    <Text size="sm" variant="muted">
+                      Most clubs ask you to keep your phone in your pocket.
                       No photos without explicit permission.
-                    </p>
+                    </Text>
                   </div>
                 </div>
               </div>
@@ -158,11 +161,11 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
                 <div className="flex items-start gap-3">
                   <Users className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-foreground mb-2">Respect Privacy</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Don&apos;t discuss other members or share who you met at the club. 
+                    <H4 className="mb-2">Respect Privacy</H4>
+                    <Text size="sm" variant="muted">
+                      Don&apos;t discuss other members or share who you met at the club.
                       What happens in the club stays in the club.
-                    </p>
+                    </Text>
                   </div>
                 </div>
               </div>
@@ -175,14 +178,9 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
       <section className="py-16 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <motion.h2 
-              className="text-2xl md:text-3xl font-bold mb-8 text-foreground"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
+            <H2 className="mb-8">
               Etiquette Guides
-            </motion.h2>
+            </H2>
             
             <div className="grid gap-4">
               {etiquetteGuides.map((article, index) => (
@@ -209,12 +207,12 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
                             {article.readTime} min read
                           </div>
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
+                        <H3 className="mb-2 group-hover:text-primary transition-colors">
                           {article.title}
-                        </h3>
-                        <p className="text-muted-foreground">
+                        </H3>
+                        <Text variant="muted">
                           {article.excerpt}
-                        </p>
+                        </Text>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                     </div>

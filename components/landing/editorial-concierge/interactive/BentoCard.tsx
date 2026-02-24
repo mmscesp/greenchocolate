@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { PREMIUM_SPRING, IMAGE_ZOOM } from '../motion/config';
+// Removed unused motion config
 
 interface BentoCardProps {
   title: string;
@@ -14,85 +14,55 @@ interface BentoCardProps {
 }
 
 export function BentoCard({ title, desc, imageSrc, size = 'small', className }: BentoCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <motion.div 
       className={cn(
-        "group relative overflow-hidden rounded-[2rem] bg-zinc-100 border border-zinc-200 p-8 flex flex-col justify-end transition-colors duration-500",
+        "group relative overflow-hidden rounded-[2rem] p-8 flex flex-col justify-end",
         size === 'large' && 'col-span-2 row-span-1 md:row-span-2',
         size === 'medium' && 'col-span-2 row-span-1',
-        isHovered ? 'bg-zinc-50 border-zinc-300 shadow-2xl shadow-zinc-200/50' : 'bg-zinc-100',
         className
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      initial={false}
-      whileTap={{ scale: 0.98 }}
-      transition={PREMIUM_SPRING}
+      whileHover={{ y: -6 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
+      {/* Ambient Glow */}
+      <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/0 to-emerald-500/0 rounded-[2.5rem] blur-xl opacity-0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 group-hover:opacity-100 transition-all duration-500 -z-10" />
+
+      {/* Inner Card Frame */}
+      <div className="absolute inset-0 bg-white border border-zinc-200/50 rounded-[2rem] transition-all duration-500 group-hover:border-emerald-500/30 group-hover:bg-zinc-50" />
       {/* Background Image Wrapper */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <motion.div 
-          className="absolute inset-0 bg-zinc-200"
-          initial="initial"
-          animate={isHovered ? "hover" : "initial"}
-          variants={IMAGE_ZOOM}
-        >
-          {imageSrc ? (
-            <img 
-              src={imageSrc} 
-              alt={title} 
-              className="w-full h-full object-cover opacity-20 grayscale group-hover:grayscale-0 group-hover:opacity-40 transition-all duration-700" 
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
-            />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-blue-500/10" />
-          )}
-        </motion.div>
-        <div className={cn(
-          "absolute inset-0 bg-gradient-to-t from-zinc-900/80 via-zinc-900/20 to-transparent z-10 transition-opacity duration-500",
-          isHovered ? 'opacity-100' : 'opacity-0'
-        )} />
+      <div className="absolute inset-[1px] rounded-[calc(2rem-1px)] z-0 overflow-hidden mix-blend-multiply opacity-40">
+        {imageSrc ? (
+          <img 
+            src={imageSrc} 
+            alt={title} 
+            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 to-zinc-50" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent z-10" />
       </div>
-      
+      {/* Content */}
       <div className="relative z-20">
-        <motion.h3 
-          className={cn(
-            "font-serif font-bold transition-colors duration-500",
-            isHovered ? 'text-white' : 'text-zinc-900',
-            size === 'large' ? 'text-3xl md:text-5xl mb-3' : 'text-xl md:text-2xl mb-2'
+        <h3 className={cn(
+            "font-serif font-bold text-zinc-900 group-hover:text-emerald-600 transition-colors duration-500",
+            size === 'large' ? 'text-3xl md:text-4xl mb-3' : 'text-xl md:text-2xl mb-2'
           )}
-          animate={{ y: isHovered ? 0 : 4 }}
-          transition={PREMIUM_SPRING}
         >
           {title}
-        </motion.h3>
+        </h3>
         
-        <AnimatePresence>
-          {isHovered && (
-            <motion.p 
-              className="text-white/80 text-sm md:text-base leading-relaxed line-clamp-2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 5 }}
-              transition={{ ...PREMIUM_SPRING, delay: 0.05 }}
-            >
-              {desc}
-            </motion.p>
-          )}
-        </AnimatePresence>
-        
-        {!isHovered && (
-          <motion.div 
-            className="w-8 h-1 bg-emerald-500/30 rounded-full"
-            layoutId={`indicator-${title}`}
-          />
-        )}
+        <p className="text-zinc-500 text-sm md:text-base leading-relaxed line-clamp-2 transition-colors duration-500 group-hover:text-zinc-700">
+          {desc}
+        </p>
       </div>
+      {/* Expanding Accent Line */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full group-hover:w-1/3 transition-all duration-500 z-20" />
     </motion.div>
   );
 }

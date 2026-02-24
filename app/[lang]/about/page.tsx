@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -39,8 +40,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 export default function AboutPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h1 className="text-4xl font-bold mb-4">About Us</h1>
-      <p className="text-lg text-muted-foreground">Methodology & Verification Standards</p>
+      <H1 className="mb-4">About Us</H1>
+      <Lead>Methodology & Verification Standards</Lead>
     </div>
   );
 }

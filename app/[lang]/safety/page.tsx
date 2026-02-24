@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import EligibilityQuiz from '@/components/marketing/EligibilityQuiz';
+import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
 import { Shield, AlertTriangle, Heart, Clock, ArrowRight, CheckCircle, Phone, MapPin, Users, Leaf, Brain, Activity } from 'lucide-react';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface SafetyPageProps {
   params: Promise<{ lang: string }>;
@@ -116,18 +117,18 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 </Badge>
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-black text-foreground mb-6">
+              <H1 className="mb-6">
                 Responsible Use{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
                   Guide
                 </span>
-              </h1>
+              </H1>
               
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-                Cannabis social clubs in Spain operate under a unique legal framework. 
-                Understanding the rules, risks, and best practices ensures you have a safe, 
+              <Lead className="mb-8">
+                Cannabis social clubs in Spain operate under a unique legal framework.
+                Understanding the rules, risks, and best practices ensures you have a safe,
                 enjoyable experience while respecting local laws.
-              </p>
+              </Lead>
 
               <div className="flex flex-wrap gap-3">
                 {['Evidence-based', '2026 Updated', 'Expert Reviewed'].map((item) => (
@@ -140,7 +141,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
             </div>
 
             <div className="lg:w-[380px] shrink-0">
-              <EligibilityQuiz />
+              <EligibilityFlow />
             </div>
           </div>
         </motion.section>
@@ -153,12 +154,12 @@ export default function SafetyPage({ params }: SafetyPageProps) {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mb-8"
           >
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+            <H2 className="mb-2">
               Essential Knowledge
-            </h2>
-            <p className="text-muted-foreground">
+            </H2>
+            <Text variant="muted">
               Key information every club member should know
-            </p>
+            </Text>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -175,8 +176,10 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                     <category.icon className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-foreground">{category.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
+                    <H3>{category.title}</H3>
+                    <Text size="sm" variant="muted" className="mt-1">
+                      {category.description}
+                    </Text>
                   </div>
                 </div>
 
@@ -195,37 +198,37 @@ export default function SafetyPage({ params }: SafetyPageProps) {
 
         {/* Emergency */}
         <motion.section 
-          className="rounded-3xl border border-red-200 bg-red-50 p-8 md:p-12"
+          className="rounded-3xl border border-red-500/20 bg-red-500/5 p-8 md:p-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <div className="flex items-start gap-4 mb-8">
-            <div className="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center">
+            <div className="w-14 h-14 bg-red-500/10 rounded-xl flex items-center justify-center">
               <AlertTriangle className="h-7 w-7 text-red-600" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Emergency Information</h2>
-              <p className="text-muted-foreground">
+              <H2 className="mb-2">Emergency Information</H2>
+              <Text variant="muted">
                 Save these numbers. In case of medical emergency, be honest with healthcare providers about cannabis consumption.
-              </p>
+              </Text>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-xl p-6 border border-red-100">
+            <div className="bg-card rounded-xl p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <Phone className="h-5 w-5 text-red-600" />
-                <h3 className="font-bold text-foreground">EU Emergency</h3>
+                <H3 className="font-bold">EU Emergency</H3>
               </div>
-              <p className="text-3xl font-black text-red-600 mb-2">112</p>
-              <p className="text-sm text-muted-foreground">Ambulance, Police, Fire</p>
+              <Text className="text-3xl font-black text-red-600 mb-2">112</Text>
+              <Text size="sm" variant="muted">Ambulance, Police, Fire</Text>
             </div>
 
-            <div className="bg-white rounded-xl p-6 border border-red-100">
+            <div className="bg-card rounded-xl p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <MapPin className="h-5 w-5 text-red-600" />
-                <h3 className="font-bold text-foreground">Barcelona Hospitals</h3>
+                <H3 className="font-bold">Barcelona Hospitals</H3>
               </div>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Hospital Clínic - C/ Villarroel 170</li>
@@ -233,13 +236,13 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               </ul>
             </div>
 
-            <div className="bg-white rounded-xl p-6 border border-red-100">
+            <div className="bg-card rounded-xl p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <Users className="h-5 w-5 text-red-600" />
-                <h3 className="font-bold text-foreground">Mossos d'Esquadra</h3>
+                <H3 className="font-bold">Mossos d'Esquadra</H3>
               </div>
-              <p className="text-3xl font-black text-red-600 mb-2">088</p>
-              <p className="text-sm text-muted-foreground">Catalan Police (non-emergency)</p>
+              <Text className="text-3xl font-black text-red-600 mb-2">088</Text>
+              <Text size="sm" variant="muted">Catalan Police (non-emergency)</Text>
             </div>
           </div>
         </motion.section>
@@ -257,8 +260,8 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 <Leaf className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-foreground">Ready to find a club?</h3>
-                <p className="text-muted-foreground">Browse verified cannabis social clubs.</p>
+                <H3 className="text-xl font-bold">Ready to find a club?</H3>
+                <Text variant="muted">Browse verified cannabis social clubs.</Text>
               </div>
             </div>
             <div className="flex gap-3">

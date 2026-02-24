@@ -11,6 +11,7 @@ import { Map, List, Grid, Sparkles, Cannabis } from 'lucide-react';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface ClubsPageClientProps {
   initialClubs: ClubCardType[];
@@ -228,12 +229,12 @@ export default function ClubsPageClient({
                   <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                     <List className="h-10 w-10 text-muted-foreground" />
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-3">
+                  <H3 className="text-2xl font-bold text-foreground mb-3">
                     {t('clubs.no_results.title')}
-                  </h3>
-                  <p className="text-muted-foreground mb-6">
+                  </H3>
+                  <Text variant="muted" className="mb-6">
                     {t('clubs.no_results.subtitle')}
-                  </p>
+                  </Text>
                   <Button
                     variant="outline"
                     onClick={() => handleFiltersChange({
@@ -262,12 +263,12 @@ export default function ClubsPageClient({
             <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <Map className="h-12 w-12 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-3">
+            <H3 className="text-2xl font-bold text-foreground mb-3">
               {t('clubs.view_mode.map')}
-            </h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
+            </H3>
+            <Text variant="muted" className="max-w-md mx-auto">
               {t('clubs.map.coming_soon')}
-            </p>
+            </Text>
           </motion.div>
         )}
       </div>

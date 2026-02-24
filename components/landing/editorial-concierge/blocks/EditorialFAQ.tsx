@@ -43,7 +43,7 @@ export function EditorialFAQ() {
         
         <div className="mt-20 p-12 rounded-[2.5rem] bg-emerald-50 border border-emerald-100 text-center">
           <EditorialHeading size="sm" className="text-emerald-900 mb-4">Still have questions?</EditorialHeading>
-          <p className="text-emerald-700 mb-8">Join the community drop or download the Safety Kit for deeper intelligence.</p>
+          <p className="text-emerald-700 mb-8">Subscribe to the Intelligence Briefing or download the Safety Kit for deeper intelligence.</p>
           <button className="bg-emerald-600 text-white font-bold px-8 py-4 rounded-full hover:bg-emerald-700 transition-colors">
             Get the Safety Kit
           </button>

@@ -18,11 +18,11 @@ const mistakes: MistakeData[] = [
   {
     id: 1,
     mistake: 'Walking into a club off the street',
-    correction: 'Private associations require sponsorship',
-    explanation: 'CSCs are member-only. You need an invite from an existing member to join.',
+    correction: 'Private associations are not public spaces',
+    explanation: 'CSCs are member-only. Prospective members must meet private association criteria to be considered.',
     icon: MapPin,
     color: 'from-amber-500 to-orange-600',
-    stat: '100% rejection rate',
+    stat: 'Strict entry protocols',
   },
   {
     id: 2,
@@ -187,8 +187,8 @@ export default function TouristMistakes() {
           Spain is <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">not</span> Amsterdam
         </h2>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Three mistakes that separate clueless tourists from informed visitors. 
-          <span className="text-gray-900 font-semibold"> Don't be that tourist.</span>
+          Three common misconceptions that separate casual visitors from informed guests. 
+          <span className="text-gray-900 font-semibold"> Respect the local culture.</span>
         </p>
       </motion.div>
 

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, History, Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface CulturePageProps {
   params: Promise<{ lang: string }>;
@@ -104,30 +105,32 @@ export default function CulturePage({ params }: CulturePageProps) {
               className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"
             >
               <History className="w-4 h-4" />
-              Culture & History
+              <Label size="sm">Culture & History</Label>
             </motion.div>
             
-            <motion.h1 
-              className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 text-foreground"
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              The Story Behind Spain&apos;s{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                Cannabis Movement
-              </span>
-            </motion.h1>
+              <H1 className="mb-6">
+                The Story Behind Spain&apos;s{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
+                  Cannabis Movement
+                </span>
+              </H1>
+            </motion.div>
             
-            <motion.p 
-              className="text-lg md:text-xl text-muted-foreground leading-relaxed"
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              From underground beginnings to cultural institutions. Discover how Spain&apos;s 
-              cannabis social clubs became a model for responsible adult use.
-            </motion.p>
+              <Lead>
+                From underground beginnings to cultural institutions. Discover how Spain&apos;s
+                cannabis social clubs became a model for responsible adult use.
+              </Lead>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -136,14 +139,7 @@ export default function CulturePage({ params }: CulturePageProps) {
       <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <motion.h2 
-              className="text-xl font-semibold mb-6 text-white"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              A Brief History
-            </motion.h2>
+            <H3 className="mb-6">A Brief History</H3>
             
             <motion.div 
               className="space-y-6"
@@ -160,11 +156,11 @@ export default function CulturePage({ params }: CulturePageProps) {
                 </div>
                 <div className="pb-6">
                   <span className="text-sm text-zinc-500">1990s</span>
-                  <h3 className="font-semibold text-white mb-2">The Movement Begins</h3>
-                  <p className="text-sm text-zinc-400">
-                    Activists start advocating for cannabis decriminalization. 
+                  <H4 className="text-white mb-2">The Movement Begins</H4>
+                  <Text size="sm" variant="muted">
+                    Activists start advocating for cannabis decriminalization.
                     The concept of &quot;cannabis clubs&quot; emerges from social movements.
-                  </p>
+                  </Text>
                 </div>
               </div>
               
@@ -177,11 +173,11 @@ export default function CulturePage({ params }: CulturePageProps) {
                 </div>
                 <div className="pb-6">
                   <span className="text-sm text-zinc-500">2006-2010</span>
-                  <h3 className="font-semibold text-white mb-2">Barcelona Emerges</h3>
-                  <p className="text-sm text-zinc-400">
-                    Barcelona becomes the epicenter. The first formal clubs 
+                  <H4 className="text-white mb-2">Barcelona Emerges</H4>
+                  <Text size="sm" variant="muted">
+                    Barcelona becomes the epicenter. The first formal clubs
                     open, creating a new model for private consumption.
-                  </p>
+                  </Text>
                 </div>
               </div>
               
@@ -193,11 +189,11 @@ export default function CulturePage({ params }: CulturePageProps) {
                 </div>
                 <div>
                   <span className="text-sm text-zinc-500">Present Day</span>
-                  <h3 className="font-semibold text-white mb-2">A Growing Movement</h3>
-                  <p className="text-sm text-zinc-400">
-                    Thousands of members across Spain. Continued evolution 
+                  <H4 className="text-white mb-2">A Growing Movement</H4>
+                  <Text size="sm" variant="muted">
+                    Thousands of members across Spain. Continued evolution
                     of the model and ongoing policy discussions.
-                  </p>
+                  </Text>
                 </div>
               </div>
             </motion.div>
@@ -209,14 +205,9 @@ export default function CulturePage({ params }: CulturePageProps) {
       <section className="py-16 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <motion.h2 
-              className="text-2xl md:text-3xl font-bold mb-8 text-foreground"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
+            <H2 className="mb-8">
               Culture Guides
-            </motion.h2>
+            </H2>
             
             <div className="grid gap-4">
               {cultureGuides.map((article, index) => (
@@ -243,12 +234,12 @@ export default function CulturePage({ params }: CulturePageProps) {
                             {article.readTime} min read
                           </div>
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
+                        <H3 className="mb-2 group-hover:text-primary transition-colors">
                           {article.title}
-                        </h3>
-                        <p className="text-muted-foreground">
+                        </H3>
+                        <Text variant="muted">
                           {article.excerpt}
-                        </p>
+                        </Text>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
                     </div>

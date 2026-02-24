@@ -13,7 +13,7 @@ export function ConciergeTools() {
         <ConciergeLabel className="text-emerald-500 mb-6 block">Precision Intelligence</ConciergeLabel>
         <EditorialHeading size="xl" className="text-white">Know Before You Go</EditorialHeading>
         <p className="text-zinc-400 text-lg mt-6 max-w-2xl mx-auto">
-          Two essential concierge tools to check your eligibility and understand the real legal landscape.
+          Two essential concierge tools to verify your preparedness and understand the real legal landscape.
           <br /><span className="text-zinc-600 text-sm mt-4 inline-block">Educational only. Not legal advice.</span>
         </p>
       </div>

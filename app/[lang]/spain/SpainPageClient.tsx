@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Building2, ArrowRight, Globe, Cannabis, Star } from 'lucide-react';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface City {
   id: string;
@@ -42,17 +43,17 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
             </Badge>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+          <H1 className="mb-6">
             Cannabis Social Clubs in{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/80">
               Spain
             </span>
-          </h1>
+          </H1>
           
-          <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
-            Explore city-by-city guidance, neighborhood context, and verified club listings. 
+          <Lead className="max-w-3xl">
+            Explore city-by-city guidance, neighborhood context, and verified club listings.
             Public pages stay educational; sensitive operational details remain gated.
-          </p>
+          </Lead>
 
           {/* Stats */}
           <div className="flex items-center gap-8 mt-8 pt-8 border-t border-border">
@@ -83,7 +84,7 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
             <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
               <Star className="h-5 w-5 text-amber-500" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground">Popular Cities</h2>
+            <H2>Popular Cities</H2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -103,13 +104,13 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
                     {city.region || city.country}
                   </div>
                   
-                  <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                  <H3 className="mb-3 group-hover:text-primary transition-colors">
                     {city.name}
-                  </h3>
+                  </H3>
                   
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                  <Text variant="muted" size="sm" className="mb-4 line-clamp-2">
                     {city.description || 'City-level trust and etiquette guidance.'}
-                  </p>
+                  </Text>
                   
                   <div className="flex items-center justify-between text-sm">
                     <span className="inline-flex items-center gap-2 text-muted-foreground bg-muted px-3 py-1.5 rounded-full">
@@ -130,7 +131,7 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <MapPin className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <p className="text-muted-foreground">No cities are available yet. Publish city records to activate this hub.</p>
+                <Text variant="muted">No cities are available yet. Publish city records to activate this hub.</Text>
               </div>
             )}
           </div>
@@ -145,11 +146,11 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
         >
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <h3 className="text-xl font-bold text-foreground mb-2 flex items-center gap-2">
+              <H3 className="mb-2 flex items-center gap-2">
                 <Cannabis className="h-5 w-5 text-primary" />
                 Need broad comparison first?
-              </h3>
-              <p className="text-muted-foreground">Use the full directory to compare verified clubs across cities.</p>
+              </H3>
+              <Text variant="muted">Use the full directory to compare verified clubs across cities.</Text>
             </div>
             <Button 
               asChild

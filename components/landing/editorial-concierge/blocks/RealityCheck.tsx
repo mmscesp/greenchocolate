@@ -8,7 +8,7 @@ import { AlertTriangle, ShieldCheck, MapPin } from 'lucide-react';
 const REALITY_ITEMS = [
   { 
     title: 'No Walk-ins', 
-    desc: 'Private associations require sponsorship and fixed member lists. Expect rejection if you arrive without preparation.', 
+    desc: 'Private associations require compliance with strict statutes and local ordinances. Expect rejection if you arrive without preparation.', 
     iconName: 'ShieldCheck',
     color: 'from-emerald-500 to-teal-600'
   },
@@ -25,8 +25,8 @@ const REALITY_ITEMS = [
     color: 'from-blue-500 to-indigo-600'
   },
   { 
-    title: 'Scam Immunity', 
-    desc: 'Street promoters and DM invitations are almost always scams. Use verified intelligence only to navigate.', 
+    title: 'Avoid Promoters', 
+    desc: 'Street promoters and DM solicitations operate outside the legal framework and expose you to unnecessary risk.', 
     iconName: 'ShieldCheck',
     color: 'from-amber-500 to-orange-600'
   },

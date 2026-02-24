@@ -24,7 +24,7 @@ export const EditorialHeading = React.forwardRef<HTMLHeadingElement, EditorialHe
         className={cn(
           'font-serif font-bold tracking-tight leading-[1.1]',
           sizes[size],
-          gradient && 'bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent',
+          gradient && 'bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent',
           className
         )}
         {...props}
