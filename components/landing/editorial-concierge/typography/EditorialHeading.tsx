@@ -13,7 +13,7 @@ const sizes = {
   lg: 'text-3xl md:text-4xl lg:text-5xl',
   xl: 'text-4xl md:text-6xl lg:text-7xl',
   '2xl': 'text-5xl md:text-7xl lg:text-8xl',
-  hero: 'text-[clamp(2.5rem,8vw,10rem)]'
+  hero: 'text-[clamp(2.5rem,8vw,10rem)] leading-tight tracking-normal'
 };
 
 export const EditorialHeading = React.forwardRef<HTMLHeadingElement, EditorialHeadingProps>(
