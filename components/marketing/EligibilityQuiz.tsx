@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, XCircle, ArrowRight, UserCheck, Shield, HelpCircle, RotateCcw, Sparkles, Mail, Fingerprint, Scale, FileCheck } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, UserCheck, Shield, HelpCircle, RotateCcw, Sparkles, Mail, Fingerprint, Scale, FileCheck } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 

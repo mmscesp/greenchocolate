@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, ShieldAlert, Fingerprint, ArrowRight } from 'lucide-react';
+import { Lock, ShieldAlert, Fingerprint, ArrowRight } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 

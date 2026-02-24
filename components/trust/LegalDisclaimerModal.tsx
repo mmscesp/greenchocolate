@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, AlertOctagon, Check, X } from 'lucide-react';
+import { Shield, AlertOctagon, Check, X } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 
 export default function LegalDisclaimerModal() {

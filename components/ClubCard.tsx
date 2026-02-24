@@ -8,7 +8,7 @@ import { Button } from './ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { Club as ClubModel } from '@/lib/types';
 import type { ClubCard as ClubCardData } from '@/app/actions/clubs';
-import { MapPin, Star, Users, Clock, CheckCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { MapPin, Star, Users, Clock, CheckCircle, ArrowRight, ShieldCheck } from '@/lib/icons';
 import TrustBadge from './trust/TrustBadge';
 
 type ClubCardEntity = ClubModel | ClubCardData;

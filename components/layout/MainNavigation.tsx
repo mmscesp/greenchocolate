@@ -12,7 +12,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { BookOpen, Shield, Scale, MapPin, Calendar } from 'lucide-react';
+import { BookOpen, Shield, Scale, MapPin, Calendar } from '@/lib/icons';
 
 export default function MainNavigation() {
   return (

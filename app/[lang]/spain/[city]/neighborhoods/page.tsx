@@ -19,6 +19,9 @@ export default async function NeighborhoodsPage({ params }: PageProps) {
     notFound();
   }
 
+  type NeighborhoodRow = (typeof neighborhoods)[number];
+  type ClubRow = (typeof clubs)[number];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <section className="rounded-2xl border bg-card p-8">
@@ -27,8 +30,8 @@ export default async function NeighborhoodsPage({ params }: PageProps) {
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {neighborhoods.length > 0 ? neighborhoods.map((neighborhood) => {
-          const sampleClub = clubs.find((club) => club.neighborhood === neighborhood.name);
+        {neighborhoods.length > 0 ? neighborhoods.map((neighborhood: NeighborhoodRow) => {
+          const sampleClub = clubs.find((club: ClubRow) => club.neighborhood === neighborhood.name);
           return (
             <Link
               key={neighborhood.name}

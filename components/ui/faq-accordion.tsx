@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 const faqItems = [

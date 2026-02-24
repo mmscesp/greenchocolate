@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Shield } from 'lucide-react';
+import { ArrowLeft, Shield } from '@/lib/icons';
 import LanguageSelector from '@/components/LanguageSelector';
 import { AdminSidebar, AdminMobileNav } from '@/components/admin/AdminSidebar';
 

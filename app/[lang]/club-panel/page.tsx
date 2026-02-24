@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Logo, LogoIcon } from '@/components/ui/logo';
-import { LogIn, UserPlus, Shield } from 'lucide-react';
+import { LogIn, UserPlus, Shield } from '@/lib/icons';
 
 export default function ClubPanelChooser() {
   return (

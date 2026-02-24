@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { PREMIUM_SPRING } from '../motion/config';
-import { ShieldCheck, AlertTriangle, MapPin } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, MapPin } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
 
 const ICONS = {

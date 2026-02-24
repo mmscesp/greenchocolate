@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
 import LanguageSelector from './LanguageSelector';
 import { Logo, LogoIcon } from '@/components/ui/logo';
-import { MapPin, BookOpen, Users, Shield, Mail, Instagram, Twitter } from 'lucide-react';
+import { MapPin, BookOpen, Users, Shield, Mail, Instagram, Twitter } from '@/lib/icons';
 
 export default function Footer() {
   const { t } = useLanguage();

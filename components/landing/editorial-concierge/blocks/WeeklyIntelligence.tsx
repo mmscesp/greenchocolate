@@ -3,7 +3,7 @@ import React from 'react';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { ArrowRight, AlertCircle, Info, ShieldCheck, Newspaper } from 'lucide-react';
+import { ArrowRight, AlertCircle, Info, ShieldCheck, Newspaper } from '@/lib/icons';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 

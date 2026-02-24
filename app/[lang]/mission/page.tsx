@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { Shield, CheckCircle, Eye, Lock } from 'lucide-react';
+import { Shield, CheckCircle, Eye, Lock } from '@/lib/icons';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/Footer';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';

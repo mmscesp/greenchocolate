@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertTriangle, Shield, Info, Scale, ArrowRight, Banknote, Gavel } from 'lucide-react';
+import { AlertTriangle, Shield, Info, Scale, ArrowRight, Banknote, Gavel } from '@/lib/icons';
 
 interface FineLevel {
   level: number;

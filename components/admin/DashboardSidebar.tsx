@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Logo, LogoIcon } from '@/components/ui/logo';
-import { BarChart3, Users, Calendar, Settings, LogOut, Home } from 'lucide-react';
+import { BarChart3, Users, Calendar, Settings, LogOut, Home } from '@/lib/icons';
 
 const navItems = [
   { href: '/club-panel/dashboard', label: 'Overview', icon: BarChart3 },

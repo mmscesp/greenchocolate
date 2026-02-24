@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Shield, AlertCircle, Calendar } from 'lucide-react';
+import { BookOpen, Shield, AlertCircle, Calendar } from '@/lib/icons';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';

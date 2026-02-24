@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, History, Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
+import { ArrowLeft, History, Calendar, MapPin, Clock, ArrowRight } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface CulturePageProps {

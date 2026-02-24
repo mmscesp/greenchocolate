@@ -5,7 +5,7 @@ import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { motion } from 'framer-motion';
-import { ArrowRight, Clock, User } from 'lucide-react';
+import { ArrowRight, Clock, User } from '@/lib/icons';
 import { type ArticleCard } from '@/app/actions/articles';
 import { trackEvent } from '@/lib/analytics';
 

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { Plus } from 'lucide-react';
+import { Plus } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
 
 const FAQS = [

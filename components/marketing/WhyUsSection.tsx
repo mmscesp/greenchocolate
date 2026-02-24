@@ -2,17 +2,15 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { 
-  BookOpen, 
-  Shield, 
-  Ticket, 
-  CheckCircle2, 
-  Lock, 
-  Eye, 
-  Sparkles,
-  Award,
-  Fingerprint
-} from 'lucide-react';
+import { BookOpen, 
+Shield, 
+Ticket, 
+CheckCircle2, 
+Lock, 
+Eye, 
+Sparkles,
+Award,
+Fingerprint } from '@/lib/icons';
 
 const features = [
   {

@@ -1,7 +1,7 @@
 // AES-256-GCM Encryption Service for PII Protection
 // Simplified for MVP: Single bundle encryption per user
 
-import { createCipheriv, createDecipheriv, createHash, randomBytes, scryptSync } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash, createSecretKey, randomBytes, scryptSync } from 'crypto';
 import { getServerEnv } from '@/lib/env';
 
 const ALGORITHM = 'aes-256-gcm';
@@ -47,19 +47,18 @@ export class EncryptionService {
   private static encryptInternal(data: unknown): string {
     const masterKey = getMasterKey();
     const iv = randomBytes(IV_LENGTH);
+    const keyBytes = Uint8Array.from(masterKey);
+    const ivBytes = Uint8Array.from(iv);
 
-    const cipher = createCipheriv(ALGORITHM, masterKey, iv);
+    const cipher = createCipheriv(ALGORITHM, createSecretKey(keyBytes), ivBytes);
     const dataString = JSON.stringify(data);
-    const encrypted = Buffer.concat([
-      cipher.update(dataString, 'utf8'),
-      cipher.final(),
-    ]);
+    const ciphertext = cipher.update(dataString, 'utf8', 'hex') + cipher.final('hex');
 
     const authTag = cipher.getAuthTag();
     const bundle: EncryptedBundle = {
       iv: iv.toString('hex'),
       authTag: authTag.toString('hex'),
-      ciphertext: encrypted.toString('hex'),
+      ciphertext,
     };
 
     return Buffer.from(JSON.stringify(bundle)).toString('base64');
@@ -67,6 +66,7 @@ export class EncryptionService {
 
   private static decryptInternal(encryptedBundle: string): unknown {
     const masterKey = getMasterKey();
+    const keyBytes = Uint8Array.from(masterKey);
 
     const bundle: EncryptedBundle = JSON.parse(
       Buffer.from(encryptedBundle, 'base64').toString('utf8')
@@ -74,18 +74,15 @@ export class EncryptionService {
 
     const decipher = createDecipheriv(
       ALGORITHM,
-      masterKey,
-      Buffer.from(bundle.iv, 'hex')
+      createSecretKey(keyBytes),
+      Uint8Array.from(Buffer.from(bundle.iv, 'hex'))
     );
 
-    decipher.setAuthTag(Buffer.from(bundle.authTag, 'hex'));
+    decipher.setAuthTag(Uint8Array.from(Buffer.from(bundle.authTag, 'hex')));
 
-    const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(bundle.ciphertext, 'hex')),
-      decipher.final(),
-    ]);
+    const decryptedText = decipher.update(bundle.ciphertext, 'hex', 'utf8') + decipher.final('utf8');
 
-    return JSON.parse(decrypted.toString('utf8'));
+    return JSON.parse(decryptedText);
   }
 
   /**

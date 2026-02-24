@@ -3,16 +3,14 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getCurrentUserProfile } from '@/app/actions/users';
-import { 
-  User, 
-  Settings, 
-  Shield, 
-  Heart, 
-  Star, 
-  ClipboardList,
-  ArrowRight,
-  Clock
-} from 'lucide-react';
+import { User, 
+Settings, 
+Shield, 
+Heart, 
+Star, 
+ClipboardList,
+ArrowRight,
+Clock } from '@/lib/icons';
 
 export const dynamic = 'force-dynamic';
 

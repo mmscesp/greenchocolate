@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { languages, Language } from '@/lib/i18n';
-import { ChevronDown, Globe } from 'lucide-react';
+import { ChevronDown, Globe } from '@/lib/icons';
 
 interface LanguageSelectorProps {
   variant?: 'header' | 'footer';

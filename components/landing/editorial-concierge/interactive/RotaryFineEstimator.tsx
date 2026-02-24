@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { PREMIUM_SPRING } from '../motion/config';
-import { AlertTriangle, MapPin, Users, Building2, Dumbbell } from 'lucide-react';
+import { AlertTriangle, MapPin, Users, Building2, Dumbbell } from '@/lib/icons';
 
 interface FineScenario {
   amount: string;

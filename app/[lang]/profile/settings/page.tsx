@@ -23,16 +23,14 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useLanguage } from '@/hooks/useLanguage';
-import {
-  Bell,
-  Shield,
-  Eye,
-  Download,
-  Check,
-  X,
-  Lock,
-  Trash2
-} from 'lucide-react';
+import { Bell,
+Shield,
+Eye,
+Download,
+Check,
+X,
+Lock,
+Trash2 } from '@/lib/icons';
 import { toast } from 'sonner';
 
 export default function SettingsPage() {

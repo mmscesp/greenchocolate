@@ -16,17 +16,15 @@ import {
 } from '@/app/actions/membership';
 import { getProfileBackendStatus, type UserProfileBackendStatus } from '@/app/actions/users';
 import Link from 'next/link';
-import {
-  Check,
-  X,
-  Clock,
-  AlertCircle,
-  Calendar,
-  MapPin,
-  ExternalLink,
-  Loader2,
-  RefreshCw,
-} from 'lucide-react';
+import { Check,
+X,
+Clock,
+AlertCircle,
+Calendar,
+MapPin,
+ExternalLink,
+Loader2,
+RefreshCw, } from '@/lib/icons';
 
 export default function UserRequestsPage() {
   const { t, language } = useLanguage();

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Mail, Star, ClipboardList, Heart } from 'lucide-react';
+import { ArrowLeft, Mail, Star, ClipboardList, Heart } from '@/lib/icons';
 import { getAdminUserById, updateUserRole, updateUserVerification } from '@/app/actions/admin-users';
 
 interface UserDetailPageProps {
@@ -17,6 +17,10 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
   if (!user) {
     notFound();
   }
+
+  type MembershipRequestRow = (typeof user.membershipRequests)[number];
+  type ReviewRow = (typeof user.reviews)[number];
+  type FavoriteRow = (typeof user.favorites)[number];
 
   return (
     <div className="space-y-6">
@@ -88,7 +92,7 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
             {user.membershipRequests.length === 0 ? (
               <p className="text-sm text-muted-foreground">No requests yet.</p>
             ) : (
-              user.membershipRequests.map((request) => (
+              user.membershipRequests.map((request: MembershipRequestRow) => (
                 <div key={request.id} className="text-sm border rounded-md p-2">
                   <div className="font-medium">{request.club.name}</div>
                   <div className="text-muted-foreground">{request.status}</div>
@@ -109,7 +113,7 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
             {user.reviews.length === 0 ? (
               <p className="text-sm text-muted-foreground">No reviews yet.</p>
             ) : (
-              user.reviews.map((review) => (
+              user.reviews.map((review: ReviewRow) => (
                 <div key={review.id} className="text-sm border rounded-md p-2">
                   <div className="font-medium">{review.club.name}</div>
                   <div className="text-muted-foreground">{review.rating}/5</div>
@@ -130,7 +134,7 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
             {user.favorites.length === 0 ? (
               <p className="text-sm text-muted-foreground">No favorites yet.</p>
             ) : (
-              user.favorites.map((favorite) => (
+              user.favorites.map((favorite: FavoriteRow) => (
                 <div key={favorite.id} className="text-sm border rounded-md p-2">
                   <div className="font-medium">{favorite.club.name}</div>
                   <div className="text-muted-foreground">{favorite.club.isVerified ? 'Verified club' : 'Unverified club'}</div>

@@ -6,22 +6,20 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { FilterOptions } from '@/lib/types';
 import { useLanguage } from '@/hooks/useLanguage';
-import {
-  Filter,
-  X,
-  MapPin,
-  Star,
-  DollarSign,
-  CheckCircle,
-  Sparkles,
-  Search,
-  SlidersHorizontal,
-  Cannabis,
-  Shield,
-  Zap,
-  Clock,
-  LayoutGrid
-} from 'lucide-react';
+import { Filter,
+X,
+MapPin,
+Star,
+DollarSign,
+CheckCircle,
+Sparkles,
+Search,
+SlidersHorizontal,
+Cannabis,
+Shield,
+Zap,
+Clock,
+LayoutGrid } from '@/lib/icons';
 import { EditorialHeading } from './landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
 import { trackEvent } from '@/lib/analytics';

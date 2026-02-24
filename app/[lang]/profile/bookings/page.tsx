@@ -9,17 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useLanguage } from '@/hooks/useLanguage';
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Users,
-  Check,
-  X,
-  ExternalLink,
-  CalendarDays,
-  Search
-} from 'lucide-react';
+import { Calendar,
+Clock,
+MapPin,
+Users,
+Check,
+X,
+ExternalLink,
+CalendarDays,
+Search } from '@/lib/icons';
 
 interface Booking {
   id: string;

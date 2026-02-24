@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Rocket, Loader2, PartyPopper } from 'lucide-react';
+import { Rocket, Loader2, PartyPopper } from '@/lib/icons';
 
 export default function WaitlistForm() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');

@@ -8,7 +8,7 @@ import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { BentoCard } from '../interactive/BentoCard';
-import { Search } from 'lucide-react';
+import { Search } from '@/lib/icons';
 
 const TOPICS = [
   { id: 'laws', title: 'Laws', desc: "Spain's rules, fines, and what 'private' really means.", size: 'large' as const, img: '/images/topics/laws.webp', href: '/editorial/legal' },

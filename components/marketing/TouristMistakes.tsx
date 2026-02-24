@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, CheckCircle2, MapPin, Camera, Lock, Shield, Sparkles } from 'lucide-react';
+import { AlertCircle, CheckCircle2, MapPin, Camera, Lock, Shield, Sparkles } from '@/lib/icons';
 
 interface MistakeData {
   id: number;

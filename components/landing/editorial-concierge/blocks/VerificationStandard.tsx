@@ -2,7 +2,7 @@ import React from 'react';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { CheckCircle2, ShieldCheck, Fingerprint, Lock } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Fingerprint, Lock } from '@/lib/icons';
 
 const VERIFY_ITEMS = [
   { title: 'Legal Compliance Audit', desc: 'Verified non-profit status and registration.', iconName: 'ShieldCheck' },

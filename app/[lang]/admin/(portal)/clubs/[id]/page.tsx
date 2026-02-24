@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Building2, Users, Calendar, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Building2, Users, Calendar, ClipboardList } from '@/lib/icons';
 import { getAdminClubById, updateClubFlags } from '@/app/actions/admin-clubs';
 
 interface ClubDetailPageProps {
@@ -17,6 +17,10 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
   if (!club) {
     notFound();
   }
+
+  type AdminRow = (typeof club.admins)[number];
+  type MembershipRequestRow = (typeof club.membershipRequests)[number];
+  type EventRow = (typeof club.events)[number];
 
   return (
     <div className="space-y-6">
@@ -84,7 +88,7 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
             {club.admins.length === 0 ? (
               <p className="text-sm text-muted-foreground">No assigned admins.</p>
             ) : (
-              club.admins.map((admin) => (
+              club.admins.map((admin: AdminRow) => (
                 <div key={admin.id} className="border rounded-md p-2 text-sm">
                   <div className="font-medium">{admin.displayName || 'Unnamed admin'}</div>
                   <div className="text-muted-foreground">{admin.email}</div>
@@ -105,7 +109,7 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
             {club.membershipRequests.length === 0 ? (
               <p className="text-sm text-muted-foreground">No recent requests.</p>
             ) : (
-              club.membershipRequests.map((request) => (
+              club.membershipRequests.map((request: MembershipRequestRow) => (
                 <div key={request.id} className="border rounded-md p-2 text-sm">
                   <div className="font-medium">{request.user.displayName || request.user.email}</div>
                   <div className="text-muted-foreground">{request.status}</div>
@@ -126,7 +130,7 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
             {club.events.length === 0 ? (
               <p className="text-sm text-muted-foreground">No events.</p>
             ) : (
-              club.events.map((event) => (
+              club.events.map((event: EventRow) => (
                 <div key={event.id} className="border rounded-md p-2 text-sm">
                   <div className="font-medium">{event.name}</div>
                   <div className="text-muted-foreground">

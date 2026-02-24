@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { PREMIUM_SPRING } from '../motion/config';
-import { Check, X, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Check, X, ShieldCheck, AlertCircle } from '@/lib/icons';
 
 const STEPS = [
   { 

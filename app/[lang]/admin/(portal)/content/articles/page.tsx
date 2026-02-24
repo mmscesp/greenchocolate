@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminContentArticlesPage() {
   const articles = await getAdminArticleIndex();
+  type ArticleRow = (typeof articles)[number];
 
   return (
     <div className="space-y-6">
@@ -24,7 +25,7 @@ export default async function AdminContentArticlesPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {articles.map((article) => (
+            {articles.map((article: ArticleRow) => (
               <div key={article.id} className="border rounded-md p-3">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                   <div>

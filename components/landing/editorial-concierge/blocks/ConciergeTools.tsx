@@ -5,7 +5,7 @@ import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { RotaryFineEstimator } from '../interactive/RotaryFineEstimator';
 import { EligibilityFlow } from '../interactive/EligibilityFlow';
-import { Calculator, ClipboardCheck } from 'lucide-react';
+import { Calculator, ClipboardCheck } from '@/lib/icons';
 
 export function ConciergeTools() {
   return (

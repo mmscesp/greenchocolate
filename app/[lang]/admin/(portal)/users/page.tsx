@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Search, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Users } from '@/lib/icons';
 import { getAdminUsers, updateUserRole, updateUserVerification } from '@/app/actions/admin-users';
 
 interface UsersPageProps {
@@ -25,6 +25,7 @@ export default async function AdminUsersPage({ params, searchParams }: UsersPage
   const page = Number(getString(query.page, '1')) || 1;
 
   const data = await getAdminUsers({ query: q, role, page, pageSize: 20 });
+  type UserRow = (typeof data.users)[number];
 
   const buildUrl = (nextPage: number) => {
     const paramsObj = new URLSearchParams();
@@ -76,7 +77,7 @@ export default async function AdminUsersPage({ params, searchParams }: UsersPage
             </div>
           ) : (
             <div className="space-y-4">
-              {data.users.map((user) => (
+              {data.users.map((user: UserRow) => (
                 <div key={user.id} className="border rounded-lg p-4">
                   <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
                     <div className="flex items-start gap-3 min-w-0">

@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter } from '@/lib/icons';
 import Link from 'next/link';
 
 interface Category {

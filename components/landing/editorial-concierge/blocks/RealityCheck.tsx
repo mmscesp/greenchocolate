@@ -3,7 +3,7 @@ import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { StickyAccordion } from '../interactive/StickyAccordion';
-import { AlertTriangle, ShieldCheck, MapPin } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, MapPin } from '@/lib/icons';
 
 const REALITY_ITEMS = [
   { 

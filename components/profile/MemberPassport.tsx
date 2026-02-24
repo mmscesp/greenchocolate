@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Fingerprint, Shield, Calendar, Clock, CheckCircle2, FileCheck, UserCheck, Lock } from 'lucide-react';
+import { Fingerprint, Shield, Calendar, Clock, CheckCircle2, FileCheck, UserCheck, Lock } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import TrustBadge from '@/components/trust/TrustBadge';
 

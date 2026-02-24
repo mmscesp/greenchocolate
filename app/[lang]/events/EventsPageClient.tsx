@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Star, Clock, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Star, Clock, ArrowRight } from '@/lib/icons';
 
 interface Event {
   id: string;

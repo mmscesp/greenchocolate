@@ -7,19 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { StatsCard } from '@/components/admin/StatsCard';
-import { 
-  BarChart3, 
-  Users, 
-  TrendingUp, 
-  Calendar,
-  Eye,
-  UserPlus,
-  Star,
-  MapPin,
-  ArrowUpRight,
-  ArrowDownRight,
-  Clock
-} from 'lucide-react';
+import { BarChart3, 
+Users, 
+TrendingUp, 
+Calendar,
+Eye,
+UserPlus,
+Star,
+MapPin,
+ArrowUpRight,
+ArrowDownRight,
+Clock } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 export default function AnalyticsPage() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Loader2 } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
 
 interface SafetyKitFormProps {

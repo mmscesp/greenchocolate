@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { ShieldAlert, Scale, Gavel } from 'lucide-react';
+import { ShieldAlert, Scale, Gavel } from '@/lib/icons';
 
 export function LegalDisclaimer() {
   const [isOpen, setIsOpen] = useState(() => {

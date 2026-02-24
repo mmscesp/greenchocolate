@@ -259,7 +259,7 @@ export async function getUserMembershipRequests() {
       orderBy: { createdAt: 'desc' },
     });
 
-    return requests.map((req) => ({
+    return requests.map((req: (typeof requests)[number]) => ({
       id: req.id,
       status: req.status,
       message: req.message,
@@ -383,7 +383,7 @@ export async function getClubMembershipRequests(clubSlug?: string): Promise<Club
       ],
     });
 
-    return requests.map(req => ({
+    return requests.map((req: (typeof requests)[number]) => ({
       id: req.id,
       status: req.status,
       message: req.message,

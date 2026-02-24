@@ -1,4 +1,4 @@
-import { Shield, FileCheck, MapPin } from 'lucide-react';
+import { Shield, FileCheck, MapPin } from '@/lib/icons';
 
 export default function RealityCheckSection() {
   return (

@@ -13,14 +13,12 @@ import {
   markNotificationsAsRead,
   type NotificationItem,
 } from '@/app/actions/notifications';
-import {
-  Bell,
-  Check,
-  CheckCheck,
-  ExternalLink,
-  Loader2,
-  RefreshCw,
-} from 'lucide-react';
+import { Bell,
+Check,
+CheckCheck,
+ExternalLink,
+Loader2,
+RefreshCw, } from '@/lib/icons';
 
 function notificationTypeLabel(type: string): string {
   return type

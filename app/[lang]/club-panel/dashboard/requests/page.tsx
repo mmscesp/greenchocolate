@@ -25,19 +25,17 @@ import {
   type ApplicationStage,
 } from '@/app/actions/applications';
 import { toast } from 'sonner';
-import {
-  Check,
-  X,
-  Clock,
-  Search,
-  Filter,
-  Loader2,
-  RefreshCw,
-  User,
-  Mail,
-  Calendar,
-  AlertCircle,
-} from 'lucide-react';
+import { Check,
+X,
+Clock,
+Search,
+Filter,
+Loader2,
+RefreshCw,
+User,
+Mail,
+Calendar,
+AlertCircle, } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 export default function ClubRequestsPage() {

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import SafetyKitForm from '@/components/marketing/SafetyKitForm';
-import { ShieldCheck, Lock, AlertTriangle, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Lock, AlertTriangle, ArrowRight } from '@/lib/icons';
 
 interface SafetyKitLandingPageProps {
   params: Promise<{ lang: string }>;

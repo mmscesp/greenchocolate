@@ -31,6 +31,8 @@ export default async function AdminRequestsPage() {
     }),
   ]);
 
+  type RecentRequestRow = (typeof recentRequests)[number];
+
   return (
     <div className="space-y-6">
       <div>
@@ -66,7 +68,7 @@ export default async function AdminRequestsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {recentRequests.map((request) => (
+            {recentRequests.map((request: RecentRequestRow) => (
               <div key={request.id} className="border rounded-md p-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div>
                   <div className="font-medium">{request.user.displayName || request.user.email}</div>

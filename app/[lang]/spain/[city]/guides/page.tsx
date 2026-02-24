@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getCityBySlug } from '@/app/actions/cities';
 import { getArticles } from '@/app/actions/articles';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Clock, ArrowRight, MapPin, Shield } from 'lucide-react';
+import { BookOpen, Clock, ArrowRight, MapPin, Shield } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface PageProps {

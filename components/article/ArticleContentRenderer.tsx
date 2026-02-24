@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, CheckCircle2, Info, Lightbulb } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Info, Lightbulb } from '@/lib/icons';
 
 // Parse content blocks with basic markdown-like syntax
 function parseContent(content: string): React.ReactNode[] {

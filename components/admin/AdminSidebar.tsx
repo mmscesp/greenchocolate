@@ -3,24 +3,22 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Building2, 
-  ClipboardList,
-  Newspaper,
-  CalendarDays,
-  BarChart3, 
-  FileText,
-  Shield,
-  Settings,
-  LogOut,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
-  Home,
-  CheckCircle2,
-} from 'lucide-react';
+import { LayoutDashboard, 
+Users, 
+Building2, 
+ClipboardList,
+Newspaper,
+CalendarDays,
+BarChart3, 
+FileText,
+Shield,
+Settings,
+LogOut,
+Menu,
+ChevronLeft,
+ChevronRight,
+Home,
+CheckCircle2, } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {

@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LucideIcon } from 'lucide-react';
+import type { ComponentType } from 'react';
 import { cn } from '@/lib/utils';
 
 interface StatsCardProps {
   title: string;
   value: string | number;
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   trend?: string;
   color?: 'green' | 'blue' | 'purple' | 'orange' | 'default';
   className?: string;
@@ -58,4 +58,3 @@ export function StatsCard({ title, value, icon: Icon, trend, color = 'default', 
     </Card>
   );
 }
-

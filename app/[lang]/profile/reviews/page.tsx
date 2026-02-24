@@ -17,17 +17,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useLanguage } from '@/hooks/useLanguage';
-import { 
-  Star, 
-  Edit3, 
-  Trash2, 
-  Calendar, 
-  MapPin,
-  ThumbsUp,
-  MessageCircle,
-  Filter,
-  Search
-} from 'lucide-react';
+import { Star, 
+Edit3, 
+Trash2, 
+Calendar, 
+MapPin,
+ThumbsUp,
+MessageCircle,
+Filter,
+Search } from '@/lib/icons';
 
 interface Review {
   id: string;

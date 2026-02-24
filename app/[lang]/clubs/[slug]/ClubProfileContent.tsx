@@ -14,30 +14,28 @@ import { submitMembershipApplication } from '@/app/actions/applications';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Heading, H1, H2, H3, H4, Label, Text } from '@/components/typography';
 import { cn } from '@/lib/utils';
-import {
-  MapPin,
-  Lock,
-  Star,
-  Phone,
-  Mail,
-  Globe,
-  Instagram,
-  Facebook,
-  Clock,
-  Users,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Check,
-  AlertCircle,
-  Loader2,
-  ArrowLeft,
-  Sparkles,
-  Shield,
-  Cannabis,
-  Info
-} from 'lucide-react';
+import { MapPin,
+Lock,
+Star,
+Phone,
+Mail,
+Globe,
+Instagram,
+Facebook,
+Clock,
+Users,
+Calendar,
+ChevronLeft,
+ChevronRight,
+X,
+Check,
+AlertCircle,
+Loader2,
+ArrowLeft,
+Sparkles,
+Shield,
+Cannabis,
+Info } from '@/lib/icons';
 
 // Editorial Concierge Components
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';

@@ -65,18 +65,22 @@ export default async function AdminPage({ params }: AdminPageProps) {
     }),
   ]);
 
-  const cityIds = clubStats.map((s) => s.cityId);
+  type ClubStatRow = (typeof clubStats)[number];
+  type CityRow = (typeof cities)[number];
+  type UserRoleRow = (typeof userRoleDistribution)[number];
+
+  const cityIds = clubStats.map((s: ClubStatRow) => s.cityId);
   const cities = await prisma.city.findMany({
     where: { id: { in: cityIds } },
     select: { id: true, name: true },
   });
 
   const clubStatsByCity = clubStats
-    .map((stat) => ({
-      cityName: cities.find((c) => c.id === stat.cityId)?.name || 'Unknown',
+    .map((stat: ClubStatRow) => ({
+      cityName: cities.find((c: CityRow) => c.id === stat.cityId)?.name || 'Unknown',
       count: stat._count,
     }))
-    .sort((a, b) => b.count - a.count)
+    .sort((a: { cityName: string; count: number }, b: { cityName: string; count: number }) => b.count - a.count)
     .slice(0, 5);
 
   return (
@@ -90,7 +94,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
         recentUsers,
         recentRequests,
         clubStatsByCity,
-        userRoleDistribution: userRoleDistribution.map((entry) => ({
+        userRoleDistribution: userRoleDistribution.map((entry: UserRoleRow) => ({
           role: entry.role,
           count: entry._count,
         })),

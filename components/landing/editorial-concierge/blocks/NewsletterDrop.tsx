@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
 
 export function NewsletterDrop() {

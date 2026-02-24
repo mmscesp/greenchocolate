@@ -5,20 +5,18 @@ import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { cn } from '@/lib/utils';
-import { 
-  User, 
-  Heart, 
-  Star, 
-  Calendar, 
-  Bell, 
-  Settings, 
-  CreditCard,
-  Home,
-  LogOut,
-  Menu,
-  ChevronRight,
-  ChevronLeft
-} from 'lucide-react';
+import { User, 
+Heart, 
+Star, 
+Calendar, 
+Bell, 
+Settings, 
+CreditCard,
+Home,
+LogOut,
+Menu,
+ChevronRight,
+ChevronLeft } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {

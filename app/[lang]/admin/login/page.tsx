@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Shield, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Shield, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff } from '@/lib/icons';
 import { adminLogin } from '@/app/actions/admin-auth';
 import { useState } from 'react';
 import Link from 'next/link';

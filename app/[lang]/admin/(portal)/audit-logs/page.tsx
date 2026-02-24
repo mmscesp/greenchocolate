@@ -28,6 +28,9 @@ export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPage
     orderBy: { tableName: 'asc' },
   });
 
+  type TableNameRow = (typeof tableNames)[number];
+  type AuditLogRow = (typeof logs)[number];
+
   return (
     <div className="space-y-6">
       <div>
@@ -41,7 +44,7 @@ export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPage
             <label className="text-sm text-muted-foreground">Filter by table</label>
             <select name="table" defaultValue={tableName} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
               <option value="">All tables</option>
-              {tableNames.map((table) => (
+              {tableNames.map((table: TableNameRow) => (
                 <option key={table.tableName} value={table.tableName}>{table.tableName}</option>
               ))}
             </select>
@@ -59,7 +62,7 @@ export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPage
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {logs.map((log) => (
+            {logs.map((log: AuditLogRow) => (
               <div key={log.id} className="border rounded-md p-3">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                   <div className="flex items-center gap-2 flex-wrap">

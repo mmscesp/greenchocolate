@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Search, Home, ArrowLeft } from 'lucide-react';
+import { Search, Home, ArrowLeft } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 
 /**

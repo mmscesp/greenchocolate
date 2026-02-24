@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Building2, ChevronLeft, ChevronRight } from '@/lib/icons';
 import { getAdminClubs, updateClubFlags } from '@/app/actions/admin-clubs';
 
 interface ClubsPageProps {
@@ -25,6 +25,7 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
   const page = Number(getString(query.page, '1')) || 1;
 
   const data = await getAdminClubs({ query: q, verification, activity, page, pageSize: 20 });
+  type ClubRow = (typeof data.clubs)[number];
 
   const buildUrl = (nextPage: number) => {
     const paramsObj = new URLSearchParams();
@@ -85,7 +86,7 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
             </div>
           ) : (
             <div className="space-y-4">
-              {data.clubs.map((club) => (
+              {data.clubs.map((club: ClubRow) => (
                 <div key={club.id} className="border rounded-lg p-4">
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="min-w-0">

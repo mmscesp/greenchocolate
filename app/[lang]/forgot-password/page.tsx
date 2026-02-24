@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Logo, LogoIcon } from '@/components/ui/logo';
-import { Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from '@/lib/icons';
 import { useAuth } from '@/components/auth/AuthProvider';
 
 export default function ForgotPasswordPage() {

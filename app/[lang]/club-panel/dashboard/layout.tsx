@@ -2,7 +2,7 @@
 
 import { ClubSidebar, ClubMobileNav } from '@/components/club/ClubSidebar';
 import LanguageSelector from '@/components/LanguageSelector';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@/lib/icons';
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useState } from 'react';

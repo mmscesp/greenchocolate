@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, Shield, ArrowRight } from 'lucide-react';
+import { Sparkles, X, Shield, ArrowRight } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import SafetyKitForm from '@/components/marketing/SafetyKitForm';
 import EligibilityQuiz from '@/components/marketing/EligibilityQuiz';

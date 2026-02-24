@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import ClubCard from '@/components/ClubCard';
 import FilterBar from '@/components/FilterBar';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Map, List, Grid, Sparkles, Cannabis, Search, SlidersHorizontal, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { Map, List, Grid, Sparkles, Cannabis, Search, SlidersHorizontal, ArrowRight, ShieldCheck, Zap } from '@/lib/icons';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';

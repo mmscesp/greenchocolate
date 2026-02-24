@@ -59,16 +59,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   };
 }
 
-import { 
-  MapPin, 
-  Building2, 
-  Shield, 
-  ArrowRight, 
-  Star, 
-  Compass,
-  BookOpen,
-  CheckCircle
-} from 'lucide-react';
+import { MapPin, 
+Building2, 
+Shield, 
+ArrowRight, 
+Star, 
+Compass,
+BookOpen,
+CheckCircle } from '@/lib/icons';
 
 interface Club {
   id: string;

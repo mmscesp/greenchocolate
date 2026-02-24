@@ -5,18 +5,16 @@ import { motion } from 'framer-motion';
 import SafetyStickyAlert from '@/components/city/SafetyStickyAlert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  MapPin, 
-  Building2, 
-  Shield, 
-  ArrowRight, 
-  Star, 
-  Users, 
-  BookOpen, 
-  Compass,
-  Cannabis,
-  CheckCircle
-} from 'lucide-react';
+import { MapPin, 
+Building2, 
+Shield, 
+ArrowRight, 
+Star, 
+Users, 
+BookOpen, 
+Compass,
+Cannabis,
+CheckCircle } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 interface Club {

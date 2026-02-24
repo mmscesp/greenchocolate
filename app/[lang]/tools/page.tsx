@@ -1,6 +1,6 @@
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/Footer';
-import { Calculator, ClipboardCheck, ArrowRight } from 'lucide-react';
+import { Calculator, ClipboardCheck, ArrowRight } from '@/lib/icons';
 
 export default function ToolsPage() {
   return (

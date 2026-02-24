@@ -1,4 +1,4 @@
-import { CheckCircle, Shield, Award } from 'lucide-react';
+import { CheckCircle, Shield, Award } from '@/lib/icons';
 import { Badge } from './ui/badge';
 
 interface VerificationBadgeProps {

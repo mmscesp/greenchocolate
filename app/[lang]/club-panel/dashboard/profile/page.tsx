@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { toast } from 'sonner';
-import { Upload, Image as ImageIcon, MapPin, Loader2 } from 'lucide-react';
+import { Upload, Image as ImageIcon, MapPin, Loader2 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 // Default values for empty form

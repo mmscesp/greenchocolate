@@ -11,17 +11,15 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useClubs } from '@/hooks/useClubs';
-import { 
-  Heart, 
-  Star, 
-  MapPin, 
-  Calendar, 
-  Search,
-  Grid,
-  List,
-  Trash2,
-  ExternalLink
-} from 'lucide-react';
+import { Heart, 
+Star, 
+MapPin, 
+Calendar, 
+Search,
+Grid,
+List,
+Trash2,
+ExternalLink } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 export default function FavoritesPage() {

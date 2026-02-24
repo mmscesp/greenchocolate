@@ -1,7 +1,7 @@
 import React from 'react';
 import { Club } from '@/lib/types';
 import GatedContent from '@/components/clubs/GatedContent';
-import { MapPin, Phone, Mail, Globe } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe } from '@/lib/icons';
 
 interface Props {
   club: Club;

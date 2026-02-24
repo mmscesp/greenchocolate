@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { ArticleDetail, ArticleCard } from '@/app/actions/articles';
-import { Leaf, Calendar, Clock, User, ArrowLeft, Share2, Shield, Info, ExternalLink, ArrowRight } from 'lucide-react';
+import { Leaf, Calendar, Clock, User, ArrowLeft, Share2, Shield, Info, ExternalLink, ArrowRight } from '@/lib/icons';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import ExpertByline from '@/components/trust/ExpertByline';
 import TrustBadge from '@/components/trust/TrustBadge';

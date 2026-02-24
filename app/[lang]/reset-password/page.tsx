@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Logo, LogoIcon } from '@/components/ui/logo';
-import { Lock, ArrowLeft, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Lock, ArrowLeft, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from '@/lib/icons';
 import { useAuth } from '@/components/auth/AuthProvider';
 
 export default function ResetPasswordPage() {

@@ -32,27 +32,25 @@ import { updateUserProfile } from '@/app/actions/users';
 import MemberPassport from '@/components/profile/MemberPassport';
 import ApplicationStatusTracker from '@/components/profile/ApplicationStatusTracker';
 import TrustBadge from '@/components/trust/TrustBadge';
-import { 
-  Edit3, 
-  Save, 
-  X, 
-  User, 
-  Mail, 
-  Calendar,
-  Shield,
-  Camera,
-  Check,
-  Star,
-  MapPin,
-  Loader2,
-  Wallet,
-  FileCheck,
-  Clock,
-  ArrowRight,
-  Heart,
-  TrendingUp,
-  CreditCard
-} from 'lucide-react';
+import { Edit3, 
+Save, 
+X, 
+User, 
+Mail, 
+Calendar,
+Shield,
+Camera,
+Check,
+Star,
+MapPin,
+Loader2,
+Wallet,
+FileCheck,
+Clock,
+ArrowRight,
+Heart,
+TrendingUp,
+CreditCard } from '@/lib/icons';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 

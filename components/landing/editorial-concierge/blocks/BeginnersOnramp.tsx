@@ -6,7 +6,7 @@ import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 // import { MagneticButton } from '../interactive/MagneticButton';
-import { ArrowRight, BookOpen, ShieldAlert, Heart } from 'lucide-react';
+import { ArrowRight, BookOpen, ShieldAlert, Heart } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
 
 type OnrampExperimentArm = 'control' | 'benefit';

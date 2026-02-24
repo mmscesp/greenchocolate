@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { StatsCard } from '@/components/admin/StatsCard';
-import { Users, Building2, ClipboardList, Calendar } from 'lucide-react';
+import { Users, Building2, ClipboardList, Calendar } from '@/lib/icons';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,8 +15,9 @@ export default async function AdminAnalyticsPage() {
     prisma.club.count({ where: { createdAt: { gte: last30Days } } }),
     prisma.membershipRequest.count({ where: { createdAt: { gte: last30Days } } }),
     prisma.event.count({ where: { startDate: { gte: now } } }),
-    prisma.membershipRequest.groupBy({ by: ['status'], _count: true }),
+    prisma.membershipRequest.groupBy({ by: ['status'], _count: { _all: true } }),
   ]);
+  type RequestByStatusRow = (typeof requestsByStatus)[number];
 
   return (
     <div className="space-y-6">
@@ -38,10 +39,10 @@ export default async function AdminAnalyticsPage() {
           <CardDescription>Current status breakdown across all clubs.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          {requestsByStatus.map((row) => (
+          {requestsByStatus.map((row: RequestByStatusRow) => (
             <div key={row.status} className="flex items-center justify-between border rounded-md px-3 py-2">
               <span className="font-medium">{row.status}</span>
-              <span className="text-muted-foreground">{row._count}</span>
+              <span className="text-muted-foreground">{row._count._all}</span>
             </div>
           ))}
         </CardContent>

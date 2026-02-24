@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield, Lock, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Shield, Lock, CheckCircle2, AlertTriangle } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 interface TrustBadgeProps {

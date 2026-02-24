@@ -2,7 +2,7 @@
 
 import { StatsCard } from '@/components/admin/StatsCard';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
-import { Users, Calendar, FileText, TrendingUp, MapPin, Clock } from 'lucide-react';
+import { Users, Calendar, FileText, TrendingUp, MapPin, Clock } from '@/lib/icons';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';

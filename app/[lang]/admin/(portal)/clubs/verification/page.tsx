@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from '@/lib/icons';
 import { getPendingClubVerifications, updateClubFlags } from '@/app/actions/admin-clubs';
 
 interface VerificationPageProps {
@@ -12,6 +12,7 @@ interface VerificationPageProps {
 export default async function ClubVerificationPage({ params }: VerificationPageProps) {
   const { lang } = await params;
   const pendingClubs = await getPendingClubVerifications();
+  type PendingClubRow = (typeof pendingClubs)[number];
 
   return (
     <div className="space-y-6">
@@ -29,7 +30,7 @@ export default async function ClubVerificationPage({ params }: VerificationPageP
         </Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {pendingClubs.map((club) => (
+          {pendingClubs.map((club: PendingClubRow) => (
             <Card key={club.id}>
               <CardHeader>
                 <CardTitle className="text-lg">{club.name}</CardTitle>

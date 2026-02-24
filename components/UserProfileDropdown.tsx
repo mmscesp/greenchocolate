@@ -8,24 +8,22 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { getUnreadNotificationCount } from '@/app/actions/notifications';
-import {
-  User,
-  Settings,
-  Heart,
-  Star,
-  Calendar,
-  LogOut,
-  ChevronDown,
-  Shield,
-  Bell,
-  CreditCard,
-  Loader2,
-  Building2,
-  LayoutDashboard,
-  Users,
-  ClipboardList,
-  PanelTop,
-} from 'lucide-react';
+import { User,
+Settings,
+Heart,
+Star,
+Calendar,
+LogOut,
+ChevronDown,
+Shield,
+Bell,
+CreditCard,
+Loader2,
+Building2,
+LayoutDashboard,
+Users,
+ClipboardList,
+PanelTop, } from '@/lib/icons';
 
 interface UserProfileDropdownProps {
   className?: string;

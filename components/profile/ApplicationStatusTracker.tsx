@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CheckCircle2, Clock, FileSearch, Shield, UserCheck, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Clock, FileSearch, Shield, UserCheck, AlertCircle } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 type ApplicationStatus = 'draft' | 'submitted' | 'reviewing' | 'background_check' | 'approved' | 'rejected';

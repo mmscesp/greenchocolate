@@ -14,7 +14,7 @@ import WhyUsSection from '@/components/marketing/WhyUsSection';
 import { FaqAccordion } from '@/components/ui/faq-accordion';
 import TrustBadge from '@/components/trust/TrustBadge';
 import { useLanguage } from '@/hooks/useLanguage';
-import { BookOpen, Shield, AlertTriangle, Calendar, ArrowRight, Clock, MapPin, CheckCircle, Lock, Eye, Calculator } from 'lucide-react';
+import { BookOpen, Shield, AlertTriangle, Calendar, ArrowRight, Clock, MapPin, CheckCircle, Lock, Eye, Calculator } from '@/lib/icons';
 import { motion } from 'framer-motion';
 import { OrganizationStructuredData, WebSiteStructuredData } from '@/components/StructuredData';
 import type { ArticleCard } from '@/app/actions/articles';

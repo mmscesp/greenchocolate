@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getArticles, getCategoriesWithCounts, getFeaturedArticles } from '@/app/actions/articles';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from 'lucide-react';
+import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 

@@ -4,19 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StatsCard } from '@/components/admin/StatsCard';
-import { 
-  Users, 
-  Building2, 
-  Shield, 
-  ClipboardList,
-  ArrowUpRight,
-  ArrowDownRight,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  TrendingUp
-} from 'lucide-react';
+import { Users, 
+Building2, 
+Shield, 
+ClipboardList,
+ArrowUpRight,
+ArrowDownRight,
+Clock,
+CheckCircle2,
+XCircle,
+AlertTriangle,
+TrendingUp } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 

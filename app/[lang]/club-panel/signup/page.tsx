@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Logo, LogoIcon } from '@/components/ui/logo';
-import { Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff } from '@/lib/icons';
 import { clubSignUp } from '@/app/actions/club-auth';
 import { signInWithOAuth } from '@/app/actions/auth';
 import { FcGoogle } from 'react-icons/fc';

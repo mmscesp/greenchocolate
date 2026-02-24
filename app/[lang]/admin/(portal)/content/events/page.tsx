@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminContentEventsPage() {
   const events = await getAdminEventsIndex();
+  type EventRow = (typeof events)[number];
 
   return (
     <div className="space-y-6">
@@ -22,7 +23,7 @@ export default async function AdminContentEventsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {events.map((event) => (
+            {events.map((event: EventRow) => (
               <div key={event.id} className="border rounded-md p-3">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                   <div>
