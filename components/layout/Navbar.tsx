@@ -15,41 +15,48 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Trigger glassmorphism only after the Hero Cinematic sequence is well underway
-      setIsScrolled(window.scrollY > window.innerHeight * 2);
+      // The Hero is 400vh long. We only want the navbar to turn solid 
+      // when the user is actually leaving the Hero section.
+      setIsScrolled(window.scrollY > window.innerHeight * 3.8);
     };
 
     window.addEventListener('scroll', handleScroll);
+    // Trigger once on mount to check initial position
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Check if it's the home page (root or just a locale like /en, /es)
   const isHomePage = pathname === '/' || /^\/(en|es|de|fr|it)(\/|$)/.test(pathname) && pathname.split('/').filter(Boolean).length <= 1;
 
   return (
     <nav
       className={cn(
-        'z-50 transition-all duration-300 pointer-events-auto',
-        isHomePage ? 'fixed top-0 left-0 right-0' : 'sticky top-0',
-        isHomePage
-          ? isScrolled
-            ? 'bg-background/95 backdrop-blur border-b supports-[backdrop-filter]:bg-background/60'
-            : 'dark bg-transparent border-transparent'
-          : 'bg-background/95 backdrop-blur border-b supports-[backdrop-filter]:bg-background/60'
+        'z-50 transition-all duration-500 pointer-events-auto', // Slower 500ms transition for premium fade
+        isHomePage ? 'fixed left-0 right-0' : 'sticky top-0',
+        
+        // --- THE MAGIC LOGIC ---
+        isHomePage && !isScrolled 
+          // 1. Transparent State (Over the Sky):
+          // We force 'dark' mode so text is white. We add a subtle gradient to protect against bright clouds.
+          ? 'top-0 dark bg-gradient-to-b from-black/80 via-black/20 to-transparent border-transparent' 
+          
+          // 2. Scrolled State (Over the rest of the site):
+          // Drops the gradient, removes 'dark' (reverting to system theme), adds glass blur and border.
+          : 'top-0 bg-background/95 backdrop-blur-md border-b border-border shadow-sm supports-[backdrop-filter]:bg-background/60 text-foreground'
       )}
     >
-
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        {/* We explicitly set text-foreground here so it inherits the forced 'dark' mode perfectly */}
+        <div className="flex justify-between h-16 text-foreground"> 
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
               <Logo size="md" showText={false} href="" className="" imageClassName="h-8 w-8" />
-              <span className="text-xl font-bold text-foreground">
+              <span className="text-xl font-bold tracking-tight">
                 SocialClubsMaps
               </span>
             </Link>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 md:gap-6">
             <MainNavigation />
             <UserProfileDropdown />
             <LanguageSelector />

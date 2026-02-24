@@ -9,56 +9,39 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // Check for reduced motion preference
+    // Accessibility check
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    if (prefersReducedMotion) {
-      return; // Skip smooth scroll for accessibility
-    }
+    if (prefersReducedMotion) return;
 
-    // Tuned for step-snapped hero narrative
+    // Register ScrollTrigger early
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initialize Lenis
     lenisRef.current = new Lenis({
-      duration: 0.3,
-      
+      duration: 1.2, // Smoother, slightly longer friction
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      
-      wheelMultiplier: 0.95,
-      
-      // ✅ Mobile touch responsiveness
-      touchMultiplier: 1.35,
-      
-      // ✅ Prevent infinite scroll
+      wheelMultiplier: 1,
+      touchMultiplier: 1.5,
       infinite: false,
-      
-      // ✅ Auto-resize on window changes
-      autoResize: true,
     });
 
-    // ✅ Integrate Lenis with GSAP ScrollTrigger
+    // Sync Lenis with GSAP ScrollTrigger
     lenisRef.current.on('scroll', ScrollTrigger.update);
 
-    // ✅ Use GSAP ticker for smooth 60fps animation loop
-    gsap.ticker.lagSmoothing(0);
-    
-    const tickerCallback = (time: number) => {
+    // Sync GSAP ticker with Lenis requestAnimationFrame
+    gsap.ticker.add((time) => {
       lenisRef.current?.raf(time * 1000);
-    };
-    
-    gsap.ticker.add(tickerCallback);
-
-    // ✅ CRITICAL: Refresh ScrollTrigger after Lenis initializes
-    requestAnimationFrame(() => {
-      ScrollTrigger.refresh();
     });
+    
+    // Disable lag smoothing to prevent visual jumps on fast scrolls
+    gsap.ticker.lagSmoothing(0);
 
-    // ✅ Cleanup
     return () => {
       lenisRef.current?.destroy();
-      gsap.ticker.remove(tickerCallback);
+      gsap.ticker.remove((time) => lenisRef.current?.raf(time * 1000));
     };
   }, []);
 
