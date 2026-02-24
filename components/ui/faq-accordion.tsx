@@ -14,7 +14,7 @@ const faqItems = [
     id: '1',
     title: 'What is a Cannabis Social Club?',
     content:
-      'A Cannabis Social Club (CSC) is a private, non-profit association in Spain where members can consume cannabis together in a social setting. Unlike Amsterdam coffee shops, CSCs are private会员-only establishments with strict protocols.',
+      'A Cannabis Social Club (CSC) is a private, non-profit association in Spain where members can consume cannabis together in a social setting. Unlike Amsterdam coffee shops, CSCs are private member-only establishments with strict protocols.',
   },
   {
     id: '2',

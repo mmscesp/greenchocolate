@@ -1,0 +1,46 @@
+import React from 'react';
+import { SectionWrapper } from '../layout/SectionWrapper';
+import { EditorialHeading } from '../typography/EditorialHeading';
+import { ConciergeLabel } from '../typography/ConciergeLabel';
+import { StickyAccordion } from '../interactive/StickyAccordion';
+import { AlertTriangle, ShieldCheck, MapPin } from 'lucide-react';
+
+const REALITY_ITEMS = [
+  { 
+    title: 'No Walk-ins', 
+    desc: 'Private associations require sponsorship and fixed member lists. Expect rejection if you arrive without preparation.', 
+    iconName: 'ShieldCheck',
+    color: 'from-emerald-500 to-teal-600'
+  },
+  { 
+    title: 'Public Consumption', 
+    desc: 'Administrative fines range from €601 to €30,000. Privacy is your only protection from local authorities.', 
+    iconName: 'AlertTriangle',
+    color: 'from-red-500 to-rose-600'
+  },
+  { 
+    title: 'Discretion First', 
+    desc: 'No filming, no social media tagging, no neighbor noise. We are guests in these residential neighborhoods.', 
+    iconName: 'MapPin',
+    color: 'from-blue-500 to-indigo-600'
+  },
+  { 
+    title: 'Scam Immunity', 
+    desc: 'Street promoters and DM invitations are almost always scams. Use verified intelligence only to navigate.', 
+    iconName: 'ShieldCheck',
+    color: 'from-amber-500 to-orange-600'
+  },
+];
+
+export function RealityCheck() {
+  return (
+    <SectionWrapper dark className="bg-black pt-32 pb-48">
+      <div className="max-w-3xl mb-24">
+        <ConciergeLabel className="text-red-500 mb-6">Reality Check</ConciergeLabel>
+        <EditorialHeading size="2xl" className="text-white">Spain is <span className="italic text-red-500">not</span> Amsterdam.</EditorialHeading>
+      </div>
+
+      <StickyAccordion items={REALITY_ITEMS} />
+    </SectionWrapper>
+  );
+}

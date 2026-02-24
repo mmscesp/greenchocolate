@@ -23,6 +23,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-primary)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'serif'],
+        mono: ['var(--font-mono)', 'monospace'],
       },
       colors: {
         // Brand Colors - Restrained Premium Palette

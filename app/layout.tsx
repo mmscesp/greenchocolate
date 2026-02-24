@@ -1,12 +1,24 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';
 import { LegalDisclaimer } from '@/components/LegalDisclaimer';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-primary',
   weight: ['400', '500', '600', '700'],
+});
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  weight: ['400', '700', '900'],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '700'],
 });
 
 export const metadata: Metadata = {
@@ -82,7 +94,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${plusJakarta.variable}`}>
+    <html lang="en" className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
         <LegalDisclaimer />
         {children}
