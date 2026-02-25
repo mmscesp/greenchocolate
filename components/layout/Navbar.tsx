@@ -84,20 +84,21 @@ export default function Navbar() {
             <MainNavigation />
           </div>
 
-          {/* Actions Section */}
-          <div className="flex items-center gap-1 md:gap-3">
-            <div className="hidden sm:flex items-center gap-1">
-              <LanguageSelector />
-            </div>
-            
+          {/* Desktop Actions Section */}
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageSelector />
             <UserProfileDropdown />
+          </div>
 
-            {/* Mobile Menu Trigger */}
+          {/* Mobile Actions Section */}
+          <div className="flex md:hidden items-center gap-1">
+            {/* Notification Dot on Mobile Menu Trigger if unread exists */}
             <button
               onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
-              className="md:hidden flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {/* Note: We'd need to lift the unread state here, but for now we rely on the Profile Dropdown to show it. */}
             </button>
           </div>
         </div>
@@ -110,9 +111,14 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 md:hidden glass-liquid pt-32 px-6 flex flex-col gap-8"
+            className="fixed inset-0 z-40 md:hidden glass-liquid pt-24 px-6 flex flex-col gap-6"
           >
-            <div className="flex flex-col gap-6 text-2xl font-semibold text-white/90">
+            {/* Rich Profile Header inside Mobile Menu */}
+            <div className="pb-4 border-b border-white/10">
+              <UserProfileDropdown variant="mobile-menu-row" onMobileClose={closeMobileMenu} />
+            </div>
+
+            <div className="flex flex-col gap-6 text-2xl font-semibold text-white/90 pt-2">
               {desktopPrimaryItems.map(({ href, label }) => (
                 <Link key={href} href={href} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                   {label}
