@@ -11,6 +11,12 @@
   --gold: 42 60% 58%;
   --gold-light: 42 63% 65%;
   --gold-dark: 42 52% 48%;
+  /* Liquid Glass System */
+  --glass-bg: rgba(20, 20, 20, 0.6); /* Dark, semi-transparent base */
+  --glass-border: rgba(255, 255, 255, 0.08); /* Subtle white border */
+  --glass-highlight: rgba(255, 255, 255, 0.05); /* Top highlight for depth */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36); /* Deep shadow */
+  --glass-blur: 16px; /* Heavy blur */
   
   --background: 0 0% 98%;
   --foreground: 240 10% 10%;
@@ -141,5 +147,20 @@
   
   .text-gradient-gold {
     @apply bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent;
+  }
+  .glass-liquid {
+    @apply backdrop-blur-xl bg-black/60 border border-white/10 shadow-2xl;
+    /* Advanced depth effects */
+    box-shadow: 
+      0 4px 24px -1px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05); /* Top inner highlight */
+  }
+  
+  .glass-liquid-hover {
+    @apply hover:bg-black/70 hover:border-white/15 transition-all duration-300;
+  }
+  
+  .glass-dropdown {
+    @apply glass-liquid rounded-xl overflow-hidden;
   }
 }

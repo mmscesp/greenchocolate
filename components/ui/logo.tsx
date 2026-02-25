@@ -32,7 +32,7 @@ export function Logo({
     <>
       <div className={cn('relative shrink-0', config.iconClass)}>
         <Image
-          src="/images/SCM_Logo_OG.jpeg"
+          src="/images/SCM_Logo_OG.svg"
           alt="SocialClubsMaps Logo"
           width={config.width}
           height={config.height}
@@ -78,7 +78,7 @@ export function LogoIcon({
   return (
     <div className={cn('relative shrink-0', config.iconClass, className)}>
       <Image
-        src="/images/SCM_Logo_OG.jpeg"
+        src="/images/SCM_Logo_OG.svg"
         alt="SocialClubsMaps Logo"
         width={config.width}
         height={config.height}
