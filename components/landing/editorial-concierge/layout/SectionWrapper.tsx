@@ -4,16 +4,21 @@ import { cn } from '@/lib/utils';
 interface SectionWrapperProps extends React.HTMLAttributes<HTMLElement> {
   container?: boolean;
   dark?: boolean;
+  glass?: boolean;
 }
 
 export const SectionWrapper = React.forwardRef<HTMLElement, SectionWrapperProps>(
-  ({ container = true, dark = false, className, children, ...props }, ref) => {
+  ({ container = true, dark = false, glass = false, className, children, ...props }, ref) => {
     return (
       <section
         ref={ref}
         className={cn(
-          'py-24 relative overflow-hidden',
-          dark ? 'bg-black text-white' : 'bg-[#FAFAFA] text-zinc-900',
+          'py-24 relative overflow-hidden transition-colors duration-500',
+          glass
+            ? 'bg-white/28 dark:bg-black/24 backdrop-blur-md border border-white/25 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
+            : dark
+              ? 'bg-background/80 backdrop-blur-sm text-white'
+              : 'bg-background/80 backdrop-blur-sm text-zinc-900',
           className
         )}
         {...props}

@@ -9,7 +9,7 @@ import { Calculator, ClipboardCheck } from '@/lib/icons';
 
 export function ConciergeTools() {
   return (
-    <SectionWrapper className="bg-zinc-900 text-white" dark>
+    <SectionWrapper glass>
       <div className="text-center mb-14 sm:mb-20">
         <ConciergeLabel className="text-emerald-500 mb-6 block">Precision Intelligence</ConciergeLabel>
         <EditorialHeading size="xl" className="text-white">Know Before You Go</EditorialHeading>

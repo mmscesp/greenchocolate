@@ -98,7 +98,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12">
         {/* Hero with Quiz */}
         <motion.section 
           className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-6 sm:p-8 md:p-12 mb-12"

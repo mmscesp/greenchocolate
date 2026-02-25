@@ -103,7 +103,7 @@ export default function EventPage({ params }: PageProps) {
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 relative z-10">
         {/* Back Button */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}

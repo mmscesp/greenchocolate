@@ -8,7 +8,7 @@ import { GlowingTimeline } from '../interactive/GlowingTimeline';
 
 export function CommunityRoadmap() {
   return (
-    <SectionWrapper dark className="bg-black">
+    <SectionWrapper glass>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-14 sm:mb-24">
           <ConciergeLabel className="text-emerald-500 mb-6 block">The Journey</ConciergeLabel>

@@ -11,7 +11,7 @@ export default function ProfileLayout({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] bg-muted/20">
+    <div className="flex min-h-[calc(100vh-64px)] bg-muted/20 pt-16 md:pt-20">
       <ProfileSidebar 
         isCollapsed={isSidebarCollapsed} 
         onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 

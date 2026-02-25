@@ -1,13 +1,9 @@
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/Footer';
 import { Calculator, ClipboardCheck, ArrowRight } from '@/lib/icons';
 
 export default function ToolsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      
-      <main className="max-w-7xl mx-auto px-4 py-20">
+      <main className="max-w-7xl mx-auto px-4 pt-28 pb-20">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Interactive Tools</h1>
           <p className="text-xl text-gray-600">Smart utilities to help you navigate compliance and safety.</p>
@@ -46,7 +42,6 @@ export default function ToolsPage() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

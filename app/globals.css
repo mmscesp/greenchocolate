@@ -11,14 +11,19 @@
   --gold: 42 60% 58%;
   --gold-light: 42 63% 65%;
   --gold-dark: 42 52% 48%;
+
+  /* Premium Background Surfaces */
+  --bg-premium-dark: 174 40% 4%;
+  --bg-premium-light: 42 20% 97%;
+
   /* Liquid Glass System */
-  --glass-bg: rgba(20, 20, 20, 0.6); /* Dark, semi-transparent base */
-  --glass-border: rgba(255, 255, 255, 0.08); /* Subtle white border */
-  --glass-highlight: rgba(255, 255, 255, 0.05); /* Top highlight for depth */
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36); /* Deep shadow */
-  --glass-blur: 16px; /* Heavy blur */
+  --glass-bg: rgba(20, 20, 20, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+  --glass-blur: 16px;
   
-  --background: 0 0% 98%;
+  --background: var(--bg-premium-light);
   --foreground: 240 10% 10%;
   
   --card: 0 0% 100%;
@@ -50,7 +55,7 @@
 }
 
 .dark {
-  --background: 240 10% 4%;
+  --background: var(--bg-premium-dark);
   --foreground: 0 0% 98%;
   
   --card: 240 10% 6%;
@@ -162,5 +167,14 @@
   
   .glass-dropdown {
     @apply glass-liquid rounded-xl overflow-hidden;
+  }
+}
+
+@keyframes aurora {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
   }
 }

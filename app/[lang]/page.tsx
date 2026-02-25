@@ -1,6 +1,7 @@
 import { getFeaturedArticles } from '@/app/actions/articles';
 import { Metadata } from 'next';
 import HeroSection from '@/components/HeroSection';
+import { AtmosphericCanvas } from '@/components/AtmosphericCanvas';
 import EditorialConciergeFlow from '@/components/landing/editorial-concierge/EditorialConciergeFlow';
 
 const OG_LOCALE_BY_LANG: Record<string, string> = {
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     fr: 'Annuaire des Clubs Sociaux Cannabis en Espagne | SocialClubsMaps',
     de: 'Cannabis Social Clubs Verzeichnis Spanien | SocialClubsMaps',
     it: 'Elenco Club Sociali Cannabis Spagna | SocialClubsMaps',
-    pl: 'Katalog Społecznościowych Klubów Konopi w Hiszpanii | SocialClubsMaps',
+    pl: 'Katalog Społecznościowych Klubów Konopi v Hiszpanii | SocialClubsMaps',
     ru: 'Каталог Социальных Клубов Конопли в Испании | SocialClubsMaps',
     pt: 'Diretório de Clubes Sociais de Cânhamo em Espanha | SocialClubsMaps',
   };
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     it: 'Scopri e connettiti con club sociali cannabis verificati in Spagna. Barcellona, Madrid, Valencia e altro. Guide esperte sulla conformité legale.',
     pl: 'Odkryj i połącz się z zweryfikowanymi społecznościowymi klubami konopi w Hiszpanii. Barcelona, Walencja i więcej. Przewodniki ekspertów o zgodności prawnej.',
     ru: 'Откройте для себя проверенные социальные клубы конопли в Испании. Барселона, Валенсия и другие. Экспертные руководства по правовому соответствию.',
-    pt: 'Descubra e conecte-se com clubes sociais de cannabis verificados na Espanha. Barcelona, Valência e muito mais. Guias especializados em conformidade legal.',
+    pt: 'Descubra e conecte-se com clubes sociais de cannabis verificados na Espanha. Barcelona, Valência e muito más. Guias especializados em conformidade legal.',
   };
 
   return {
@@ -65,9 +66,11 @@ export default async function HomePage() {
   const featuredArticles = await getFeaturedArticles(6);
 
   return (
-    <div className="bg-white">
+    <div className="relative min-h-screen">
       <HeroSection />
-      <EditorialConciergeFlow featuredArticles={featuredArticles} />
+      <AtmosphericCanvas>
+        <EditorialConciergeFlow featuredArticles={featuredArticles} />
+      </AtmosphericCanvas>
     </div>
   );
 }

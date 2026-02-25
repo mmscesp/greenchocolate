@@ -17,7 +17,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
           <div className="absolute bottom-0 left-0 w-[460px] h-[460px] bg-teal-500/10 blur-[120px] rounded-full" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-14 md:pt-32 md:pb-24">
           <div className="grid lg:grid-cols-2 gap-14 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-300 text-xs font-bold uppercase tracking-widest mb-6">

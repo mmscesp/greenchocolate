@@ -116,7 +116,7 @@ function AdminLoginForm() {
 
 export default function AdminLoginPage() {
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="w-full max-w-md">
         <Card className="p-8 shadow-2xl border-2 border-slate-200 dark:border-slate-700">
           <div className="text-center mb-8">

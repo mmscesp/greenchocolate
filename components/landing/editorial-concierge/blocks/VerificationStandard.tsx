@@ -18,7 +18,7 @@ const ICONS: Record<string, React.ElementType> = {
 
 export function VerificationStandard() {
   return (
-    <SectionWrapper>
+    <SectionWrapper glass>
       <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-20 items-center">
         <div>
           <ConciergeLabel className="text-emerald-600 mb-6">Our Standard</ConciergeLabel>

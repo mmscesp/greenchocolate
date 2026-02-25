@@ -65,7 +65,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 pt-24 md:pt-32 pb-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">

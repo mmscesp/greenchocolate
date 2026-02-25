@@ -14,7 +14,7 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="max-w-lg w-full bg-white rounded-xl shadow-lg p-8 text-center">
         <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <Search className="h-12 w-12 text-green-600" />

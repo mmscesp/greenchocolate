@@ -27,7 +27,7 @@ export function NewsletterDrop() {
   };
 
   return (
-    <SectionWrapper dark className="bg-[#0A0A0A]">
+    <SectionWrapper glass>
       {/* Background Animated Gradient Placeholder */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-emerald-500/20 rounded-full blur-[120px]" />

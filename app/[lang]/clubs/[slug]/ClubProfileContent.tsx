@@ -46,7 +46,7 @@ import { PREMIUM_SPRING, FADE_UP, STAGGER_CONTAINER } from '@/components/landing
 
 function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAudit?: string }) {
   return (
-    <div className="sticky top-0 z-50 w-full min-h-12 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center py-1">
+    <div className="sticky top-16 md:top-20 z-50 w-full min-h-12 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center py-1">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 sm:gap-6 min-w-0">
           <div className="flex items-center gap-2">
@@ -149,7 +149,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       <ClubTrustStrip isVerified={club.isVerified} />
       
       {/* Navigation */}
-      <div className="absolute top-16 left-0 z-20 w-full px-4 sm:px-6 lg:px-8 pointer-events-none">
+      <div className="absolute top-24 md:top-32 left-0 z-20 w-full px-4 sm:px-6 lg:px-8 pointer-events-none">
         <div className="max-w-7xl mx-auto pointer-events-auto">
           <Link href={`/${language}/clubs`}>
             <Button 
@@ -164,7 +164,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       </div>
 
       {/* Hero Section */}
-      <SectionWrapper dark className="pt-32 pb-24 min-h-[80vh] flex items-end relative overflow-hidden">
+      <SectionWrapper dark className="pt-40 md:pt-48 pb-24 min-h-[80vh] flex items-end relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence mode="wait">

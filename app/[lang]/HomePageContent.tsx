@@ -52,19 +52,19 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
       />
       <WebSiteStructuredData name="SocialClubsMaps" url="https://socialclubsmaps.com" />
 
-        <div className="min-h-screen bg-white relative">
+        <div className="min-h-screen relative">
         {/* Hero Section (stats integrated inside) */}
         <HeroSection />
 
         {/* What Tourists Get Wrong */}
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section className="py-24 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <TouristMistakes />
           </div>
         </section>
 
         {/* Interactive Tools - Risk Radar & Eligibility */}
-        <section className="py-24 bg-zinc-900 relative overflow-hidden">
+        <section className="py-24 bg-transparent relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
@@ -93,7 +93,7 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
         </section>
 
         {/* Featured Articles */}
-        <section className="py-24 bg-gradient-to-b from-zinc-50 to-white relative overflow-hidden">
+        <section className="py-24 relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-20 left-10 w-72 h-72 bg-green-100 rounded-full blur-3xl opacity-30" />
@@ -160,7 +160,7 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
         <WhyUsSection />
 
         {/* Coming Soon: Barcelona */}
-        <section className="py-24 bg-zinc-900 relative overflow-hidden">
+        <section className="py-24 bg-transparent relative overflow-hidden">
           {/* Background Effects */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-green-500/10 rounded-full blur-3xl" />
@@ -255,7 +255,7 @@ export default function HomePageContent({ featuredArticles }: HomePageContentPro
         </section>
 
         {/* FAQ Section */}
-        <section className='py-24 bg-white'>
+        <section className="py-24">
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <div className='text-center mb-12'>
               <Badge variant='outline' className='mb-4 border-green-200 text-green-700'>

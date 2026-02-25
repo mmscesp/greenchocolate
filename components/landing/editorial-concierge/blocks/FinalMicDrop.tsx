@@ -7,7 +7,7 @@ import { ConciergeLabel } from '../typography/ConciergeLabel';
 
 export function FinalMicDrop() {
   return (
-    <SectionWrapper dark className="bg-black min-h-[90vh] flex items-center justify-center text-center py-0" container={false}>
+    <SectionWrapper glass className="min-h-[90vh] flex items-center justify-center text-center py-0" container={false}>
       {/* Cinematic Background Image Placeholder */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black/60 z-10" />

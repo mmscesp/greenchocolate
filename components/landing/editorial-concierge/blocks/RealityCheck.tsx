@@ -34,7 +34,7 @@ const REALITY_ITEMS = [
 
 export function RealityCheck() {
   return (
-    <SectionWrapper dark className="bg-black pt-32 pb-48">
+    <SectionWrapper glass className="pt-32 pb-48">
       <div className="max-w-3xl mb-24">
         <ConciergeLabel className="text-red-500 mb-6">Reality Check</ConciergeLabel>
         <EditorialHeading size="2xl" className="text-white">Spain is <span className="italic text-red-500">not</span> Amsterdam.</EditorialHeading>

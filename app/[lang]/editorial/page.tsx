@@ -54,7 +54,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-muted/50 to-background py-20 md:py-28">
+      <section className="relative bg-gradient-to-b from-muted/50 to-background pt-24 md:pt-32 pb-20 md:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2">

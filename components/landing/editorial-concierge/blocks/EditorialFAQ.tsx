@@ -21,7 +21,7 @@ export function EditorialFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <SectionWrapper>
+    <SectionWrapper glass>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
           <ConciergeLabel className="text-emerald-600 mb-6 block">Intelligence</ConciergeLabel>

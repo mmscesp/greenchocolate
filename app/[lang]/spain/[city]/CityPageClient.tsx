@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import SafetyStickyAlert from '@/components/city/SafetyStickyAlert';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, 
@@ -115,9 +115,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
         <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 to-transparent" />
       </div>
 
-      <SafetyStickyAlert />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 relative">
         {/* Hero Section */}
         <motion.section 
           className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-8 md:p-12 mb-12"
@@ -163,13 +161,14 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
           </div>
         </motion.section>
 
-        {/* Quick Links Grid */}
+        {/* Quick Links Grid - 2 columns for Clubs & Guides */}
         <motion.section 
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
+
           <Link 
             href={`/${lang}/spain/${city}/clubs`} 
             className="group relative rounded-2xl border bg-card p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 overflow-hidden"
@@ -181,18 +180,8 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
             <Text size="sm" variant="muted">Browse verified clubs with public safety-first previews.</Text>
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
           </Link>
-          
-          <Link 
-            href={`/${lang}/spain/${city}/neighborhoods`} 
-            className="group relative rounded-2xl border bg-card p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 overflow-hidden"
-          >
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Compass className="h-6 w-6 text-primary" />
-            </div>
-            <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Neighborhoods</h2>
-            <Text size="sm" variant="muted">Compare local zones by activity and available club coverage.</Text>
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
-          </Link>
+
+
           
           <Link 
             href={`/${lang}/spain/${city}/guides`} 

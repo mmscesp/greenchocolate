@@ -121,7 +121,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28">
+      <section className="relative pt-24 md:pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div

@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 import { Shield, CheckCircle, Eye, Lock } from '@/lib/icons';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/Footer';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
@@ -45,9 +43,8 @@ export default function MissionPage() {
   
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       
-      <main className="max-w-4xl mx-auto px-4 py-20">
+      <main className="max-w-4xl mx-auto px-4 pt-28 pb-20">
         <div className="text-center mb-16">
           <H1 className="mb-4">Our Mission: Trust & Transparency</H1>
           <Lead>We are building the verified navigation layer for Spain's cannabis social club culture.</Lead>
@@ -105,7 +102,6 @@ export default function MissionPage() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }

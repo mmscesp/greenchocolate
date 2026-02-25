@@ -27,7 +27,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
       : "Navigating Barcelona's social clubs requires respect, discretion, and preparation. Follow our safety-first guide for a seamless introduction to the culture.";
 
   return (
-    <SectionWrapper className="bg-white">
+    <SectionWrapper glass className="">
       <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-24 items-center">
         {/* Left Side: Curated Path */}
         <div className="space-y-12">

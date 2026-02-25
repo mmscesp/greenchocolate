@@ -80,7 +80,7 @@ export default function ClubSignupPage() {
   // Show success state
   if (state?.success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">
         <Card className="p-8 max-w-md w-full text-center shadow-xl">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="h-10 w-10 text-green-600" />
@@ -111,7 +111,7 @@ export default function ClubSignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 pt-24 md:pt-32 pb-12 px-4">
       <div className="max-w-2xl mx-auto">
         <Link
           href={step === 1 ? "/club-panel" : "#"}

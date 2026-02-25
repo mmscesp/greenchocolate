@@ -64,7 +64,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
   const displayArticles = articles.length > 0 ? articles : fallbackArticles;
 
   return (
-    <SectionWrapper>
+    <SectionWrapper glass>
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         <div className="max-w-2xl">
           <ConciergeLabel className="mb-4 text-emerald-600">Knowledge Base</ConciergeLabel>

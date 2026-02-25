@@ -68,7 +68,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
       </div>
 
       {/* Back to Editorial link */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-6">
         <Link href={`/${language}/editorial`}>
           <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4 mr-2" />

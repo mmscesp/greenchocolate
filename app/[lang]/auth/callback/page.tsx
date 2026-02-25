@@ -120,7 +120,7 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">
       <Card className="p-8 max-w-md w-full text-center shadow-xl">
         <Link href="/" className="inline-flex items-center gap-2 mb-6">
           <LogoIcon size="lg" />

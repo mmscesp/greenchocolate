@@ -9,7 +9,7 @@ export default async function TermsPage({ params }: TermsPageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-16">
         <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">Terms of Use</h1>
         <p className="text-muted-foreground text-lg mb-10">
           SocialClubsMaps provides educational and informational content. We do not sell cannabis,
