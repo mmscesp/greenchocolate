@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import SafetyKitForm from '@/components/marketing/SafetyKitForm';
+import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
 import { ShieldCheck, Lock, AlertTriangle, ArrowRight } from '@/lib/icons';
 
 interface SafetyKitLandingPageProps {
@@ -52,19 +52,17 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
             </div>
 
             <div>
-              <SafetyKitForm source="safety_kit_landing" />
-              <p className="mt-5 text-xs text-zinc-500 leading-relaxed">
-                By requesting the kit, you agree to receive educational emails. You can unsubscribe at any time.
-                Read our{' '}
-                <Link href={`/${lang}/privacy`} className="text-emerald-400 hover:text-emerald-300">
-                  Privacy Policy
-                </Link>{' '}
-                and{' '}
-                <Link href={`/${lang}/terms`} className="text-emerald-400 hover:text-emerald-300">
-                  Terms
-                </Link>
-                .
-              </p>
+              <div className="rounded-3xl border border-emerald-500/20 bg-zinc-900/60 backdrop-blur-md p-4">
+                <EligibilityFlow />
+                <div className="mt-4 flex justify-center">
+                  <Link
+                    href={`/${lang}/safety`}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-emerald-400 hover:text-emerald-300 font-bold uppercase tracking-widest text-xs"
+                  >
+                    Open Full Safety Guide <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>

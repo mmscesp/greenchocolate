@@ -12,7 +12,7 @@ import { Leaf, Calendar, Clock, User, ArrowLeft, Share2, Shield, Info, ExternalL
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import ExpertByline from '@/components/trust/ExpertByline';
 import TrustBadge from '@/components/trust/TrustBadge';
-import SafetyKitForm from '@/components/marketing/SafetyKitForm';
+import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
 import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 
 interface ArticleContentProps {
@@ -166,7 +166,16 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
           <aside className="space-y-12">
             {/* Safety Kit Widget */}
             <div className="sticky top-24 space-y-12">
-              <SafetyKitForm />
+              <div className="rounded-3xl border border-border bg-card p-4">
+                <EligibilityFlow />
+                <div className="mt-4 flex justify-center">
+                  <Link href={`/${language}/safety`}>
+                    <Button className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-widest text-[10px] px-6">
+                      Open Safety Guide <ArrowRight className="ml-2 h-3 w-3" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
 
               {/* Verification Details */}
               <div className="p-8 bg-card border rounded-3xl shadow-lg shadow-primary/5 relative overflow-hidden group">
