@@ -21,11 +21,11 @@ export default function GatedContent({
       {/* Blurred Background Content */}
       <div className={`${blurClass} select-none pointer-events-none opacity-20 bg-midnight-charcoal p-8`}>
         <div className="space-y-4">
-           <div className="h-6 w-3/4 bg-white/10 rounded-lg"></div>
-           <div className="h-4 w-1/2 bg-white/10 rounded-lg"></div>
-           <div className="h-4 w-full bg-white/10 rounded-lg"></div>
-           <div className="h-4 w-5/6 bg-white/10 rounded-lg"></div>
-           <div className="h-10 w-full bg-white/10 rounded-xl mt-6"></div>
+           <div className="h-6 w-3/4 bg-emerald-500/10 rounded-lg"></div>
+           <div className="h-4 w-1/2 bg-emerald-500/10 rounded-lg"></div>
+           <div className="h-4 w-full bg-emerald-500/10 rounded-lg"></div>
+           <div className="h-4 w-5/6 bg-emerald-500/10 rounded-lg"></div>
+           <div className="h-10 w-full bg-emerald-500/10 rounded-xl mt-6"></div>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ export default function GatedContent({
                   <Link href="/login" className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
                     Member Login
                   </Link>
-                  <div className="w-1 h-1 bg-white/10 rounded-full" />
+                  <div className="w-1 h-1 bg-emerald-500/15 rounded-full" />
                   <Link href="/faq" className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
                     Legal FAQ
                   </Link>

@@ -35,7 +35,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
   }, []);
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/25 relative overflow-hidden">
       {/* Reading Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-primary/80 z-[60] origin-left"
@@ -63,8 +63,8 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
 
       {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/3 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gold/10 rounded-full blur-3xl" />
       </div>
 
       {/* Back to Editorial link */}

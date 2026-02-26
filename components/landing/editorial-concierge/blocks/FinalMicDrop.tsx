@@ -23,7 +23,7 @@ export function FinalMicDrop() {
           <Link href="/safety" className="w-full sm:w-auto min-h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 sm:px-12 py-3 sm:py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-base sm:text-lg uppercase tracking-widest text-center">
             Get the Visitor Safety Kit
           </Link>
-          <Link href="/editorial" className="w-full sm:w-auto min-h-11 bg-white/5 hover:bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold px-8 sm:px-12 py-3 sm:py-6 rounded-full transition-all hover:scale-105 active:scale-95 text-base sm:text-lg uppercase tracking-widest text-center">
+          <Link href="/editorial" className="w-full sm:w-auto min-h-11 bg-emerald-500/10 hover:bg-emerald-500/20 backdrop-blur-md text-white border border-emerald-500/25 font-bold px-8 sm:px-12 py-3 sm:py-6 rounded-full transition-all hover:scale-105 active:scale-95 text-base sm:text-lg uppercase tracking-widest text-center">
             Join the Weekly Drop
           </Link>
         </div>

@@ -57,14 +57,14 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
                 }}
               >
                 <motion.div
-                  className="group relative flex items-start gap-4 sm:gap-6 p-5 sm:p-6 rounded-[2rem] bg-zinc-50/50 border border-zinc-200/50 transition-all duration-500 hover:border-emerald-500/30 hover:bg-zinc-50 overflow-hidden"
+                  className="group relative flex items-start gap-4 sm:gap-6 p-5 sm:p-6 rounded-[2rem] bg-muted/60 border border-zinc-200/50 transition-all duration-500 hover:border-emerald-500/30 hover:bg-muted overflow-hidden"
                   whileHover={{ y: -4 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 >
                 {/* Ambient Glow */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/0 to-emerald-500/0 rounded-[2.5rem] blur-xl opacity-0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 group-hover:opacity-100 transition-all duration-500 -z-10" />
 
-                <div className="relative w-12 h-12 rounded-xl bg-white border border-zinc-200 flex items-center justify-center shrink-0 group-hover:border-emerald-500/30 transition-colors duration-500 z-10">
+                <div className="relative w-12 h-12 rounded-xl bg-card border border-zinc-200 flex items-center justify-center shrink-0 group-hover:border-emerald-500/30 transition-colors duration-500 z-10">
                   <item.icon className="w-5 h-5 text-zinc-400 group-hover:text-emerald-600 transition-colors duration-500" />
                 </div>
                 <div className="flex-1 relative z-10">
@@ -102,7 +102,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
             </p>
             <Link
               href="/safety"
-              className="pointer-events-auto min-h-11 w-full sm:w-auto bg-white text-black font-bold px-6 sm:px-10 py-3 sm:py-5 rounded-full hover:bg-emerald-50 transition-colors duration-500 flex items-center justify-center gap-3 group/btn"
+              className="pointer-events-auto min-h-11 w-full sm:w-auto bg-card text-black font-bold px-6 sm:px-10 py-3 sm:py-5 rounded-full hover:bg-emerald-50 transition-colors duration-500 flex items-center justify-center gap-3 group/btn"
               onClick={() => {
                 trackEvent('landing_onramp_read_guide_click', {
                   destination: '/safety',

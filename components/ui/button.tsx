@@ -15,7 +15,7 @@ const buttonVariants = cva(
         
         // Secondary: Alternative actions, outlined style
         secondary: 
-          "bg-white text-foreground border border-border hover:bg-neutral-50 hover:border-brand/30",
+          "bg-card text-foreground border border-border hover:bg-muted hover:border-brand/30",
         
         // Ghost: Low emphasis, navigation items
         ghost: 
@@ -35,7 +35,7 @@ const buttonVariants = cva(
         
         // Legacy aliases for backward compatibility during transition
         default: "bg-brand text-white hover:bg-brand-dark shadow-sm hover:shadow",
-        outline: "bg-white text-foreground border border-border hover:bg-neutral-50 hover:border-brand/30",
+        outline: "bg-card text-foreground border border-border hover:bg-muted hover:border-brand/30",
       },
       size: {
         sm: "h-9 px-3 text-xs",

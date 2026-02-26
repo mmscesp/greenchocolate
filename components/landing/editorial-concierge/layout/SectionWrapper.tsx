@@ -15,7 +15,7 @@ export const SectionWrapper = React.forwardRef<HTMLElement, SectionWrapperProps>
         className={cn(
           'py-24 relative overflow-hidden transition-colors duration-500',
           glass
-            ? 'bg-white/28 dark:bg-black/24 backdrop-blur-md border border-white/25 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
+            ? 'bg-card/60 dark:bg-black/24 backdrop-blur-md border border-emerald-500/15 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
             : dark
               ? 'bg-background/80 backdrop-blur-sm text-white'
               : 'bg-background/80 backdrop-blur-sm text-zinc-900',

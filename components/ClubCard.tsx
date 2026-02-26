@@ -99,7 +99,7 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
               <Badge 
                 key={index} 
                 variant="outline" 
-                className="text-[10px] uppercase tracking-tighter border-white/5 text-zinc-400 bg-white/5 px-2 py-0"
+                className="text-[10px] uppercase tracking-tighter border-emerald-500/20 text-zinc-300 bg-emerald-500/10 px-2 py-0"
               >
                 {vibe}
               </Badge>

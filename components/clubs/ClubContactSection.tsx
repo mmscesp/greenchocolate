@@ -28,7 +28,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
       </h3>
       <div className="space-y-6">
         <div className="flex items-start gap-4">
-          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+          <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
             <MapPin className="h-5 w-5 text-primary" />
           </div>
           <div>
@@ -38,7 +38,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+          <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
             <Phone className="h-5 w-5 text-primary" />
           </div>
            <div>
@@ -48,7 +48,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+          <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
             <Mail className="h-5 w-5 text-primary" />
           </div>
            <div>
@@ -59,7 +59,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
 
         {club.website && (
           <div className="flex items-center gap-4">
-            <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/10">
+            <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
               <Globe className="h-5 w-5 text-primary" />
             </div>
              <div>

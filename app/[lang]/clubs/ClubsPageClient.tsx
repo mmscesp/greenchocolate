@@ -146,14 +146,14 @@ export default function ClubsPageClient({
       </SectionWrapper>
 
       {/* Interactive Controls Section */}
-      <section className="bg-zinc-50 py-12">
+      <section className="bg-transparent py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col lg:flex-row gap-8">
             
             {/* Left Column: Filter Sidebar */}
             <div className="lg:w-80 flex-shrink-0">
               <div className="sticky top-24 space-y-8">
-                <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
+                <div className="bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
                   <div className="mb-8">
                     <EditorialHeading size="sm" className="text-zinc-900 uppercase tracking-widest border-b border-zinc-100 pb-4 mb-8">Advanced Filters</EditorialHeading>
                   </div>
@@ -229,12 +229,12 @@ export default function ClubsPageClient({
                   {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="bg-white rounded-[2rem] border border-zinc-200 h-[450px] animate-pulse overflow-hidden">
+                        <div key={i} className="bg-card rounded-[2rem] border border-zinc-200 h-[450px] animate-pulse overflow-hidden">
                           <div className="h-64 bg-zinc-100" />
                           <div className="p-8 space-y-4">
                             <div className="h-8 bg-zinc-100 rounded-lg w-3/4" />
                             <div className="h-4 bg-zinc-100 rounded-lg w-1/2" />
-                            <div className="h-12 bg-zinc-50 rounded-lg" />
+                            <div className="h-12 bg-muted rounded-lg" />
                           </div>
                         </div>
                       ))}
@@ -254,8 +254,8 @@ export default function ClubsPageClient({
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white rounded-[2rem] border border-zinc-200 p-8 sm:p-12 lg:p-20 text-center">
-                      <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-zinc-100">
+                    <div className="bg-card rounded-[2rem] border border-zinc-200 p-8 sm:p-12 lg:p-20 text-center">
+                      <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-8 border border-zinc-100">
                         <Search className="h-8 w-8 text-zinc-300" />
                       </div>
                       <EditorialHeading size="sm" className="mb-4">No results found</EditorialHeading>

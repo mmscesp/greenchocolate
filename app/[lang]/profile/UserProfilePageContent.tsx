@@ -194,7 +194,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
                 <Button
                   size="icon"
                   variant="secondary"
-                  className="absolute top-4 right-4 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border-0 shadow-lg"
+                className="absolute top-4 right-4 rounded-full bg-card/30 backdrop-blur-md hover:bg-card/45 text-white border-0 shadow-lg"
                   type="button"
                 >
                   <Camera className="h-4 w-4" />

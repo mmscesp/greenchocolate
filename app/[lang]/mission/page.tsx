@@ -42,7 +42,7 @@ export default function MissionPage() {
   // For now, hardcoding key sections while keeping i18n structure in mind
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       
       <main className="max-w-4xl mx-auto px-4 pt-28 pb-20">
         <div className="text-center mb-16">
@@ -81,7 +81,7 @@ export default function MissionPage() {
                   icon: Eye
                 }
               ].map((item, i) => (
-                <div key={i} className="flex gap-4 p-6 bg-white border rounded-xl shadow-sm">
+                <div key={i} className="flex gap-4 p-6 bg-card border rounded-xl shadow-sm">
                   <item.icon className="h-6 w-6 text-green-600 shrink-0" />
                   <div>
                     <H4 className="mb-1">{item.title}</H4>

@@ -87,7 +87,7 @@ function ClubLoginForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-gray-500">
+          <span className="bg-background px-2 text-gray-500">
             Or sign in with email
           </span>
         </div>
@@ -204,7 +204,7 @@ function ClubLoginForm() {
 
 export default function ClubLoginPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100/40 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="w-full max-w-md">
         <Link href="/club-panel" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />

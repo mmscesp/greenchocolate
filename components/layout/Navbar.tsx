@@ -41,8 +41,6 @@ export default function Navbar() {
     };
   }, [mobileMenuOpen]);
 
-  const isHomePage = pathname === '/' || /^\/(en|es|de|fr|it)(\/|$)/.test(pathname) && pathname.split('/').filter(Boolean).length <= 1;
-
   return (
     <>
       <motion.nav
@@ -56,10 +54,7 @@ export default function Navbar() {
           'fixed inset-x-0 mx-auto top-0 z-50 transition-all duration-500',
           isScrolled 
             ? 'glass-liquid rounded-full px-6 py-2' 
-            : cn(
-                'w-full px-4 md:px-8 py-4 bg-transparent border-transparent',
-                isHomePage && 'dark text-white'
-              )
+            : 'w-full px-4 md:px-8 py-4 bg-transparent border-transparent'
         )}
       >
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
@@ -67,10 +62,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
               <Logo size="md" showText={false} href="" className="transition-transform group-hover:scale-110" imageClassName="h-10 w-10" />
-              <span className={cn(
-                "text-xl font-bold tracking-tight transition-all duration-300",
-                isScrolled ? "text-white" : (isHomePage ? "text-white" : "text-foreground")
-              )}>
+              <span className="text-xl font-bold tracking-tight text-liquid-aware transition-all duration-300">
                 SocialClubsMaps
               </span>
             </Link>
@@ -78,27 +70,25 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className={cn(
-            "hidden md:flex items-center rounded-full px-2 py-1 mx-4 transition-all duration-300",
+            "hidden md:flex items-center rounded-full px-2 py-1 mx-4 transition-all duration-300 text-liquid-aware",
             isScrolled ? "bg-white/5" : "bg-transparent"
           )}>
             <MainNavigation />
           </div>
 
           {/* Desktop Actions Section */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3 text-liquid-aware">
             <LanguageSelector />
             <UserProfileDropdown />
           </div>
 
           {/* Mobile Actions Section */}
           <div className="flex md:hidden items-center gap-1">
-            {/* Notification Dot on Mobile Menu Trigger if unread exists */}
             <button
               onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 text-liquid-aware transition-colors"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              {/* Note: We'd need to lift the unread state here, but for now we rely on the Profile Dropdown to show it. */}
             </button>
           </div>
         </div>

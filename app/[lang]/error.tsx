@@ -23,8 +23,8 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 pt-16 md:pt-20">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-16 md:pt-20">
+      <div className="max-w-md w-full bg-card rounded-xl shadow-lg p-8 text-center">
         <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
           <AlertCircle className="h-10 w-10 text-red-600" />
         </div>

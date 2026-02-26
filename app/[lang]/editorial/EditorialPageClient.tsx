@@ -129,7 +129,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm border-white/20 text-zinc-400 bg-white/5">
+              <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm border-emerald-500/20 text-zinc-400 bg-emerald-500/5">
                 <BookOpen className="w-4 h-4 mr-2" />
                 Knowledge Vault
               </Badge>
@@ -182,7 +182,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               >
                 <Link
                   href={`/${lang}/editorial/${category.slug}`}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 md:p-8 hover:border-white/20 transition-all duration-500 block h-full"
+                className="group relative overflow-hidden rounded-2xl border border-emerald-500/15 bg-emerald-500/5 backdrop-blur-sm p-6 md:p-8 hover:border-emerald-500/30 transition-all duration-500 block h-full"
                 >
                   {/* Glow effect */}
                   <div className={`absolute -inset-1 bg-gradient-to-r ${category.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 -z-10`} />
@@ -225,7 +225,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               transition={{ duration: 0.6, delay: 0.6 }}
             >
               <h2 className="text-2xl md:text-3xl font-bold text-white">Featured Articles</h2>
-              <Button variant="outline" asChild className="border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white rounded-xl">
+              <Button variant="outline" asChild className="border-emerald-500/15 text-zinc-300 hover:bg-emerald-500/10 hover:text-white rounded-xl">
                 <Link href={`/${lang}/editorial/legal`}>
                   View all <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
@@ -242,11 +242,11 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                 >
                   <Link
                     href={`/${lang}/editorial/${article.slug}`}
-                    className="group block rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden hover:border-white/20 transition-all duration-500 h-full"
+                className="group block rounded-2xl border border-emerald-500/15 bg-emerald-500/5 backdrop-blur-sm overflow-hidden hover:border-emerald-500/30 transition-all duration-500 h-full"
                   >
                     <div className="aspect-video bg-zinc-800/50 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
-                      <Badge className="absolute top-3 left-3 bg-white/10 text-zinc-300 border-white/20" variant="secondary">
+                  <Badge className="absolute top-3 left-3 bg-emerald-500/10 text-zinc-300 border-emerald-500/20" variant="secondary">
                         {article.category}
                       </Badge>
                     </div>

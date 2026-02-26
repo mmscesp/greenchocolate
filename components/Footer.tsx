@@ -10,8 +10,12 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-background border-t border-border">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <footer className="relative bg-gradient-to-b from-background to-emerald-50/20 dark:to-emerald-950/10 border-t border-border overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-20 left-[10%] h-56 w-56 rounded-full bg-emerald-500/8 blur-3xl" />
+        <div className="absolute -bottom-24 right-[10%] h-64 w-64 rounded-full bg-gold/10 blur-3xl" />
+      </div>
+      <div className="container relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
@@ -29,7 +33,7 @@ export default function Footer() {
                 href="https://www.instagram.com/socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center w-9 h-9 rounded-lg bg-neutral-100 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
+                className="flex items-center justify-center w-9 h-9 rounded-lg bg-card border border-border/60 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
@@ -38,14 +42,14 @@ export default function Footer() {
                 href="https://x.com/socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center w-9 h-9 rounded-lg bg-neutral-100 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
+                className="flex items-center justify-center w-9 h-9 rounded-lg bg-card border border-border/60 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a 
                 href="mailto:hello@socialclubsmaps.com"
-                className="flex items-center justify-center w-9 h-9 rounded-lg bg-neutral-100 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
+                className="flex items-center justify-center w-9 h-9 rounded-lg bg-card border border-border/60 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
                 aria-label="Email"
               >
                 <Mail className="h-4 w-4" />
@@ -121,7 +125,7 @@ export default function Footer() {
               <LanguageSelector variant="footer" />
             </div>
             
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-neutral-50 border border-neutral-100">
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-muted border border-neutral-100">
               <Shield className="h-4 w-4 text-gold" />
               <span className="text-xs text-muted-foreground">
                 Verified & Secure Platform

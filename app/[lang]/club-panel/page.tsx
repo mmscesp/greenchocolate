@@ -10,8 +10,8 @@ import { LogIn, UserPlus, Shield } from '@/lib/icons';
 
 export default function ClubPanelChooser() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 pt-16 md:pt-20">
-      <nav className="bg-white/95 backdrop-blur-md shadow-sm border-b">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100/40 pt-16 md:pt-20">
+      <nav className="bg-card/95 backdrop-blur-md shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <Link href="/" className="flex items-center gap-2">

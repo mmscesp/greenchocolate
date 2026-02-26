@@ -38,7 +38,7 @@ export function DataTable<T>({ columns, data, title, onEdit, onDelete, onAction,
           </thead>
           <tbody>
             {data.map((row, idx) => (
-              <tr key={idx} className="border-b hover:bg-gray-50">
+              <tr key={idx} className="border-b hover:bg-muted">
                 {columns.map((col) => (
                   <td key={String(col.key)} className="py-3 px-4 text-sm text-gray-700">
                     {col.render ? col.render(row[col.key], row) : String(row[col.key])}

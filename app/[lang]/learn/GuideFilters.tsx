@@ -22,7 +22,7 @@ export default function BlogFilters({
   currentLang,
 }: BlogFiltersProps) {
   return (
-    <div className="bg-white rounded-lg p-6 mb-8 shadow-sm">
+    <div className="bg-card rounded-lg p-6 mb-8 shadow-sm">
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Search */}
         <form action={`/${currentLang}/editorial`} method="GET" className="flex-1 relative">
@@ -65,7 +65,7 @@ export default function BlogFilters({
           className={`px-3 py-1 rounded-full text-sm border transition-colors ${
             !currentCategory
               ? 'bg-green-100 border-green-300 text-green-800'
-              : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+              : 'bg-muted border-gray-200 text-gray-700 hover:bg-muted/80'
           }`}
         >
           All
@@ -77,7 +77,7 @@ export default function BlogFilters({
             className={`px-3 py-1 rounded-full text-sm border transition-colors ${
               currentCategory === cat.name
                 ? 'bg-green-100 border-green-300 text-green-800'
-                : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                : 'bg-muted border-gray-200 text-gray-700 hover:bg-muted/80'
             }`}
           >
             {cat.name} ({cat.count})

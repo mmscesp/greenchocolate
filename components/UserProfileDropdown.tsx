@@ -244,7 +244,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
           </div>
         )}
       </div>
-      <span className="hidden sm:inline font-medium text-white/90 group-hover:text-white text-sm">
+      <span className="hidden sm:inline font-medium text-white group-hover:text-white text-sm">
         {displayName.split(' ')[0]}
       </span>
       <ChevronDown className={cn('h-3 w-3 text-white/40 transition-transform duration-300', isOpen && 'rotate-180')} />

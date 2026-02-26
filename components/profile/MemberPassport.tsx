@@ -89,7 +89,7 @@ export default function MemberPassport({
           {/* QR Code Placeholder */}
           <div className={cn(
             "w-16 h-16 rounded-xl p-2 shadow-lg border-2",
-            "bg-white",
+            "bg-card",
             config.border
           )}>
             <div className="w-full h-full rounded-lg flex items-center justify-center bg-muted">
@@ -101,7 +101,7 @@ export default function MemberPassport({
         {/* Status Badge */}
         <div className={cn(
           "inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5 border",
-          "bg-white/50 dark:bg-black/20",
+          "bg-card/70 dark:bg-black/20",
           config.border
         )}>
           <CheckCircle2 className={cn("h-4 w-4", config.accent)} />

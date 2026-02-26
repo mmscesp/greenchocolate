@@ -17,7 +17,7 @@ export function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-full md:w-64 bg-white border-r border-gray-200 h-full md:h-screen flex flex-col">
+    <div className="w-full md:w-64 bg-card border-r border-gray-200 h-full md:h-screen flex flex-col">
       <div className="p-6 border-b">
         <Link href="/club-panel" className="flex items-center gap-2">
           <LogoIcon size="md" />
@@ -36,7 +36,7 @@ export function DashboardSidebar() {
                 href={item.href}
                 className={cn(
                   'flex min-h-11 items-center gap-3 px-4 py-3 rounded-lg transition-colors',
-                  isActive ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600 hover:bg-gray-50'
+                  isActive ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600 hover:bg-muted'
                 )}
               >
                 <Icon className="h-5 w-5" />
@@ -48,7 +48,7 @@ export function DashboardSidebar() {
       </nav>
 
       <div className="p-4 border-t space-y-2">
-        <Link href="/" className="flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+        <Link href="/" className="flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-muted rounded-lg transition-colors">
           <Home className="h-5 w-5" />
           <span>Back to Site</span>
         </Link>

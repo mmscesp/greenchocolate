@@ -68,7 +68,7 @@ export default function LanguageSelector({
         variant="ghost"
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center h-10 w-10 p-0 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+        className="flex items-center justify-center h-10 w-10 p-0 rounded-full hover:bg-white/10 text-white transition-colors"
       >
         <Globe className="h-5 w-5" />
       </Button>

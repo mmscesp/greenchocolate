@@ -140,7 +140,7 @@ export default function FilterBar({
                 className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
                   filters.neighborhood === neighborhood
                     ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
-                    : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
                 }`}
               >
                 {neighborhood}
@@ -164,7 +164,7 @@ export default function FilterBar({
                 className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
                   filters.amenities.includes(amenity)
                     ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
-                    : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
                 }`}
               >
                 {amenity}
@@ -188,7 +188,7 @@ export default function FilterBar({
                 className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
                   filters.vibes.includes(vibe)
                     ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
-                    : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
                 }`}
               >
                 {vibe}
@@ -219,7 +219,7 @@ export default function FilterBar({
             </div>
             <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filters.isVerified ? 'bg-emerald-500' : 'bg-zinc-200'}`}>
               <motion.div 
-                className="w-4 h-4 bg-white rounded-full shadow-sm"
+                className="w-4 h-4 bg-card rounded-full shadow-sm"
                 animate={{ x: filters.isVerified ? 16 : 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
@@ -241,7 +241,7 @@ export default function FilterBar({
                   className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${
                     filters.priceRange.includes(price)
                       ? 'bg-zinc-900 border-zinc-900 text-white'
-                      : 'bg-white border-zinc-200 text-zinc-400 hover:border-zinc-300'
+                      : 'bg-card border-zinc-200 text-zinc-400 hover:border-zinc-300'
                   }`}
                 >
                   {price}
@@ -265,7 +265,7 @@ export default function FilterBar({
                   className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${
                     filters.rating === rating
                       ? 'bg-zinc-900 border-zinc-900 text-white'
-                      : 'bg-white border-zinc-200 text-zinc-400 hover:border-zinc-300'
+                      : 'bg-card border-zinc-200 text-zinc-400 hover:border-zinc-300'
                   }`}
                 >
                   {rating}

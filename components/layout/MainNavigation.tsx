@@ -71,7 +71,7 @@ export default function MainNavigation() {
     <NavigationMenu viewportClassName="bg-transparent border-none shadow-none">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5 text-white/70 hover:text-white transition-colors">
+          <NavigationMenuTrigger className="bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5 text-white hover:text-white transition-colors">
             Explore
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -87,7 +87,7 @@ export default function MainNavigation() {
 
         {desktopPrimaryItems.map(({ href, label, Icon }) => (
           <NavigationMenuItem key={href}>
-            <Link href={href} className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-white/5 text-white/70 hover:text-white transition-colors')}>
+            <Link href={href} className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-white/5 text-white hover:text-white transition-colors')}>
               {Icon ? (
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4" />
@@ -119,11 +119,11 @@ const ListItem = React.forwardRef<
           )}
           {...props}
         >
-          <div className="flex items-center gap-2 text-sm font-semibold leading-none text-white/90 group-hover:text-white">
+          <div className="flex items-center gap-2 text-sm font-semibold leading-none text-white group-hover:text-white">
             {icon}
             {title}
           </div>
-          <p className="line-clamp-2 text-sm leading-snug text-white/50 pl-6 group-hover:text-white/70">
+          <p className="line-clamp-2 text-sm leading-snug text-white/70 pl-6 group-hover:text-white">
             {children}
           </p>
         </a>

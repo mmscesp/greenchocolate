@@ -98,7 +98,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
             }}
           >
             <motion.div
-              className="group relative p-5 sm:p-6 rounded-[2.5rem] bg-white border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden"
+              className="group relative p-5 sm:p-6 rounded-[2.5rem] bg-card border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden"
               whileHover={{ y: -6 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
@@ -110,7 +110,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
                 {/* Image Placeholder */}
                 <div className="absolute inset-0 bg-zinc-200 group-hover:scale-105 transition-transform duration-1000 z-0" />
                 <div className="absolute top-4 left-4 z-10">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-white/90 backdrop-blur-sm text-zinc-900 shadow-sm">
+                  <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-card/90 backdrop-blur-sm text-zinc-900 shadow-sm">
                     {article.category}
                   </span>
                 </div>

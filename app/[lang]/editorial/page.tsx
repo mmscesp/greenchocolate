@@ -52,9 +52,13 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/30 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-24 left-[12%] h-[420px] w-[420px] rounded-full bg-emerald-500/10 blur-3xl" />
+        <div className="absolute top-[35%] right-[8%] h-[360px] w-[360px] rounded-full bg-gold/10 blur-3xl" />
+      </div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-muted/50 to-background pt-24 md:pt-32 pb-20 md:pb-28">
+      <section className="relative bg-gradient-to-b from-emerald-500/8 via-background/50 to-transparent pt-24 md:pt-32 pb-20 md:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2">
@@ -109,7 +113,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
 
       {/* Featured Articles */}
       {featuredArticles.length > 0 && (
-        <section className="py-16 md:py-24 bg-muted/30">
+        <section className="py-16 md:py-24 bg-emerald-500/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <H2>Featured Articles</H2>

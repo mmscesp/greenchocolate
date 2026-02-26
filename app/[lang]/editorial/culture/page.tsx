@@ -59,7 +59,7 @@ export default function CulturePage({ params }: CulturePageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/25">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse space-y-8">
             <div className="h-48 bg-muted rounded-3xl" />
@@ -75,10 +75,11 @@ export default function CulturePage({ params }: CulturePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/25 relative overflow-hidden">
       {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-emerald-500/10 to-transparent" />
+        <div className="absolute top-[36%] right-[10%] h-[320px] w-[320px] rounded-full bg-gold/10 blur-3xl" />
       </div>
 
       {/* Hero */}
@@ -152,7 +153,7 @@ export default function CulturePage({ params }: CulturePageProps) {
                   <div className="w-10 h-10 bg-purple-500/10 rounded-full flex items-center justify-center shrink-0 border border-purple-500/20">
                     <Calendar className="w-5 h-5 text-purple-400" />
                   </div>
-                  <div className="w-0.5 h-full bg-white/10 mt-2" />
+                  <div className="w-0.5 h-full bg-emerald-500/20 mt-2" />
                 </div>
                 <div className="pb-6">
                   <span className="text-sm text-zinc-500">1990s</span>
@@ -169,7 +170,7 @@ export default function CulturePage({ params }: CulturePageProps) {
                   <div className="w-10 h-10 bg-violet-500/10 rounded-full flex items-center justify-center shrink-0 border border-violet-500/20">
                     <MapPin className="w-5 h-5 text-violet-400" />
                   </div>
-                  <div className="w-0.5 h-full bg-white/10 mt-2" />
+                  <div className="w-0.5 h-full bg-emerald-500/20 mt-2" />
                 </div>
                 <div className="pb-6">
                   <span className="text-sm text-zinc-500">2006-2010</span>

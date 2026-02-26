@@ -47,7 +47,7 @@ export function BentoCard({ title, desc, imageSrc, href = '/editorial', size = '
       <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/0 to-emerald-500/0 rounded-[2.5rem] blur-xl opacity-0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 group-hover:opacity-100 transition-all duration-500 -z-10" />
 
       {/* Inner Card Frame */}
-      <div className="absolute inset-0 bg-white border border-zinc-200/50 rounded-[2rem] transition-all duration-500 group-hover:border-emerald-500/30 group-hover:bg-zinc-50" />
+      <div className="absolute inset-0 bg-card border border-zinc-200/50 rounded-[2rem] transition-all duration-500 group-hover:border-emerald-500/30 group-hover:bg-muted" />
       {/* Background Image Wrapper */}
       <div className="absolute inset-[1px] rounded-[calc(2rem-1px)] z-0 overflow-hidden mix-blend-multiply opacity-40">
         {imageSrc && !imageError ? (
@@ -62,7 +62,7 @@ export function BentoCard({ title, desc, imageSrc, href = '/editorial', size = '
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 to-zinc-50" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/80 to-transparent z-10" />
       </div>
       {/* Content */}
       <div className="relative z-20">

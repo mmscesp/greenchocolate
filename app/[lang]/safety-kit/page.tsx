@@ -36,15 +36,15 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
               </p>
 
               <div className="grid sm:grid-cols-3 gap-4 text-sm">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-4">
                   <p className="text-emerald-300 font-bold uppercase tracking-widest text-[10px] mb-2">No hype</p>
                   <p className="text-zinc-300">Education-first, not brokering.</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-4">
                   <p className="text-emerald-300 font-bold uppercase tracking-widest text-[10px] mb-2">Updated</p>
                   <p className="text-zinc-300">Current legal and safety context.</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-4">
                   <p className="text-emerald-300 font-bold uppercase tracking-widest text-[10px] mb-2">Private</p>
                   <p className="text-zinc-300">Data-minimized and trust-first.</p>
                 </div>
@@ -72,26 +72,26 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-6">
             <AlertTriangle className="h-5 w-5 text-amber-400 mb-3" />
             <h2 className="text-lg font-bold mb-2">Avoid Expensive Mistakes</h2>
             <p className="text-zinc-400 text-sm">Public-consumption and possession risk context, practical do/don't checklists, and tourist trap warnings.</p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-6">
             <ShieldCheck className="h-5 w-5 text-emerald-400 mb-3" />
             <h2 className="text-lg font-bold mb-2">Respect Club Culture</h2>
             <p className="text-zinc-400 text-sm">First-visit etiquette, privacy rules, and how to avoid behavior that gets people rejected.</p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-6">
             <Lock className="h-5 w-5 text-cyan-400 mb-3" />
             <h2 className="text-lg font-bold mb-2">Protect Yourself</h2>
             <p className="text-zinc-400 text-sm">Scam pattern detection, safer communication behavior, and personal-risk minimization basics.</p>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-6">
           <p className="text-zinc-300">Need deeper context before downloading?</p>
           <Link href={`/${lang}/editorial/legal`} className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-emerald-400 hover:text-emerald-300 font-bold uppercase tracking-widest text-xs">
             Read Legal Basics <ArrowRight className="h-4 w-4" />

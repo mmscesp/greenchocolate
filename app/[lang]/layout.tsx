@@ -5,6 +5,7 @@ import { AuthProvider } from '@/components/auth/AuthProvider';
 import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/layout/Navbar';
 import ConditionalFooter from '@/components/layout/ConditionalFooter';
+import PlatformBackground from '@/components/layout/PlatformBackground';
 import LegalDisclaimerModal from '@/components/trust/LegalDisclaimerModal';
 
 export async function generateStaticParams() {
@@ -30,6 +31,7 @@ export default async function LocaleLayout({
           <div className="min-h-screen flex flex-col">
             <LegalDisclaimerModal />
             <Navbar />
+            <PlatformBackground />
             <main className="flex-1">
               {children}
             </main>

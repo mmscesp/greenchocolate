@@ -48,7 +48,7 @@ export function WeeklyIntelligence() {
           ].map((item, i) => (
             <motion.div 
               key={i} 
-              className="group relative p-8 rounded-[2rem] bg-white border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden cursor-pointer"
+              className="group relative p-8 rounded-[2rem] bg-card border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden cursor-pointer"
               whileHover={{ y: -6 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
@@ -79,5 +79,4 @@ export function WeeklyIntelligence() {
     </SectionWrapper>
   );
 }
-
 

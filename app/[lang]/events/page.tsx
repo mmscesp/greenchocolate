@@ -11,7 +11,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
   const events = await getUpcomingEvents(24);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 space-y-8">
       <section className="rounded-2xl border bg-card p-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-3">Europe Events</h1>
         <p className="text-muted-foreground">Cultural and industry events connected to the platform's trust-and-education mission.</p>

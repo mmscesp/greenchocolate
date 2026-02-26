@@ -52,7 +52,7 @@ export function KnowledgeRouter() {
             placeholder="Search the Knowledge Vault..."
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="w-full bg-white border border-zinc-200 rounded-full py-4 pl-12 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all"
+            className="w-full bg-card border border-zinc-200 rounded-full py-4 pl-12 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all"
           />
         </form>
       </div>

@@ -252,11 +252,11 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       </SectionWrapper>
 
       {/* Main Content - Bento Grid */}
-      <SectionWrapper className="bg-zinc-50">
+      <SectionWrapper className="bg-transparent">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
           
           {/* About Card - Large */}
-          <div className="md:col-span-2 bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
+          <div className="md:col-span-2 bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
                 <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -279,7 +279,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           {/* Info Column */}
           <div className="space-y-6">
             {/* Location Card (Blurred) */}
-            <div className="relative bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm overflow-hidden group">
+            <div className="relative bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm overflow-hidden group">
               <div className="flex items-center gap-3 mb-6 relative z-10">
                 <MapPin className="h-5 w-5 text-zinc-400" />
                 <h3 className="font-bold text-zinc-900">Location</h3>
@@ -296,8 +296,8 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               </div>
 
               {/* Overlay */}
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/60 backdrop-blur-md p-6 text-center">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-card/70 backdrop-blur-md p-6 text-center">
+                <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
                   <Lock className="h-5 w-5 text-zinc-400" />
                 </div>
                 <h4 className="font-bold text-zinc-900 mb-2">Private Location</h4>
@@ -315,7 +315,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     </Button>
                   )}
                   <Link href={`/${language}/app`} className="w-full">
-                    <Button variant="outline" className="w-full bg-white border-zinc-200 hover:bg-zinc-50 text-zinc-900 rounded-xl">
+                    <Button variant="outline" className="w-full bg-card border-zinc-200 hover:bg-muted text-zinc-900 rounded-xl">
                       Register on App
                     </Button>
                   </Link>
@@ -324,7 +324,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Hours Card */}
-            <div className="bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
+            <div className="bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <Clock className="h-5 w-5 text-zinc-400" />
                 <h3 className="font-bold text-zinc-900">Opening Hours</h3>
@@ -365,14 +365,14 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           </div>
 
           {/* Amenities - Full Width */}
-          <div className="md:col-span-3 bg-white rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm mt-6">
+          <div className="md:col-span-3 bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm mt-6">
             <div className="flex items-center gap-3 mb-6">
               <Shield className="h-5 w-5 text-zinc-400" />
               <EditorialHeading size="md" className="text-zinc-900">Services & Amenities</EditorialHeading>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {club.amenities.map((amenity, i) => (
-                <div key={i} className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-100">
+                <div key={i} className="flex items-center gap-2 p-3 bg-muted rounded-xl border border-zinc-100">
                   <Check className="h-4 w-4 text-emerald-500" />
                   <span className="text-zinc-700 text-sm sm:text-base font-medium">{amenity}</span>
                 </div>
@@ -451,7 +451,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     setShowPreRegistrationModal(false);
                     setFormState(null);
                   }}
-                  className="absolute top-4 right-4 min-h-11 min-w-11 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors"
+                  className="absolute top-4 right-4 min-h-11 min-w-11 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-card hover:text-black transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>

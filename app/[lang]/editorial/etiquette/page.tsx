@@ -59,7 +59,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/25">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse space-y-8">
             <div className="h-48 bg-muted rounded-3xl" />
@@ -75,10 +75,11 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/25 relative overflow-hidden">
       {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-emerald-500/10 to-transparent" />
+        <div className="absolute top-[34%] right-[8%] h-[300px] w-[300px] rounded-full bg-gold/10 blur-3xl" />
       </div>
 
       {/* Hero */}

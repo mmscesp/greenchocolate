@@ -7,12 +7,20 @@ import { AuroraBackground } from '@/components/ui/aurora-background';
 
 interface AtmosphericCanvasProps {
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  fixed?: boolean;
 }
 
-export function AtmosphericCanvas({ className, children }: AtmosphericCanvasProps) {
+export function AtmosphericCanvas({ className, children, fixed = false }: AtmosphericCanvasProps) {
   return (
-    <section className={cn('relative overflow-hidden bg-background', className)}>
+    <section
+      className={cn(
+        fixed
+          ? 'fixed inset-0 -z-10 overflow-hidden bg-background pointer-events-none'
+          : 'relative overflow-hidden bg-background',
+        className
+      )}
+    >
       <AuroraBackground className="opacity-90" showRadialGradient />
 
       <div
@@ -32,7 +40,7 @@ export function AtmosphericCanvas({ className, children }: AtmosphericCanvasProp
         }}
       />
 
-      <div className="relative z-10">{children}</div>
+      {children ? <div className="relative z-10">{children}</div> : null}
     </section>
   );
 }
