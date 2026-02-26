@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { AdminDashboardClient } from '../AdminDashboardClient';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +11,8 @@ interface AdminPageProps {
 
 export default async function AdminPage({ params }: AdminPageProps) {
   const { lang } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
 
   const [
     totalUsers,
@@ -77,7 +81,7 @@ export default async function AdminPage({ params }: AdminPageProps) {
 
   const clubStatsByCity = clubStats
     .map((stat: ClubStatRow) => ({
-      cityName: cities.find((c: CityRow) => c.id === stat.cityId)?.name || 'Unknown',
+      cityName: cities.find((c: CityRow) => c.id === stat.cityId)?.name || t('admin.common.unknown'),
       count: stat._count,
     }))
     .sort((a: { cityName: string; count: number }, b: { cityName: string; count: number }) => b.count - a.count)

@@ -114,7 +114,7 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-3 w-3 text-primary" />
-              <span>EST. {club.foundedYear}</span>
+              <span>{t('club.established_prefix')} {club.foundedYear}</span>
             </div>
           </div>
 

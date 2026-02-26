@@ -17,6 +17,7 @@ AlertTriangle,
 TrendingUp } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface DashboardData {
   totalUsers: number;
@@ -83,6 +84,7 @@ const getStatusIcon = (status: string) => {
 };
 
 export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) {
+  const { t } = useLanguage();
   const adminCount = data.userRoleDistribution.find(r => r.role === 'ADMIN')?.count || 0;
   const clubAdminCount = data.userRoleDistribution.find(r => r.role === 'CLUB_ADMIN')?.count || 0;
   const userCount = data.userRoleDistribution.find(r => r.role === 'USER')?.count || 0;
@@ -92,37 +94,37 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          Admin Dashboard
+          {t('admin.dashboard.header.title')}
         </h1>
         <p className="text-slate-600 dark:text-slate-400 mt-1">
-          Platform overview and key metrics
+          {t('admin.dashboard.header.description')}
         </p>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
-          title="Total Users"
+          title={t('admin.dashboard.metrics.total_users')}
           value={data.totalUsers.toLocaleString()}
           icon={Users}
           color="blue"
           trend={`${userCount} members • ${clubAdminCount} club admins`}
         />
         <StatsCard
-          title="Total Clubs"
+          title={t('admin.dashboard.metrics.total_clubs')}
           value={data.totalClubs.toLocaleString()}
           icon={Building2}
           color="green"
           trend={`${data.pendingVerifications} pending verification`}
         />
         <StatsCard
-          title="Pending Requests"
+          title={t('admin.dashboard.metrics.pending_requests')}
           value={data.pendingRequests.toLocaleString()}
           icon={ClipboardList}
           color="orange"
         />
         <StatsCard
-          title="Platform Admins"
+          title={t('admin.dashboard.metrics.platform_admins')}
           value={adminCount.toString()}
           icon={Shield}
           color="purple"
@@ -136,7 +138,7 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
               <div>
-                <h3 className="font-medium text-yellow-800 dark:text-yellow-300">Attention Required</h3>
+                <h3 className="font-medium text-yellow-800 dark:text-yellow-300">{t('admin.dashboard.alert.title')}</h3>
                 <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
                   {data.pendingVerifications > 0 && `${data.pendingVerifications} club(s) awaiting verification. `}
                   {data.pendingRequests > 10 && `${data.pendingRequests} membership requests pending review.`}
@@ -153,15 +155,15 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Recent Users</span>
+                    <span>{t('admin.dashboard.recent_users.title')}</span>
               <Link
                 href={`/${lang}/admin/users`}
                 className="text-sm font-normal text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               >
-                View all
+                  {t('common.view_all')}
               </Link>
             </CardTitle>
-            <CardDescription>Latest user registrations</CardDescription>
+            <CardDescription>{t('admin.dashboard.recent_users.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -176,7 +178,7 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-slate-900 dark:text-slate-100 truncate">
-                        {user.displayName || 'Anonymous'}
+                        {user.displayName || t('admin.common.anonymous')}
                       </span>
                       <Badge className={cn('text-xs', getRoleBadgeVariant(user.role))}>
                         {user.role.replace('_', ' ')}
@@ -197,15 +199,15 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
-              <span>Recent Requests</span>
+              <span>{t('admin.dashboard.recent_requests.title')}</span>
               <Link
                 href={`/${lang}/admin/requests`}
                 className="text-sm font-normal text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
               >
-                View all
+                {t('common.view_all')}
               </Link>
             </CardTitle>
-            <CardDescription>Latest membership requests</CardDescription>
+            <CardDescription>{t('admin.dashboard.recent_requests.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -214,13 +216,13 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={request.user.avatarUrl || ''} />
                     <AvatarFallback className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                      {request.user.displayName?.charAt(0) || 'U'}
+                      {request.user.displayName?.charAt(0) || t('admin.common.user_initial')}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-slate-900 dark:text-slate-100 truncate">
-                        {request.user.displayName || 'Anonymous'}
+                        {request.user.displayName || t('admin.common.anonymous')}
                       </span>
                       {getStatusIcon(request.status)}
                     </div>
@@ -240,8 +242,8 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
         {/* Clubs by City */}
         <Card>
           <CardHeader>
-            <CardTitle>Clubs by City</CardTitle>
-            <CardDescription>Distribution of clubs across cities</CardDescription>
+            <CardTitle>{t('admin.dashboard.city_distribution.title')}</CardTitle>
+            <CardDescription>{t('admin.dashboard.city_distribution.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -253,7 +255,7 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
                   <div key={city.cityName} className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-medium text-slate-700 dark:text-slate-300">{city.cityName}</span>
-                      <span className="text-slate-500 dark:text-slate-400">{city.count} clubs</span>
+                      <span className="text-slate-500 dark:text-slate-400">{city.count} {t('admin.dashboard.city_distribution.clubs_suffix')}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
@@ -279,8 +281,8 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
         {/* User Role Distribution */}
         <Card>
           <CardHeader>
-            <CardTitle>User Role Distribution</CardTitle>
-            <CardDescription>Breakdown of user types</CardDescription>
+            <CardTitle>{t('admin.dashboard.role_distribution.title')}</CardTitle>
+            <CardDescription>{t('admin.dashboard.role_distribution.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

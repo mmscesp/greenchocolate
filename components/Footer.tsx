@@ -23,7 +23,7 @@ export default function Footer() {
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand/10">
                 <LogoIcon size="sm" />
               </div>
-              <span className="text-lg font-semibold text-foreground">SocialClubsMaps</span>
+              <span className="text-lg font-semibold text-foreground">{t('brand.name')}</span>
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
               {t('footer.description')}
@@ -34,7 +34,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-center w-9 h-9 rounded-lg bg-card border border-border/60 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
-                aria-label="Instagram"
+                aria-label={t('footer.social.instagram_aria')}
               >
                 <Instagram className="h-4 w-4" />
               </a>
@@ -43,14 +43,14 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-center w-9 h-9 rounded-lg bg-card border border-border/60 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
-                aria-label="Twitter"
+                aria-label={t('footer.social.twitter_aria')}
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a 
                 href="mailto:hello@socialclubsmaps.com"
                 className="flex items-center justify-center w-9 h-9 rounded-lg bg-card border border-border/60 hover:bg-brand/10 text-neutral-500 hover:text-brand transition-colors"
-                aria-label="Email"
+                aria-label={t('footer.social.email_aria')}
               >
                 <Mail className="h-4 w-4" />
               </a>
@@ -128,7 +128,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 p-3 rounded-lg bg-muted border border-neutral-100">
               <Shield className="h-4 w-4 text-gold" />
               <span className="text-xs text-muted-foreground">
-                Verified & Secure Platform
+                {t('footer.trust.verified_secure')}
               </span>
             </div>
           </div>
@@ -141,13 +141,13 @@ export default function Footer() {
           </p>
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-2">
             <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Terms
+              {t('footer.terms_short')}
             </Link>
             <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Privacy
+              {t('footer.privacy_short')}
             </Link>
             <Link href="/cookies" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-              Cookies
+              {t('footer.cookies')}
             </Link>
           </div>
         </div>

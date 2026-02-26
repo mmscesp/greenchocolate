@@ -212,17 +212,17 @@ export default function UserRequestsPage() {
         <Card className="shadow-sm border-primary/20 bg-primary/5">
           <CardContent className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">Current Application Stage</p>
+              <p className="text-sm text-muted-foreground">{t('requests.current_stage')}</p>
               <p className="text-xl font-semibold text-foreground mt-1 capitalize">
                 {backendStatus.application.status.replaceAll('_', ' ')}
               </p>
             </div>
             <div className="text-sm text-muted-foreground">
-              Passport: <span className="font-medium text-foreground font-mono">{backendStatus.passport.verificationId}</span>
+              {t('requests.passport')}: <span className="font-medium text-foreground font-mono">{backendStatus.passport.verificationId}</span>
             </div>
             {backendStatus.application.estimatedCompletion && (
               <div className="text-sm text-muted-foreground">
-                Est. completion: <span className="font-medium text-foreground">{new Date(backendStatus.application.estimatedCompletion).toLocaleDateString('es-ES')}</span>
+                {t('requests.estimated_completion')}: <span className="font-medium text-foreground">{new Date(backendStatus.application.estimatedCompletion).toLocaleDateString()}</span>
               </div>
             )}
           </CardContent>
@@ -274,7 +274,7 @@ export default function UserRequestsPage() {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Calendar className="h-4 w-4 text-primary/70" />
-                        <span>{new Date(request.createdAt).toLocaleDateString('es-ES')}</span>
+                        <span>{new Date(request.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
 

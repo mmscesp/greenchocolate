@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Shield } from '@/lib/icons';
 import LanguageSelector from '@/components/LanguageSelector';
 import { AdminSidebar, AdminMobileNav } from '@/components/admin/AdminSidebar';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface AdminShellProps {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ interface AdminShellProps {
 }
 
 export default function AdminShell({ children, lang, adminInfo }: AdminShellProps) {
+  const { t } = useLanguage();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
@@ -38,14 +40,14 @@ export default function AdminShell({ children, lang, adminInfo }: AdminShellProp
               className="hidden sm:flex items-center gap-2 text-slate-400 hover:text-slate-100 transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span className="text-sm font-medium">Back to Site</span>
+              <span className="text-sm font-medium">{t('nav.back_to_site')}</span>
             </Link>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-2 text-sm text-slate-400 font-medium bg-slate-800 px-3 py-1.5 rounded-full">
               <Shield className="h-4 w-4 text-green-400" />
-              Admin Mode
+              {t('admin.shell.mode')}
             </div>
             <LanguageSelector />
           </div>

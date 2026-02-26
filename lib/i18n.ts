@@ -1,14 +1,10 @@
-export type Language = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pl' | 'ru' | 'pt';
+export type Language = 'es' | 'en' | 'fr' | 'de';
 
 export const languages = {
   es: { name: 'Español', flag: '🇪🇸' },
   en: { name: 'English', flag: '🇬🇧' },
   fr: { name: 'Français', flag: '🇫🇷' },
   de: { name: 'Deutsch', flag: '🇩🇪' },
-  it: { name: 'Italiano', flag: '🇮🇹' },
-  pl: { name: 'Polski', flag: '🇵🇱' },
-  ru: { name: 'Русский', flag: '🇷🇺' },
-  pt: { name: 'Português', flag: '🇵🇹' }
 };
 
 export const translations = {

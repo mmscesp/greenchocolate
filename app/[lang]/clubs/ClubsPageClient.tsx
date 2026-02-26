@@ -98,7 +98,7 @@ export default function ClubsPageClient({
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
                 <PulsingStatusDot />
                 <ConciergeLabel size="xs" className="text-emerald-400">
-                  {t('clubs.verified_directory') || 'Verified Directory'}
+                  {t('clubs.verified_directory')}
                 </ConciergeLabel>
               </div>
             </motion.div>
@@ -106,7 +106,7 @@ export default function ClubsPageClient({
             {/* Main Title */}
             <motion.div variants={FADE_UP}>
               <EditorialHeading as="h1" size="hero" className="text-white mb-8">
-                Discover <span className="text-emerald-500 italic">Premium</span> Clubs
+                {t('clubs.hero.title_prefix')} <span className="text-emerald-500 italic">{t('clubs.hero.title_highlight')}</span> {t('clubs.hero.title_suffix')}
               </EditorialHeading>
             </motion.div>
 
@@ -125,19 +125,19 @@ export default function ClubsPageClient({
               <div>
                 <div className="text-4xl md:text-5xl font-serif text-white mb-2">{clubs.length}+</div>
                 <ConciergeLabel size="xs" emphasis="low" className="uppercase tracking-[0.2em]">
-                  {t('clubs.clubs_count') || 'Clubs Registered'}
+                  {t('clubs.clubs_count')}
                 </ConciergeLabel>
               </div>
               <div className="hidden md:block">
                 <div className="text-4xl md:text-5xl font-serif text-emerald-500 mb-2">100%</div>
                 <ConciergeLabel size="xs" emphasis="low" className="uppercase tracking-[0.2em]">
-                  {t('clubs.verified') || 'Verified Protocol'}
+                  {t('clubs.verified')}
                 </ConciergeLabel>
               </div>
               <div>
                 <div className="text-4xl md:text-5xl font-serif text-white mb-2">{neighborhoods.length}</div>
                 <ConciergeLabel size="xs" emphasis="low" className="uppercase tracking-[0.2em]">
-                  {t('clubs.neighborhoods') || 'Prime Neighborhoods'}
+                  {t('clubs.neighborhoods')}
                 </ConciergeLabel>
               </div>
             </motion.div>
@@ -155,7 +155,7 @@ export default function ClubsPageClient({
               <div className="sticky top-24 space-y-8">
                 <div className="bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
                   <div className="mb-8">
-                    <EditorialHeading size="sm" className="text-zinc-900 uppercase tracking-widest border-b border-zinc-100 pb-4 mb-8">Advanced Filters</EditorialHeading>
+                    <EditorialHeading size="sm" className="text-zinc-900 uppercase tracking-widest border-b border-zinc-100 pb-4 mb-8">{t('filters.advanced')}</EditorialHeading>
                   </div>
                   
                   {/* FilterBar Integration (Wrapped or Modified) */}
@@ -171,12 +171,12 @@ export default function ClubsPageClient({
 
                 <div className="bg-zinc-900 rounded-[2rem] p-6 sm:p-8 text-white relative overflow-hidden">
                   <div className="relative z-10">
-                    <ConciergeLabel size="xs" className="text-emerald-500 mb-4 block">Concierge Tip</ConciergeLabel>
+                    <ConciergeLabel size="xs" className="text-emerald-500 mb-4 block">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
                     <p className="text-zinc-400 text-sm leading-relaxed mb-6 font-serif italic">
-                      "Verified clubs offer guaranteed membership protocols and higher standards of educational material."
+                      {t('clubs.sidebar.concierge_quote')}
                     </p>
                     <Link href={`/${language}/guide/verification`} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white hover:text-emerald-400 transition-colors">
-                      Learn about our standard <ArrowRight className="h-3 w-3" />
+                      {t('clubs.sidebar.learn_standard')} <ArrowRight className="h-3 w-3" />
                     </Link>
                   </div>
                   <ShieldCheck className="absolute -bottom-4 -right-4 h-32 w-32 text-white/5" />
@@ -196,16 +196,16 @@ export default function ClubsPageClient({
                       viewMode === 'grid' ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:bg-zinc-200'
                     }`}
                   >
-                    <Grid className="h-4 w-4" /> Grid View
+                    <Grid className="h-4 w-4" /> {t('clubs.view_mode.grid')}
                   </button>
                   <button
                     type="button"
                     disabled
                     aria-disabled="true"
-                    title="Map view is in development"
+                    title={t('clubs.view_mode.map_dev_title')}
                     className="inline-flex min-h-11 items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest text-zinc-400 bg-zinc-100 cursor-not-allowed"
                   >
-                    <Map className="h-4 w-4" /> Map View (Soon)
+                    <Map className="h-4 w-4" /> {t('clubs.view_mode.map_soon')}
                   </button>
                 </div>
                 
@@ -217,7 +217,7 @@ export default function ClubsPageClient({
                       exit={{ opacity: 0 }}
                       className="flex items-center gap-2 text-zinc-400 text-xs font-mono"
                     >
-                      <Zap className="h-3 w-3 animate-pulse text-emerald-500" /> Updating directory...
+                      <Zap className="h-3 w-3 animate-pulse text-emerald-500" /> {t('clubs.status.updating_directory')}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -258,9 +258,9 @@ export default function ClubsPageClient({
                       <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-8 border border-zinc-100">
                         <Search className="h-8 w-8 text-zinc-300" />
                       </div>
-                      <EditorialHeading size="sm" className="mb-4">No results found</EditorialHeading>
+                      <EditorialHeading size="sm" className="mb-4">{t('clubs.no_results.title')}</EditorialHeading>
                       <p className="text-zinc-500 mb-8 max-w-sm mx-auto font-serif italic">
-                        Adjust your filters or clear them to explore all clubs in our directory.
+                        {t('clubs.no_results.subtitle')}
                       </p>
                       <Button 
                         variant="outline"
@@ -274,7 +274,7 @@ export default function ClubsPageClient({
                         })}
                         className="rounded-full min-h-11 px-8 sm:px-12 py-3 sm:py-6 font-bold uppercase tracking-widest text-xs"
                       >
-                        Reset All Filters
+                        {t('clubs.clear_filters')}
                       </Button>
                     </div>
                   )}

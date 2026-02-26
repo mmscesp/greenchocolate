@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -16,40 +17,40 @@ import { BookOpen, Shield, MapPin, Calendar } from '@/lib/icons';
 
 interface DesktopExploreItem {
   href: string;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   Icon: React.ComponentType<{ className?: string }>;
 }
 
 interface DesktopPrimaryItem {
   href: string;
-  label: string;
+  labelKey: string;
   Icon?: React.ComponentType<{ className?: string }>;
 }
 
 export const desktopExploreItems: DesktopExploreItem[] = [
   {
     href: '/spain/barcelona',
-    title: 'Barcelona Guide',
-    description: "The complete hub for Barcelona's cannabis culture and clubs.",
+    titleKey: 'nav.explore.barcelona.title',
+    descriptionKey: 'nav.explore.barcelona.description',
     Icon: MapPin,
   },
   {
     href: '/spain/madrid',
-    title: 'Madrid Guide',
-    description: "Navigate Madrid's discreet but thriving scene.",
+    titleKey: 'nav.explore.madrid.title',
+    descriptionKey: 'nav.explore.madrid.description',
     Icon: MapPin,
   },
   {
     href: '/events',
-    title: 'Events',
-    description: 'Cultural and industry events across Europe.',
+    titleKey: 'nav.explore.events.title',
+    descriptionKey: 'nav.explore.events.description',
     Icon: Calendar,
   },
   {
     href: '/safety',
-    title: 'Safety Protocol',
-    description: 'Essential safety guidelines and best practices.',
+    titleKey: 'nav.explore.safety.title',
+    descriptionKey: 'nav.explore.safety.description',
     Icon: Shield,
   },
 ];
@@ -57,44 +58,46 @@ export const desktopExploreItems: DesktopExploreItem[] = [
 export const desktopPrimaryItems: DesktopPrimaryItem[] = [
   {
     href: '/editorial',
-    label: 'Guides',
+    labelKey: 'nav.guides',
     Icon: BookOpen,
   },
   {
     href: '/clubs',
-    label: 'Clubs Directory',
+    labelKey: 'nav.clubs_directory',
   },
 ];
 
 export default function MainNavigation() {
+  const { t } = useLanguage();
+
   return (
     <NavigationMenu viewportClassName="bg-transparent border-none shadow-none">
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5 text-white hover:text-white transition-colors">
-            Explore
+            {t('nav.explore_menu')}
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 w-[min(92vw,20rem)] sm:w-[24rem] md:w-[26rem] lg:w-[31rem] glass-dropdown mt-2 animate-in fade-in zoom-in-95 duration-200">
-              {desktopExploreItems.map(({ href, title, description, Icon }) => (
-                <ListItem key={href} href={href} title={title} icon={<Icon className="h-4 w-4" />}>
-                  {description}
+              {desktopExploreItems.map(({ href, titleKey, descriptionKey, Icon }) => (
+                <ListItem key={href} href={href} title={t(titleKey)} icon={<Icon className="h-4 w-4" />}>
+                  {t(descriptionKey)}
                 </ListItem>
               ))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        {desktopPrimaryItems.map(({ href, label, Icon }) => (
+        {desktopPrimaryItems.map(({ href, labelKey, Icon }) => (
           <NavigationMenuItem key={href}>
             <Link href={href} className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-white/5 text-white hover:text-white transition-colors')}>
               {Icon ? (
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4" />
-                  {label}
+                  {t(labelKey)}
                 </span>
               ) : (
-                label
+                t(labelKey)
               )}
             </Link>
           </NavigationMenuItem>

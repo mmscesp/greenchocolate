@@ -2,26 +2,35 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { getAdminArticleIndex } from '@/app/actions/admin-content';
 import PublishArticleForm from './PublishArticleForm';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminContentArticlesPage() {
+interface AdminContentArticlesPageProps {
+  params: Promise<{ lang: string }>;
+}
+
+export default async function AdminContentArticlesPage({ params }: AdminContentArticlesPageProps) {
+  const { lang } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
   const articles = await getAdminArticleIndex();
   type ArticleRow = (typeof articles)[number];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Content - Articles</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('admin.content.articles.title')}</h1>
         <p className="text-muted-foreground mt-1">
-          Public editorial index (file-backed MDX). Publish workflow integration is ready for admin wiring.
+          {t('admin.content.articles.subtitle')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Articles ({articles.length})</CardTitle>
-          <CardDescription>Latest indexed articles from content artifacts.</CardDescription>
+          <CardTitle>{t('admin.content.articles.list_title')} ({articles.length})</CardTitle>
+          <CardDescription>{t('admin.content.articles.list_subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -34,7 +43,7 @@ export default async function AdminContentArticlesPage() {
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <Badge variant="outline">{article.category}</Badge>
-                    <Badge variant="secondary">{article.readTime} min read</Badge>
+                    <Badge variant="secondary">{article.readTime} {t('admin.content.articles.min_read')}</Badge>
                   </div>
                 </div>
               </div>

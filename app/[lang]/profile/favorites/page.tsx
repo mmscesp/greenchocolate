@@ -239,8 +239,8 @@ export default function FavoritesPage() {
             </h3>
             <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
               {searchQuery
-                ? t('favorites.no_results_search_desc') || 'Try adjusting your search terms'
-                : t('favorites.no_results_empty_desc') || 'Explore clubs and add them to your favorites'
+                ? t('favorites.no_results_search_desc')
+                : t('favorites.no_results_empty_desc')
               }
             </p>
             {!searchQuery && (

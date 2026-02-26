@@ -2,10 +2,19 @@ import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { StatsCard } from '@/components/admin/StatsCard';
 import { Users, Building2, ClipboardList, Calendar } from '@/lib/icons';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminAnalyticsPage() {
+interface AdminAnalyticsPageProps {
+  params: Promise<{ lang: string }>;
+}
+
+export default async function AdminAnalyticsPage({ params }: AdminAnalyticsPageProps) {
+  const { lang } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
   const now = new Date();
   const last30Days = new Date(now);
   last30Days.setDate(now.getDate() - 30);
@@ -22,21 +31,21 @@ export default async function AdminAnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Platform Analytics</h1>
-        <p className="text-muted-foreground mt-1">High-level platform growth and activity metrics.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('admin.analytics.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('admin.analytics.subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard title="New Users (30d)" value={newUsers30d} icon={Users} color="blue" />
-        <StatsCard title="New Clubs (30d)" value={newClubs30d} icon={Building2} color="green" />
-        <StatsCard title="New Requests (30d)" value={newRequests30d} icon={ClipboardList} color="orange" />
-        <StatsCard title="Upcoming Events" value={upcomingEvents} icon={Calendar} color="purple" />
+        <StatsCard title={t('admin.analytics.new_users_30d')} value={newUsers30d} icon={Users} color="blue" />
+        <StatsCard title={t('admin.analytics.new_clubs_30d')} value={newClubs30d} icon={Building2} color="green" />
+        <StatsCard title={t('admin.analytics.new_requests_30d')} value={newRequests30d} icon={ClipboardList} color="orange" />
+        <StatsCard title={t('admin.analytics.upcoming_events')} value={upcomingEvents} icon={Calendar} color="purple" />
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Membership Request Distribution</CardTitle>
-          <CardDescription>Current status breakdown across all clubs.</CardDescription>
+          <CardTitle>{t('admin.analytics.request_distribution_title')}</CardTitle>
+          <CardDescription>{t('admin.analytics.request_distribution_subtitle')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {requestsByStatus.map((row: RequestByStatusRow) => (

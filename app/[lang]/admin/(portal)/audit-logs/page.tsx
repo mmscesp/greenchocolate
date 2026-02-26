@@ -1,10 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 export const dynamic = 'force-dynamic';
 
 interface AuditLogsPageProps {
+  params: Promise<{ lang: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
@@ -12,7 +15,11 @@ function getString(value: string | string[] | undefined, fallback = ''): string 
   return typeof value === 'string' ? value : fallback;
 }
 
-export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPageProps) {
+export default async function AdminAuditLogsPage({ params, searchParams }: AuditLogsPageProps) {
+  const { lang } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
+
   const query = await searchParams;
   const tableName = getString(query.table);
 
@@ -34,22 +41,22 @@ export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPage
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
-        <p className="text-muted-foreground mt-1">Security and admin action trail (latest 100 records).</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('admin.audit.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('admin.audit.subtitle')}</p>
       </div>
 
       <Card>
         <CardContent className="pt-6">
           <form className="flex gap-3 items-center">
-            <label className="text-sm text-muted-foreground">Filter by table</label>
+            <label className="text-sm text-muted-foreground">{t('admin.audit.filter_by_table')}</label>
             <select name="table" defaultValue={tableName} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
-              <option value="">All tables</option>
+              <option value="">{t('admin.audit.all_tables')}</option>
               {tableNames.map((table: TableNameRow) => (
                 <option key={table.tableName} value={table.tableName}>{table.tableName}</option>
               ))}
             </select>
             <button className="h-10 px-4 rounded-md bg-primary text-primary-foreground text-sm" type="submit">
-              Apply
+              {t('admin.common.apply')}
             </button>
           </form>
         </CardContent>
@@ -57,8 +64,8 @@ export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPage
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Logs</CardTitle>
-          <CardDescription>{logs.length} records</CardDescription>
+          <CardTitle>{t('admin.audit.recent_logs')}</CardTitle>
+          <CardDescription>{logs.length} {t('admin.audit.records')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -68,11 +75,11 @@ export default async function AdminAuditLogsPage({ searchParams }: AuditLogsPage
                   <div className="flex items-center gap-2 flex-wrap">
                     <Badge variant="outline">{log.tableName}</Badge>
                     <Badge>{log.operation}</Badge>
-                    <span className="text-xs text-muted-foreground">record: {log.recordId}</span>
+                    <span className="text-xs text-muted-foreground">{t('admin.audit.record')}: {log.recordId}</span>
                   </div>
                   <span className="text-xs text-muted-foreground">{new Date(log.createdAt).toLocaleString()}</span>
                 </div>
-                <div className="text-xs text-muted-foreground mt-2">changedBy: {log.changedBy}</div>
+                <div className="text-xs text-muted-foreground mt-2">{t('admin.audit.changed_by')}: {log.changedBy}</div>
               </div>
             ))}
           </div>

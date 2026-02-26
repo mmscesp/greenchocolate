@@ -31,6 +31,7 @@ import {
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { adminSignOut } from '@/app/actions/admin-auth';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface AdminSidebarProps {
   className?: string;
@@ -48,53 +49,53 @@ interface AdminSidebarProps {
 
 const navigation = [
   { 
-    name: 'Dashboard', 
+    nameKey: 'admin.nav.dashboard', 
     href: '/admin', 
     icon: LayoutDashboard,
     exact: true 
   },
   { 
-    name: 'Users', 
+    nameKey: 'admin.nav.users', 
     href: '/admin/users', 
     icon: Users,
   },
   { 
-    name: 'Clubs', 
+    nameKey: 'admin.nav.clubs', 
     href: '/admin/clubs', 
     icon: Building2,
   },
   { 
-    name: 'Verification Queue', 
+    nameKey: 'admin.nav.verification_queue', 
     href: '/admin/clubs/verification', 
     icon: CheckCircle2,
   },
   { 
-    name: 'Membership Requests', 
+    nameKey: 'admin.nav.membership_requests', 
     href: '/admin/requests', 
     icon: ClipboardList,
   },
   {
-    name: 'Content Articles',
+    nameKey: 'admin.nav.content_articles',
     href: '/admin/content/articles',
     icon: Newspaper,
   },
   {
-    name: 'Content Events',
+    nameKey: 'admin.nav.content_events',
     href: '/admin/content/events',
     icon: CalendarDays,
   },
   { 
-    name: 'Analytics', 
+    nameKey: 'admin.nav.analytics', 
     href: '/admin/analytics', 
     icon: BarChart3,
   },
   { 
-    name: 'Audit Logs', 
+    nameKey: 'admin.nav.audit_logs', 
     href: '/admin/audit-logs', 
     icon: FileText,
   },
   { 
-    name: 'Settings', 
+    nameKey: 'admin.nav.settings', 
     href: '/admin/settings', 
     icon: Settings,
   },
@@ -108,10 +109,11 @@ function AdminSidebarContent({
   adminInfo,
   lang = 'en',
 }: AdminSidebarProps) {
+  const { t } = useLanguage();
   const pathname = usePathname();
   const pathnameWithoutLocale = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
   
-  const displayName = adminInfo?.displayName || 'Admin';
+  const displayName = adminInfo?.displayName || t('admin.common.admin');
   const email = adminInfo?.email || 'admin@example.com';
   
   const showText = !isCollapsed || isMobile;
@@ -127,7 +129,7 @@ function AdminSidebarContent({
           <div className="bg-slate-700 p-1.5 rounded-lg shrink-0">
             <Shield className="h-6 w-6 text-slate-100" />
           </div>
-          <span className="text-lg font-bold tracking-tight">Admin Portal</span>
+          <span className="text-lg font-bold tracking-tight">{t('admin.login.hero.title')}</span>
         </div>
       )}
 
@@ -179,7 +181,7 @@ function AdminSidebarContent({
                 key={item.href}
                 href={withLocale(item.href)}
                 onClick={onClose}
-                title={isCollapsed && !isMobile ? item.name : undefined}
+                title={isCollapsed && !isMobile ? t(item.nameKey) : undefined}
                 className={cn(
                   "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                   isActive
@@ -201,7 +203,7 @@ function AdminSidebarContent({
                       exit={{ opacity: 0, width: 0 }}
                       className="flex-1 overflow-hidden whitespace-nowrap"
                     >
-                      {item.name}
+                      {t(item.nameKey)}
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -233,7 +235,7 @@ function AdminSidebarContent({
             size="sm"
           >
             <Home className="h-4 w-4 shrink-0" />
-            {showText && <span>Back to Site</span>}
+            {showText && <span>{t('nav.back_to_site')}</span>}
           </Button>
         </Link>
         <form action={signOutWithLang}>
@@ -247,7 +249,7 @@ function AdminSidebarContent({
             size="sm"
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            {showText && <span>Sign Out</span>}
+            {showText && <span>{t('nav.logout')}</span>}
           </Button>
         </form>
       </div>
@@ -302,6 +304,7 @@ export function AdminMobileNav({
   adminInfo?: { displayName?: string | null; email: string; avatarUrl?: string | null };
   lang?: string;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   return (
@@ -309,12 +312,12 @@ export function AdminMobileNav({
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="lg:hidden hover:bg-slate-800 rounded-full transition-colors">
           <Menu className="h-6 w-6 text-slate-300" />
-          <span className="sr-only">Toggle menu</span>
+          <span className="sr-only">{t('admin.nav.toggle_menu')}</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-72 border-r-0 shadow-2xl bg-slate-900">
         <SheetHeader className="sr-only">
-          <SheetTitle>Admin Navigation</SheetTitle>
+          <SheetTitle>{t('admin.nav.title')}</SheetTitle>
         </SheetHeader>
         <AdminSidebarContent onClose={() => setOpen(false)} isMobile={true} adminInfo={adminInfo} lang={lang} />
       </SheetContent>

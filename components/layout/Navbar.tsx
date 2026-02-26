@@ -10,8 +10,10 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { Logo } from '@/components/ui/logo';
 import { cn } from '@/lib/utils';
 import { Menu, X } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function Navbar() {
+  const { t } = useLanguage();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,7 +65,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-2 group">
               <Logo size="md" showText={false} href="" className="transition-transform group-hover:scale-110" imageClassName="h-10 w-10" />
               <span className="text-xl font-bold tracking-tight text-liquid-aware transition-all duration-300">
-                SocialClubsMaps
+                {t('brand.name')}
               </span>
             </Link>
           </div>
@@ -109,21 +111,21 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col gap-6 text-2xl font-semibold text-white/90 pt-2">
-              {desktopPrimaryItems.map(({ href, label }) => (
+              {desktopPrimaryItems.map(({ href, labelKey }) => (
                 <Link key={href} href={href} onClick={closeMobileMenu} className="hover:text-white transition-colors">
-                  {label}
+                  {t(labelKey)}
                 </Link>
               ))}
-              {desktopExploreItems.map(({ href, title }) => (
+              {desktopExploreItems.map(({ href, titleKey }) => (
                 <Link key={href} href={href} onClick={closeMobileMenu} className="hover:text-white/85 hover:text-white transition-colors text-xl font-medium">
-                  {title}
+                  {t(titleKey)}
                 </Link>
               ))}
             </div>
 
             <div className="mt-auto pb-12 flex flex-col gap-6 border-t border-white/10 pt-8">
               <div className="flex items-center justify-between">
-                <span className="text-white/60 font-medium">Language</span>
+                <span className="text-white/60 font-medium">{t('language.label')}</span>
                 <LanguageSelector direction="up" />
               </div>
             </div>

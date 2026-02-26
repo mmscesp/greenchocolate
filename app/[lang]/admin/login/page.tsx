@@ -12,8 +12,10 @@ import { adminLogin } from '@/app/actions/admin-auth';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useLanguage } from '@/hooks/useLanguage';
 
 function AdminLoginForm() {
+  const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const params = useParams<{ lang: string }>();
   const lang = params?.lang || 'en';
@@ -37,13 +39,13 @@ function AdminLoginForm() {
         <div>
           <Label htmlFor="email" className="flex items-center gap-2 mb-2">
             <Mail className="h-4 w-4 text-muted-foreground" />
-            Admin Email
+            {t('admin.login.email')}
           </Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="admin@example.com"
+            placeholder={t('admin.login.email_placeholder')}
             className="w-full"
             required
             disabled={isPending}
@@ -57,7 +59,7 @@ function AdminLoginForm() {
         <div>
           <Label htmlFor="password" className="flex items-center gap-2 mb-2">
             <Lock className="h-4 w-4 text-muted-foreground" />
-            Password
+            {t('admin.login.password')}
           </Label>
           <div className="relative">
             <Input
@@ -91,12 +93,12 @@ function AdminLoginForm() {
           {isPending ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Authenticating...
+              {t('admin.login.authenticating')}
             </>
           ) : (
             <>
               <Shield className="h-4 w-4 mr-2" />
-              Access Admin Portal
+              {t('admin.login.access_portal')}
             </>
           )}
         </Button>
@@ -104,9 +106,9 @@ function AdminLoginForm() {
 
       <div className="mt-6 pt-6 border-t text-center">
         <p className="text-sm text-muted-foreground">
-          Not an admin?{' '}
+          {t('admin.login.not_admin')} {' '}
           <Link href={`/${lang}`} className="text-primary hover:underline">
-            Return to homepage
+            {t('admin.login.return_home')}
           </Link>
         </p>
       </div>
@@ -115,6 +117,7 @@ function AdminLoginForm() {
 }
 
 export default function AdminLoginPage() {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="w-full max-w-md">
@@ -124,10 +127,10 @@ export default function AdminLoginPage() {
               <Shield className="h-8 w-8 text-white dark:text-slate-900" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-              Admin Portal
+              {t('admin.login.hero_title')}
             </h1>
             <p className="text-slate-600 dark:text-slate-400 mt-2">
-              Secure administrative access only
+              {t('admin.login.hero_subtitle')}
             </p>
           </div>
 
@@ -141,9 +144,9 @@ export default function AdminLoginPage() {
         </Card>
 
         <p className="text-center text-xs text-slate-500 dark:text-slate-500 mt-6">
-          Unauthorized access is prohibited and logged.
+          {t('admin.login.unauthorized_notice')}
           <br />
-          All admin actions are audited.
+          {t('admin.login.audit_notice')}
         </p>
       </div>
     </div>

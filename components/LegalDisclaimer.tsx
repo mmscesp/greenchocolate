@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,13 +13,13 @@ import {
 import { ShieldAlert, Scale, Gavel } from '@/lib/icons';
 
 export function LegalDisclaimer() {
-  const [isOpen, setIsOpen] = useState(() => {
-    if (typeof window === 'undefined') {
-      return false;
+  const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    const accepted = localStorage.getItem('legal-disclaimer-accepted');
+    if (!accepted) {
+      setIsOpen(true);
     }
-
-    return !localStorage.getItem('legal-disclaimer-accepted');
-  });
+  }, []);
 
   const handleAccept = () => {
     localStorage.setItem('legal-disclaimer-accepted', 'true');
@@ -28,10 +28,11 @@ export function LegalDisclaimer() {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent className="max-w-2xl bg-midnight-charcoal border-secondary text-foreground">
+      <AlertDialogContent className="max-w-2xl bg-neutral-950 border-brand/20 text-foreground overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-brand" />
         <AlertDialogHeader>
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 rounded-full bg-accent/10 text-accent">
+            <div className="p-2.5 rounded-xl bg-brand/10 text-brand ring-1 ring-brand/20">
               <ShieldAlert className="w-6 h-6" />
             </div>
             <AlertDialogTitle className="text-2xl font-serif">Legal Access Verification</AlertDialogTitle>
@@ -42,13 +43,13 @@ export function LegalDisclaimer() {
             </p>
             <div className="grid gap-4 mt-4">
               <div className="flex gap-3">
-                <Scale className="w-5 h-5 text-accent shrink-0 mt-1" />
+                <Scale className="w-5 h-5 text-brand shrink-0 mt-1" />
                 <p>
                   I confirm that I am <span className="text-foreground font-semibold">18 years of age or older</span> and that I am accessing this information for educational and legal compliance purposes.
                 </p>
               </div>
               <div className="flex gap-3">
-                <Gavel className="w-5 h-5 text-accent shrink-0 mt-1" />
+                <Gavel className="w-5 h-5 text-brand shrink-0 mt-1" />
                 <p>
                   I understand that cannabis consumption in public spaces remains illegal in Spain and that this platform does not facilitate illegal sales or distribution.
                 </p>
@@ -62,9 +63,9 @@ export function LegalDisclaimer() {
         <AlertDialogFooter className="mt-6">
           <AlertDialogAction
             onClick={handleAccept}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 py-6 text-lg"
+            className="bg-brand hover:bg-brand/90 text-white font-bold px-10 py-7 text-lg rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand/20"
           >
-            I Accept & Verify My Eligibility
+            I Accept & Verify Eligibility
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

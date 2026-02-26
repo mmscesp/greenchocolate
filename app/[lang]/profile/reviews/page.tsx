@@ -254,7 +254,7 @@ export default function ReviewsPage() {
                           <span className="text-muted-foreground/50">•</span>
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3.5 w-3.5 text-primary/70" />
-                            <span>{new Date(review.date).toLocaleDateString('es-ES')}</span>
+                            <span>{new Date(review.date).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
@@ -328,8 +328,8 @@ export default function ReviewsPage() {
             </h3>
             <p className="text-muted-foreground mb-6">
               {searchQuery || ratingFilter
-                ? t('reviews.no_results_search_desc') || 'Try adjusting your filters'
-                : t('reviews.no_results_empty_desc') || 'Visit clubs and share your experience'
+                ? t('reviews.no_results_search_desc')
+                : t('reviews.no_results_empty_desc')
               }
             </p>
             {!searchQuery && !ratingFilter && (

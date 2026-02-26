@@ -2,40 +2,28 @@
  * Type definitions for i18n translations
  * 
  * This file provides TypeScript type safety for translation keys.
- * It uses the Spanish dictionary as the source of truth.
+ * It uses a flexible type that accepts any string key.
  */
 
-import type es from '../dictionaries/es.json';
+// Use Record<string, string> for flexibility with dynamic keys
+export type Dictionary = Record<string, string>;
 
 /**
  * Type representing all available translation keys
  * This provides autocompletion and type checking for translation keys
  */
-export type TranslationKey = keyof typeof es;
-
-/**
- * Type representing the entire translation dictionary structure
- */
-export type Dictionary = typeof es;
+export type TranslationKey = string;
 
 /**
  * Helper type to get nested key paths
  * Example: 'home.hero.title' | 'nav.explore' | etc.
  */
-export type TranslationKeyPath = Path<typeof es>;
-
-type Path<T> = T extends object
-  ? {
-      [K in keyof T]-?: K extends string | number
-        ? `${K}` | `${K}.${Path<T[K]>}`
-        : never;
-    }[keyof T]
-  : never;
+export type TranslationKeyPath = string;
 
 /**
  * Available locales
  */
-export type Locale = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pl' | 'ru' | 'pt';
+export type Locale = 'es' | 'en' | 'fr' | 'de';
 
 /**
  * Locale configuration

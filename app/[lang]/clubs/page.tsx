@@ -9,10 +9,6 @@ const OG_LOCALE_BY_LANG: Record<string, string> = {
   en: 'en_US',
   fr: 'fr_FR',
   de: 'de_DE',
-  it: 'it_IT',
-  pl: 'pl_PL',
-  ru: 'ru_RU',
-  pt: 'pt_PT',
 };
 
 interface ClubsPageProps {

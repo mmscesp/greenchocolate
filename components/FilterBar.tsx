@@ -103,9 +103,9 @@ export default function FilterBar({
           </div>
           <div>
             <EditorialHeading size="sm" className="text-zinc-900">
-              {totalResults} clubs found
+              {totalResults} {t('filters.results_found')}
             </EditorialHeading>
-            <ConciergeLabel size="xs" emphasis="low">Precision Directory Screening</ConciergeLabel>
+            <ConciergeLabel size="xs" emphasis="low">{t('filters.precision_screening')}</ConciergeLabel>
           </div>
         </div>
         
@@ -115,7 +115,7 @@ export default function FilterBar({
             onClick={clearAllFilters}
             className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-red-500 transition-colors"
           >
-            <X className="h-3 w-3" /> Clear All
+            <X className="h-3 w-3" /> {t('filters.clear_all')}
           </button>
         )}
       </div>
@@ -127,7 +127,7 @@ export default function FilterBar({
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-zinc-400" />
-                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Neighborhood</EditorialHeading>
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.neighborhood')}</EditorialHeading>
           </div>
           <div className="flex flex-wrap gap-2">
             {neighborhoods.map((neighborhood) => (
@@ -153,7 +153,7 @@ export default function FilterBar({
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <LayoutGrid className="h-4 w-4 text-zinc-400" />
-                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Services & Amenities</EditorialHeading>
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.amenities')}</EditorialHeading>
           </div>
           <div className="flex flex-wrap gap-2">
             {amenities.map((amenity) => (
@@ -177,7 +177,7 @@ export default function FilterBar({
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-zinc-400" />
-                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Vibe & Style</EditorialHeading>
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.vibes')}</EditorialHeading>
           </div>
           <div className="flex flex-wrap gap-2">
             {vibes.map((vibe) => (
@@ -213,8 +213,8 @@ export default function FilterBar({
                 <Shield className={`h-4 w-4 ${filters.isVerified ? 'text-white' : 'text-zinc-400'}`} />
               </div>
               <div className="text-left">
-                <span className="block text-xs font-bold uppercase tracking-widest text-zinc-900">Verified clubs only</span>
-                <span className="text-[10px] text-zinc-400">Show only verified clubs</span>
+                <span className="block text-xs font-bold uppercase tracking-widest text-zinc-900">{t('filters.verified_only')}</span>
+                <span className="text-[10px] text-zinc-400">{t('filters.verified_only_desc')}</span>
               </div>
             </div>
             <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filters.isVerified ? 'bg-emerald-500' : 'bg-zinc-200'}`}>
@@ -230,7 +230,7 @@ export default function FilterBar({
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-zinc-400" />
-              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Price range:</EditorialHeading>
+              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.price_range')}</EditorialHeading>
             </div>
             <div className="flex gap-2">
               {['$', '$$', '$$$'].map(price => (
@@ -254,7 +254,7 @@ export default function FilterBar({
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Star className="h-4 w-4 text-zinc-400" />
-              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">Minimum rating:</EditorialHeading>
+              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.minimum_rating')}</EditorialHeading>
             </div>
             <div className="flex gap-2">
               {[4, 4.5, 5].map(rating => (

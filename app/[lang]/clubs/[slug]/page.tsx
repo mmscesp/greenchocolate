@@ -5,6 +5,8 @@ import { getClubBySlug, getCityNeighbors, getClubs } from '@/app/actions/clubs';
 import { getClubDetailsWithAccess } from '@/app/actions/gated-content';
 import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -31,12 +33,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
   const { lang, slug } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
   const clubDetail = await getClubBySlug(slug);
   
   if (!clubDetail) {
     return {
-      title: 'Club Not Found | SocialClubsMaps',
-      description: 'The requested club could not be found.',
+      title: `${t('clubs.detail.not_found_title')} | SocialClubsMaps`,
+      description: t('clubs.detail.not_found_description'),
     };
   }
 
@@ -57,6 +61,8 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
 
 export default async function ClubPage({ params }: ClubPageProps) {
   const { lang, slug } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
   const clubDetail = await getClubBySlug(slug);
 
   if (!clubDetail) {
@@ -132,13 +138,13 @@ export default async function ClubPage({ params }: ClubPageProps) {
       {
         '@type': 'ListItem',
         position: 1,
-        name: 'Home',
+        name: t('nav.home'),
         item: `https://socialclubsmaps.com/${lang}`,
       },
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Clubs',
+        name: t('clubs.title'),
         item: `https://socialclubsmaps.com/${lang}/clubs`,
       },
       {
