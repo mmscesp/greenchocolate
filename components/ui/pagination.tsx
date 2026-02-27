@@ -4,10 +4,28 @@ import { ChevronLeft, ChevronRight, MoreHorizontal } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { ButtonProps, buttonVariants } from '@/components/ui/button';
 
-const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
+interface PaginationLabels {
+  navAriaLabel?: string;
+  previousAriaLabel?: string;
+  previousLabel?: string;
+  nextAriaLabel?: string;
+  nextLabel?: string;
+  morePagesSr?: string;
+}
+
+const defaultPaginationLabels: Required<PaginationLabels> = {
+  navAriaLabel: 'pagination',
+  previousAriaLabel: 'Go to previous page',
+  previousLabel: 'Previous',
+  nextAriaLabel: 'Go to next page',
+  nextLabel: 'Next',
+  morePagesSr: 'More pages',
+};
+
+const Pagination = ({ className, ariaLabel, ...props }: React.ComponentProps<'nav'> & { ariaLabel?: string }) => (
   <nav
     role="navigation"
-    aria-label="pagination"
+    aria-label={ariaLabel || defaultPaginationLabels.navAriaLabel}
     className={cn('mx-auto flex w-full justify-center', className)}
     {...props}
   />
@@ -61,31 +79,33 @@ PaginationLink.displayName = 'PaginationLink';
 
 const PaginationPrevious = ({
   className,
+  labels,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & { labels?: PaginationLabels }) => (
   <PaginationLink
-    aria-label="Go to previous page"
+    aria-label={labels?.previousAriaLabel || defaultPaginationLabels.previousAriaLabel}
     size="default"
     className={cn('gap-1 pl-2.5', className)}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <span>{labels?.previousLabel || defaultPaginationLabels.previousLabel}</span>
   </PaginationLink>
 );
 PaginationPrevious.displayName = 'PaginationPrevious';
 
 const PaginationNext = ({
   className,
+  labels,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & { labels?: PaginationLabels }) => (
   <PaginationLink
-    aria-label="Go to next page"
+    aria-label={labels?.nextAriaLabel || defaultPaginationLabels.nextAriaLabel}
     size="default"
     className={cn('gap-1 pr-2.5', className)}
     {...props}
   >
-    <span>Next</span>
+    <span>{labels?.nextLabel || defaultPaginationLabels.nextLabel}</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 );
@@ -93,15 +113,16 @@ PaginationNext.displayName = 'PaginationNext';
 
 const PaginationEllipsis = ({
   className,
+  srText,
   ...props
-}: React.ComponentProps<'span'>) => (
+}: React.ComponentProps<'span'> & { srText?: string }) => (
   <span
     aria-hidden
     className={cn('flex h-9 w-9 items-center justify-center', className)}
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More pages</span>
+    <span className="sr-only">{srText || defaultPaginationLabels.morePagesSr}</span>
   </span>
 );
 PaginationEllipsis.displayName = 'PaginationEllipsis';

@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,6 +23,7 @@ import {
 import { toast } from 'sonner';
 import { Upload, Image as ImageIcon, MapPin, Loader2 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 // Default values for empty form
 const defaultValues = {
@@ -36,25 +37,27 @@ const defaultValues = {
   foundedYear: new Date().getFullYear(),
 };
 
-// Schema Definition
-const clubProfileSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  description: z.string().min(20, 'Description must be at least 20 characters'),
-  neighborhood: z.string().min(2, 'Neighborhood is required'),
-  addressDisplay: z.string().min(5, 'Address is required'),
-  contactEmail: z.string().email('Invalid email address'),
-  phoneNumber: z.string().optional(),
-  capacity: z.coerce.number().min(1, 'Capacity must be at least 1'),
-  foundedYear: z.coerce.number()
-    .min(1900, 'Year must be after 1900')
-    .max(new Date().getFullYear(), 'Year cannot be in the future'),
-});
+const createClubProfileSchema = (t: (key: string) => string) =>
+  z.object({
+    name: z.string().min(2, t('club_panel.profile.validation.name_min')),
+    description: z.string().min(20, t('club_panel.profile.validation.description_min')),
+    neighborhood: z.string().min(2, t('club_panel.profile.validation.neighborhood_required')),
+    addressDisplay: z.string().min(5, t('club_panel.profile.validation.address_required')),
+    contactEmail: z.string().email(t('club_panel.profile.validation.invalid_email')),
+    phoneNumber: z.string().optional(),
+    capacity: z.coerce.number().min(1, t('club_panel.profile.validation.capacity_min')),
+    foundedYear: z.coerce.number()
+      .min(1900, t('club_panel.profile.validation.year_min'))
+      .max(new Date().getFullYear(), t('club_panel.profile.validation.year_max')),
+  });
 
-type ClubProfileFormValues = z.infer<typeof clubProfileSchema>;
+type ClubProfileFormValues = z.infer<ReturnType<typeof createClubProfileSchema>>;
 
 export default function ClubProfilePage() {
+  const { t } = useLanguage();
   const [isSaving, setIsSaving] = useState(false);
   const [coverImage, setCoverImage] = useState<string | null>(null);
+  const clubProfileSchema = useMemo(() => createClubProfileSchema(t), [t]);
 
   // Initialize form with default values
   const form = useForm<ClubProfileFormValues>({
@@ -69,7 +72,7 @@ export default function ClubProfilePage() {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     console.log('Form data:', data);
-    toast.success('Club profile updated successfully');
+    toast.success(t('club_panel.profile.toast.updated'));
     setIsSaving(false);
   }
 
@@ -79,7 +82,7 @@ export default function ClubProfilePage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setCoverImage(reader.result as string);
-        toast.success('Cover image updated');
+        toast.success(t('club_panel.profile.toast.cover_image_updated'));
       };
       reader.readAsDataURL(file);
     }
@@ -88,8 +91,8 @@ export default function ClubProfilePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Club Profile</h1>
-        <p className="text-muted-foreground">Manage your club's public information and appearance.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.profile.title')}</h1>
+        <p className="text-muted-foreground">{t('club_panel.profile.subtitle')}</p>
       </div>
 
       <Form {...form}>
@@ -98,18 +101,18 @@ export default function ClubProfilePage() {
           {/* Media Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Media & Branding</CardTitle>
-              <CardDescription>Upload your club's cover image and logo.</CardDescription>
+              <CardTitle>{t('club_panel.profile.media.title')}</CardTitle>
+              <CardDescription>{t('club_panel.profile.media.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <FormLabel>Cover Image</FormLabel>
+                <FormLabel>{t('club_panel.profile.media.cover_image')}</FormLabel>
                 <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/50 hover:bg-muted/80 transition-colors group cursor-pointer">
                   {coverImage ? (
                     <>
                       <Image
                         src={coverImage}
-                        alt="Cover"
+                        alt={t('club_panel.profile.media.cover_alt')}
                         fill
                         sizes="100vw"
                         className="object-cover transition-opacity group-hover:opacity-75"
@@ -123,7 +126,7 @@ export default function ClubProfilePage() {
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                       <ImageIcon className="h-10 w-10 mb-2" />
-                      <span>Upload cover image</span>
+                      <span>{t('club_panel.profile.media.upload_cover')}</span>
                     </div>
                   )}
                   <input 
@@ -133,7 +136,7 @@ export default function ClubProfilePage() {
                     className="absolute inset-0 opacity-0 cursor-pointer" 
                   />
                 </div>
-                <FormDescription>Recommended size: 1920x1080px (16:9 aspect ratio).</FormDescription>
+                <FormDescription>{t('club_panel.profile.media.recommended_size')}</FormDescription>
               </div>
             </CardContent>
           </Card>
@@ -141,8 +144,8 @@ export default function ClubProfilePage() {
           {/* General Information */}
           <Card>
             <CardHeader>
-              <CardTitle>General Information</CardTitle>
-              <CardDescription>Basic details about your social club.</CardDescription>
+              <CardTitle>{t('club_panel.profile.general.title')}</CardTitle>
+              <CardDescription>{t('club_panel.profile.general.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -151,9 +154,9 @@ export default function ClubProfilePage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Club Name</FormLabel>
+                      <FormLabel>{t('club_panel.profile.general.club_name')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter club name" {...field} />
+                        <Input placeholder={t('club_panel.profile.general.club_name_placeholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -165,7 +168,7 @@ export default function ClubProfilePage() {
                   name="foundedYear"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Founded Year</FormLabel>
+                      <FormLabel>{t('club_panel.profile.general.founded_year')}</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -180,16 +183,16 @@ export default function ClubProfilePage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t('club_panel.profile.general.description_label')}</FormLabel>
                     <FormControl>
                       <Textarea 
-                        placeholder="Tell us about your club..." 
+                        placeholder={t('club_panel.profile.general.description_placeholder')}
                         className="min-h-[150px] resize-y" 
                         {...field} 
                       />
                     </FormControl>
                     <FormDescription>
-                      This will be displayed on your public profile page.
+                      {t('club_panel.profile.general.description_help')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -202,7 +205,7 @@ export default function ClubProfilePage() {
                   name="capacity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Member Capacity</FormLabel>
+                      <FormLabel>{t('club_panel.profile.general.member_capacity')}</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -217,8 +220,8 @@ export default function ClubProfilePage() {
           {/* Location & Contact */}
           <Card>
             <CardHeader>
-              <CardTitle>Location & Contact</CardTitle>
-              <CardDescription>How members can find and reach you.</CardDescription>
+              <CardTitle>{t('club_panel.profile.location.title')}</CardTitle>
+              <CardDescription>{t('club_panel.profile.location.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <FormField
@@ -226,11 +229,11 @@ export default function ClubProfilePage() {
                 name="addressDisplay"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Address</FormLabel>
+                    <FormLabel>{t('club_panel.profile.location.address')}</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input className="pl-9" placeholder="Street address" {...field} />
+                        <Input className="pl-9" placeholder={t('club_panel.profile.location.address_placeholder')} {...field} />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -244,9 +247,9 @@ export default function ClubProfilePage() {
                   name="neighborhood"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Neighborhood</FormLabel>
+                      <FormLabel>{t('club_panel.profile.location.neighborhood')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Gràcia" {...field} />
+                        <Input placeholder={t('club_panel.profile.location.neighborhood_placeholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -258,9 +261,9 @@ export default function ClubProfilePage() {
                   name="contactEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact Email</FormLabel>
+                      <FormLabel>{t('club_panel.profile.location.contact_email')}</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="club@example.com" {...field} />
+                        <Input type="email" placeholder={t('club_panel.profile.location.contact_email_placeholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -273,9 +276,9 @@ export default function ClubProfilePage() {
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>{t('club_panel.profile.location.phone_number')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="+34 ..." {...field} />
+                      <Input placeholder={t('club_panel.profile.location.phone_placeholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -286,16 +289,16 @@ export default function ClubProfilePage() {
 
           <div className="flex items-center justify-end gap-4 sticky bottom-6 bg-background/80 backdrop-blur-md p-4 rounded-xl border shadow-lg z-10">
             <Button type="button" variant="ghost" onClick={() => form.reset()}>
-              Discard Changes
+              {t('club_panel.profile.discard_changes')}
             </Button>
             <Button type="submit" disabled={isSaving} className="min-w-[150px]">
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  {t('club_panel.profile.saving')}
                 </>
               ) : (
-                'Save Changes'
+                t('common.save_changes')
               )}
             </Button>
           </div>

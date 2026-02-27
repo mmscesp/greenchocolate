@@ -7,8 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Logo, LogoIcon } from '@/components/ui/logo';
 import { LogIn, UserPlus, Shield } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ClubPanelChooser() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100/40 pt-16 md:pt-20">
       <nav className="bg-card/95 backdrop-blur-md shadow-sm border-b">
@@ -17,12 +20,12 @@ export default function ClubPanelChooser() {
             <Link href="/" className="flex items-center gap-2">
               <LogoIcon size="md" />
               <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                SocialClubsMaps
+                {t('brand.name')}
               </span>
             </Link>
             <div className="flex items-center">
               <Link href="/">
-                <Button variant="ghost">Back to Home</Button>
+                <Button variant="ghost">{t('club_panel.entry.back_to_home')}</Button>
               </Link>
             </div>
           </div>
@@ -33,13 +36,13 @@ export default function ClubPanelChooser() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full mb-6">
             <Shield className="h-4 w-4" />
-            <span className="text-sm font-medium">Club Management Panel</span>
+            <span className="text-sm font-medium">{t('club_panel.entry.badge')}</span>
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Welcome to Club Panel
+            {t('club_panel.entry.title')}
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Manage your cannabis social club, receive membership requests, and connect with your community
+            {t('club_panel.entry.subtitle')}
           </p>
         </div>
 
@@ -51,13 +54,13 @@ export default function ClubPanelChooser() {
                   <LogIn className="h-8 w-8 text-green-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Sign In
+                  {t('club_panel.entry.sign_in_title')}
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Already have a registered club? Access your dashboard
+                  {t('club_panel.entry.sign_in_description')}
                 </p>
                 <div className="flex items-center justify-center gap-2 text-green-600 font-medium group-hover:gap-3 transition-all">
-                  <span>Access Panel</span>
+                  <span>{t('club_panel.entry.sign_in_cta')}</span>
                   <LogIn className="h-4 w-4" />
                 </div>
               </div>
@@ -71,13 +74,13 @@ export default function ClubPanelChooser() {
                   <UserPlus className="h-8 w-8 text-emerald-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Register Club
+                  {t('club_panel.entry.register_title')}
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  New here? Register your club and start managing your community
+                  {t('club_panel.entry.register_description')}
                 </p>
                 <div className="flex items-center justify-center gap-2 text-emerald-600 font-medium group-hover:gap-3 transition-all">
-                  <span>Get Started</span>
+                  <span>{t('club_panel.entry.register_cta')}</span>
                   <UserPlus className="h-4 w-4" />
                 </div>
               </div>

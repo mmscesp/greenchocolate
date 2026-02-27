@@ -33,25 +33,25 @@ export default function AnalyticsPage() {
   };
 
   const monthlyData = [
-    { month: 'Jan', views: 890, requests: 12 },
-    { month: 'Feb', views: 1020, requests: 15 },
-    { month: 'Mar', views: 1150, requests: 18 },
-    { month: 'Apr', views: 1247, requests: 23 },
+    { monthKey: 'club_panel.analytics.months.jan', views: 890, requests: 12 },
+    { monthKey: 'club_panel.analytics.months.feb', views: 1020, requests: 15 },
+    { monthKey: 'club_panel.analytics.months.mar', views: 1150, requests: 18 },
+    { monthKey: 'club_panel.analytics.months.apr', views: 1247, requests: 23 },
   ];
 
   const topSources = [
-    { source: 'Direct Search', percentage: 45, visits: 561 },
-    { source: 'Social Media', percentage: 28, visits: 349 },
-    { source: 'Referrals', percentage: 18, visits: 224 },
-    { source: 'Other', percentage: 9, visits: 113 }
+    { sourceKey: 'club_panel.analytics.sources.direct_search', percentage: 45, visits: 561 },
+    { sourceKey: 'club_panel.analytics.sources.social_media', percentage: 28, visits: 349 },
+    { sourceKey: 'club_panel.analytics.sources.referrals', percentage: 18, visits: 224 },
+    { sourceKey: 'club_panel.analytics.sources.other', percentage: 9, visits: 113 }
   ];
 
   const recentActivity = [
-    { type: 'view', message: 'New profile visit', time: '2 min ago' },
-    { type: 'request', message: 'New membership request', time: '15 min ago' },
-    { type: 'view', message: 'Profile viewed from downtown', time: '1 hour ago' },
-    { type: 'request', message: 'Request approved', time: '2 hours ago' },
-    { type: 'view', message: 'New profile visit', time: '3 hours ago' }
+    { type: 'view', messageKey: 'club_panel.analytics.activity.new_profile_visit', timeKey: 'club_panel.analytics.activity_time.2m' },
+    { type: 'request', messageKey: 'club_panel.analytics.activity.new_membership_request', timeKey: 'club_panel.analytics.activity_time.15m' },
+    { type: 'view', messageKey: 'club_panel.analytics.activity.profile_viewed_downtown', timeKey: 'club_panel.analytics.activity_time.1h' },
+    { type: 'request', messageKey: 'club_panel.analytics.activity.request_approved', timeKey: 'club_panel.analytics.activity_time.2h' },
+    { type: 'view', messageKey: 'club_panel.analytics.activity.new_profile_visit', timeKey: 'club_panel.analytics.activity_time.3h' }
   ];
 
   return (
@@ -59,9 +59,9 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.analytics.title')}</h1>
           <p className="text-muted-foreground mt-1">
-            Track your club's performance and member engagement
+            {t('club_panel.analytics.subtitle')}
           </p>
         </div>
         
@@ -70,42 +70,42 @@ export default function AnalyticsPage() {
           onChange={(e) => setTimeRange(e.target.value)}
           className="px-3 py-2 border rounded-md text-sm bg-background"
         >
-          <option value="7d">Last 7 days</option>
-          <option value="30d">Last 30 days</option>
-          <option value="90d">Last 90 days</option>
-          <option value="1y">Last year</option>
+          <option value="7d">{t('club_panel.analytics.time_range.7d')}</option>
+          <option value="30d">{t('club_panel.analytics.time_range.30d')}</option>
+          <option value="90d">{t('club_panel.analytics.time_range.90d')}</option>
+          <option value="1y">{t('club_panel.analytics.time_range.1y')}</option>
         </select>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
-          title="Profile Views"
+          title={t('club_panel.analytics.stats.profile_views')}
           value={stats.totalViews.toLocaleString()}
           icon={Eye}
           color="blue"
-          trend="+12% vs last month"
+          trend={t('club_panel.analytics.stats.profile_views_trend')}
         />
         <StatsCard
-          title="New Members"
+          title={t('club_panel.analytics.stats.new_members')}
           value={stats.newMembers}
           icon={UserPlus}
           color="green"
-          trend="+28% vs last month"
+          trend={t('club_panel.analytics.stats.new_members_trend')}
         />
         <StatsCard
-          title="Average Rating"
+          title={t('club_panel.analytics.stats.average_rating')}
           value={stats.averageRating}
           icon={Star}
           color="orange"
-          trend="Based on 142 reviews"
+          trend={t('club_panel.analytics.stats.average_rating_trend')}
         />
         <StatsCard
-          title="Total Requests"
+          title={t('club_panel.analytics.stats.total_requests')}
           value={stats.totalRequests}
           icon={Users}
           color="purple"
-          trend="5 pending"
+          trend={t('club_panel.analytics.stats.total_requests_trend')}
         />
       </div>
 
@@ -116,15 +116,15 @@ export default function AnalyticsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-muted-foreground" />
-              Monthly Trends
+              {t('club_panel.analytics.monthly_trends.title')}
             </CardTitle>
-            <CardDescription>Profile views and membership requests over time</CardDescription>
+            <CardDescription>{t('club_panel.analytics.monthly_trends.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {monthlyData.map((data) => (
-                <div key={data.month} className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-muted-foreground w-10">{data.month}</span>
+                <div key={data.monthKey} className="flex items-center gap-4">
+                  <span className="text-sm font-medium text-muted-foreground w-10">{t(data.monthKey)}</span>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
@@ -137,7 +137,7 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
                   <Badge variant="outline" className="text-xs whitespace-nowrap">
-                    {data.requests} req
+                    {data.requests} {t('club_panel.analytics.monthly_trends.requests_suffix')}
                   </Badge>
                 </div>
               ))}
@@ -150,16 +150,16 @@ export default function AnalyticsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="h-5 w-5 text-muted-foreground" />
-              Traffic Sources
+              {t('club_panel.analytics.traffic_sources.title')}
             </CardTitle>
-            <CardDescription>Where your visitors are coming from</CardDescription>
+            <CardDescription>{t('club_panel.analytics.traffic_sources.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {topSources.map((source) => (
-                <div key={source.source} className="space-y-2">
+                <div key={source.sourceKey} className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{source.source}</span>
+                    <span className="font-medium">{t(source.sourceKey)}</span>
                     <span className="text-muted-foreground">{source.percentage}%</span>
                   </div>
                   <div className="flex items-center gap-3">
@@ -190,8 +190,8 @@ export default function AnalyticsPage() {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest interactions with your club</CardDescription>
+            <CardTitle>{t('club_panel.analytics.recent_activity.title')}</CardTitle>
+            <CardDescription>{t('club_panel.analytics.recent_activity.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -213,10 +213,10 @@ export default function AnalyticsPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{activity.message}</p>
+                    <p className="text-sm font-medium">{t(activity.messageKey)}</p>
                     <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                       <Clock className="h-3 w-3" />
-                      {activity.time}
+                      {t(activity.timeKey)}
                     </p>
                   </div>
                 </div>
@@ -228,8 +228,8 @@ export default function AnalyticsPage() {
         {/* Performance Insights */}
         <Card>
           <CardHeader>
-            <CardTitle>Performance Insights</CardTitle>
-            <CardDescription>Key takeaways from your analytics</CardDescription>
+            <CardTitle>{t('club_panel.analytics.insights.title')}</CardTitle>
+            <CardDescription>{t('club_panel.analytics.insights.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -239,10 +239,9 @@ export default function AnalyticsPage() {
                     <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-green-800 dark:text-green-400 mb-1">Positive Growth</h4>
+                    <h4 className="font-medium text-green-800 dark:text-green-400 mb-1">{t('club_panel.analytics.insights.positive_growth.title')}</h4>
                     <p className="text-sm text-green-700 dark:text-green-500">
-                      Your club has experienced 28% growth in new members this month. 
-                      Great work maintaining service quality!
+                      {t('club_panel.analytics.insights.positive_growth.body')}
                     </p>
                   </div>
                 </div>
@@ -254,10 +253,9 @@ export default function AnalyticsPage() {
                     <Eye className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-blue-800 dark:text-blue-400 mb-1">High Visibility</h4>
+                    <h4 className="font-medium text-blue-800 dark:text-blue-400 mb-1">{t('club_panel.analytics.insights.high_visibility.title')}</h4>
                     <p className="text-sm text-blue-700 dark:text-blue-500">
-                      Your profile is getting many views. Consider updating photos and 
-                      description to keep visitors engaged.
+                      {t('club_panel.analytics.insights.high_visibility.body')}
                     </p>
                   </div>
                 </div>
@@ -269,10 +267,9 @@ export default function AnalyticsPage() {
                     <Star className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-orange-800 dark:text-orange-400 mb-1">Excellent Rating</h4>
+                    <h4 className="font-medium text-orange-800 dark:text-orange-400 mb-1">{t('club_panel.analytics.insights.excellent_rating.title')}</h4>
                     <p className="text-sm text-orange-700 dark:text-orange-500">
-                      With a 4.8/5 rating, your club is among the top-rated in the area. 
-                      Keep up the great work!
+                      {t('club_panel.analytics.insights.excellent_rating.body')}
                     </p>
                   </div>
                 </div>

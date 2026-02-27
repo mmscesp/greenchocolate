@@ -67,15 +67,22 @@ export const desktopPrimaryItems: DesktopPrimaryItem[] = [
   },
 ];
 
-export default function MainNavigation() {
+interface MainNavigationProps {
+  tone?: 'light' | 'dark';
+}
+
+export default function MainNavigation({ tone = 'light' }: MainNavigationProps) {
   const { t, language } = useLanguage();
   const withLocale = (path: string) => `/${language}${path}`;
+  const triggerClassName = tone === 'light'
+    ? 'bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5 text-white hover:text-white transition-colors'
+    : 'bg-transparent hover:bg-black/5 data-[state=open]:bg-black/5 text-slate-800 hover:text-slate-900 transition-colors';
 
   return (
     <NavigationMenu viewportClassName="bg-transparent border-none shadow-none">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5 text-white hover:text-white transition-colors">
+          <NavigationMenuTrigger className={triggerClassName}>
             {t('nav.explore_menu')}
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -91,7 +98,7 @@ export default function MainNavigation() {
 
         {desktopPrimaryItems.map(({ href, labelKey, Icon }) => (
           <NavigationMenuItem key={href}>
-            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-white/5 text-white hover:text-white transition-colors')}>
+            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), triggerClassName)}>
               {Icon ? (
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4" />

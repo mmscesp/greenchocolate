@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/hooks/useLanguage';
 
 type PublishResponse = {
   success?: boolean;
@@ -43,13 +44,24 @@ function buildIdempotencyKey(slug: string): string {
 }
 
 export default function PublishArticleForm() {
+  const { t } = useLanguage();
+  const formatText = (key: string, values: Record<string, string>) => {
+    let message = t(key);
+
+    for (const [name, value] of Object.entries(values)) {
+      message = message.replace(`{{${name}}}`, value);
+    }
+
+    return message;
+  };
+
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [category, setCategory] = useState<'legal' | 'etiquette' | 'harm-reduction' | 'culture'>('culture');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
-  const [authorName, setAuthorName] = useState('Editorial Team');
+  const [authorName, setAuthorName] = useState(() => t('admin.content.articles.publish.author_default'));
   const [authorBio, setAuthorBio] = useState('');
   const [heroImage, setHeroImage] = useState('');
   const [heroImageAlt, setHeroImageAlt] = useState('');
@@ -115,7 +127,7 @@ export default function PublishArticleForm() {
     } catch (error) {
       setResponse({
         success: false,
-        error: error instanceof Error ? error.message : 'Publish request failed',
+        error: error instanceof Error ? error.message : t('admin.content.articles.publish.error_request_failed'),
       });
     } finally {
       setIsSubmitting(false);
@@ -125,26 +137,26 @@ export default function PublishArticleForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Publish New Article</CardTitle>
+        <CardTitle>{t('admin.content.articles.publish.title')}</CardTitle>
         <CardDescription>
-          One-click publish to your file-backed editorial pipeline.
+          {t('admin.content.articles.publish.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Article title" required minLength={5} maxLength={180} />
+            <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.article_title')} required minLength={5} maxLength={180} />
             <Input
               value={slug}
               onChange={(event) => setSlug(slugify(event.target.value))}
-              placeholder={suggestedSlug || 'article-slug'}
+              placeholder={suggestedSlug || t('admin.content.articles.publish.placeholders.article_slug')}
               required
               pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-              title="Lowercase letters, numbers, and hyphens only"
+              title={t('admin.content.articles.publish.slug_title')}
             />
           </div>
 
-          <Textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} placeholder="SEO excerpt (20-350 chars)" required minLength={20} maxLength={350} />
+          <Textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.seo_excerpt')} required minLength={20} maxLength={350} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <select
@@ -152,59 +164,63 @@ export default function PublishArticleForm() {
               onChange={(event) => setCategory(event.target.value as 'legal' | 'etiquette' | 'harm-reduction' | 'culture')}
               className="h-10 rounded-md border border-input bg-background px-3 text-sm"
             >
-              <option value="culture">Culture</option>
-              <option value="legal">Legal</option>
-              <option value="etiquette">Etiquette</option>
-              <option value="harm-reduction">Harm Reduction</option>
+              <option value="culture">{t('admin.content.articles.publish.categories.culture')}</option>
+              <option value="legal">{t('admin.content.articles.publish.categories.legal')}</option>
+              <option value="etiquette">{t('admin.content.articles.publish.categories.etiquette')}</option>
+              <option value="harm-reduction">{t('admin.content.articles.publish.categories.harm_reduction')}</option>
             </select>
-            <Input value={authorName} onChange={(event) => setAuthorName(event.target.value)} placeholder="Author name" required minLength={2} maxLength={120} />
+            <Input value={authorName} onChange={(event) => setAuthorName(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.author_name')} required minLength={2} maxLength={120} />
           </div>
 
-          <Textarea value={content} onChange={(event) => setContent(event.target.value)} placeholder="MDX content" required minLength={120} className="min-h-[220px]" />
+          <Textarea value={content} onChange={(event) => setContent(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.mdx_content')} required minLength={120} className="min-h-[220px]" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="Tags (comma-separated)" />
-            <Input value={authorBio} onChange={(event) => setAuthorBio(event.target.value)} placeholder="Author bio (optional)" maxLength={320} />
-            <Input value={heroImage} onChange={(event) => setHeroImage(event.target.value)} placeholder="Hero image URL (optional)" type="url" />
-            <Input value={heroImageAlt} onChange={(event) => setHeroImageAlt(event.target.value)} placeholder="Hero image alt text" maxLength={180} />
-            <Input value={citySlug} onChange={(event) => setCitySlug(event.target.value)} placeholder="City slug (optional)" />
-            <Input value={cityName} onChange={(event) => setCityName(event.target.value)} placeholder="City name (optional)" />
-            <Input value={metaTitle} onChange={(event) => setMetaTitle(event.target.value)} placeholder="Meta title (optional)" maxLength={180} />
-            <Input value={metaDescription} onChange={(event) => setMetaDescription(event.target.value)} placeholder="Meta description (optional)" maxLength={320} />
-            <Input value={readTime} onChange={(event) => setReadTime(event.target.value)} placeholder="Read time minutes" type="number" min={1} max={120} />
-            <Input value={featuredOrder} onChange={(event) => setFeaturedOrder(event.target.value)} placeholder="Featured order" type="number" min={0} max={200} />
-            <Input value={publishedAt} onChange={(event) => setPublishedAt(event.target.value)} placeholder="Publish date" type="datetime-local" />
+            <Input value={tags} onChange={(event) => setTags(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.tags')} />
+            <Input value={authorBio} onChange={(event) => setAuthorBio(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.author_bio')} maxLength={320} />
+            <Input value={heroImage} onChange={(event) => setHeroImage(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.hero_image_url')} type="url" />
+            <Input value={heroImageAlt} onChange={(event) => setHeroImageAlt(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.hero_image_alt')} maxLength={180} />
+            <Input value={citySlug} onChange={(event) => setCitySlug(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.city_slug')} />
+            <Input value={cityName} onChange={(event) => setCityName(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.city_name')} />
+            <Input value={metaTitle} onChange={(event) => setMetaTitle(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.meta_title')} maxLength={180} />
+            <Input value={metaDescription} onChange={(event) => setMetaDescription(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.meta_description')} maxLength={320} />
+            <Input value={readTime} onChange={(event) => setReadTime(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.read_time_minutes')} type="number" min={1} max={120} />
+            <Input value={featuredOrder} onChange={(event) => setFeaturedOrder(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.featured_order')} type="number" min={0} max={200} />
+            <Input value={publishedAt} onChange={(event) => setPublishedAt(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.publish_date')} type="datetime-local" />
           </div>
 
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Publishing...' : 'Publish Article'}
+            {isSubmitting ? t('admin.content.articles.publish.publishing') : t('admin.content.articles.publish.publish_article')}
           </Button>
         </form>
 
         {response && (
           <div className="mt-4 border rounded-md p-3 text-sm">
-            <div className="font-medium mb-2">Publish Result</div>
+            <div className="font-medium mb-2">{t('admin.content.articles.publish.result_title')}</div>
             {response.success ? (
               <div className="space-y-1">
                 <div className="flex gap-2 flex-wrap">
-                  <Badge>{response.idempotent ? 'Idempotent Replay' : 'Published'}</Badge>
-                  {response.mode && <Badge variant="secondary">mode: {response.mode}</Badge>}
+                  <Badge>{response.idempotent ? t('admin.content.articles.publish.result.idempotent_replay') : t('admin.content.articles.publish.result.published')}</Badge>
+                  {response.mode && (
+                    <Badge variant="secondary">
+                      {formatText('admin.content.articles.publish.result.mode', { mode: response.mode })}
+                    </Badge>
+                  )}
                 </div>
-                {response.path && <div>Path: {response.path}</div>}
-                {response.commitSha && <div>Commit: {response.commitSha}</div>}
-                {response.idempotencyKey && <div>Idempotency Key: {response.idempotencyKey}</div>}
-                {response.contentHash && <div>Content Hash: {response.contentHash}</div>}
+                {response.path && <div>{formatText('admin.content.articles.publish.result.path', { path: response.path })}</div>}
+                {response.commitSha && <div>{formatText('admin.content.articles.publish.result.commit', { commit: response.commitSha })}</div>}
+                {response.idempotencyKey && <div>{formatText('admin.content.articles.publish.result.idempotency_key', { key: response.idempotencyKey })}</div>}
+                {response.contentHash && <div>{formatText('admin.content.articles.publish.result.content_hash', { hash: response.contentHash })}</div>}
                 {response.rollback?.existed && (
                   <div>
-                    Rollback metadata available
-                    {response.rollback.backupPath ? ` (backup: ${response.rollback.backupPath})` : ''}
-                    {response.rollback.previousCommitSha ? ` (previous commit: ${response.rollback.previousCommitSha})` : ''}
+                    {t('admin.content.articles.publish.result.rollback_available')}
+                    {response.rollback.backupPath ? ` (${formatText('admin.content.articles.publish.result.backup', { backup: response.rollback.backupPath })})` : ''}
+                    {response.rollback.previousCommitSha ? ` (${formatText('admin.content.articles.publish.result.previous_commit', { commit: response.rollback.previousCommitSha })})` : ''}
                   </div>
                 )}
               </div>
             ) : (
               <div className="space-y-1 text-destructive">
-                <div>{response.error || 'Publish failed'}</div>
+                <div>{response.error || t('admin.content.articles.publish.error_publish_failed')}</div>
                 {response.details && <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(response.details, null, 2)}</pre>}
               </div>
             )}

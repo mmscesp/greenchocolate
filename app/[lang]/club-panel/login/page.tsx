@@ -15,8 +15,10 @@ import { Mail, Lock, ArrowLeft, AlertCircle, Loader2, Eye, EyeOff } from '@/lib/
 import { login, signInWithOAuth } from '@/app/actions/auth';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
+import { useLanguage } from '@/hooks/useLanguage';
 
 function ClubLoginForm() {
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/club-panel/dashboard';
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -63,7 +65,7 @@ function ClubLoginForm() {
           ) : (
             <FcGoogle className="h-4 w-4" />
           )}
-          Continue with Google
+          {t('auth.login.continue_google')}
         </Button>
         
         <Button
@@ -78,7 +80,7 @@ function ClubLoginForm() {
           ) : (
             <FaApple className="h-4 w-4" />
           )}
-          Continue with Apple
+          {t('auth.login.continue_apple')}
         </Button>
       </div>
 
@@ -88,7 +90,7 @@ function ClubLoginForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-gray-500">
-            Or sign in with email
+            {t('auth.login.continue_email')}
           </span>
         </div>
       </div>
@@ -110,13 +112,13 @@ function ClubLoginForm() {
         <div>
           <Label htmlFor="email" className="flex items-center gap-2 mb-2">
             <Mail className="h-4 w-4 text-gray-500" />
-            Club Email
+            {t('club_panel.login.email_label')}
           </Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="club@example.com"
+            placeholder={t('club_panel.login.email_placeholder')}
             className="w-full"
             required
             disabled={isPending}
@@ -129,7 +131,7 @@ function ClubLoginForm() {
         <div>
           <Label htmlFor="password" className="flex items-center gap-2 mb-2">
             <Lock className="h-4 w-4 text-gray-500" />
-            Password
+            {t('form.password')}
           </Label>
           <div className="relative">
             <Input
@@ -163,14 +165,14 @@ function ClubLoginForm() {
               disabled={isPending}
             />
             <Label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
-              Remember me
+              {t('auth.login.remember_me')}
             </Label>
           </div>
           <Link
             href="/forgot-password"
             className="text-sm text-green-600 hover:text-green-700"
           >
-            Forgot password?
+            {t('auth.login.forgot_password')}
           </Link>
         </div>
 
@@ -182,19 +184,19 @@ function ClubLoginForm() {
           {isPending ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Signing in...
+              {t('auth.login.signing_in')}
             </>
           ) : (
-            'Sign In'
+            t('auth.login.submit')
           )}
         </Button>
       </form>
 
       <div className="mt-6 text-center">
         <p className="text-gray-600">
-          Don't have an account?{' '}
+          {t('auth.login.no_account')}{' '}
           <Link href="/club-panel/signup" className="text-green-600 hover:text-green-700 font-medium">
-            Register your club
+            {t('club_panel.login.register_club_link')}
           </Link>
         </p>
       </div>
@@ -203,12 +205,14 @@ function ClubLoginForm() {
 }
 
 export default function ClubLoginPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100/40 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="w-full max-w-md">
         <Link href="/club-panel" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          <span>Back</span>
+          <span>{t('club_panel.common.back')}</span>
         </Link>
 
         <Card className="p-8 shadow-xl border-2">
@@ -216,14 +220,14 @@ export default function ClubLoginPage() {
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
               <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                SocialClubsMaps
+                {t('brand.name')}
               </span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              Club Panel Access
+              {t('club_panel.login.title')}
             </h1>
             <p className="text-gray-600 mt-2">
-              Sign in to manage your club
+              {t('club_panel.login.subtitle')}
             </p>
           </div>
 

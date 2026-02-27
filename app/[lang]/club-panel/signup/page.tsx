@@ -15,8 +15,20 @@ import { clubSignUp } from '@/app/actions/club-auth';
 import { signInWithOAuth } from '@/app/actions/auth';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ClubSignupPage() {
+  const { t } = useLanguage();
+  const formatText = (key: string, values: Record<string, string | number>) => {
+    let message = t(key);
+
+    for (const [name, value] of Object.entries(values)) {
+      message = message.replace(`{{${name}}}`, String(value));
+    }
+
+    return message;
+  };
+
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [clientError, setClientError] = useState<string | null>(null);
@@ -49,11 +61,11 @@ export default function ClubSignupPage() {
 
     // Validate step 1
     if (!formData.clubName || !formData.email || !formData.password) {
-      setClientError('Please fill in all fields');
+      setClientError(t('club_panel.signup.errors.fill_all_fields'));
       return;
     }
     if (formData.password.length < 8) {
-      setClientError('Password must be at least 8 characters');
+      setClientError(t('club_panel.signup.errors.password_min_length'));
       return;
     }
     
@@ -86,22 +98,20 @@ export default function ClubSignupPage() {
             <CheckCircle className="h-10 w-10 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Registration Successful
+            {t('club_panel.signup.success.title')}
           </h2>
           <p className="text-gray-600 mb-8">
-            Your club <strong>{formData.clubName}</strong> has been registered successfully.
-            Please check your email to verify your account. 
-            Our team will review your application within 1-2 business days.
+            {formatText('club_panel.signup.success.description', { clubName: formData.clubName })}
           </p>
           <div className="space-y-3">
             <Link href="/club-panel/login" className="block">
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                Go to Sign In
+                {t('club_panel.signup.success.go_to_sign_in')}
               </Button>
             </Link>
             <Link href="/" className="block">
               <Button variant="outline" className="w-full">
-                Back to Home
+                {t('club_panel.entry.back_to_home')}
               </Button>
             </Link>
           </div>
@@ -124,7 +134,7 @@ export default function ClubSignupPage() {
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          <span>Back</span>
+          <span>{t('club_panel.common.back')}</span>
         </Link>
 
         <Card className="p-8 shadow-xl">
@@ -132,14 +142,14 @@ export default function ClubSignupPage() {
             <Link href="/" className="inline-flex items-center gap-2 mb-4">
               <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                SocialClubsMaps
+                {t('brand.name')}
               </span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              Register New Club
+              {t('club_panel.signup.title')}
             </h1>
             <p className="text-gray-600 mt-2">
-              Step {step} of 2
+              {formatText('club_panel.signup.step_counter', { step, total: 2 })}
             </p>
           </div>
 
@@ -157,7 +167,7 @@ export default function ClubSignupPage() {
               ) : (
                 <FcGoogle className="h-4 w-4" />
               )}
-              Continue with Google
+              {t('auth.register.continue_google')}
             </Button>
             
             <Button
@@ -172,7 +182,7 @@ export default function ClubSignupPage() {
               ) : (
                 <FaApple className="h-4 w-4" />
               )}
-              Continue with Apple
+              {t('auth.register.continue_apple')}
             </Button>
           </div>
 
@@ -182,7 +192,7 @@ export default function ClubSignupPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-gray-500">
-                Or register with email
+                {t('auth.register.continue_email')}
               </span>
             </div>
           </div>
@@ -199,13 +209,13 @@ export default function ClubSignupPage() {
               <div>
                 <Label htmlFor="clubName" className="flex items-center gap-2 mb-2">
                   <Building className="h-4 w-4 text-gray-500" />
-                  Club Name
+                  {t('club_panel.signup.club_name_label')}
                 </Label>
                 <Input
                   id="clubName"
                   name="clubName"
                   type="text"
-                  placeholder="Green Harmony CSC"
+                  placeholder={t('club_panel.signup.club_name_placeholder')}
                   value={formData.clubName}
                   onChange={handleChange}
                   required
@@ -218,13 +228,13 @@ export default function ClubSignupPage() {
               <div>
                 <Label htmlFor="email" className="flex items-center gap-2 mb-2">
                   <Mail className="h-4 w-4 text-gray-500" />
-                  Contact Email
+                  {t('club_panel.signup.contact_email_label')}
                 </Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="info@greenharmony.com"
+                  placeholder={t('club_panel.signup.contact_email_placeholder')}
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -237,14 +247,14 @@ export default function ClubSignupPage() {
               <div>
                 <Label htmlFor="password" className="flex items-center gap-2 mb-2">
                   <Lock className="h-4 w-4 text-gray-500" />
-                  Password
+                  {t('form.password')}
                 </Label>
                 <div className="relative">
                   <Input
                     id="password"
                     name="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Minimum 8 characters"
+                    placeholder={t('club_panel.signup.password_placeholder')}
                     value={formData.password}
                     onChange={handleChange}
                     required
@@ -260,7 +270,7 @@ export default function ClubSignupPage() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Use at least 8 characters with letters and numbers
+                  {t('club_panel.signup.password_hint')}
                 </p>
                 {state?.errors?.password && (
                   <p className="text-sm text-red-600 mt-1">{state.errors.password[0]}</p>
@@ -271,7 +281,7 @@ export default function ClubSignupPage() {
                 type="submit"
                 className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
-                Next
+                {t('club_panel.signup.next')}
               </Button>
             </form>
           ) : (
@@ -284,13 +294,13 @@ export default function ClubSignupPage() {
               <div>
                 <Label htmlFor="address" className="flex items-center gap-2 mb-2">
                   <MapPin className="h-4 w-4 text-gray-500" />
-                  Address
+                  {t('club_panel.signup.address_label')}
                 </Label>
                 <Input
                   id="address"
                   name="address"
                   type="text"
-                  placeholder="123 Main Street, Madrid"
+                  placeholder={t('club_panel.signup.address_placeholder')}
                   value={formData.address}
                   onChange={handleChange}
                   required
@@ -304,13 +314,13 @@ export default function ClubSignupPage() {
               <div>
                 <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
                   <Phone className="h-4 w-4 text-gray-500" />
-                  Phone
+                  {t('form.phone')}
                 </Label>
                 <Input
                   id="phone"
                   name="phone"
                   type="tel"
-                  placeholder="+34 600 123 456"
+                  placeholder={t('club_panel.signup.phone_placeholder')}
                   value={formData.phone}
                   onChange={handleChange}
                   required
@@ -324,12 +334,12 @@ export default function ClubSignupPage() {
               <div>
                 <Label htmlFor="description" className="flex items-center gap-2 mb-2">
                   <Building className="h-4 w-4 text-gray-500" />
-                  Description
+                  {t('club_panel.signup.description_label')}
                 </Label>
                 <Textarea
                   id="description"
                   name="description"
-                  placeholder="Describe your club, its values, and what makes it unique..."
+                  placeholder={t('club_panel.signup.description_placeholder')}
                   value={formData.description}
                   onChange={handleChange}
                   rows={4}
@@ -338,7 +348,7 @@ export default function ClubSignupPage() {
                   minLength={20}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Minimum 20 characters
+                  {t('club_panel.signup.description_hint')}
                 </p>
                 {state?.errors?.description && (
                   <p className="text-sm text-red-600 mt-1">{state.errors.description[0]}</p>
@@ -353,19 +363,19 @@ export default function ClubSignupPage() {
                 {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Registering...
+                    {t('club_panel.signup.registering')}
                   </>
                 ) : (
-                  'Register Club'
+                  t('club_panel.entry.register_title')
                 )}
               </Button>
             </form>
           )}
 
           <div className="mt-6 text-center text-sm text-gray-600">
-            Already have an account?{' '}
+            {t('club_panel.signup.already_have_account')}{' '}
             <Link href="/club-panel/login" className="text-green-600 hover:text-green-700 font-medium">
-              Sign in
+              {t('auth.login.submit')}
             </Link>
           </div>
         </Card>

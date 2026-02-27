@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Calendar, MapPin, Users, Edit, Trash2, Plus, Image as ImageIcon, Clock, X } from '@/lib/icons';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface EventForm {
   title: string;
@@ -37,22 +38,8 @@ interface ClubEvent {
   image?: string;
 }
 
-const getStatusBadge = (date: string) => {
-  const eventDate = new Date(date);
-  const today = new Date();
-  const isUpcoming = eventDate > today;
-  const isToday = eventDate.toDateString() === today.toDateString();
-
-  if (isToday) {
-    return <Badge className="bg-primary text-primary-foreground">Today</Badge>;
-  }
-  if (isUpcoming) {
-    return <Badge variant="secondary">Upcoming</Badge>;
-  }
-  return <Badge variant="outline" className="text-muted-foreground">Past</Badge>;
-};
-
 export default function EventsPage() {
+  const { t, language } = useLanguage();
   const [events, setEvents] = useState<ClubEvent[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -65,6 +52,21 @@ export default function EventsPage() {
     description: '',
     image: '',
   });
+
+  const getStatusBadge = (date: string) => {
+    const eventDate = new Date(date);
+    const today = new Date();
+    const isUpcoming = eventDate > today;
+    const isToday = eventDate.toDateString() === today.toDateString();
+
+    if (isToday) {
+      return <Badge className="bg-primary text-primary-foreground">{t('club_panel.events.status.today')}</Badge>;
+    }
+    if (isUpcoming) {
+      return <Badge variant="secondary">{t('club_panel.events.status.upcoming')}</Badge>;
+    }
+    return <Badge variant="outline" className="text-muted-foreground">{t('club_panel.events.status.past')}</Badge>;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -85,7 +87,7 @@ export default function EventsPage() {
     e.preventDefault();
     if (editingId) {
       setEvents(events.map((ev) => (ev.id === editingId ? { ...ev, ...formData } : ev)));
-      toast.success('Event updated successfully');
+      toast.success(t('club_panel.events.toast.updated'));
     } else {
       const newEvent = { 
         id: `${formData.title}-${formData.date}-${events.length + 1}`,
@@ -94,14 +96,14 @@ export default function EventsPage() {
         image: formData.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'
       };
       setEvents([newEvent, ...events]);
-      toast.success('Event created successfully');
+      toast.success(t('club_panel.events.toast.created'));
     }
     resetForm();
   };
 
   const handleDelete = (id: string) => {
     setEvents(events.filter((e) => e.id !== id));
-    toast.success('Event deleted');
+    toast.success(t('club_panel.events.toast.deleted'));
   };
 
   const resetForm = () => {
@@ -110,8 +112,16 @@ export default function EventsPage() {
     setEditingId(null);
   };
 
-  const handleEdit = (event: any) => {
-    setFormData(event);
+  const handleEdit = (event: ClubEvent) => {
+    setFormData({
+      title: event.title,
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      capacity: event.capacity,
+      description: event.description,
+      image: event.image || '',
+    });
     setEditingId(event.id);
     setShowForm(true);
   };
@@ -124,14 +134,14 @@ export default function EventsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Events</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.events.title')}</h1>
           <p className="text-muted-foreground mt-1">
-            Manage and schedule events for your club members
+            {t('club_panel.events.subtitle')}
           </p>
         </div>
         <Button onClick={() => setShowForm(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          Create Event
+          {t('club_panel.events.create_event')}
         </Button>
       </div>
 
@@ -144,7 +154,7 @@ export default function EventsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{upcomingEvents.length}</p>
-              <p className="text-sm text-muted-foreground">Upcoming Events</p>
+              <p className="text-sm text-muted-foreground">{t('club_panel.events.stats.upcoming_events')}</p>
             </div>
           </CardContent>
         </Card>
@@ -157,7 +167,7 @@ export default function EventsPage() {
               <p className="text-2xl font-bold">
                 {events.reduce((acc, e) => acc + (e.attendees || 0), 0)}
               </p>
-              <p className="text-sm text-muted-foreground">Total Attendees</p>
+              <p className="text-sm text-muted-foreground">{t('club_panel.events.stats.total_attendees')}</p>
             </div>
           </CardContent>
         </Card>
@@ -168,7 +178,7 @@ export default function EventsPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{pastEvents.length}</p>
-              <p className="text-sm text-muted-foreground">Past Events</p>
+              <p className="text-sm text-muted-foreground">{t('club_panel.events.stats.past_events')}</p>
             </div>
           </CardContent>
         </Card>
@@ -176,18 +186,18 @@ export default function EventsPage() {
 
       {/* Events Grid */}
       <div className="space-y-6">
-        <h2 className="text-xl font-semibold tracking-tight">Upcoming Events</h2>
+        <h2 className="text-xl font-semibold tracking-tight">{t('club_panel.events.sections.upcoming')}</h2>
         
         {upcomingEvents.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="bg-muted inline-flex p-4 rounded-full mb-4">
               <Calendar className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium mb-2">No upcoming events</h3>
-            <p className="text-muted-foreground mb-4">Create your first event to get started</p>
+            <h3 className="text-lg font-medium mb-2">{t('club_panel.events.empty.no_upcoming_title')}</h3>
+            <p className="text-muted-foreground mb-4">{t('club_panel.events.empty.no_upcoming_description')}</p>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Create Event
+              {t('club_panel.events.create_event')}
             </Button>
           </Card>
         ) : (
@@ -215,7 +225,7 @@ export default function EventsPage() {
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-primary" />
                       <span>
-                        {new Date(event.date).toLocaleDateString('en-US', { 
+                        {new Date(event.date).toLocaleDateString(language, {
                           weekday: 'short', 
                           month: 'short', 
                           day: 'numeric' 
@@ -230,8 +240,8 @@ export default function EventsPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
-                      <span>
-                        {event.attendees || 0} / {event.capacity} registered
+                        <span>
+                        {event.attendees || 0} / {event.capacity} {t('club_panel.events.registered_suffix')}
                       </span>
                     </div>
                   </div>
@@ -248,7 +258,7 @@ export default function EventsPage() {
                       className="flex-1 gap-2"
                     >
                       <Edit className="h-4 w-4" />
-                      Edit
+                      {t('club_panel.events.actions.edit')}
                     </Button>
                     <Button
                       variant="ghost"
@@ -268,7 +278,7 @@ export default function EventsPage() {
         {/* Past Events Section */}
         {pastEvents.length > 0 && (
           <>
-            <h2 className="text-xl font-semibold tracking-tight mt-12">Past Events</h2>
+            <h2 className="text-xl font-semibold tracking-tight mt-12">{t('club_panel.events.sections.past')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 opacity-75">
               {pastEvents.slice(0, 3).map((event) => (
                 <Card key={event.id} className="overflow-hidden">
@@ -287,7 +297,7 @@ export default function EventsPage() {
                   <CardContent className="p-5">
                     <h3 className="text-lg font-semibold mb-2 line-clamp-1">{event.title}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Held on {new Date(event.date).toLocaleDateString()}
+                      {t('club_panel.events.held_on')} {new Date(event.date).toLocaleDateString(language)}
                     </p>
                   </CardContent>
                 </Card>
@@ -301,24 +311,24 @@ export default function EventsPage() {
       <Dialog open={showForm} onOpenChange={() => resetForm()}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingId ? 'Edit Event' : 'Create New Event'}</DialogTitle>
+            <DialogTitle>{editingId ? t('club_panel.events.dialog.edit_title') : t('club_panel.events.dialog.create_title')}</DialogTitle>
             <DialogDescription>
               {editingId 
-                ? 'Update the details of your existing event.' 
-                : 'Fill in the details to create a new club event.'}
+                ? t('club_panel.events.dialog.edit_description')
+                : t('club_panel.events.dialog.create_description')}
             </DialogDescription>
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-6 mt-4">
             {/* Image Upload */}
             <div className="space-y-2">
-              <Label>Event Cover Image</Label>
+              <Label>{t('club_panel.events.form.event_cover_image')}</Label>
               <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/50 hover:bg-muted/80 transition-colors group cursor-pointer">
                 {formData.image ? (
                   <>
                      <Image
                        src={formData.image}
-                       alt="Preview"
+                      alt={t('club_panel.events.form.preview_alt')}
                        fill
                        sizes="100vw"
                        className="object-cover"
@@ -334,7 +344,7 @@ export default function EventsPage() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                     <ImageIcon className="h-10 w-10 mb-2" />
-                    <span>Click to upload event image</span>
+                    <span>{t('club_panel.events.form.upload_prompt')}</span>
                   </div>
                 )}
                 <input 
@@ -348,18 +358,18 @@ export default function EventsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Event Title</Label>
+                <Label htmlFor="title">{t('club_panel.events.form.event_title')}</Label>
                 <Input
                   id="title"
                   name="title"
-                  placeholder="e.g., Monthly Member Meetup"
+                  placeholder={t('club_panel.events.form.event_title_placeholder')}
                   value={formData.title}
                   onChange={handleChange}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="date">Date</Label>
+                <Label htmlFor="date">{t('club_panel.events.form.date')}</Label>
                 <Input
                   id="date"
                   name="date"
@@ -373,7 +383,7 @@ export default function EventsPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="time">Time</Label>
+                <Label htmlFor="time">{t('club_panel.events.form.time')}</Label>
                 <Input
                   id="time"
                   name="time"
@@ -384,7 +394,7 @@ export default function EventsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="capacity">Capacity</Label>
+                <Label htmlFor="capacity">{t('club_panel.events.form.capacity')}</Label>
                 <Input
                   id="capacity"
                   name="capacity"
@@ -398,11 +408,11 @@ export default function EventsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location">{t('club_panel.events.form.location')}</Label>
               <Input
                 id="location"
                 name="location"
-                placeholder="e.g., Main Lounge"
+                placeholder={t('club_panel.events.form.location_placeholder')}
                 value={formData.location}
                 onChange={handleChange}
                 required
@@ -410,11 +420,11 @@ export default function EventsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('club_panel.events.form.description')}</Label>
               <Textarea
                 id="description"
                 name="description"
-                placeholder="Describe what attendees can expect..."
+                placeholder={t('club_panel.events.form.description_placeholder')}
                 value={formData.description}
                 onChange={handleChange}
                 rows={4}
@@ -424,10 +434,10 @@ export default function EventsPage() {
 
             <div className="flex gap-3 justify-end pt-4 border-t">
               <Button type="button" variant="ghost" onClick={resetForm}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit">
-                {editingId ? 'Update Event' : 'Create Event'}
+                {editingId ? t('club_panel.events.actions.update_event') : t('club_panel.events.create_event')}
               </Button>
             </div>
           </form>

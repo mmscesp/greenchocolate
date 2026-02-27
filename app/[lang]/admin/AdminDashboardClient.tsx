@@ -83,6 +83,19 @@ const getStatusIcon = (status: string) => {
   }
 };
 
+const getRoleLabel = (role: string, t: (key: string) => string) => {
+  switch (role) {
+    case 'ADMIN':
+      return t('admin.users.roles.admin');
+    case 'CLUB_ADMIN':
+      return t('admin.users.roles.club_admin');
+    case 'USER':
+      return t('admin.users.roles.user');
+    default:
+      return t('admin.common.unknown');
+  }
+};
+
 export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) {
   const { t } = useLanguage();
   const formatText = (key: string, values: Record<string, string | number>) => {
@@ -200,7 +213,7 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
                         {user.displayName || t('admin.common.anonymous')}
                       </span>
                       <Badge className={cn('text-xs', getRoleBadgeVariant(user.role))}>
-                        {user.role.replace('_', ' ')}
+                        {getRoleLabel(user.role, t)}
                       </Badge>
                     </div>
                     <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
@@ -313,7 +326,7 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
                         <Badge className={cn('text-xs', getRoleBadgeVariant(role.role))}>
-                          {role.role.replace('_', ' ')}
+                          {getRoleLabel(role.role, t)}
                         </Badge>
                       </div>
                       <span className="text-slate-500 dark:text-slate-400">

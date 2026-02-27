@@ -37,8 +37,10 @@ Mail,
 Calendar,
 AlertCircle, } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ClubRequestsPage() {
+  const { t, language } = useLanguage();
   const [requests, setRequests] = useState<ClubApplicationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,12 +60,12 @@ export default function ClubRequestsPage() {
       const data = await getClubApplications();
       setRequests(data);
     } catch (err) {
-      setError('Failed to load membership requests');
+      setError(t('club_panel.requests.errors.load_failed'));
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     loadRequests();
@@ -80,7 +82,7 @@ export default function ClubRequestsPage() {
 
       const result = await advanceApplicationStage(selectedRequest.id, nextStage, approvalNotes);
       if (result.success) {
-        toast.success(nextStage === 'FINAL_APPROVAL' ? 'Application approved' : 'Application moved to background check');
+        toast.success(nextStage === 'FINAL_APPROVAL' ? t('club_panel.requests.toast.approved') : t('club_panel.requests.toast.moved_to_background_check'));
         setRequests((prev) =>
           prev.map((r) =>
             r.id === selectedRequest.id
@@ -95,11 +97,11 @@ export default function ClubRequestsPage() {
         setIsApproveDialogOpen(false);
         setApprovalNotes('');
       } else {
-        toast.error(result.error || 'Failed to advance application stage');
+        toast.error(result.error || t('club_panel.requests.errors.advance_failed'));
       }
     } catch (err) {
       console.error('Approve error:', err);
-      toast.error('Failed to approve request');
+      toast.error(t('club_panel.requests.errors.approve_failed'));
     } finally {
       setActionLoading(false);
       setSelectedRequest(null);
@@ -111,9 +113,9 @@ export default function ClubRequestsPage() {
 
     setActionLoading(true);
     try {
-      const result = await rejectApplication(selectedRequest.id, rejectionReason || 'Rejected by club admin');
+      const result = await rejectApplication(selectedRequest.id, rejectionReason || t('club_panel.requests.rejected_by_admin'));
       if (result.success) {
-        toast.success('Application rejected');
+        toast.success(t('club_panel.requests.toast.rejected'));
         setRequests((prev) =>
           prev.map((r) =>
             r.id === selectedRequest.id ? { ...r, status: 'REJECTED' } : r
@@ -122,11 +124,11 @@ export default function ClubRequestsPage() {
         setIsRejectDialogOpen(false);
         setRejectionReason('');
       } else {
-        toast.error(result.error || 'Failed to reject request');
+        toast.error(result.error || t('club_panel.requests.errors.reject_failed'));
       }
     } catch (err) {
       console.error('Reject error:', err);
-      toast.error('Failed to reject request');
+      toast.error(t('club_panel.requests.errors.reject_failed'));
     } finally {
       setActionLoading(false);
       setSelectedRequest(null);
@@ -149,32 +151,47 @@ export default function ClubRequestsPage() {
         return (
           <Badge variant="secondary" className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            Under Review
+            {t('club_panel.requests.status.under_review')}
           </Badge>
         );
       case 'BACKGROUND_CHECK':
         return (
           <Badge variant="secondary" className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            Background Check
+            {t('club_panel.requests.status.background_check')}
           </Badge>
         );
       case 'APPROVED':
         return (
           <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-green-200 flex items-center gap-1">
             <Check className="h-3 w-3" />
-            Approved
+            {t('club_panel.requests.status.approved')}
           </Badge>
         );
       case 'REJECTED':
         return (
           <Badge variant="destructive" className="flex items-center gap-1">
             <X className="h-3 w-3" />
-            Rejected
+            {t('club_panel.requests.status.rejected')}
           </Badge>
         );
       default:
         return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getStageLabel = (stage: string) => {
+    switch (stage) {
+      case 'SUBMITTED':
+        return t('club_panel.requests.stage.submitted');
+      case 'UNDER_REVIEW':
+        return t('club_panel.requests.stage.under_review');
+      case 'BACKGROUND_CHECK':
+        return t('club_panel.requests.stage.background_check');
+      case 'FINAL_APPROVAL':
+        return t('club_panel.requests.stage.final_approval');
+      default:
+        return stage.replaceAll('_', ' ');
     }
   };
 
@@ -186,12 +203,12 @@ export default function ClubRequestsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Membership Requests</h1>
-          <p className="text-muted-foreground mt-2">Manage membership requests for your club</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.requests.title')}</h1>
+          <p className="text-muted-foreground mt-2">{t('club_panel.requests.subtitle')}</p>
         </div>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-3 text-muted-foreground">Loading requests...</span>
+          <span className="ml-3 text-muted-foreground">{t('club_panel.requests.loading')}</span>
         </div>
       </div>
     );
@@ -201,15 +218,15 @@ export default function ClubRequestsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Membership Requests</h1>
-          <p className="text-muted-foreground mt-2">Manage membership requests for your club</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.requests.title')}</h1>
+          <p className="text-muted-foreground mt-2">{t('club_panel.requests.subtitle')}</p>
         </div>
         <Card className="p-12 text-center border-destructive/50 bg-destructive/5">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h3 className="text-lg font-medium text-destructive mb-2">{error}</h3>
           <Button onClick={loadRequests} variant="outline" className="mt-4">
             <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
+            {t('common.retry')}
           </Button>
         </Card>
       </div>
@@ -221,12 +238,12 @@ export default function ClubRequestsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Membership Requests</h1>
-          <p className="text-muted-foreground mt-2">Manage membership requests for your club</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.requests.title')}</h1>
+          <p className="text-muted-foreground mt-2">{t('club_panel.requests.subtitle')}</p>
         </div>
         <Button variant="outline" onClick={loadRequests} disabled={loading}>
           <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-          Refresh
+          {t('common.refresh')}
         </Button>
       </div>
 
@@ -238,7 +255,7 @@ export default function ClubRequestsPage() {
               <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
             </div>
             <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{pendingRequests.length}</p>
-            <p className="text-sm text-muted-foreground">Pending</p>
+            <p className="text-sm text-muted-foreground">{t('club_panel.requests.stats.pending')}</p>
           </CardContent>
         </Card>
         <Card>
@@ -247,7 +264,7 @@ export default function ClubRequestsPage() {
               <Check className="h-6 w-6 text-green-600 dark:text-green-400" />
             </div>
             <p className="text-3xl font-bold text-green-600 dark:text-green-400">{approvedRequests.length}</p>
-            <p className="text-sm text-muted-foreground">Approved</p>
+            <p className="text-sm text-muted-foreground">{t('club_panel.requests.stats.approved')}</p>
           </CardContent>
         </Card>
         <Card>
@@ -256,7 +273,7 @@ export default function ClubRequestsPage() {
               <X className="h-6 w-6 text-red-600 dark:text-red-400" />
             </div>
             <p className="text-3xl font-bold text-red-600 dark:text-red-400">{rejectedRequests.length}</p>
-            <p className="text-sm text-muted-foreground">Rejected</p>
+            <p className="text-sm text-muted-foreground">{t('club_panel.requests.stats.rejected')}</p>
           </CardContent>
         </Card>
       </div>
@@ -266,9 +283,9 @@ export default function ClubRequestsPage() {
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name or email..."
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                placeholder={t('club_panel.requests.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
@@ -281,11 +298,11 @@ export default function ClubRequestsPage() {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="px-3 py-2 border rounded-md text-sm bg-background"
               >
-                <option value="all">All Status</option>
-                 <option value="under_review">Under Review</option>
-                 <option value="background_check">Background Check</option>
-                 <option value="approved">Approved</option>
-                 <option value="rejected">Rejected</option>
+                <option value="all">{t('club_panel.requests.filters.all_status')}</option>
+                 <option value="under_review">{t('club_panel.requests.status.under_review')}</option>
+                 <option value="background_check">{t('club_panel.requests.status.background_check')}</option>
+                 <option value="approved">{t('club_panel.requests.status.approved')}</option>
+                 <option value="rejected">{t('club_panel.requests.status.rejected')}</option>
               </select>
             </div>
           </div>
@@ -295,8 +312,8 @@ export default function ClubRequestsPage() {
       {/* Requests List */}
       <Card>
         <CardHeader>
-          <CardTitle>All Requests</CardTitle>
-          <CardDescription>Review and manage incoming membership applications.</CardDescription>
+          <CardTitle>{t('club_panel.requests.list_title')}</CardTitle>
+          <CardDescription>{t('club_panel.requests.list_description')}</CardDescription>
         </CardHeader>
         <CardContent>
           {filteredRequests.length === 0 ? (
@@ -304,11 +321,11 @@ export default function ClubRequestsPage() {
               <div className="bg-muted inline-flex p-4 rounded-full mb-4">
                 <User className="h-8 w-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No requests found</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">{t('club_panel.requests.empty.title')}</h3>
               <p className="text-muted-foreground">
                 {searchQuery || statusFilter !== 'all'
-                  ? 'Try adjusting your search or filters'
-                  : 'No membership requests yet'}
+                  ? t('club_panel.requests.empty.adjust_filters')
+                  : t('club_panel.requests.empty.no_requests_yet')}
               </p>
             </div>
           ) : (
@@ -322,16 +339,16 @@ export default function ClubRequestsPage() {
                     <div className="flex items-start md:items-center gap-4">
                       <Avatar className="h-10 w-10 border">
                         <AvatarImage src={request.user.avatarUrl || ''} />
-                        <AvatarFallback>{request.user.displayName?.charAt(0) || 'U'}</AvatarFallback>
+                        <AvatarFallback>{request.user.displayName?.charAt(0) || t('admin.common.user_initial')}</AvatarFallback>
                       </Avatar>
                       
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-foreground">
-                            {request.user.displayName || 'Anonymous'}
+                            {request.user.displayName || t('admin.common.anonymous')}
                           </h3>
                           {getStatusBadge(request.status)}
-                          <Badge variant="outline">{request.stage.replaceAll('_', ' ')}</Badge>
+                          <Badge variant="outline">{getStageLabel(request.stage)}</Badge>
                         </div>
                         
                         <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
@@ -341,7 +358,7 @@ export default function ClubRequestsPage() {
                           </div>
                           <div className="flex items-center gap-1.5">
                             <Calendar className="h-3.5 w-3.5" />
-                            <span>{new Date(request.createdAt).toLocaleDateString('es-ES')}</span>
+                            <span>{new Date(request.createdAt).toLocaleDateString(language)}</span>
                           </div>
                         </div>
                       </div>
@@ -367,7 +384,7 @@ export default function ClubRequestsPage() {
                           className="text-destructive hover:bg-destructive/10 border-destructive/20"
                         >
                           <X className="h-4 w-4 mr-1.5" />
-                          Reject
+                          {t('admin.common.reject')}
                         </Button>
                         <Button
                           size="sm"
@@ -378,12 +395,12 @@ export default function ClubRequestsPage() {
                           className="bg-green-600 hover:bg-green-700 text-white"
                         >
                            <Check className="h-4 w-4 mr-1.5" />
-                           {request.status === 'BACKGROUND_CHECK' ? 'Approve' : 'Move to Background Check'}
+                           {request.status === 'BACKGROUND_CHECK' ? t('admin.common.approve') : t('club_panel.requests.actions.move_to_background_check')}
                         </Button>
                       </>
                     ) : (
                       <span className="text-sm text-muted-foreground px-2">
-                        Processed on {new Date().toLocaleDateString()}
+                        {t('club_panel.requests.processed_on')} {new Date().toLocaleDateString(language)}
                       </span>
                     )}
                   </div>
@@ -399,19 +416,19 @@ export default function ClubRequestsPage() {
       <Dialog open={isApproveDialogOpen} onOpenChange={setIsApproveDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Approve Membership Request</DialogTitle>
+            <DialogTitle>{t('club_panel.requests.dialog.approve_title')}</DialogTitle>
             <DialogDescription>
-              You are about to approve the membership request from{' '}
+              {t('club_panel.requests.dialog.approve_description_prefix')}{' '}
               <span className="font-semibold text-foreground">{selectedRequest?.user.displayName || selectedRequest?.user.email}</span>
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Notes (optional)
+                {t('club_panel.requests.dialog.notes_optional')}
               </label>
               <Textarea
-                placeholder="Add any notes about this approval..."
+                placeholder={t('club_panel.requests.dialog.notes_placeholder')}
                 value={approvalNotes}
                 onChange={(e) => setApprovalNotes(e.target.value)}
               />
@@ -419,7 +436,7 @@ export default function ClubRequestsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsApproveDialogOpen(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleApprove}
@@ -431,7 +448,7 @@ export default function ClubRequestsPage() {
               ) : (
                 <Check className="h-4 w-4 mr-2" />
               )}
-              Approve Request
+              {t('club_panel.requests.actions.approve_request')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -440,19 +457,19 @@ export default function ClubRequestsPage() {
       <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject Membership Request</DialogTitle>
+            <DialogTitle>{t('club_panel.requests.dialog.reject_title')}</DialogTitle>
             <DialogDescription>
-              You are about to reject the membership request from{' '}
+              {t('club_panel.requests.dialog.reject_description_prefix')}{' '}
               <span className="font-semibold text-foreground">{selectedRequest?.user.displayName || selectedRequest?.user.email}</span>
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Reason (optional)
+                {t('club_panel.requests.dialog.reason_optional')}
               </label>
               <Textarea
-                placeholder="Provide a reason for rejection..."
+                placeholder={t('club_panel.requests.dialog.reason_placeholder')}
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
               />
@@ -460,7 +477,7 @@ export default function ClubRequestsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsRejectDialogOpen(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleReject}
@@ -472,7 +489,7 @@ export default function ClubRequestsPage() {
               ) : (
                 <X className="h-4 w-4 mr-2" />
               )}
-              Reject Request
+              {t('club_panel.requests.actions.reject_request')}
             </Button>
           </DialogFooter>
         </DialogContent>

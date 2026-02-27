@@ -29,9 +29,10 @@ interface UserProfileDropdownProps {
   className?: string;
   variant?: 'dropdown' | 'mobile-menu-row';
   onMobileClose?: () => void;
+  tone?: 'light' | 'dark';
 }
 
-export default function UserProfileDropdown({ className = '', variant = 'dropdown', onMobileClose }: UserProfileDropdownProps) {
+export default function UserProfileDropdown({ className = '', variant = 'dropdown', onMobileClose, tone = 'light' }: UserProfileDropdownProps) {
   const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,6 +40,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const router = useRouter();
   const withLocale = (path: string) => `/${language}${path}`;
+  const useLightTone = variant === 'mobile-menu-row' ? true : tone === 'light';
 
   useEffect(() => {
     let mounted = true;
@@ -103,8 +105,16 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
   if (authLoading) {
     return (
       <div className={cn('relative', className)}>
-        <Button variant="ghost" size="sm" disabled className="flex items-center justify-center h-10 w-10 p-0 rounded-full bg-white/5 border border-white/10">
-          <Loader2 className="h-4 w-4 animate-spin text-white/50" />
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled
+          className={cn(
+            'flex items-center justify-center h-10 w-10 p-0 rounded-full border',
+            useLightTone ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'
+          )}
+        >
+          <Loader2 className={cn('h-4 w-4 animate-spin', useLightTone ? 'text-white/50' : 'text-slate-500')} />
         </Button>
       </div>
     );
@@ -114,7 +124,16 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
     return (
       <div className={cn('relative', className)}>
         <Link href={withLocale('/account/login')}>
-          <Button variant="ghost" size="sm" className="h-10 px-4 rounded-full bg-white/5 border border-white/10 text-white/80 hover:text-white hover:bg-white/10 transition-all">
+          <Button
+            variant="ghost"
+            size="sm"
+            className={cn(
+              'h-10 px-4 rounded-full border transition-all',
+              useLightTone
+                ? 'bg-white/5 border-white/10 text-white/80 hover:text-white hover:bg-white/10'
+                : 'bg-black/5 border-black/10 text-slate-700 hover:text-slate-900 hover:bg-black/10'
+            )}
+          >
             {t('auth.login')}
           </Button>
         </Link>
@@ -240,9 +259,14 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
       variant="ghost"
       size="sm"
       onClick={() => setIsOpen(!isOpen)}
-      className="flex h-10 items-center gap-2 pl-1 pr-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all group"
+      className={cn(
+        'flex h-10 items-center gap-2 pl-1 pr-3 rounded-full border transition-all group',
+        useLightTone
+          ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+          : 'bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20'
+      )}
     >
-      <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20">
+      <div className={cn('w-8 h-8 rounded-full overflow-hidden border', useLightTone ? 'border-white/20' : 'border-black/15')}>
         {user.user_metadata?.avatar_url ? (
           <Image
             src={user.user_metadata.avatar_url}
@@ -257,10 +281,10 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
           </div>
         )}
       </div>
-      <span className="hidden sm:inline font-medium text-white group-hover:text-white text-sm">
+      <span className={cn('hidden sm:inline font-medium text-sm', useLightTone ? 'text-white group-hover:text-white' : 'text-slate-900 group-hover:text-slate-950')}>
         {displayName.split(' ')[0]}
       </span>
-      <ChevronDown className={cn('h-3 w-3 text-white/40 transition-transform duration-300', isOpen && 'rotate-180')} />
+      <ChevronDown className={cn('h-3 w-3 transition-transform duration-300', useLightTone ? 'text-white/40' : 'text-slate-500', isOpen && 'rotate-180')} />
     </Button>
   );
 

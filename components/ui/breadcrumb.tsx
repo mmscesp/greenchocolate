@@ -90,8 +90,9 @@ BreadcrumbSeparator.displayName = 'BreadcrumbSeparator';
 
 const BreadcrumbEllipsis = ({
   className,
+  srText = 'More',
   ...props
-}: React.ComponentProps<'span'>) => (
+}: React.ComponentProps<'span'> & { srText?: string }) => (
   <span
     role="presentation"
     aria-hidden="true"
@@ -99,7 +100,7 @@ const BreadcrumbEllipsis = ({
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More</span>
+    <span className="sr-only">{srText}</span>
   </span>
 );
 BreadcrumbEllipsis.displayName = 'BreadcrumbElipssis';

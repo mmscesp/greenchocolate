@@ -36,7 +36,7 @@ export default function DashboardLayout({
           
           <div className="flex items-center gap-4">
             <div className="hidden sm:block text-sm text-muted-foreground font-medium">
-              Club Administration
+              {t('club_panel.header.subtitle')}
             </div>
             <LanguageSelector />
           </div>
