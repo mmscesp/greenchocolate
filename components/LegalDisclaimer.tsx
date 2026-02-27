@@ -58,6 +58,7 @@ const messages = {
 
 export function LegalDisclaimer() {
   const pathname = usePathname();
+  const hasLocaleModal = pathname ? /^\/(en|es|fr|de)(\/|$)/.test(pathname) : false;
   const localeSegment = pathname?.split('/')[1];
   const locale = localeSegment === 'es' || localeSegment === 'en' || localeSegment === 'fr' || localeSegment === 'de'
     ? localeSegment
@@ -68,8 +69,16 @@ export function LegalDisclaimer() {
       return false;
     }
 
+    if (hasLocaleModal) {
+      return false;
+    }
+
     return !localStorage.getItem('legal-disclaimer-accepted');
   });
+
+  if (hasLocaleModal) {
+    return null;
+  }
 
   const handleAccept = () => {
     localStorage.setItem('legal-disclaimer-accepted', 'true');
