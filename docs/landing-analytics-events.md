@@ -56,13 +56,13 @@ Transport behavior:
   - Payload: `destination`
   - KPI mapping: early high-intent guide transition.
 
-- `landing_featured_explore_archive_click`
+- `landing_story_primary_cta_click`
   - Payload: `destination`
-  - KPI mapping: archive CTA CTR.
+  - KPI mapping: trust-story to Safety Guide CTR.
 
-- `landing_featured_article_click`
-  - Payload: `article_id`, `article_title`, `destination`
-  - KPI mapping: content conversion quality by article.
+- `landing_story_secondary_cta_click`
+  - Payload: `destination`
+  - KPI mapping: trust-story to mission/standards CTR.
 
 ### Trust and objection handling
 
