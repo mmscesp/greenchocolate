@@ -1,4 +1,3 @@
-import { getFeaturedArticles } from '@/app/actions/articles';
 import { Metadata } from 'next';
 import HeroSection from '@/components/HeroSection';
 import { AtmosphericCanvas } from '@/components/AtmosphericCanvas';
@@ -50,14 +49,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 }
 
 export default async function HomePage() {
-  // Fetch data for the concierge vault
-  const featuredArticles = await getFeaturedArticles(6);
-
   return (
     <div className="relative min-h-screen">
       <HeroSection />
       <AtmosphericCanvas>
-        <EditorialConciergeFlow featuredArticles={featuredArticles} />
+        <EditorialConciergeFlow />
       </AtmosphericCanvas>
     </div>
   );

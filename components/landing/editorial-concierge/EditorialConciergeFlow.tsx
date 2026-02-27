@@ -3,30 +3,25 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { TrustStrip } from './blocks/TrustStrip';
+import { WhoWeAre } from './blocks/WhoWeAre';
 import { KnowledgeRouter } from './blocks/KnowledgeRouter';
 import { RealityCheck } from './blocks/RealityCheck';
 import { BeginnersOnramp } from './blocks/BeginnersOnramp';
 import { ConciergeTools } from './blocks/ConciergeTools';
-import { FeaturedVault } from './blocks/FeaturedVault';
 import { NewsletterDrop } from './blocks/NewsletterDrop';
 
 import { VerificationStandard } from './blocks/VerificationStandard';
 import { CommunityRoadmap } from './blocks/CommunityRoadmap';
 import { EditorialFAQ } from './blocks/EditorialFAQ';
 import { FinalMicDrop } from './blocks/FinalMicDrop';
-import { type ArticleCard } from '@/app/actions/articles';
 import { clearAnalyticsContext, setAnalyticsContext, trackEvent } from '@/lib/analytics';
 import { resolveExperimentArm } from '@/lib/experiments';
 
-export interface EditorialConciergeFlowProps {
-  featuredArticles: ArticleCard[];
-}
-
 const SECTION_KEYS = [
   'trust_strip',
+  'who_we_are',
   'beginners_onramp',
   'knowledge_router',
-  'featured_vault',
   'reality_check',
   'verification_standard',
   'concierge_tools',
@@ -51,7 +46,7 @@ const ONRAMP_EXPERIMENT_ARMS = ['control', 'benefit'] as const;
  * Main entry point for the "God-Level" rebranding.
  * Follows a premium editorial aesthetic.
  */
-export default function EditorialConciergeFlow({ featuredArticles }: EditorialConciergeFlowProps) {
+export default function EditorialConciergeFlow() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [onrampAssignment] = useState<{ arm: string; source: 'query' | 'storage' | 'random' }>(
     () => {
@@ -159,13 +154,13 @@ export default function EditorialConciergeFlow({ featuredArticles }: EditorialCo
     <div ref={containerRef} className="relative font-sans antialiased text-zinc-900 selection:bg-emerald-100 selection:text-emerald-900">
       {/* 1. Trust Anchor (Fixed on scroll) */}
       <section data-landing-section={SECTION_KEYS[0]}><TrustStrip /></section>
-      {/* 2. Beginners Onramp (Welcome first!) */}
-      <section data-landing-section={SECTION_KEYS[1]}><BeginnersOnramp experimentArm={onrampAssignment.arm as 'control' | 'benefit'} /></section>
-      {/* 3. Knowledge Router (Bento Grid) */}
-      <section data-landing-section={SECTION_KEYS[2]}><KnowledgeRouter /></section>
-      {/* 4. Featured Vault (Show value first) */}
-      <section data-landing-section={SECTION_KEYS[3]}><FeaturedVault articles={featuredArticles} /></section>
-      {/* 5. Reality Check (Warnings after they're hooked) */}
+      {/* 2. Who We Are (Identity + trust) */}
+      <section data-landing-section={SECTION_KEYS[1]}><WhoWeAre /></section>
+      {/* 3. Beginners Onramp (Welcome first!) */}
+      <section data-landing-section={SECTION_KEYS[2]}><BeginnersOnramp experimentArm={onrampAssignment.arm as 'control' | 'benefit'} /></section>
+      {/* 4. Knowledge Router (Bento Grid) */}
+      <section data-landing-section={SECTION_KEYS[3]}><KnowledgeRouter /></section>
+      {/* 5. Reality Check (Warnings after trust context) */}
       <section data-landing-section={SECTION_KEYS[4]}><RealityCheck /></section>
       {/* 6. Verification Standard (Reassure after warnings) */}
       <section data-landing-section={SECTION_KEYS[5]}><VerificationStandard /></section>
