@@ -1,0 +1,285 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model City {
+  id              String    @id @default(uuid())
+  name            String    @unique
+  slug            String    @unique
+  country         String    @default("Spain")
+  region          String?
+  description     String?
+  metaTitle       String?
+  metaDescription String?
+  latitude        Float?
+  longitude       Float?
+  timezone        String    @default("Europe/Madrid")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  countryCode     String    @default("ES")
+  articles        Article[]
+  clubs           Club[]
+  events          Event[]
+
+  @@index([slug])
+  @@index([country, region])
+}
+
+model Club {
+  id                    String              @id @default(uuid())
+  slug                  String              @unique
+  name                  String
+  description           String
+  shortDescription      String?
+  cityId                String
+  neighborhood          String
+  addressDisplay        String
+  coordinates           Json
+  contactEmail          String
+  phoneNumber           String?
+  website               String?
+  socialMedia           Json?
+  isVerified            Boolean             @default(true)
+  isActive              Boolean             @default(true)
+  allowsPreRegistration Boolean             @default(true)
+  openingHours          Json
+  amenities             String[]
+  vibeTags              String[]
+  priceRange            String
+  capacity              Int
+  foundedYear           Int
+  images                String[]
+  logoUrl               String?
+  coverImageUrl         String?
+  metaTitle             String?
+  metaDescription       String?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  articles              Article[]
+  city                  City                @relation(fields: [cityId], references: [id])
+  membershipRequests    MembershipRequest[]
+  admins                Profile[]           @relation("ClubAdmin")
+  reviews               Review[]
+  favorites             Favorite[]
+  events                Event[]
+
+  @@index([slug])
+  @@index([cityId])
+  @@index([neighborhood])
+  @@index([isVerified, isActive])
+}
+
+model Profile {
+  id                     String              @id @default(uuid())
+  authId                 String              @unique
+  email                  String              @unique
+  role                   UserRole            @default(USER)
+  tier                   String              @default("novice")
+  encryptedData          String?
+  avatarUrl              String?
+  bio                    String?
+  displayName            String?
+  preferences            Json?
+  stats                  Json                @default("{\"requests\": 0, \"favoriteClubs\": 0}")
+  isVerified             Boolean             @default(false)
+  hasCompletedOnboarding Boolean             @default(false)
+  lastActiveAt           DateTime?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  managedClubId          String?
+  consents               ConsentRecord[]
+  membershipRequests     MembershipRequest[]
+  reviews                Review[]
+  favorites              Favorite[]
+  notifications          Notification[]
+  managedClub            Club?               @relation("ClubAdmin", fields: [managedClubId], references: [id])
+
+  @@index([authId])
+  @@index([email])
+  @@index([managedClubId])
+  @@index([lastActiveAt])
+}
+
+model MembershipRequest {
+  id                String                    @id @default(uuid())
+  status            RequestStatus             @default(PENDING)
+  message           String?
+  appointmentDate   DateTime?
+  appointmentNotes  String?
+  encryptedSnapshot Json?
+  userId            String
+  clubId            String
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  rejectionReason   String?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  club              Club                      @relation(fields: [clubId], references: [id])
+  user              Profile                   @relation(fields: [userId], references: [id])
+  stageHistory      ApplicationStageHistory[]
+
+  @@unique([userId, clubId])
+  @@index([clubId, status])
+  @@index([userId])
+}
+
+model Article {
+  id              String    @id @default(uuid())
+  title           String
+  slug            String    @unique
+  excerpt         String
+  content         String
+  category        String
+  tags            String[]
+  heroImage       String?
+  heroImageAlt    String?
+  authorName      String
+  authorBio       String?
+  authorAvatar    String?
+  cityId          String?
+  clubId          String?
+  isPublished     Boolean   @default(false)
+  publishedAt     DateTime?
+  featuredOrder   Int       @default(0)
+  readTime        Int       @default(5)
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  city            City?     @relation(fields: [cityId], references: [id])
+  club            Club?     @relation(fields: [clubId], references: [id])
+
+  @@index([slug])
+  @@index([category])
+  @@index([cityId])
+  @@index([isPublished, publishedAt])
+  @@index([clubId])
+}
+
+model ConsentRecord {
+  id          String    @id @default(uuid())
+  userId      String
+  purpose     String
+  granted     Boolean
+  version     String
+  metadata    Json
+  withdrawnAt DateTime?
+  createdAt   DateTime  @default(now())
+  user        Profile   @relation(fields: [userId], references: [id])
+
+  @@index([userId, purpose])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  content   String?
+  userId    String
+  clubId    String
+  isPublic  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club      Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, clubId])
+  @@index([clubId, isPublic])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  clubId    String
+  createdAt DateTime @default(now())
+  
+  user      Profile  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club      Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, clubId])
+}
+
+model Event {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  name        String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  location    String
+  clubId      String?
+  cityId      String?
+  isPublished Boolean   @default(false)
+  imageUrl    String?
+  eventUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  club        Club?     @relation(fields: [clubId], references: [id], onDelete: SetNull)
+  city        City?     @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  
+  @@index([clubId])
+  @@index([cityId])
+  @@index([startDate])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  isRead    Boolean   @default(false)
+  data      Json?
+  createdAt DateTime  @default(now())
+  
+  user      Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, isRead])
+}
+
+model ApplicationStageHistory {
+  id            String   @id @default(uuid())
+  applicationId String
+  fromStage     String?
+  toStage       String
+  changedBy     String
+  notes         String?
+  createdAt     DateTime @default(now())
+  
+  application   MembershipRequest @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  
+  @@index([applicationId, createdAt])
+  @@index([changedBy])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  tableName  String
+  recordId   String
+  operation  String
+  changedBy  String
+  changeData Json
+  changeHash String
+  createdAt  DateTime @default(now())
+
+  @@index([tableName, recordId])
+  @@index([createdAt])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  CLUB_ADMIN
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SCHEDULED
+}

@@ -1,0 +1,280 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
+import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
+import { Shield, AlertTriangle, Heart, Clock, ArrowRight, CheckCircle, Phone, MapPin, Users, Leaf, Brain, Activity } from '@/lib/icons';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+
+interface SafetyPageProps {
+  params: Promise<{ lang: string }>;
+}
+
+const buildSafetyCategories = (t: (key: string) => string) => [
+  {
+    id: 'edibles',
+    title: t('safety.categories.edibles.title'),
+    description: t('safety.categories.edibles.description'),
+    icon: Clock,
+    color: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+    tips: [
+      t('safety.categories.edibles.tips.1'),
+      t('safety.categories.edibles.tips.2'),
+      t('safety.categories.edibles.tips.3'),
+      t('safety.categories.edibles.tips.4')
+    ]
+  },
+  {
+    id: 'first-time',
+    title: t('safety.categories.first_visit.title'),
+    description: t('safety.categories.first_visit.description'),
+    icon: Users,
+    color: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+    tips: [
+      t('safety.categories.first_visit.tips.1'),
+      t('safety.categories.first_visit.tips.2'),
+      t('safety.categories.first_visit.tips.3'),
+      t('safety.categories.first_visit.tips.4')
+    ]
+  },
+  {
+    id: 'medical',
+    title: t('safety.categories.medical.title'),
+    description: t('safety.categories.medical.description'),
+    icon: Activity,
+    color: 'bg-red-500/10 text-red-600 border-red-500/20',
+    tips: [
+      t('safety.categories.medical.tips.1'),
+      t('safety.categories.medical.tips.2'),
+      t('safety.categories.medical.tips.3'),
+      t('safety.categories.medical.tips.4')
+    ]
+  },
+  {
+    id: 'mental',
+    title: t('safety.categories.mental.title'),
+    description: t('safety.categories.mental.description'),
+    icon: Brain,
+    color: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+    tips: [
+      t('safety.categories.mental.tips.1'),
+      t('safety.categories.mental.tips.2'),
+      t('safety.categories.mental.tips.3'),
+      t('safety.categories.mental.tips.4')
+    ]
+  }
+];
+
+export default function SafetyPage({ params }: SafetyPageProps) {
+  const { t } = useLanguage();
+  const [lang, setLang] = useState('en');
+  const [isLoading, setIsLoading] = useState(true);
+  const safetyCategories = buildSafetyCategories(t);
+
+  useEffect(() => {
+    params.then(({ lang: resolvedLang }) => {
+      setLang(resolvedLang);
+      setTimeout(() => setIsLoading(false), 300);
+    });
+  }, [params]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="animate-pulse space-y-8">
+            <div className="h-64 bg-muted rounded-3xl" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-48 bg-muted rounded-2xl" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12">
+        {/* Hero with Quiz */}
+        <motion.section 
+          className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-6 sm:p-8 md:p-12 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
+                  {t('safety.badge')}
+                </Badge>
+              </div>
+              
+              <H1 className="mb-6">
+                {t('safety.title_prefix')}{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
+                  {t('safety.title_highlight')}
+                </span>
+              </H1>
+              
+              <Lead className="mb-8">
+                {t('safety.subtitle')}
+              </Lead>
+
+              <div className="flex flex-wrap gap-3">
+                {[t('safety.tags.evidence_based'), t('safety.tags.updated'), t('safety.tags.expert_reviewed')].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-4 py-2 rounded-full">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full lg:w-[380px] shrink-0">
+              <EligibilityFlow />
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Safety Categories */}
+        <section className="mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-8"
+          >
+            <H2 className="mb-2">
+              {t('safety.essential_knowledge.title')}
+            </H2>
+            <Text variant="muted">
+              {t('safety.essential_knowledge.subtitle')}
+            </Text>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {safetyCategories.map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                className="rounded-2xl border bg-card p-5 sm:p-6 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${category.color}`}>
+                    <category.icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <H3>{category.title}</H3>
+                    <Text size="sm" variant="muted" className="mt-1">
+                      {category.description}
+                    </Text>
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mt-4">
+                  {category.tips.map((tip, tipIndex) => (
+                    <li key={tipIndex} className="flex items-start gap-3 text-sm text-muted-foreground">
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Emergency */}
+        <motion.section 
+          className="rounded-3xl border border-red-500/20 bg-red-500/5 p-6 sm:p-8 md:p-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <div className="flex items-start gap-4 mb-8">
+            <div className="w-14 h-14 bg-red-500/10 rounded-xl flex items-center justify-center">
+              <AlertTriangle className="h-7 w-7 text-red-600" />
+            </div>
+            <div>
+              <H2 className="mb-2">{t('safety.emergency.title')}</H2>
+              <Text variant="muted">
+                {t('safety.emergency.subtitle')}
+              </Text>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
+              <div className="flex items-center gap-2 mb-4">
+                <Phone className="h-5 w-5 text-red-600" />
+                <H3 className="font-bold">{t('safety.emergency.eu.title')}</H3>
+              </div>
+              <Text className="text-3xl font-black text-red-600 mb-2">112</Text>
+              <Text size="sm" variant="muted">{t('safety.emergency.eu.description')}</Text>
+            </div>
+
+            <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin className="h-5 w-5 text-red-600" />
+                <H3 className="font-bold">{t('safety.emergency.hospitals.title')}</H3>
+              </div>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>{t('safety.emergency.hospitals.1')}</li>
+                <li>{t('safety.emergency.hospitals.2')}</li>
+              </ul>
+            </div>
+
+            <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
+              <div className="flex items-center gap-2 mb-4">
+                <Users className="h-5 w-5 text-red-600" />
+                <H3 className="font-bold">{t('safety.emergency.police.title')}</H3>
+              </div>
+              <Text className="text-3xl font-black text-red-600 mb-2">088</Text>
+              <Text size="sm" variant="muted">{t('safety.emergency.police.description')}</Text>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* CTA */}
+        <motion.section 
+          className="mt-12 rounded-3xl border bg-gradient-to-br from-primary/5 to-background p-6 sm:p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex items-start sm:items-center gap-4">
+              <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
+                <Leaf className="h-7 w-7 text-primary" />
+              </div>
+              <div>
+                <H3 className="text-xl font-bold">{t('safety.cta.title')}</H3>
+                <Text variant="muted">{t('safety.cta.subtitle')}</Text>
+              </div>
+            </div>
+            <div className="flex w-full sm:w-auto gap-3">
+              <Button asChild className="w-full sm:w-auto min-h-11 bg-primary hover:bg-primary/90">
+                <Link href={`/${lang}/clubs`}>
+                  {t('safety.cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </motion.section>
+      </div>
+    </div>
+  );
+}

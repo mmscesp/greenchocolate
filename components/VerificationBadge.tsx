@@ -1,4 +1,4 @@
-import { CheckCircle, Shield, Award } from 'lucide-react';
+import { CheckCircle, Shield, Award } from '@/lib/icons';
 import { Badge } from './ui/badge';
 
 interface VerificationBadgeProps {
@@ -35,8 +35,9 @@ export default function VerificationBadge({
     <Badge 
       variant={badgeVariant} 
       className={`flex items-center gap-1 ${sizeClasses[size]} shadow-lg animate-pulse hover:animate-none transition-all duration-300 hover:scale-105`}
+      style={{ animationDuration: '6s' }}
     >
-      <Icon className={`${iconSizes[size]} animate-pulse`} />
+      <Icon className={`${iconSizes[size]} animate-pulse`} style={{ animationDuration: '6s' }} />
       {showText && (variant === 'premium' ? 'Club Premium' : 'Verificado')}
     </Badge>
   );

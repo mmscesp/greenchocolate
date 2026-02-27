@@ -5,33 +5,50 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
+        // Primary: Main actions, solid brand color
+        primary: 
+          "bg-brand text-white hover:bg-brand-dark shadow-sm hover:shadow",
+        
+        // Secondary: Alternative actions, outlined style
+        secondary: 
+          "bg-card text-foreground border border-border hover:bg-muted hover:border-brand/30",
+        
+        // Ghost: Low emphasis, navigation items
+        ghost: 
+          "hover:bg-neutral-100 text-foreground hover:text-brand",
+        
+        // Accent: Premium highlights, CTAs, verified actions
+        accent: 
+          "bg-gold text-neutral-900 hover:bg-gold-dark font-semibold shadow-sm hover:shadow",
+        
+        // Destructive: Danger actions
+        destructive: 
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        cannabis: "bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300",
-        success: "bg-green-100 text-green-800 hover:bg-green-200 border border-green-300"
+        
+        // Link: Text-only button
+        link: 
+          "text-brand underline-offset-4 hover:underline hover:text-brand-dark",
+        
+        // Legacy aliases for backward compatibility during transition
+        default: "bg-brand text-white hover:bg-brand-dark shadow-sm hover:shadow",
+        outline: "bg-card text-foreground border border-border hover:bg-muted hover:border-brand/30",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        xl: "h-12 rounded-lg px-10 text-base",
+        sm: "h-9 px-3 text-xs",
+        md: "h-11 px-4",
+        lg: "h-12 px-6 text-base",
+        xl: "h-14 px-8 text-base",
         icon: "h-10 w-10",
+        default: "h-11 px-4",
       },
     },
     defaultVariants: {
-      variant: "default",
-      size: "default",
+      variant: "primary",
+      size: "md",
     },
   }
 )

@@ -2,25 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/hooks/useLanguage';
 import { cn } from '@/lib/utils';
-import { BarChart3, Users, Calendar, Settings, LogOut, Leaf, Home } from 'lucide-react';
+import { LogoIcon } from '@/components/ui/logo';
+import { BarChart3, Users, Calendar, Settings, LogOut, Home } from '@/lib/icons';
 
 const navItems = [
-  { href: '/club-panel/dashboard', label: 'Overview', icon: BarChart3 },
-  { href: '/club-panel/dashboard/profile', label: 'Profile', icon: Settings },
-  { href: '/club-panel/dashboard/requests', label: 'Requests', icon: Users },
-  { href: '/club-panel/dashboard/events', label: 'Events', icon: Calendar },
+  { href: '/club-panel/dashboard', labelKey: 'club_panel.nav.overview', icon: BarChart3 },
+  { href: '/club-panel/dashboard/profile', labelKey: 'club_panel.nav.club_profile', icon: Settings },
+  { href: '/club-panel/dashboard/requests', labelKey: 'club_panel.nav.membership_requests', icon: Users },
+  { href: '/club-panel/dashboard/events', labelKey: 'club_panel.nav.events', icon: Calendar },
 ];
 
 export function DashboardSidebar() {
+  const { t } = useLanguage();
   const pathname = usePathname();
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
+    <div className="w-full md:w-64 bg-card border-r border-gray-200 h-full md:h-screen flex flex-col">
       <div className="p-6 border-b">
         <Link href="/club-panel" className="flex items-center gap-2">
-          <Leaf className="h-8 w-8 text-green-600" />
-          <span className="font-bold text-gray-900">Club Admin</span>
+          <LogoIcon size="md" />
+          <span className="font-bold text-gray-900">{t('club_panel.common.club_admin_fallback')}</span>
         </Link>
       </div>
 
@@ -34,12 +37,12 @@ export function DashboardSidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
-                  isActive ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600 hover:bg-gray-50'
+                  'flex min-h-11 items-center gap-3 px-4 py-3 rounded-lg transition-colors',
+                  isActive ? 'bg-green-50 text-green-600 font-medium' : 'text-gray-600 hover:bg-muted'
                 )}
               >
                 <Icon className="h-5 w-5" />
-                <span>{item.label}</span>
+                <span>{t(item.labelKey)}</span>
               </Link>
             );
           })}
@@ -47,13 +50,13 @@ export function DashboardSidebar() {
       </nav>
 
       <div className="p-4 border-t space-y-2">
-        <Link href="/" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+        <Link href="/" className="flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-muted rounded-lg transition-colors">
           <Home className="h-5 w-5" />
-          <span>Back to Site</span>
+          <span>{t('nav.back_to_site')}</span>
         </Link>
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
+        <button className="w-full flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
           <LogOut className="h-5 w-5" />
-          <span>Logout</span>
+          <span>{t('nav.logout')}</span>
         </button>
       </div>
     </div>

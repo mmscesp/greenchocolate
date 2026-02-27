@@ -1,23 +1,55 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { FilterOptions } from '@/lib/types';
-import { NEIGHBORHOODS, AMENITIES, VIBE_TAGS } from '@/lib/constants';
-import { Filter, X, MapPin, Star, DollarSign, CheckCircle, Sparkles, Search } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
+import { Filter,
+X,
+MapPin,
+Star,
+DollarSign,
+CheckCircle,
+Sparkles,
+Search,
+SlidersHorizontal,
+Cannabis,
+Shield,
+Zap,
+Clock,
+LayoutGrid } from '@/lib/icons';
+import { EditorialHeading } from './landing/editorial-concierge/typography/EditorialHeading';
+import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
+import { trackEvent } from '@/lib/analytics';
 
 interface FilterBarProps {
   filters: FilterOptions;
   onFiltersChange: (filters: FilterOptions) => void;
   totalResults: number;
+  neighborhoods: string[];
+  amenities: string[];
+  vibes: string[];
 }
 
-export default function FilterBar({ filters, onFiltersChange, totalResults }: FilterBarProps) {
+export default function FilterBar({ 
+  filters, 
+  onFiltersChange, 
+  totalResults,
+  neighborhoods = [],
+  amenities = [],
+  vibes = []
+}: FilterBarProps) {
+  const { t } = useLanguage();
   const [showFilters, setShowFilters] = useState(false);
 
-  const updateFilter = (key: keyof FilterOptions, value: any) => {
+  const updateFilter = (key: keyof FilterOptions, value: FilterOptions[keyof FilterOptions]) => {
     onFiltersChange({ ...filters, [key]: value });
+    trackEvent('clubs_filter_update', {
+      key,
+      value_type: Array.isArray(value) ? 'array' : typeof value,
+    });
   };
 
   const toggleArrayFilter = (key: 'amenities' | 'vibes' | 'priceRange', value: string) => {
@@ -26,6 +58,11 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
       ? currentArray.filter(item => item !== value)
       : [...currentArray, value];
     updateFilter(key, newArray);
+    trackEvent('clubs_filter_toggle', {
+      key,
+      option: value,
+      active: !currentArray.includes(value),
+    });
   };
 
   const clearAllFilters = () => {
@@ -37,6 +74,7 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
       priceRange: [],
       rating: 0
     });
+    trackEvent('clubs_filter_clear_all');
   };
 
   const hasActiveFilters = filters.neighborhood || 
@@ -46,270 +84,198 @@ export default function FilterBar({ filters, onFiltersChange, totalResults }: Fi
     filters.priceRange.length > 0 || 
     filters.rating > 0;
 
+  const activeFilterCount = [
+    filters.neighborhood ? 1 : 0,
+    filters.amenities.length,
+    filters.vibes.length,
+    filters.isVerified ? 1 : 0,
+    filters.priceRange.length,
+    filters.rating > 0 ? 1 : 0
+  ].reduce((a, b) => a + b, 0);
+
   return (
-    <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-gray-200 p-6 mb-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant={showFilters ? "cannabis" : "outline"}
-            size="sm"
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 transition-all duration-300"
-          >
-            <Filter className="h-4 w-4" />
-            Filtros Avanzados
-            {hasActiveFilters && (
-              <Badge variant="cannabis" className="ml-2 px-2 py-0 text-xs">
-                {[
-                  filters.neighborhood ? 1 : 0,
-                  filters.amenities.length,
-                  filters.vibes.length,
-                  filters.isVerified ? 1 : 0,
-                  filters.priceRange.length,
-                  filters.rating > 0 ? 1 : 0
-                ].reduce((a, b) => a + b, 0)}
-              </Badge>
-            )}
-          </Button>
-          
-          <div className="flex items-center gap-2 text-gray-600">
-            <Search className="h-4 w-4" />
-            <span className="font-medium">
-              {totalResults} clubs encontrados
-            </span>
+    <div className="space-y-8">
+      {/* Search Result Summary */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-zinc-900 rounded-full flex items-center justify-center">
+            <Search className="h-4 w-4 text-emerald-500" />
+          </div>
+          <div>
+            <EditorialHeading size="sm" className="text-zinc-900">
+              {totalResults} {t('filters.results_found')}
+            </EditorialHeading>
+            <ConciergeLabel size="xs" emphasis="low">{t('filters.precision_screening')}</ConciergeLabel>
           </div>
         </div>
         
         {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
+          <button 
+            type="button"
             onClick={clearAllFilters}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-300"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-red-500 transition-colors"
           >
-            <X className="h-4 w-4 mr-1" />
-            Limpiar filtros
-          </Button>
+            <X className="h-3 w-3" /> {t('filters.clear_all')}
+          </button>
         )}
       </div>
 
-      {/* Active Filters Display */}
-      {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2 mb-6 p-4 bg-green-50 rounded-xl border border-green-200">
-          <span className="text-sm font-medium text-green-800 mr-2">Filtros activos:</span>
-          
-          {filters.neighborhood && (
-            <Badge variant="cannabis" className="flex items-center gap-1 animate-pulse">
-              <MapPin className="h-3 w-3" />
-              {filters.neighborhood}
-              <X 
-                className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
-                onClick={() => updateFilter('neighborhood', '')}
-              />
-            </Badge>
-          )}
-          
-          {filters.amenities.map(amenity => (
-            <Badge key={amenity} variant="secondary" className="flex items-center gap-1">
-              <Sparkles className="h-3 w-3" />
-              {amenity}
-              <X 
-                className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
+      {/* Advanced Filters Sections */}
+      <div className="space-y-10">
+        
+        {/* Neighborhood Filter */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-zinc-400" />
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.neighborhood')}</EditorialHeading>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {neighborhoods.map((neighborhood) => (
+              <button
+                type="button"
+                key={neighborhood}
+                onClick={() => updateFilter('neighborhood',
+                  filters.neighborhood === neighborhood ? '' : neighborhood
+                )}
+                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                  filters.neighborhood === neighborhood
+                    ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
+                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                }`}
+              >
+                {neighborhood}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Amenities Filter */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <LayoutGrid className="h-4 w-4 text-zinc-400" />
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.amenities')}</EditorialHeading>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {amenities.map((amenity) => (
+              <button
+                type="button"
+                key={amenity}
                 onClick={() => toggleArrayFilter('amenities', amenity)}
-              />
-            </Badge>
-          ))}
-          
-          {filters.vibes.map(vibe => (
-            <Badge key={vibe} variant="outline" className="flex items-center gap-1 border-purple-200 text-purple-700">
-              {vibe}
-              <X 
-                className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
+                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                  filters.amenities.includes(amenity)
+                    ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
+                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                }`}
+              >
+                {amenity}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Vibes Filter */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-zinc-400" />
+                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.vibes')}</EditorialHeading>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {vibes.map((vibe) => (
+              <button
+                type="button"
+                key={vibe}
                 onClick={() => toggleArrayFilter('vibes', vibe)}
-              />
-            </Badge>
-          ))}
-          
-          {filters.priceRange.map(price => (
-            <Badge key={price} variant="outline" className="flex items-center gap-1 border-yellow-200 text-yellow-700">
-              <DollarSign className="h-3 w-3" />
-              {price}
-              <X 
-                className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
-                onClick={() => toggleArrayFilter('priceRange', price)}
-              />
-            </Badge>
-          ))}
-          
-          {filters.isVerified && (
-            <Badge variant="verified" className="flex items-center gap-1">
-              <CheckCircle className="h-3 w-3" />
-              Verificado
-              <X 
-                className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
-                onClick={() => updateFilter('isVerified', false)}
-              />
-            </Badge>
-          )}
-          
-          {filters.rating > 0 && (
-            <Badge variant="outline" className="flex items-center gap-1 border-yellow-200 text-yellow-700">
-              <Star className="h-3 w-3" />
-              {filters.rating}+ estrellas
-              <X 
-                className="h-3 w-3 cursor-pointer hover:scale-110 transition-transform" 
-                onClick={() => updateFilter('rating', 0)}
-              />
-            </Badge>
-          )}
-        </div>
-      )}
-
-      {/* Filter Options */}
-      {showFilters && (
-        <div className="space-y-6 pt-6 border-t border-gray-200 animate-in slide-in-from-top duration-300">
-          {/* Neighborhood Filter */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-green-600" />
-              Barrio
-            </label>
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-              {NEIGHBORHOODS.map(neighborhood => (
-                <button
-                  key={neighborhood}
-                  onClick={() => updateFilter('neighborhood', 
-                    filters.neighborhood === neighborhood ? '' : neighborhood
-                  )}
-                  className={`p-3 rounded-xl text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
-                    filters.neighborhood === neighborhood
-                      ? 'bg-green-100 border-green-300 text-green-800 shadow-lg'
-                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
-                  }`}
-                >
-                  {neighborhood}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Amenities Filter */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-purple-600" />
-              Servicios y Amenidades
-            </label>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {AMENITIES.slice(0, 12).map(amenity => (
-                <button
-                  key={amenity}
-                  onClick={() => toggleArrayFilter('amenities', amenity)}
-                  className={`p-3 rounded-xl text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
-                    filters.amenities.includes(amenity)
-                      ? 'bg-purple-100 border-purple-300 text-purple-800 shadow-lg'
-                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
-                  }`}
-                >
-                  {filters.amenities.includes(amenity) && (
-                    <CheckCircle className="h-3 w-3 inline mr-1" />
-                  )}
-                  {amenity}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Vibes Filter */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-              <Star className="h-4 w-4 text-yellow-600" />
-              Ambiente y Estilo
-            </label>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {VIBE_TAGS.slice(0, 12).map(vibe => (
-                <button
-                  key={vibe}
-                  onClick={() => toggleArrayFilter('vibes', vibe)}
-                  className={`p-3 rounded-xl text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
-                    filters.vibes.includes(vibe)
-                      ? 'bg-yellow-100 border-yellow-300 text-yellow-800 shadow-lg'
-                      : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300'
-                  }`}
-                >
-                  {filters.vibes.includes(vibe) && (
-                    <CheckCircle className="h-3 w-3 inline mr-1" />
-                  )}
-                  {vibe}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Additional Filters */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-gray-200">
-            {/* Verified Filter */}
-            <label className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors">
-              <input
-                type="checkbox"
-                checked={filters.isVerified}
-                onChange={(e) => updateFilter('isVerified', e.target.checked)}
-                className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
-              />
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">Solo clubs verificados</span>
-              </div>
-            </label>
-            
-            {/* Price Range Filter */}
-            <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-200">
-              <div className="flex items-center gap-2 mb-3">
-                <DollarSign className="h-4 w-4 text-yellow-600" />
-                <span className="text-sm font-medium text-yellow-800">Rango de precios:</span>
-              </div>
-              <div className="flex gap-2">
-                {['$', '$$', '$$$'].map(price => (
-                  <button
-                    key={price}
-                    onClick={() => toggleArrayFilter('priceRange', price)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
-                      filters.priceRange.includes(price)
-                        ? 'bg-yellow-200 border-yellow-400 text-yellow-800'
-                        : 'bg-white border-yellow-200 text-yellow-700 hover:bg-yellow-100'
-                    }`}
-                  >
-                    {price}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Rating Filter */}
-            <div className="p-4 bg-orange-50 rounded-xl border border-orange-200">
-              <div className="flex items-center gap-2 mb-3">
-                <Star className="h-4 w-4 text-orange-600" />
-                <span className="text-sm font-medium text-orange-800">Valoración mínima:</span>
-              </div>
-              <div className="flex gap-2">
-                {[4, 4.5, 5].map(rating => (
-                  <button
-                    key={rating}
-                    onClick={() => updateFilter('rating', filters.rating === rating ? 0 : rating)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all duration-300 hover:scale-105 ${
-                      filters.rating === rating
-                        ? 'bg-orange-200 border-orange-400 text-orange-800'
-                        : 'bg-white border-orange-200 text-orange-700 hover:bg-orange-100'
-                    }`}
-                  >
-                    {rating}★
-                  </button>
-                ))}
-              </div>
-            </div>
+                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                  filters.vibes.includes(vibe)
+                    ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
+                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                }`}
+              >
+                {vibe}
+              </button>
+            ))}
           </div>
         </div>
-      )}
+
+        {/* Boolean & Range Filters */}
+        <div className="grid grid-cols-1 gap-8 pt-8 border-t border-zinc-100">
+          
+          {/* Verified Only */}
+          <button
+            type="button"
+            onClick={() => updateFilter('isVerified', !filters.isVerified)}
+            className="flex items-center justify-between gap-4 group"
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                filters.isVerified ? 'bg-emerald-500' : 'bg-zinc-100 group-hover:bg-zinc-200'
+              }`}>
+                <Shield className={`h-4 w-4 ${filters.isVerified ? 'text-white' : 'text-zinc-400'}`} />
+              </div>
+              <div className="text-left">
+                <span className="block text-xs font-bold uppercase tracking-widest text-zinc-900">{t('filters.verified_only')}</span>
+                <span className="text-[10px] text-zinc-400">{t('filters.verified_only_desc')}</span>
+              </div>
+            </div>
+            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filters.isVerified ? 'bg-emerald-500' : 'bg-zinc-200'}`}>
+              <motion.div 
+                className="w-4 h-4 bg-card rounded-full shadow-sm"
+                animate={{ x: filters.isVerified ? 16 : 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            </div>
+          </button>
+
+          {/* Price Range */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-zinc-400" />
+              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.price_range')}</EditorialHeading>
+            </div>
+            <div className="flex gap-2">
+              {['$', '$$', '$$$'].map(price => (
+                <button
+                  type="button"
+                  key={price}
+                  onClick={() => toggleArrayFilter('priceRange', price)}
+                  className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${
+                    filters.priceRange.includes(price)
+                      ? 'bg-zinc-900 border-zinc-900 text-white'
+                      : 'bg-card border-zinc-200 text-zinc-400 hover:border-zinc-300'
+                  }`}
+                >
+                  {price}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Minimum Rating */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Star className="h-4 w-4 text-zinc-400" />
+              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.minimum_rating')}</EditorialHeading>
+            </div>
+            <div className="flex gap-2">
+              {[4, 4.5, 5].map(rating => (
+                <button
+                  type="button"
+                  key={rating}
+                  onClick={() => updateFilter('rating', filters.rating === rating ? 0 : rating)}
+                  className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${
+                    filters.rating === rating
+                      ? 'bg-zinc-900 border-zinc-900 text-white'
+                      : 'bg-card border-zinc-200 text-zinc-400 hover:border-zinc-300'
+                  }`}
+                >
+                  {rating}
+                </button>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }

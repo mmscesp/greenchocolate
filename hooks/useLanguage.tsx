@@ -1,44 +1,70 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Language, translations } from '@/lib/i18n';
+import { createContext, useContext, ReactNode } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { i18n, type Locale } from '@/lib/i18n-config';
 
 // Define the translation key type
 export type TranslationKey = string;
 
-// Translation function
-const getTranslation = (language: Language, key: TranslationKey): string => {
-  return translations[language]?.[key as keyof typeof translations[Language]] || key;
-};
+// Type for dictionary
+export type Dictionary = Record<string, string>;
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: Locale;
+  setLanguage: (lang: Locale) => void;
   t: (key: TranslationKey) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('es');
+interface LanguageProviderProps {
+  children: ReactNode;
+  locale: Locale;
+  dictionary: Dictionary;
+}
 
-  useEffect(() => {
-    // Load language from localStorage
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && translations[savedLanguage]) {
-      setLanguageState(savedLanguage);
+export function LanguageProvider({ children, locale, dictionary }: LanguageProviderProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const setLanguage = (newLang: Locale) => {
+    if (newLang === locale) return;
+
+    void (async () => {
+      try {
+        await fetch('/api/locale', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ locale: newLang }),
+        });
+      } catch {
+        // Ignore cookie persistence failures; route locale still updates below.
+      }
+    })();
+
+    // Construct new path: Replace /es/about with /en/about
+    // We assume the first segment is always the locale due to middleware
+    const segments = pathname.split('/');
+    if (segments[1] && i18n.locales.includes(segments[1] as Locale)) {
+      segments[1] = newLang; // Replace locale segment
+    } else {
+      segments.splice(1, 0, newLang); // Insert locale at beginning
     }
-  }, []);
+    const newPath = segments.join('/') || '/';
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('language', lang);
+    router.replace(newPath);
+    router.refresh();
   };
 
-  const t = (key: TranslationKey) => getTranslation(language, key);
+  const t = (key: TranslationKey): string => {
+    return dictionary[key] || key;
+  };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language: locale, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -50,4 +76,13 @@ export function useLanguage() {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
+}
+
+// Hook to get locale for server components
+export function useLocale(): Locale {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLocale must be used within a LanguageProvider');
+  }
+  return context.language;
 }

@@ -1,26 +1,30 @@
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MoreHorizontal } from 'lucide-react';
+'use client';
 
-export interface Column {
-  key: string;
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
+import { MoreHorizontal } from '@/lib/icons';
+
+export interface Column<T> {
+  key: keyof T;
   label: string;
   width?: string;
-  render?: (value: any) => React.ReactNode;
+  render?: (value: T[keyof T], row: T) => React.ReactNode;
 }
 
-export interface DataTableProps {
-  columns: Column[];
-  data: any[];
+export interface DataTableProps<T> {
+  columns: Column<T>[];
+  data: T[];
   title?: string;
-  onEdit?: (row: any) => void;
-  onDelete?: (row: any) => void;
-  onAction?: (row: any, action: string) => void;
+  onEdit?: (row: T) => void;
+  onDelete?: (row: T) => void;
+  onAction?: (row: T, action: string) => void;
   actions?: { label: string; value: string; color?: string }[];
 }
 
-export function DataTable({ columns, data, title, onEdit, onDelete, onAction, actions }: DataTableProps) {
+export function DataTable<T>({ columns, data, title, onEdit, onDelete, onAction, actions }: DataTableProps<T>) {
+  const { t } = useLanguage();
+
   return (
     <Card className="p-6">
       {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
@@ -29,19 +33,19 @@ export function DataTable({ columns, data, title, onEdit, onDelete, onAction, ac
           <thead>
             <tr className="border-b">
               {columns.map((col) => (
-                <th key={col.key} className={`text-left py-3 px-4 font-semibold text-sm text-gray-600 ${col.width || ''}`}>
+                <th key={String(col.key)} className={`text-left py-3 px-4 font-semibold text-sm text-gray-600 ${col.width || ''}`}>
                   {col.label}
                 </th>
               ))}
-              {(onEdit || onDelete || onAction || actions) && <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">Actions</th>}
+              {(onEdit || onDelete || onAction || actions) && <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">{t('common.actions')}</th>}
             </tr>
           </thead>
           <tbody>
             {data.map((row, idx) => (
-              <tr key={idx} className="border-b hover:bg-gray-50">
+              <tr key={idx} className="border-b hover:bg-muted">
                 {columns.map((col) => (
-                  <td key={col.key} className="py-3 px-4 text-sm text-gray-700">
-                    {col.render ? col.render(row[col.key]) : row[col.key]}
+                  <td key={String(col.key)} className="py-3 px-4 text-sm text-gray-700">
+                    {col.render ? col.render(row[col.key], row) : String(row[col.key])}
                   </td>
                 ))}
                 {(onEdit || onDelete || onAction || actions) && (
