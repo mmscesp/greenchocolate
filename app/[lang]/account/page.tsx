@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getCurrentUserProfile } from '@/app/actions/users';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 import { User, 
 Settings, 
 Shield, 
@@ -20,7 +22,19 @@ interface AccountPageProps {
 
 export default async function AccountPage({ params }: AccountPageProps) {
   const { lang } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
   const userProfile = await getCurrentUserProfile();
+
+  const formatText = (key: string, values: Record<string, string | number>) => {
+    let message = t(key);
+
+    for (const [name, value] of Object.entries(values)) {
+      message = message.replace(`{{${name}}}`, String(value));
+    }
+
+    return message;
+  };
 
   if (!userProfile) {
     redirect(`/${lang}/account/login`);
@@ -28,37 +42,37 @@ export default async function AccountPage({ params }: AccountPageProps) {
 
   const menuItems = [
     {
-      title: 'My Profile',
-      description: 'View and edit your profile information',
-      href: '/profile',
+      title: t('user.my_profile'),
+      description: t('account.menu.profile_desc'),
+      href: `/${lang}/profile`,
       icon: User,
       color: 'bg-blue-100 text-blue-600',
     },
     {
-      title: 'Saved Clubs',
-      description: 'View your favorite clubs',
-      href: '/profile/favorites',
+      title: t('user.favorite_clubs'),
+      description: t('account.menu.favorites_desc'),
+      href: `/${lang}/profile/favorites`,
       icon: Heart,
       color: 'bg-red-100 text-red-600',
     },
     {
-      title: 'My Reviews',
-      description: 'Manage your club reviews',
-      href: '/profile/reviews',
+      title: t('user.my_reviews'),
+      description: t('account.menu.reviews_desc'),
+      href: `/${lang}/profile/reviews`,
       icon: Star,
       color: 'bg-yellow-100 text-yellow-600',
     },
     {
-      title: 'Membership Requests',
-      description: 'Track your membership applications',
-      href: '/account/requests',
+      title: t('account.menu.membership_requests'),
+      description: t('account.menu.requests_desc'),
+      href: `/${lang}/account/requests`,
       icon: ClipboardList,
       color: 'bg-green-100 text-green-600',
     },
     {
-      title: 'Account Settings',
-      description: 'Manage your account preferences',
-      href: '/profile/settings',
+      title: t('account.menu.account_settings'),
+      description: t('account.menu.settings_desc'),
+      href: `/${lang}/profile/settings`,
       icon: Settings,
       color: 'bg-gray-100 text-gray-600',
     },
@@ -73,21 +87,24 @@ export default async function AccountPage({ params }: AccountPageProps) {
             <User className="h-10 w-10 text-primary" />
           </div>
           <h1 className="text-4xl font-bold text-foreground mb-2">
-            Welcome, {userProfile.displayName || 'User'}!
+            {formatText('account.welcome', { name: userProfile.displayName || t('user.fallback.name') })}
           </h1>
           <p className="text-lg text-muted-foreground">
-            Manage your account and explore your personalized features
+            {t('account.subtitle')}
           </p>
           <div className="flex items-center justify-center gap-2 mt-4">
             <Shield className="h-4 w-4 text-green-600" />
             <span className="text-sm text-green-600 capitalize">
-              {userProfile.role.toLowerCase().replace('_', ' ')} Account
+              {formatText('account.role_account', { role: userProfile.role.toLowerCase().replace('_', ' ') })}
             </span>
           </div>
           {userProfile.lastActiveAt && (
             <div className="flex items-center justify-center gap-2 mt-2 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
-              <span>Last active: {new Date(userProfile.lastActiveAt).toLocaleDateString()} at {new Date(userProfile.lastActiveAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              <span>{formatText('account.last_active', {
+                date: new Date(userProfile.lastActiveAt).toLocaleDateString(),
+                time: new Date(userProfile.lastActiveAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              })}</span>
             </div>
           )}
         </div>
@@ -98,7 +115,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">3</p>
-                <p className="text-sm text-muted-foreground">Saved Clubs</p>
+                <p className="text-sm text-muted-foreground">{t('account.stats.saved_clubs')}</p>
               </div>
             </CardContent>
           </Card>
@@ -106,7 +123,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">12</p>
-                <p className="text-sm text-muted-foreground">Reviews Written</p>
+                <p className="text-sm text-muted-foreground">{t('account.stats.reviews_written')}</p>
               </div>
             </CardContent>
           </Card>
@@ -114,7 +131,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
             <CardContent className="pt-6">
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary">2</p>
-                <p className="text-sm text-muted-foreground">Active Requests</p>
+                <p className="text-sm text-muted-foreground">{t('account.stats.active_requests')}</p>
               </div>
             </CardContent>
           </Card>
@@ -148,21 +165,21 @@ export default async function AccountPage({ params }: AccountPageProps) {
         {/* Club Admin Section */}
         {(userProfile.role === 'CLUB_ADMIN' || userProfile.role === 'ADMIN') && (
           <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Club Management</h2>
+            <h2 className="text-2xl font-bold mb-6">{t('account.club_management.title')}</h2>
             <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-green-600" />
-                  Club Admin Panel
+                  {t('account.club_management.panel_title')}
                 </CardTitle>
                 <CardDescription>
-                  Manage your club, view membership requests, and update club information
+                  {t('account.club_management.panel_desc')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="/club-panel/dashboard">
+                <Link href={`/${lang}/club-panel/dashboard`}>
                   <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    Access Club Dashboard
+                    {t('account.club_management.access_dashboard')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>

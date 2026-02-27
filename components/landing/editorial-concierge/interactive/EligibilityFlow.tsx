@@ -6,33 +6,35 @@ import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { PREMIUM_SPRING } from '../motion/config';
 import { Check, X, ShieldCheck, AlertCircle } from '@/lib/icons';
-
-const STEPS = [
-  { 
-    id: 'age', 
-    q: 'Are you over 18 or 21 years old?', 
-    desc: 'Age requirements vary by club. Most require 18+, premium clubs 21+.' 
-  },
-  { 
-    id: 'id', 
-    q: 'Do you have valid government photo ID?', 
-    desc: 'Passports or EU ID cards required. Digital versions are rejected.' 
-  },
-  { 
-    id: 'intent', 
-    q: 'Joining for therapeutic or social use?', 
-    desc: 'Associations are not shops. Commercial intent is prohibited.' 
-  },
-];
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function EligibilityFlow() {
+  const { t } = useLanguage();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, boolean>>({});
   const [isComplete, setIsComplete] = useState(false);
 
+  const steps = [
+    {
+      id: 'age',
+      q: t('landing.eligibility.steps.age.q'),
+      desc: t('landing.eligibility.steps.age.desc'),
+    },
+    {
+      id: 'id',
+      q: t('landing.eligibility.steps.id.q'),
+      desc: t('landing.eligibility.steps.id.desc'),
+    },
+    {
+      id: 'intent',
+      q: t('landing.eligibility.steps.intent.q'),
+      desc: t('landing.eligibility.steps.intent.desc'),
+    },
+  ];
+
   const handleAnswer = (val: boolean) => {
-    setAnswers({ ...answers, [STEPS[step].id]: val });
-    if (step < STEPS.length - 1) {
+    setAnswers({ ...answers, [steps[step].id]: val });
+    if (step < steps.length - 1) {
       setStep(step + 1);
     } else {
       setIsComplete(true);
@@ -59,7 +61,7 @@ export function EligibilityFlow() {
           >
             {/* Step indicator */}
             <div className="flex justify-center gap-2 mb-8">
-              {STEPS.map((_, i) => (
+              {steps.map((_, i) => (
                 <div 
                   key={i}
                   className={`
@@ -77,12 +79,12 @@ export function EligibilityFlow() {
             
             {/* Question - HIGHER CONTRAST */}
             <EditorialHeading size="md" className="text-white mb-3 leading-tight">
-              {STEPS[step].q}
+              {steps[step].q}
             </EditorialHeading>
             
             {/* Description - IMPROVED CONTRAST */}
             <p className="text-zinc-300 text-sm max-w-xs mx-auto mb-10 leading-relaxed">
-              {STEPS[step].desc}
+              {steps[step].desc}
             </p>
             
             {/* Buttons - BETTER CONTRAST */}
@@ -100,7 +102,7 @@ export function EligibilityFlow() {
                   border border-emerald-500/30
                 "
               >
-                <Check className="w-4 h-4" /> Yes
+                <Check className="w-4 h-4" /> {t('landing.eligibility.yes')}
               </button>
               <button 
                 onClick={() => handleAnswer(false)}
@@ -114,7 +116,7 @@ export function EligibilityFlow() {
                   border border-zinc-600
                 "
               >
-                <X className="w-4 h-4" /> No
+                <X className="w-4 h-4" /> {t('landing.eligibility.no')}
               </button>
             </div>
           </motion.div>
@@ -131,18 +133,18 @@ export function EligibilityFlow() {
             </div>
             
             <EditorialHeading size="md" className="text-white mb-3">
-              Eligibility Verified
+              {t('landing.eligibility.complete_title')}
             </EditorialHeading>
             
             <p className="text-zinc-300 text-sm max-w-xs mx-auto mb-8 leading-relaxed">
-              You meet the primary preparedness requirements for Spanish association membership.
+              {t('landing.eligibility.complete_description')}
             </p>
             
             <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-6">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
                 <p className="text-zinc-300 text-xs text-left">
-                  Remember: bring your ID, arrive early, and always respect the house rules.
+                  {t('landing.eligibility.warning')}
                 </p>
               </div>
             </div>
@@ -156,7 +158,7 @@ export function EligibilityFlow() {
                 hover:underline underline-offset-4
               "
             >
-              Restart Screening
+              {t('landing.eligibility.restart')}
             </button>
           </motion.div>
         )}

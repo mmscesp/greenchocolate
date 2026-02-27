@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
 import { MapPin, 
 Building2, 
 Shield, 
@@ -102,6 +103,7 @@ const neighborhoodsData: Record<string, string[]> = {
 };
 
 export default function CityPageClient({ lang, city }: CityPageClientProps) {
+  const { t } = useLanguage();
   const citySlug = city.toLowerCase();
   const cityDetail = cityData[citySlug] || cityData.barcelona;
   const cityClubs = clubsData[citySlug] || clubsData.barcelona;
@@ -133,30 +135,30 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
           </div>
           
           <H1 className="mb-6">
-            Cannabis Clubs in{' '}
+            {t('city.title_prefix')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/80">
               {cityDetail.name}
             </span>
           </H1>
           
           <Lead className="max-w-3xl mb-8">
-            {cityDetail.description || `Verified navigation for ${cityDetail.name}: local etiquette, neighborhoods, and club discovery.`}
+            {cityDetail.description || t('city.description_fallback').replace('{{city}}', cityDetail.name)}
           </Lead>
           
           <div className="flex flex-wrap items-center gap-6 text-sm">
             <div className="flex items-center gap-2 text-muted-foreground bg-muted px-4 py-2 rounded-full">
               <Building2 className="h-4 w-4 text-primary" /> 
               <span className="font-bold text-foreground">{cityClubs.length}</span> 
-              <span>verified clubs</span>
+              <span>{t('city.verified_clubs')}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground bg-muted px-4 py-2 rounded-full">
               <Compass className="h-4 w-4 text-primary" /> 
               <span className="font-bold text-foreground">{neighborhoods.length}</span> 
-              <span>neighborhoods</span>
+              <span>{t('city.neighborhoods')}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground bg-muted px-4 py-2 rounded-full">
               <Shield className="h-4 w-4 text-primary" /> 
-              <span>Private-association model</span>
+              <span>{t('city.private_model')}</span>
             </div>
           </div>
         </motion.section>
@@ -176,8 +178,8 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
             <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Building2 className="h-6 w-6 text-primary" />
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Club Directory</h2>
-            <Text size="sm" variant="muted">Browse verified clubs with public safety-first previews.</Text>
+            <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{t('city.cards.directory.title')}</h2>
+            <Text size="sm" variant="muted">{t('city.cards.directory.description')}</Text>
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
           </Link>
 
@@ -190,8 +192,8 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
             <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <BookOpen className="h-6 w-6 text-primary" />
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Guides</h2>
-            <Text size="sm" variant="muted">Read city-specific legal, etiquette, and safety content.</Text>
+            <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">{t('city.cards.guides.title')}</h2>
+            <Text size="sm" variant="muted">{t('city.cards.guides.description')}</Text>
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
           </Link>
         </motion.section>
@@ -207,14 +209,14 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
               <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
                 <Star className="h-5 w-5 text-amber-500" />
               </div>
-              <H2>Featured Verified Clubs</H2>
+              <H2>{t('city.featured.title')}</H2>
             </div>
             <Button 
               variant="outline" 
               asChild
               className="border-border text-foreground hover:bg-muted hover:text-foreground rounded-xl"
             >
-              <Link href={`/${lang}/spain/${city}/clubs`}>View all clubs</Link>
+              <Link href={`/${lang}/spain/${city}/clubs`}>{t('city.featured.view_all')}</Link>
             </Button>
           </div>
 
@@ -234,7 +236,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
                     <H3 className="group-hover:text-primary transition-colors">{club.name}</H3>
                     {club.isVerified && (
                       <Badge className="bg-primary/10 text-primary border-primary/20">
-                        <CheckCircle className="h-3 w-3 mr-1" /> Verified
+                        <CheckCircle className="h-3 w-3 mr-1" /> {t('city.verified')}
                       </Badge>
                     )}
                   </div>
@@ -250,7 +252,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
                       </span>
                     </div>
                     <span className="inline-flex items-center gap-1 text-primary font-bold group-hover:translate-x-1 transition-transform">
-                      Open profile <ArrowRight className="h-4 w-4" />
+                      {t('city.open_profile')} <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
                 </Link>
@@ -260,7 +262,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <Building2 className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <Text variant="muted">No verified clubs found for this city yet.</Text>
+                <Text variant="muted">{t('city.empty')}</Text>
               </div>
             )}
           </div>

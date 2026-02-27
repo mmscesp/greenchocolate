@@ -85,6 +85,16 @@ const getStatusIcon = (status: string) => {
 
 export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) {
   const { t } = useLanguage();
+  const formatText = (key: string, values: Record<string, string | number>) => {
+    let message = t(key);
+
+    for (const [name, value] of Object.entries(values)) {
+      message = message.replace(`{{${name}}}`, String(value));
+    }
+
+    return message;
+  };
+
   const adminCount = data.userRoleDistribution.find(r => r.role === 'ADMIN')?.count || 0;
   const clubAdminCount = data.userRoleDistribution.find(r => r.role === 'CLUB_ADMIN')?.count || 0;
   const userCount = data.userRoleDistribution.find(r => r.role === 'USER')?.count || 0;
@@ -108,14 +118,19 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
           value={data.totalUsers.toLocaleString()}
           icon={Users}
           color="blue"
-          trend={`${userCount} members • ${clubAdminCount} club admins`}
+          trend={formatText('admin.dashboard.metrics.total_users_trend', {
+            members: userCount,
+            clubAdmins: clubAdminCount,
+          })}
         />
         <StatsCard
           title={t('admin.dashboard.metrics.total_clubs')}
           value={data.totalClubs.toLocaleString()}
           icon={Building2}
           color="green"
-          trend={`${data.pendingVerifications} pending verification`}
+          trend={formatText('admin.dashboard.metrics.total_clubs_trend', {
+            pending: data.pendingVerifications,
+          })}
         />
         <StatsCard
           title={t('admin.dashboard.metrics.pending_requests')}
@@ -140,8 +155,12 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
               <div>
                 <h3 className="font-medium text-yellow-800 dark:text-yellow-300">{t('admin.dashboard.alert.title')}</h3>
                 <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
-                  {data.pendingVerifications > 0 && `${data.pendingVerifications} club(s) awaiting verification. `}
-                  {data.pendingRequests > 10 && `${data.pendingRequests} membership requests pending review.`}
+                  {data.pendingVerifications > 0 && formatText('admin.dashboard.alert.pending_verifications', {
+                    count: data.pendingVerifications,
+                  })}
+                  {data.pendingRequests > 10 && formatText('admin.dashboard.alert.pending_requests', {
+                    count: data.pendingRequests,
+                  })}
                 </p>
               </div>
             </div>

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Heart, Users, Camera, Smartphone, Clock, ArrowRight } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface EtiquettePageProps {
   params: Promise<{ lang: string }>;
@@ -14,39 +15,40 @@ interface EtiquettePageProps {
 
 const etiquetteGuides = [
   {
-    title: '5 Mistakes Tourists Make',
+    titleKey: 'editorial.etiquette.guides.1.title',
     slug: '5-mistakes-tourists-make',
-    excerpt: 'Don\'t be "that" tourist. Learn the local norms and club etiquette before you arrive.',
+    excerptKey: 'editorial.etiquette.guides.1.excerpt',
     readTime: 6,
     featured: true,
   },
   {
-    title: 'Photography Rules: What You Need to Know',
+    titleKey: 'editorial.etiquette.guides.2.title',
     slug: 'photography-rules-clubs',
-    excerpt: 'Why clubs ban photos and how to respect privacy in shared spaces.',
+    excerptKey: 'editorial.etiquette.guides.2.excerpt',
     readTime: 4,
   },
   {
-    title: 'Tipping and Contribution Culture',
+    titleKey: 'editorial.etiquette.guides.3.title',
     slug: 'tipping-contribution-culture',
-    excerpt: 'Understanding how clubs fund their operations and member expectations.',
+    excerptKey: 'editorial.etiquette.guides.3.excerpt',
     readTime: 5,
   },
   {
-    title: 'Conversations with Locals',
+    titleKey: 'editorial.etiquette.guides.4.title',
     slug: 'conversations-locals',
-    excerpt: 'How to engage respectfully with club members and staff.',
+    excerptKey: 'editorial.etiquette.guides.4.excerpt',
     readTime: 4,
   },
   {
-    title: 'Respecting Club Hierarchy',
+    titleKey: 'editorial.etiquette.guides.5.title',
     slug: 'respecting-club-hierarchy',
-    excerpt: 'Understanding club governance and how decisions are made.',
+    excerptKey: 'editorial.etiquette.guides.5.excerpt',
     readTime: 5,
   },
 ];
 
 export default function EtiquettePage({ params }: EtiquettePageProps) {
+  const { t } = useLanguage();
   const [lang, setLang] = useState('en');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -93,7 +95,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
             <Button variant="outline" asChild className="mb-6 border-border text-muted-foreground hover:bg-muted hover:text-foreground">
               <Link href={`/${lang}/editorial`}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
-                Back to Knowledge Vault
+                {t('editorial.etiquette.back_to_vault')}
               </Link>
             </Button>
           </motion.div>
@@ -106,7 +108,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"
             >
               <Heart className="w-4 h-4" />
-              <Label size="sm">Club Etiquette</Label>
+              <Label size="sm">{t('editorial.etiquette.badge')}</Label>
             </motion.div>
             
             <motion.div
@@ -115,9 +117,9 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <H1 className="mb-6">
-                Be a Respectful{' '}
+                {t('editorial.etiquette.title_prefix')}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                  Club Guest
+                  {t('editorial.etiquette.title_highlight')}
                 </span>
               </H1>
             </motion.div>
@@ -128,8 +130,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <Lead>
-                Every club has its own culture and rules. Learn the unwritten norms,
-                respect the space, and connect with the community like a local.
+                {t('editorial.etiquette.lead')}
               </Lead>
             </motion.div>
           </div>
@@ -150,10 +151,9 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
                 <div className="flex items-start gap-3">
                   <Smartphone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2">Phones Away</H4>
+                    <H4 className="mb-2">{t('editorial.etiquette.tip_phone.title')}</H4>
                     <Text size="sm" variant="muted">
-                      Most clubs ask you to keep your phone in your pocket.
-                      No photos without explicit permission.
+                      {t('editorial.etiquette.tip_phone.description')}
                     </Text>
                   </div>
                 </div>
@@ -162,10 +162,9 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
                 <div className="flex items-start gap-3">
                   <Users className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2">Respect Privacy</H4>
+                    <H4 className="mb-2">{t('editorial.etiquette.tip_privacy.title')}</H4>
                     <Text size="sm" variant="muted">
-                      Don&apos;t discuss other members or share who you met at the club.
-                      What happens in the club stays in the club.
+                      {t('editorial.etiquette.tip_privacy.description')}
                     </Text>
                   </div>
                 </div>
@@ -180,7 +179,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <H2 className="mb-8">
-              Etiquette Guides
+              {t('editorial.etiquette.guides_title')}
             </H2>
             
             <div className="grid gap-4">
@@ -200,19 +199,19 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
                         <div className="flex items-center gap-3 mb-2">
                           {article.featured && (
                             <Badge className="bg-primary/10 text-primary border-primary/20">
-                              Featured
+                              {t('editorial.etiquette.featured')}
                             </Badge>
                           )}
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Clock className="w-3.5 h-3.5" />
-                            {article.readTime} min read
+                            {article.readTime} {t('editorial.min_read')}
                           </div>
                         </div>
                         <H3 className="mb-2 group-hover:text-primary transition-colors">
-                          {article.title}
+                          {t(article.titleKey)}
                         </H3>
                         <Text variant="muted">
-                          {article.excerpt}
+                          {t(article.excerptKey)}
                         </Text>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />

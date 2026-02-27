@@ -68,7 +68,7 @@ const mockStats = {
 
 const profileFormSchema = z.object({
   displayName: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: 'Username must be at least 2 characters.',
   }),
   bio: z.string().max(160).optional(),
 });
@@ -89,7 +89,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
     },
   });
 
-  const displayName = userProfile?.displayName || userProfile?.email?.split('@')[0] || 'Member';
+  const displayName = userProfile?.displayName || userProfile?.email?.split('@')[0] || t('profile.member_fallback');
   const verificationId = backendStatus?.passport.verificationId || `SMC-2026-${userProfile?.id?.slice(0, 8).toUpperCase() || 'UNKNOWN'}`;
 
   if (!userProfile) {
@@ -209,9 +209,9 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
                 <div className="relative group">
                   <div className="rounded-full p-1.5 bg-background shadow-2xl">
                     <Avatar className="w-28 h-28 sm:w-32 sm:h-32 border-4 border-background">
-                      <AvatarImage src={userProfile.avatarUrl || ''} alt={userProfile.displayName || 'User'} />
+                      <AvatarImage src={userProfile.avatarUrl || ''} alt={userProfile.displayName || t('profile.user_fallback')} />
                       <AvatarFallback className="text-3xl sm:text-4xl bg-primary/10 text-primary font-bold">
-                        {(userProfile.displayName || 'U').charAt(0).toUpperCase()}
+                        {(userProfile.displayName || t('profile.user_initial_fallback')).charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </div>
@@ -239,7 +239,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
                       />
                     ) : (
                       <h2 className="text-2xl font-bold text-foreground">
-                        {userProfile.displayName || 'User'}
+                        {userProfile.displayName || t('profile.user_fallback')}
                       </h2>
                     )}
 
@@ -369,9 +369,9 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
           <div>
             <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
               <Wallet className="h-6 w-6 text-primary" />
-              Member Passport
+              {t('profile.passport.title')}
             </h3>
-            <p className="text-muted-foreground mt-1">Your digital membership credentials</p>
+            <p className="text-muted-foreground mt-1">{t('profile.passport.subtitle')}</p>
           </div>
 
           <div className="flex bg-muted rounded-lg p-1 self-start">
@@ -385,7 +385,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {t(`profile.passport.tabs.${tab}`)}
               </button>
             ))}
           </div>
@@ -395,16 +395,15 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
               <p className="text-muted-foreground leading-relaxed">
-                Your Member Passport is your digital credential for accessing verified clubs in Barcelona.
-                Keep your profile information up to date to ensure smooth entry.
+                {t('profile.passport.overview_description')}
               </p>
 
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: MapPin, label: 'Clubs Viewed', value: mockStats.clubsViewed },
-                  { icon: Heart, label: 'Favorites', value: mockStats.favoritesCount },
-                  { icon: Star, label: 'Reviews', value: mockStats.reviewsWritten },
-                  { icon: Calendar, label: 'Member Since', value: mockStats.memberSince },
+                  { icon: MapPin, label: t('profile.passport.stats.clubs_viewed'), value: mockStats.clubsViewed },
+                  { icon: Heart, label: t('profile.passport.stats.favorites'), value: mockStats.favoritesCount },
+                  { icon: Star, label: t('profile.passport.stats.reviews'), value: mockStats.reviewsWritten },
+                  { icon: Calendar, label: t('profile.passport.stats.member_since'), value: mockStats.memberSince },
                 ].map((stat, idx) => (
                   <motion.div
                     key={stat.label}

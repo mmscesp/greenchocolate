@@ -4,7 +4,9 @@ import { getCityBySlug } from '@/app/actions/cities';
 import { getArticles } from '@/app/actions/articles';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, Clock, ArrowRight, MapPin, Shield } from '@/lib/icons';
-import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+import { H1, H3, Text, Lead } from '@/components/typography';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
@@ -12,6 +14,15 @@ interface PageProps {
 
 export default async function CityGuidesPage({ params }: PageProps) {
   const { lang, city } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
+  const format = (key: string, vars: Record<string, string>) => {
+    const template = t(key);
+    return Object.entries(vars).reduce(
+      (acc, [name, value]) => acc.replaceAll(`{{${name}}}`, value),
+      template
+    );
+  };
   const [cityDetail, guides] = await Promise.all([
     getCityBySlug(city),
     getArticles({ citySlug: city, limit: 24 }),
@@ -41,30 +52,30 @@ export default async function CityGuidesPage({ params }: PageProps) {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/80">
               {cityDetail.name}
             </span>{' '}
-            Guides
+            {t('city_guides.title_suffix')}
           </H1>
           
           <Lead className="max-w-3xl">
-            City-specific legal, etiquette, and safety content curated for responsible visitors.
+            {t('city_guides.lead')}
           </Lead>
 
           {/* Stats */}
           <div className="flex items-center gap-8 mt-8 pt-8 border-t border-border">
             <div className="text-center">
               <div className="text-3xl font-black text-foreground">{guides.length}</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Guides</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('city_guides.stats.guides')}</div>
             </div>
             <div className="w-px h-12 bg-border" />
             <div className="text-center">
               <div className="text-3xl font-black text-primary">100%</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Verified</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('city_guides.stats.verified')}</div>
             </div>
             <div className="w-px h-12 bg-border" />
             <div className="text-center">
               <div className="text-3xl font-black text-foreground">
                 <Shield className="h-8 w-8 inline text-primary" />
               </div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Safe</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('city_guides.stats.safe')}</div>
             </div>
           </div>
         </section>
@@ -90,7 +101,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
                   </div>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />
-                    <span>{guide.readTime} min read</span>
+                    <span>{format('city_guides.min_read', { minutes: String(guide.readTime) })}</span>
                   </div>
                 </div>
                 
@@ -103,7 +114,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
                 </Text>
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <span className="text-xs text-muted-foreground font-medium">Read Guide</span>
+                  <span className="text-xs text-muted-foreground font-medium">{t('city_guides.read_guide')}</span>
                   <ArrowRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
@@ -113,7 +124,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="h-8 w-8 text-muted-foreground" />
               </div>
-              <Text variant="muted">No city-specific guides are published for {cityDetail.name} yet.</Text>
+              <Text variant="muted">{format('city_guides.empty', { city: cityDetail.name })}</Text>
             </div>
           )}
         </section>

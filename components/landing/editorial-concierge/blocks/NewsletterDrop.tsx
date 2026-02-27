@@ -7,10 +7,19 @@ import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { ArrowRight, Check } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function NewsletterDrop() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+
+  const bullets = [
+    t('landing.newsletter.bullets.legal_intelligence'),
+    t('landing.newsletter.bullets.scam_alerts'),
+    t('landing.newsletter.bullets.harm_reduction'),
+    t('landing.newsletter.bullets.regulatory_analysis'),
+  ];
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,20 +44,20 @@ export function NewsletterDrop() {
       </div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        <ConciergeLabel emphasis="medium" className="mb-6 block text-emerald-500">Strategic Intelligence</ConciergeLabel>
-        <EditorialHeading size="xl" className="mb-8 text-white">The definitive weekly briefing on the Spanish cannabis landscape.</EditorialHeading>
+        <ConciergeLabel emphasis="medium" className="mb-6 block text-emerald-500">{t('landing.newsletter.label')}</ConciergeLabel>
+        <EditorialHeading size="xl" className="mb-8 text-white">{t('landing.newsletter.title')}</EditorialHeading>
         <p className="text-zinc-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto">
-          Critical legal updates, emerging scam patterns, and harm reduction protocols. 
-          Zero promotion. Pure, high-trust intelligence for the informed member.
+          {t('landing.newsletter.description_line_1')} 
+          {t('landing.newsletter.description_line_2')}
         </p>
 
         <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto mb-16 flex flex-col md:block">
-          <label htmlFor="newsletter-drop-email" className="sr-only">Email address</label>
+          <label htmlFor="newsletter-drop-email" className="sr-only">{t('landing.newsletter.email_label')}</label>
           <input 
             id="newsletter-drop-email"
             type="email" 
             required
-            placeholder="Email address..."
+            placeholder={t('landing.newsletter.email_placeholder')}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             className="w-full bg-transparent border-b-2 border-zinc-800 py-4 md:py-6 px-2 md:px-4 text-xl md:text-3xl text-white font-serif focus:outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
@@ -58,21 +67,16 @@ export function NewsletterDrop() {
             disabled={status === 'loading'}
             className="mt-6 md:mt-0 md:absolute md:right-0 md:bottom-6 text-emerald-500 hover:text-emerald-400 font-bold uppercase tracking-widest text-sm md:text-xs flex items-center justify-center md:justify-start gap-2"
           >
-            {status === 'success' ? 'Subscribed' : status === 'loading' ? 'Subscribing...' : 'Subscribe'} <ArrowRight className="w-4 h-4" />
+            {status === 'success' ? t('landing.newsletter.subscribed') : status === 'loading' ? t('landing.newsletter.subscribing') : t('landing.newsletter.subscribe')} <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
         {status === 'success' && (
-          <p className="mb-8 text-emerald-400 text-sm font-bold uppercase tracking-widest">You are in. Watch your inbox.</p>
+          <p className="mb-8 text-emerald-400 text-sm font-bold uppercase tracking-widest">{t('landing.newsletter.success')}</p>
         )}
 
         <div className="flex flex-wrap justify-center gap-8">
-          {[
-            'Legal Intelligence',
-            'Scam Alerts',
-            'Harm Reduction',
-            'Regulatory Analysis'
-          ].map((item) => (
+          {bullets.map((item) => (
             <div key={item} className="flex items-center gap-2 text-zinc-500">
               <Check className="w-4 h-4 text-emerald-500" />
               <ConciergeLabel size="xs">{item}</ConciergeLabel>

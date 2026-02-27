@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/hooks/useLanguage';
 import { Calendar, MapPin, Star, Clock, ArrowRight } from '@/lib/icons';
 
 interface Event {
@@ -23,76 +24,77 @@ interface EventsPageClientProps {
   lang: string;
 }
 
-const mockEvents: Event[] = [
+const buildMockEvents = (t: (key: string) => string): Event[] => [
   {
     id: '1',
     slug: 'cannabis-cup-barcelona-2025',
-    name: 'Cannabis Cup Barcelona 2025',
-    description: 'Join the most prestigious cannabis competition in Europe. Top growers and extractors compete for excellence awards across multiple categories.',
+    name: t('events.mock.1.name'),
+    description: t('events.mock.1.description'),
     startDate: '2025-03-15',
     endDate: '2025-03-17',
-    location: 'Fira Barcelona, Barcelona',
-    cityName: 'Barcelona',
-    clubName: 'Green Revolution CSC',
+    location: t('events.mock.1.location'),
+    cityName: t('events.mock.1.city_name'),
+    clubName: t('events.mock.1.club_name'),
   },
   {
     id: '2',
     slug: 'medical-cannabis-summit',
-    name: 'Medical Cannabis Summit Europe',
-    description: 'A comprehensive conference bringing together medical professionals, researchers, and patients to discuss therapeutic applications of cannabis.',
+    name: t('events.mock.2.name'),
+    description: t('events.mock.2.description'),
     startDate: '2025-04-20',
     endDate: '2025-04-22',
-    location: 'RAI Amsterdam, Amsterdam',
-    cityName: 'Amsterdam',
-    clubName: 'Medical Green CSC',
+    location: t('events.mock.2.location'),
+    cityName: t('events.mock.2.city_name'),
+    clubName: t('events.mock.2.club_name'),
   },
   {
     id: '3',
     slug: 'cannabis-expo-berlin',
-    name: 'Cannabis Expo Berlin 2025',
-    description: 'The largest B2B cannabis exhibition in Germany, featuring international exhibitors, networking events, and educational workshops.',
+    name: t('events.mock.3.name'),
+    description: t('events.mock.3.description'),
     startDate: '2025-05-10',
     endDate: '2025-05-12',
-    location: 'Messe Berlin, Berlin',
-    cityName: 'Berlin',
-    clubName: 'Berlin Green CSC',
+    location: t('events.mock.3.location'),
+    cityName: t('events.mock.3.city_name'),
+    clubName: t('events.mock.3.club_name'),
   },
   {
     id: '4',
     slug: 'cannabis-culture-festival',
-    name: 'Cannabis Culture Festival Madrid',
-    description: 'Celebrate cannabis culture with live music, art exhibitions, educational talks, and community networking in the heart of Spain.',
+    name: t('events.mock.4.name'),
+    description: t('events.mock.4.description'),
     startDate: '2025-06-15',
     endDate: '2025-06-16',
-    location: 'Matadero Madrid, Madrid',
-    cityName: 'Madrid',
-    clubName: 'Madrid Social Club',
+    location: t('events.mock.4.location'),
+    cityName: t('events.mock.4.city_name'),
+    clubName: t('events.mock.4.club_name'),
   },
   {
     id: '5',
     slug: 'indoor-cannabis-workshop',
-    name: 'Advanced Indoor Growing Workshop',
-    description: 'Master indoor cultivation techniques with expert growers. Learn about lighting, nutrients, environmental control, and organic pest management.',
+    name: t('events.mock.5.name'),
+    description: t('events.mock.5.description'),
     startDate: '2025-02-28',
     endDate: '2025-03-01',
-    location: 'Green Lab, Barcelona',
-    cityName: 'Barcelona',
-    clubName: 'Green Revolution CSC',
+    location: t('events.mock.5.location'),
+    cityName: t('events.mock.5.city_name'),
+    clubName: t('events.mock.5.club_name'),
   },
   {
     id: '6',
     slug: 'cannabis-regulation-forum',
-    name: 'European Cannabis Regulation Forum',
-    description: 'Join policymakers, industry leaders, and advocates to discuss the future of cannabis regulation across European markets.',
+    name: t('events.mock.6.name'),
+    description: t('events.mock.6.description'),
     startDate: '2025-07-08',
     endDate: '2025-07-09',
-    location: 'Brussels Expo, Brussels',
-    cityName: 'Brussels',
+    location: t('events.mock.6.location'),
+    cityName: t('events.mock.6.city_name'),
   },
 ];
 
 export default function EventsPageClient({ lang }: EventsPageClientProps) {
-  const [events] = useState<Event[]>(mockEvents);
+  const { t } = useLanguage();
+  const [events] = useState<Event[]>(() => buildMockEvents(t));
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -135,19 +137,19 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
               <Calendar className="h-5 w-5 text-primary" />
             </div>
             <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
-              Community
+              {t('events.badge')}
             </Badge>
           </div>
           
           <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6">
-            Europe{' '}
+            {t('events.title_prefix')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-              Events
+              {t('events.title_highlight')}
             </span>
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
-            Cultural and industry events connected to the platform&apos;s trust-and-education mission.
+            {t('events.subtitle')}
           </p>
         </motion.section>
 
@@ -201,7 +203,7 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <span className="text-xs text-muted-foreground font-medium">View Details</span>
+                  <span className="text-xs text-muted-foreground font-medium">{t('events.view_details')}</span>
                   <ArrowRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
                 </div>
 
@@ -213,7 +215,7 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Calendar className="h-8 w-8 text-muted-foreground" />
               </div>
-              <p className="text-muted-foreground">No upcoming published events yet.</p>
+              <p className="text-muted-foreground">{t('events.empty')}</p>
             </div>
           )}
         </motion.section>

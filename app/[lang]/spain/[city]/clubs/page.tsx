@@ -4,7 +4,9 @@ import { getCityBySlug } from '@/app/actions/cities';
 import { getClubs } from '@/app/actions/clubs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+import { H1, H3, Text } from '@/components/typography';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
@@ -12,6 +14,15 @@ interface PageProps {
 
 export default async function CityClubsPage({ params }: PageProps) {
   const { lang, city } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
+  const format = (key: string, vars: Record<string, string>) => {
+    const template = t(key);
+    return Object.entries(vars).reduce(
+      (acc, [name, value]) => acc.replaceAll(`{{${name}}}`, value),
+      template
+    );
+  };
 
   const [cityDetail, clubs] = await Promise.all([
     getCityBySlug(city),
@@ -25,9 +36,9 @@ export default async function CityClubsPage({ params }: PageProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <section className="rounded-2xl border bg-card p-8">
-        <H1 className="mb-3">{cityDetail.name} Club Directory</H1>
+        <H1 className="mb-3">{format('city_clubs.title', { city: cityDetail.name })}</H1>
         <Text variant="muted" className="max-w-3xl">
-          Public profiles show trust, safety, and context. Sensitive operational details remain available only after login and club-side acceptance.
+          {t('city_clubs.lead')}
         </Text>
       </section>
 
@@ -36,7 +47,7 @@ export default async function CityClubsPage({ params }: PageProps) {
           <article key={club.id} className="rounded-xl border bg-card p-5">
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <H3>{club.name}</H3>
-              {club.isVerified && <Badge>Verified</Badge>}
+              {club.isVerified && <Badge>{t('city_clubs.verified')}</Badge>}
               <Badge variant="outline">{club.priceRange}</Badge>
             </div>
 
@@ -51,13 +62,13 @@ export default async function CityClubsPage({ params }: PageProps) {
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm text-muted-foreground">{club.neighborhood}</span>
               <Button asChild>
-                <Link href={`/${lang}/spain/${city}/clubs/${club.slug}`}>View Public Profile</Link>
+                <Link href={`/${lang}/spain/${city}/clubs/${club.slug}`}>{t('city_clubs.view_public_profile')}</Link>
               </Button>
             </div>
           </article>
         )) : (
           <div className="rounded-xl border border-dashed p-6">
-            <Text variant="muted">No verified clubs are currently listed for {cityDetail.name}.</Text>
+            <Text variant="muted">{format('city_clubs.empty', { city: cityDetail.name })}</Text>
           </div>
         )}
       </section>

@@ -7,7 +7,8 @@ import { Logo, LogoIcon } from '@/components/ui/logo';
 import { MapPin, BookOpen, Users, Shield, Mail, Instagram, Twitter } from '@/lib/icons';
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const withLocale = (path: string) => `/${language}${path}`;
 
   return (
     <footer className="relative bg-gradient-to-b from-background to-emerald-50/20 dark:to-emerald-950/10 border-t border-border overflow-hidden">
@@ -63,7 +64,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link 
-                  href="/clubs" 
+                  href={withLocale('/clubs')} 
                   className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <MapPin className="h-4 w-4 text-neutral-400 group-hover:text-brand transition-colors" />
@@ -72,7 +73,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link 
-                  href="/editorial" 
+                  href={withLocale('/editorial')} 
                   className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <BookOpen className="h-4 w-4 text-neutral-400 group-hover:text-brand transition-colors" />
@@ -81,7 +82,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link 
-                  href="/club-panel/dashboard" 
+                  href={withLocale('/club-panel/dashboard')} 
                   className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Users className="h-4 w-4 text-neutral-400 group-hover:text-brand transition-colors" />
@@ -96,7 +97,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-foreground mb-4">{t('footer.support')}</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/editorial" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href={withLocale('/editorial')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.help_center')}
                 </Link>
               </li>
@@ -106,12 +107,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href={withLocale('/terms')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.terms')}
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href={withLocale('/privacy')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.privacy')}
                 </Link>
               </li>
@@ -140,13 +141,13 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} SocialClubsMaps. {t('footer.copyright')}
           </p>
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-4 gap-y-2">
-            <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <Link href={withLocale('/terms')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               {t('footer.terms_short')}
             </Link>
-            <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <Link href={withLocale('/privacy')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               {t('footer.privacy_short')}
             </Link>
-            <Link href="/cookies" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <Link href={withLocale('/cookies')} className="text-xs text-muted-foreground hover:text-foreground transition-colors">
               {t('footer.cookies')}
             </Link>
           </div>

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { PREMIUM_SPRING } from '../motion/config';
 import { ShieldCheck, AlertTriangle, MapPin } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const ICONS = {
   ShieldCheck,
@@ -23,6 +24,7 @@ interface StickyAccordionProps {
 }
 
 export function StickyAccordion({ items }: StickyAccordionProps) {
+  const { t } = useLanguage();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
@@ -45,7 +47,7 @@ export function StickyAccordion({ items }: StickyAccordionProps) {
               });
             }}
             aria-expanded={isActive}
-            aria-label={`${item.title} details`}
+            aria-label={`${item.title} ${t('landing.accordion.details_aria_suffix')}`}
             className={cn(
               'relative p-6 sm:p-8 rounded-[2.5rem] border bg-zinc-950 flex flex-col transition-all duration-700 cursor-pointer group overflow-hidden text-left min-h-11',
               isActive ? 'lg:col-span-2 border-zinc-700' : 'lg:col-span-1 border-zinc-800'
@@ -100,7 +102,7 @@ export function StickyAccordion({ items }: StickyAccordionProps) {
                     </p>
                     <div className="mt-8 pt-8 border-t border-white/5 flex items-center gap-4">
                       <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Secure Intelligence Node</span>
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">{t('landing.accordion.secure_node')}</span>
                     </div>
                   </motion.div>
                 ) : (
@@ -122,7 +124,7 @@ export function StickyAccordion({ items }: StickyAccordionProps) {
                   "font-mono text-xs uppercase tracking-[0.2em] transition-colors duration-500",
                   isActive ? 'text-emerald-500' : 'text-zinc-700'
                 )}>
-                  Reality_Check.0{i+1}
+                  {t('landing.accordion.reality_check_prefix')}{i + 1}
                 </span>
               </div>
             </div>

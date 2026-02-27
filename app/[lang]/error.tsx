@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, RefreshCw, Home } from '@/lib/icons';
 import Link from 'next/link';
+import { useLanguage } from '@/hooks/useLanguage';
 
 /**
  * Global Error Boundary
@@ -17,6 +18,7 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { language } = useLanguage();
   useEffect(() => {
     // Log error to monitoring service
     console.error('Global error caught:', error);
@@ -52,7 +54,7 @@ export default function GlobalError({
             Intentar de nuevo
           </Button>
 
-          <Link href="/" passHref className="w-full">
+          <Link href={`/${language}`} passHref className="w-full">
             <Button variant="outline" className="w-full">
               <Home className="h-4 w-4 mr-2" />
               Volver al inicio

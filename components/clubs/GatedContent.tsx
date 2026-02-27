@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
-import { Lock, ShieldAlert, Fingerprint, ArrowRight } from '@/lib/icons';
+import { Fingerprint, ArrowRight } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface Props {
   blurLevel?: 'medium' | 'heavy';
@@ -11,9 +14,13 @@ interface Props {
 
 export default function GatedContent({ 
   blurLevel = 'heavy', 
-  label = 'Restricted Access',
-  description = 'Sensitive club details are only visible to verified members.'
+  label,
+  description
 }: Props) {
+  const { language, t } = useLanguage();
+  const withLocale = (path: string) => `/${language}${path}`;
+  const computedLabel = label ?? t('clubs.gated.label');
+  const computedDescription = description ?? t('clubs.gated.description');
   const blurClass = blurLevel === 'heavy' ? 'blur-xl' : 'blur-lg';
   
   return (
@@ -40,26 +47,26 @@ export default function GatedContent({
                 <Fingerprint className="h-8 w-8 text-primary" />
               </div>
               
-              <h3 className="font-serif text-2xl text-white mb-3">{label}</h3>
+              <h3 className="font-serif text-2xl text-white mb-3">{computedLabel}</h3>
               <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-                {description}
+                {computedDescription}
               </p>
               
               <div className="grid gap-4">
                 <Button className="w-full py-6 bg-primary text-primary-foreground font-bold rounded-xl uppercase tracking-widest text-xs group/btn" asChild>
-                  <Link href="/register">
-                    <span>Initiate Verification</span>
+                  <Link href={withLocale('/account/register')}>
+                    <span>{t('clubs.gated.initiate_verification')}</span>
                     <ArrowRight className="h-4 w-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
                 
                 <div className="flex items-center justify-center gap-4 mt-2">
-                  <Link href="/login" className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
-                    Member Login
+                  <Link href={withLocale('/account/login')} className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
+                    {t('clubs.gated.member_login')}
                   </Link>
                   <div className="w-1 h-1 bg-emerald-500/15 rounded-full" />
-                  <Link href="/faq" className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
-                    Legal FAQ
+                  <Link href={withLocale('/editorial/legal')} className="text-xs font-bold text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">
+                    {t('clubs.gated.legal_faq')}
                   </Link>
                 </div>
               </div>

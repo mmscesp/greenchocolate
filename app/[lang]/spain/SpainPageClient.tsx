@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
 import { MapPin, Building2, ArrowRight, Globe, Cannabis, Star } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
@@ -24,6 +25,8 @@ interface SpainPageClientProps {
 }
 
 export default function SpainPageClient({ cities, popularCities, lang }: SpainPageClientProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-background relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12">
@@ -39,37 +42,36 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
               <Globe className="h-5 w-5 text-primary" />
             </div>
             <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
-              Country Hub
+              {t('spain.badge')}
             </Badge>
           </div>
           
           <H1 className="mb-6">
-            Cannabis Social Clubs in{' '}
+            {t('spain.title_prefix')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/80">
-              Spain
+              {t('spain.title_highlight')}
             </span>
           </H1>
-          
+
           <Lead className="max-w-3xl">
-            Explore city-by-city guidance, neighborhood context, and verified club listings.
-            Public pages stay educational; sensitive operational details remain gated.
+            {t('spain.subtitle')}
           </Lead>
 
           {/* Stats */}
           <div className="flex items-center gap-8 mt-8 pt-8 border-t border-border">
             <div className="text-center">
               <div className="text-3xl font-black text-foreground">{cities.length}</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Cities</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('spain.stats.cities')}</div>
             </div>
             <div className="w-px h-12 bg-border" />
             <div className="text-center">
               <div className="text-3xl font-black text-primary">100%</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Verified</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('spain.stats.verified')}</div>
             </div>
             <div className="w-px h-12 bg-border" />
             <div className="text-center">
               <div className="text-3xl font-black text-foreground">24/7</div>
-              <div className="text-sm text-muted-foreground uppercase tracking-wider">Support</div>
+              <div className="text-sm text-muted-foreground uppercase tracking-wider">{t('spain.stats.support')}</div>
             </div>
           </div>
         </motion.section>
@@ -84,7 +86,7 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
             <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
               <Star className="h-5 w-5 text-amber-500" />
             </div>
-            <H2>Popular Cities</H2>
+            <H2>{t('spain.popular_cities')}</H2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -109,16 +111,16 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
                   </H3>
                   
                   <Text variant="muted" size="sm" className="mb-4 line-clamp-2">
-                    {city.description || 'City-level trust and etiquette guidance.'}
+                    {city.description || t('spain.city_fallback_description')}
                   </Text>
                   
                   <div className="flex items-center justify-between text-sm">
                     <span className="inline-flex items-center gap-2 text-muted-foreground bg-muted px-3 py-1.5 rounded-full">
                       <Building2 className="h-4 w-4 text-primary" /> 
-                      <span className="font-bold text-foreground">{city.clubCount}</span> clubs
+                      <span className="font-bold text-foreground">{city.clubCount}</span> {t('spain.clubs')}
                     </span>
                     <span className="inline-flex items-center gap-1 text-primary font-bold group-hover:translate-x-1 transition-transform">
-                      Explore <ArrowRight className="h-4 w-4" />
+                      {t('spain.explore')} <ArrowRight className="h-4 w-4" />
                     </span>
                   </div>
 
@@ -131,7 +133,7 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <MapPin className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <Text variant="muted">No cities are available yet. Publish city records to activate this hub.</Text>
+                <Text variant="muted">{t('spain.empty')}</Text>
               </div>
             )}
           </div>
@@ -148,16 +150,16 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
             <div>
               <H3 className="mb-2 flex items-center gap-2">
                 <Cannabis className="h-5 w-5 text-primary" />
-                Need broad comparison first?
+                {t('spain.cta.title')}
               </H3>
-              <Text variant="muted">Use the full directory to compare verified clubs across cities.</Text>
+              <Text variant="muted">{t('spain.cta.subtitle')}</Text>
             </div>
             <Button 
               asChild
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-6 rounded-xl shadow-lg shadow-primary/25 transition-all duration-300"
             >
               <Link href={`/${lang}/clubs`} className="flex items-center gap-2">
-                Open Full Directory <ArrowRight className="h-4 w-4" />
+                {t('spain.cta.button')} <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>

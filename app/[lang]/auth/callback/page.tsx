@@ -9,6 +9,7 @@ import { Logo, LogoIcon } from '@/components/ui/logo';
 import { Loader2, CheckCircle, AlertCircle } from '@/lib/icons';
 import { createClient } from '@/lib/supabase/client';
 import { getLandingPageByRole } from '@/lib/auth-utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 /**
  * Auth Callback Page
@@ -16,10 +17,24 @@ import { getLandingPageByRole } from '@/lib/auth-utils';
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
+  const { language } = useLanguage();
+  const withLocale = (path: string) => `/${language}${path}`;
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [message, setMessage] = useState('Verifying your email...');
 
   useEffect(() => {
+    const localizeLandingPage = (path: string) => {
+      if (!path || path === '/') {
+        return `/${language}`;
+      }
+
+      if (path === `/${language}` || path.startsWith(`/${language}/`)) {
+        return path;
+      }
+
+      return `/${language}${path}`;
+    };
+
     const clearAuthHash = () => {
       if (!window.location.hash) {
         return;
@@ -61,7 +76,7 @@ export default function AuthCallbackPage() {
               .eq('authId', session.user.id)
               .single();
 
-            const landingPage = getLandingPageByRole(profile?.role || 'USER');
+            const landingPage = localizeLandingPage(getLandingPageByRole(profile?.role || 'USER'));
             
             // Redirect after a short delay
             setTimeout(() => {
@@ -91,7 +106,7 @@ export default function AuthCallbackPage() {
             
             // Get session to find user profile
             const { data: { session } } = await supabase.auth.getSession();
-            let landingPage = '/';
+            let landingPage = `/${language}`;
             
             if (session) {
               const { data: profile } = await supabase
@@ -99,7 +114,7 @@ export default function AuthCallbackPage() {
                 .select('role')
                 .eq('authId', session.user.id)
                 .single();
-              landingPage = getLandingPageByRole(profile?.role || 'USER');
+              landingPage = localizeLandingPage(getLandingPageByRole(profile?.role || 'USER'));
             }
             
             setTimeout(() => {
@@ -117,12 +132,12 @@ export default function AuthCallbackPage() {
     };
 
     handleAuthCallback();
-  }, [router]);
+  }, [language, router]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">
       <Card className="p-8 max-w-md w-full text-center shadow-xl">
-        <Link href="/" className="inline-flex items-center gap-2 mb-6">
+        <Link href={`/${language}`} className="inline-flex items-center gap-2 mb-6">
           <LogoIcon size="lg" />
           <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             SocialClubsMaps
@@ -172,12 +187,12 @@ export default function AuthCallbackPage() {
               {message}
             </p>
             <div className="space-y-3">
-              <Link href="/account/login">
+              <Link href={withLocale('/account/login')}>
                 <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
                   Sign In
                 </Button>
               </Link>
-              <Link href="/resend-confirmation">
+              <Link href={withLocale('/resend-confirmation')}>
                 <Button variant="outline" className="w-full">
                   Resend Verification Email
                 </Button>

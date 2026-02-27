@@ -6,46 +6,51 @@ import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { ArrowRight, AlertCircle, Info, ShieldCheck, Newspaper } from '@/lib/icons';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function WeeklyIntelligence() {
+  const { t } = useLanguage();
+
+  const intelligenceCards = [
+    {
+      title: t('landing.weekly.cards.legal.title'),
+      content: t('landing.weekly.cards.legal.content'),
+      icon: ShieldCheck,
+      color: 'text-blue-500',
+      bg: 'bg-blue-50',
+    },
+    {
+      title: t('landing.weekly.cards.safety.title'),
+      content: t('landing.weekly.cards.safety.content'),
+      icon: AlertCircle,
+      color: 'text-red-500',
+      bg: 'bg-red-50',
+    },
+    {
+      title: t('landing.weekly.cards.harm.title'),
+      content: t('landing.weekly.cards.harm.content'),
+      icon: Info,
+      color: 'text-amber-500',
+      bg: 'bg-amber-50',
+    },
+  ];
+
   return (
     <SectionWrapper>
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-16">
           <div>
-            <ConciergeLabel className="text-emerald-600 mb-4 block">Safety Briefing</ConciergeLabel>
-            <EditorialHeading size="xl">Barcelona Intelligence</EditorialHeading>
+            <ConciergeLabel className="text-emerald-600 mb-4 block">{t('landing.weekly.label')}</ConciergeLabel>
+            <EditorialHeading size="xl">{t('landing.weekly.title')}</EditorialHeading>
           </div>
           <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-emerald-50 border border-emerald-100">
             <Newspaper className="w-4 h-4 text-emerald-600" />
-            <ConciergeLabel size="xs" emphasis="high" className="text-emerald-700">Updated: Feb 24, 2026</ConciergeLabel>
+            <ConciergeLabel size="xs" emphasis="high" className="text-emerald-700">{t('landing.weekly.updated')}</ConciergeLabel>
           </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { 
-              title: 'Legal Framework', 
-              content: "Catalonia's regulatory landscape requires member discretion. Private associations operate under strict privacy rules that you should understand before visiting.", 
-              icon: ShieldCheck, 
-              color: 'text-blue-500',
-              bg: 'bg-blue-50'
-            },
-            { 
-              title: 'Safety Protocol', 
-              content: 'Stay safe by avoiding street promoters and fake storefronts. Legitimate associations never recruit in public spaces or near tourist landmarks.', 
-              icon: AlertCircle, 
-              color: 'text-red-500',
-              bg: 'bg-red-50'
-            },
-            { 
-              title: 'Harm Reduction', 
-              content: 'Responsible consumption starts with respecting the neighborhood. Keep noise levels low after 10 PM to honor local residential agreements.', 
-              icon: Info, 
-              color: 'text-amber-500',
-              bg: 'bg-amber-50'
-            },
-          ].map((item, i) => (
+          {intelligenceCards.map((item, i) => (
             <motion.div 
               key={i} 
               className="group relative p-8 rounded-[2rem] bg-card border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden cursor-pointer"
@@ -66,7 +71,7 @@ export function WeeklyIntelligence() {
               </div>
 
               <div className="mt-8 pt-8 border-t border-zinc-100 relative z-10 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-emerald-600 transition-colors duration-500">
-                Read Context
+                {t('landing.weekly.read_context')}
                 <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 text-emerald-600 group-hover:translate-x-1 transition-all duration-500" />
               </div>
 
@@ -79,4 +84,3 @@ export function WeeklyIntelligence() {
     </SectionWrapper>
   );
 }
-

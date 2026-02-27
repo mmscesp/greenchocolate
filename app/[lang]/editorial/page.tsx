@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 interface EditorialPageProps {
   params: Promise<{ lang: string }>;
@@ -11,6 +13,8 @@ interface EditorialPageProps {
 
 export default async function EditorialPage({ params }: EditorialPageProps) {
   const { lang } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
   const [featuredArticles, categories] = await Promise.all([
     getFeaturedArticles(3),
     getCategoriesWithCounts(),
@@ -19,32 +23,32 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
   const CATEGORIES = [
     {
       slug: 'legal',
-      title: 'Legal Framework',
-      description: 'Understanding Spain\'s cannabis laws, fines, and your rights as a visitor.',
+      title: t('editorial.categories.legal.title'),
+      description: t('editorial.categories.legal.description'),
       icon: Scale,
       color: 'bg-blue-50 text-blue-600 border-blue-200',
       articleCount: categories.find(c => c.name === 'Legal')?.count || 0,
     },
     {
       slug: 'etiquette',
-      title: 'Club Etiquette',
-      description: 'Do\'s and don\'ts inside private associations. Be a respectful guest.',
+      title: t('editorial.categories.etiquette.title'),
+      description: t('editorial.categories.etiquette.description'),
       icon: Heart,
       color: 'bg-green-50 text-green-600 border-green-200',
       articleCount: categories.find(c => c.name === 'Etiquette')?.count || 0,
     },
     {
       slug: 'safety',
-      title: 'Safety & Harm Reduction',
-      description: 'Stay safe. Edges, dosing, and emergency protocols.',
+      title: t('editorial.categories.safety.title'),
+      description: t('editorial.categories.safety.description'),
       icon: Shield,
       color: 'bg-amber-50 text-amber-600 border-amber-200',
       articleCount: categories.find(c => c.name === 'Harm Reduction')?.count || 0,
     },
     {
       slug: 'culture',
-      title: 'Culture & History',
-      description: 'The story behind Spain\'s cannabis social club movement.',
+      title: t('editorial.categories.culture.title'),
+      description: t('editorial.categories.culture.description'),
       icon: History,
       color: 'bg-purple-50 text-purple-600 border-purple-200',
       articleCount: categories.find(c => c.name === 'Culture')?.count || 0,
@@ -63,14 +67,13 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
           <div className="max-w-3xl mx-auto text-center">
             <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
-              Knowledge Vault
+              {t('editorial.badge')}
             </Eyebrow>
             <H1 size="xl" className="mb-6">
-              Navigate Spain's Cannabis Culture <span className="text-primary">Confidently</span>
+              {t('editorial.title_prefix')} <span className="text-primary">{t('editorial.title_highlight')}</span>
             </H1>
             <Lead className="mb-8">
-              Authoritative guides on legal compliance, club etiquette, and harm reduction.
-              Built by experts, verified by lawyers, designed for responsible adults.
+              {t('editorial.subtitle')}
             </Lead>
           </div>
         </div>
@@ -79,7 +82,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       {/* Category Grid */}
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <H2 className="mb-8">Browse by Topic</H2>
+          <H2 className="mb-8">{t('editorial.browse_by_topic')}</H2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {CATEGORIES.map((category) => (
               <Link
@@ -100,7 +103,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                   </Text>
                   <div className="flex items-center justify-between">
                     <Text size="sm" variant="muted">
-                      {category.articleCount} {category.articleCount === 1 ? 'article' : 'articles'}
+                      {category.articleCount} {category.articleCount === 1 ? t('editorial.article') : t('editorial.articles')}
                     </Text>
                     <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>
@@ -116,10 +119,10 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
         <section className="py-16 md:py-24 bg-emerald-500/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
-              <H2>Featured Articles</H2>
+              <H2>{t('editorial.featured_articles')}</H2>
               <Button variant="ghost" asChild>
                 <Link href={`/${lang}/editorial/legal`}>
-                  View all <ArrowRight className="ml-2 w-4 h-4" />
+                  {t('editorial.view_all')} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
             </div>
@@ -148,7 +151,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
-                        {article.readTime} min read
+                        {article.readTime} {t('editorial.min_read')}
                       </div>
                       {article.cityName && (
                         <span>{article.cityName}</span>
@@ -166,36 +169,36 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <H2 className="mb-6">Our Editorial Standards</H2>
+            <H2 className="mb-6">{t('editorial.standards.title')}</H2>
             <Text variant="muted" className="mb-10">
-              Every article in our Knowledge Vault is researched, fact-checked, and reviewed by legal experts and harm reduction specialists.
+              {t('editorial.standards.subtitle')}
             </Text>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Scale className="w-7 h-7 text-primary" />
                 </div>
-                <H4 className="mb-2">Legally Verified</H4>
+                <H4 className="mb-2">{t('editorial.standards.items.legal.title')}</H4>
                 <Text size="sm" variant="muted">
-                  Reviewed by legal professionals familiar with Spanish cannabis law
+                  {t('editorial.standards.items.legal.description')}
                 </Text>
               </div>
               <div className="text-center">
                 <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Shield className="w-7 h-7 text-primary" />
                 </div>
-                <H4 className="mb-2">Harm Reduction Focused</H4>
+                <H4 className="mb-2">{t('editorial.standards.items.harm_reduction.title')}</H4>
                 <Text size="sm" variant="muted">
-                  Prioritizing safety and responsible consumption above all
+                  {t('editorial.standards.items.harm_reduction.description')}
                 </Text>
               </div>
               <div className="text-center">
                 <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <BookOpen className="w-7 h-7 text-primary" />
                 </div>
-                <H4 className="mb-2">Regularly Updated</H4>
+                <H4 className="mb-2">{t('editorial.standards.items.updated.title')}</H4>
                 <Text size="sm" variant="muted">
-                  Laws change. We monitor updates and revise content accordingly
+                  {t('editorial.standards.items.updated.description')}
                 </Text>
               </div>
             </div>

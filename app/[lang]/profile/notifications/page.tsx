@@ -28,7 +28,7 @@ function notificationTypeLabel(type: string): string {
 }
 
 export default function ProfileNotificationsPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [markingId, setMarkingId] = useState<string | null>(null);
@@ -74,13 +74,13 @@ export default function ProfileNotificationsPage() {
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Notifications</h1>
-          <p className="text-muted-foreground mt-1">Track all membership and account alerts.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('notifications.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('notifications.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2 self-start">
           <Button variant="outline" onClick={loadNotifications} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('notifications.refresh')}
           </Button>
           <Button onClick={markAllAsRead} disabled={markingId === '__all__' || unreadIds.length === 0}>
             {markingId === '__all__' ? (
@@ -88,7 +88,7 @@ export default function ProfileNotificationsPage() {
             ) : (
               <CheckCheck className="h-4 w-4 mr-2" />
             )}
-            Mark all read
+            {t('notifications.mark_all_read')}
           </Button>
         </div>
       </div>
@@ -96,19 +96,19 @@ export default function ProfileNotificationsPage() {
       <div className="grid grid-cols-3 gap-4">
         <Card className="shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm font-medium text-muted-foreground">Total</p>
+            <p className="text-sm font-medium text-muted-foreground">{t('notifications.stats.total')}</p>
             <p className="text-2xl font-bold text-foreground mt-1">{notifications.length}</p>
           </CardContent>
         </Card>
         <Card className="shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm font-medium text-muted-foreground">Unread</p>
+            <p className="text-sm font-medium text-muted-foreground">{t('notifications.stats.unread')}</p>
             <p className="text-2xl font-bold text-foreground mt-1">{unreadIds.length}</p>
           </CardContent>
         </Card>
         <Card className="shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm font-medium text-muted-foreground">Read</p>
+            <p className="text-sm font-medium text-muted-foreground">{t('notifications.stats.read')}</p>
             <p className="text-2xl font-bold text-foreground mt-1">{notifications.length - unreadIds.length}</p>
           </CardContent>
         </Card>
@@ -124,10 +124,10 @@ export default function ProfileNotificationsPage() {
             <div className="bg-gray-100 p-6 rounded-full w-fit mx-auto mb-6">
               <Bell className="h-12 w-12 text-gray-500" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No notifications yet</h3>
-            <p className="text-gray-600 mb-6">You will see updates here once your applications change status.</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('notifications.empty.title')}</h3>
+            <p className="text-gray-600 mb-6">{t('notifications.empty.description')}</p>
             <Link href={`/${language}/profile/requests`}>
-              <Button>Open Requests</Button>
+              <Button>{t('notifications.empty.open_requests')}</Button>
             </Link>
           </CardContent>
         </Card>
@@ -140,7 +140,7 @@ export default function ProfileNotificationsPage() {
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h3 className="font-semibold text-gray-900">{item.title}</h3>
                     <Badge variant={item.isRead ? 'outline' : 'secondary'}>
-                      {item.isRead ? 'Read' : 'Unread'}
+                      {item.isRead ? t('notifications.stats.read') : t('notifications.stats.unread')}
                     </Badge>
                     <Badge variant="outline">{notificationTypeLabel(item.type)}</Badge>
                   </div>
@@ -154,7 +154,7 @@ export default function ProfileNotificationsPage() {
                   <Link href={`/${language}/profile/requests`}>
                     <Button variant="outline" size="sm">
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      Open requests
+                      {t('notifications.open_requests')}
                     </Button>
                   </Link>
                   {!item.isRead && (
@@ -168,7 +168,7 @@ export default function ProfileNotificationsPage() {
                       ) : (
                         <Check className="h-4 w-4 mr-2" />
                       )}
-                      Mark read
+                      {t('notifications.mark_read')}
                     </Button>
                   )}
                 </div>

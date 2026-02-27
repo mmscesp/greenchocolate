@@ -1,14 +1,11 @@
+'use client';
+
 import React from 'react';
 import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { CheckCircle2, ShieldCheck, Fingerprint, Lock } from '@/lib/icons';
-
-const VERIFY_ITEMS = [
-  { title: 'Legal Compliance Audit', desc: 'Verified non-profit status and registration.', iconName: 'ShieldCheck' },
-  { title: 'Privacy Protection', desc: 'GDPR-compliant handling of member data.', iconName: 'Lock' },
-  { title: 'Transparency Policy', desc: 'Clear communication of rules and statutes.', iconName: 'Fingerprint' },
-];
+import { useLanguage } from '@/hooks/useLanguage';
 
 const ICONS: Record<string, React.ElementType> = {
   ShieldCheck,
@@ -17,19 +14,41 @@ const ICONS: Record<string, React.ElementType> = {
 };
 
 export function VerificationStandard() {
+  const { t } = useLanguage();
+
+  const verifyItems = [
+    { title: t('landing.verification.items.legal.title'), desc: t('landing.verification.items.legal.desc'), iconName: 'ShieldCheck' },
+    { title: t('landing.verification.items.privacy.title'), desc: t('landing.verification.items.privacy.desc'), iconName: 'Lock' },
+    { title: t('landing.verification.items.transparency.title'), desc: t('landing.verification.items.transparency.desc'), iconName: 'Fingerprint' },
+  ];
+
+  const verifyList = [
+    t('landing.verification.list.verify.1'),
+    t('landing.verification.list.verify.2'),
+    t('landing.verification.list.verify.3'),
+    t('landing.verification.list.verify.4'),
+  ];
+
+  const cannotGuaranteeList = [
+    t('landing.verification.list.cannot.1'),
+    t('landing.verification.list.cannot.2'),
+    t('landing.verification.list.cannot.3'),
+  ];
+
   return (
     <SectionWrapper glass>
       <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-20 items-center">
         <div>
-          <ConciergeLabel className="text-emerald-600 mb-6">Our Standard</ConciergeLabel>
-          <EditorialHeading size="xl" className="mb-8">The Verification Moat</EditorialHeading>
+          <ConciergeLabel className="text-emerald-600 mb-6">{t('landing.verification.label')}</ConciergeLabel>
+          <EditorialHeading size="xl" className="mb-8">{t('landing.verification.title')}</EditorialHeading>
           <p className="text-lg text-zinc-500 leading-relaxed mb-12">
-            We don't just list clubs. Every partner undergoes a multi-point verification process 
-            to ensure they operate within the strict legal framework of Spanish private associations.
+            {t('landing.verification.description_line_1')}
+            {' '}
+            {t('landing.verification.description_line_2')}
           </p>
           
           <div className="space-y-8">
-            {VERIFY_ITEMS.map((item, i) => {
+            {verifyItems.map((item, i) => {
               const Icon = ICONS[item.iconName] || ShieldCheck;
               return (
                 <div key={i} className="flex gap-6">
@@ -55,13 +74,13 @@ export function VerificationStandard() {
           </div>
           
           <div className="relative z-10">
-            <ConciergeLabel emphasis="high" className="mb-12 block">Forensic Integrity</ConciergeLabel>
+            <ConciergeLabel emphasis="high" className="mb-12 block">{t('landing.verification.forensic_label')}</ConciergeLabel>
             
             <div className="space-y-8">
               <div className="pb-8 border-b border-white/10">
-                <h4 className="font-serif text-xl mb-4 text-emerald-400 font-bold">What We Verify</h4>
+                <h4 className="font-serif text-xl mb-4 text-emerald-400 font-bold">{t('landing.verification.what_we_verify')}</h4>
                 <ul className="space-y-3">
-                  {['Association Registry Status', 'Statutes & House Rules', 'Physical Premises Security', 'Safe Member Onboarding'].map(s => (
+                  {verifyList.map((s) => (
                     <li key={s} className="flex items-center gap-3 text-sm text-zinc-300">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {s}
                     </li>
@@ -70,9 +89,9 @@ export function VerificationStandard() {
               </div>
               
               <div>
-                <h4 className="font-serif text-xl mb-4 text-zinc-400 font-bold">What We Cannot Guarantee</h4>
+                <h4 className="font-serif text-xl mb-4 text-zinc-400 font-bold">{t('landing.verification.what_we_cannot_guarantee')}</h4>
                 <ul className="space-y-3 opacity-60">
-                  {['Third-party conduct', 'Future legal changes', 'Inventory availability'].map(s => (
+                  {cannotGuaranteeList.map((s) => (
                     <li key={s} className="flex items-center gap-3 text-sm text-zinc-400">
                       <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" /> {s}
                     </li>

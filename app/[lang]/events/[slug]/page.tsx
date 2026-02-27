@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Clock, ArrowLeft, ExternalLink } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface Event {
   id: string;
@@ -52,6 +53,7 @@ const mockEvents: Record<string, Event> = {
 };
 
 export default function EventPage({ params }: PageProps) {
+  const { t } = useLanguage();
   const [lang, setLang] = useState('en');
   const [slug, setSlug] = useState('');
   const [event, setEvent] = useState<Event | null>(null);
@@ -87,9 +89,9 @@ export default function EventPage({ params }: PageProps) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Event Not Found</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-4">{t('event_detail.not_found')}</h1>
           <Button variant="outline" asChild className="border-border text-muted-foreground hover:bg-muted hover:text-foreground">
-            <Link href={`/${lang}/events`}>Back to Events</Link>
+            <Link href={`/${lang}/events`}>{t('event_detail.back_to_events')}</Link>
           </Button>
         </div>
       </div>
@@ -114,7 +116,7 @@ export default function EventPage({ params }: PageProps) {
           <Button variant="outline" asChild className="border-border text-muted-foreground hover:bg-muted hover:text-foreground">
             <Link href={`/${lang}/events`}>
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Events
+              {t('event_detail.back_to_events')}
             </Link>
           </Button>
         </motion.div>
@@ -154,7 +156,7 @@ export default function EventPage({ params }: PageProps) {
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Date</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('event_detail.date')}</p>
                 <p className="text-foreground font-medium">
                   {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
                 </p>
@@ -166,7 +168,7 @@ export default function EventPage({ params }: PageProps) {
                 <MapPin className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider">Location</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider">{t('event_detail.location')}</p>
                 <p className="text-foreground font-medium">{event.location}</p>
               </div>
             </div>
@@ -182,7 +184,7 @@ export default function EventPage({ params }: PageProps) {
         >
           <div className="flex items-center gap-3 text-muted-foreground">
             <Clock className="h-5 w-5" />
-            <p className="text-sm">Always verify venue rules and local regulations before attending.</p>
+            <p className="text-sm">{t('event_detail.compliance_note')}</p>
           </div>
           <div className="flex gap-3">
             {event.eventUrl && (
@@ -191,7 +193,7 @@ export default function EventPage({ params }: PageProps) {
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 <a href={event.eventUrl} target="_blank" rel="noreferrer">
-                  Official Event Page
+                  {t('event_detail.official_page')}
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </a>
               </Button>

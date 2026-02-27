@@ -1,6 +1,7 @@
 'use client';
 
 import { ProfileSidebar, ProfileMobileNav } from '@/components/profile/ProfileSidebar';
+import { useLanguage } from '@/hooks/useLanguage';
 import { useState } from 'react';
 
 export default function ProfileLayout({
@@ -8,6 +9,7 @@ export default function ProfileLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useLanguage();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
@@ -21,7 +23,7 @@ export default function ProfileLayout({
         {/* Mobile Navigation Toggle - Only visible on small screens */}
         <div className="lg:hidden sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b px-4 py-3 flex items-center gap-3">
           <ProfileMobileNav />
-          <span className="font-semibold text-foreground">Menu</span>
+          <span className="font-semibold text-foreground">{t('common.menu')}</span>
         </div>
 
         {/* Page content */}

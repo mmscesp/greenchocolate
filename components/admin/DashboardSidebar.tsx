@@ -2,18 +2,20 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/hooks/useLanguage';
 import { cn } from '@/lib/utils';
-import { Logo, LogoIcon } from '@/components/ui/logo';
+import { LogoIcon } from '@/components/ui/logo';
 import { BarChart3, Users, Calendar, Settings, LogOut, Home } from '@/lib/icons';
 
 const navItems = [
-  { href: '/club-panel/dashboard', label: 'Overview', icon: BarChart3 },
-  { href: '/club-panel/dashboard/profile', label: 'Profile', icon: Settings },
-  { href: '/club-panel/dashboard/requests', label: 'Requests', icon: Users },
-  { href: '/club-panel/dashboard/events', label: 'Events', icon: Calendar },
+  { href: '/club-panel/dashboard', labelKey: 'club_panel.nav.overview', icon: BarChart3 },
+  { href: '/club-panel/dashboard/profile', labelKey: 'club_panel.nav.club_profile', icon: Settings },
+  { href: '/club-panel/dashboard/requests', labelKey: 'club_panel.nav.membership_requests', icon: Users },
+  { href: '/club-panel/dashboard/events', labelKey: 'club_panel.nav.events', icon: Calendar },
 ];
 
 export function DashboardSidebar() {
+  const { t } = useLanguage();
   const pathname = usePathname();
 
   return (
@@ -21,7 +23,7 @@ export function DashboardSidebar() {
       <div className="p-6 border-b">
         <Link href="/club-panel" className="flex items-center gap-2">
           <LogoIcon size="md" />
-          <span className="font-bold text-gray-900">Club Admin</span>
+          <span className="font-bold text-gray-900">{t('club_panel.common.club_admin_fallback')}</span>
         </Link>
       </div>
 
@@ -40,7 +42,7 @@ export function DashboardSidebar() {
                 )}
               >
                 <Icon className="h-5 w-5" />
-                <span>{item.label}</span>
+                <span>{t(item.labelKey)}</span>
               </Link>
             );
           })}
@@ -50,11 +52,11 @@ export function DashboardSidebar() {
       <div className="p-4 border-t space-y-2">
         <Link href="/" className="flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-muted rounded-lg transition-colors">
           <Home className="h-5 w-5" />
-          <span>Back to Site</span>
+          <span>{t('nav.back_to_site')}</span>
         </Link>
         <button className="w-full flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
           <LogOut className="h-5 w-5" />
-          <span>Logout</span>
+          <span>{t('nav.logout')}</span>
         </button>
       </div>
     </div>

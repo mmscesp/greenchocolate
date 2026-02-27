@@ -49,12 +49,12 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/95 backdrop-blur-md border-t border-border"
       >
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
-          <p className="text-foreground font-bold hidden sm:block">Want to visit a club safely?</p>
-          <p className="text-foreground font-bold sm:hidden">Visit safely?</p>
+          <p className="text-foreground font-bold hidden sm:block">{t('article.sticky_cta.desktop')}</p>
+          <p className="text-foreground font-bold sm:hidden">{t('article.sticky_cta.mobile')}</p>
           <div className="flex items-center gap-3">
             <Link href={`/${language}/clubs`}>
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full">
-                Browse Clubs <ArrowRight className="ml-2 h-4 w-4" />
+                {t('article.sticky_cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -104,11 +104,11 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
             <div className="flex items-center gap-8 text-muted-foreground font-bold text-xs uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
-                <span>{article.readTime} MIN READ</span>
+                <span>{article.readTime} {t('article.min_read')}</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-primary" />
-                <span>VERIFIED {new Date(article.publishedAt || '').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                <span>{t('article.verified')} {new Date(article.publishedAt || '').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
               </div>
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               {/* Expert Byline */}
               <ExpertByline 
                 name={article.authorName} 
-                role="Legal & Compliance Specialist" 
+                role={t('article.author_role')} 
                 date={new Date(article.publishedAt || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
               />
 
@@ -135,7 +135,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                 </div>
                 <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest mb-4">
                   <Info className="h-4 w-4" />
-                  Compliance Summary
+                  {t('article.compliance_summary')}
                 </div>
                 <p className="text-foreground font-medium leading-relaxed relative z-10">
                   {article.excerpt}
@@ -171,7 +171,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                 <div className="mt-4 flex justify-center">
                   <Link href={`/${language}/safety`}>
                     <Button className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold uppercase tracking-widest text-[10px] px-6">
-                      Open Safety Guide <ArrowRight className="ml-2 h-3 w-3" />
+                      {t('article.open_safety_guide')} <ArrowRight className="ml-2 h-3 w-3" />
                     </Button>
                   </Link>
                 </div>
@@ -181,25 +181,25 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               <div className="p-8 bg-card border rounded-3xl shadow-lg shadow-primary/5 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <h4 className="text-xs font-bold uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
-                  <Shield className="h-4 w-4" /> Vetting Process
+                  <Shield className="h-4 w-4" /> {t('article.vetting_process')}
                 </h4>
                 <ul className="space-y-4 text-xs font-medium text-muted-foreground">
                   <li className="flex items-start gap-3">
                     <div className="h-1.5 w-1.5 bg-primary rounded-full mt-1.5 shrink-0" />
-                    Association License Verification
+                    {t('article.vetting_items.license')}
                   </li>
                   <li className="flex items-start gap-3">
                     <div className="h-1.5 w-1.5 bg-primary rounded-full mt-1.5 shrink-0" />
-                    Physical Site Safety Audit
+                    {t('article.vetting_items.audit')}
                   </li>
                   <li className="flex items-start gap-3">
                     <div className="h-1.5 w-1.5 bg-primary rounded-full mt-1.5 shrink-0" />
-                    House Rules & Etiquette Review
+                    {t('article.vetting_items.house_rules')}
                   </li>
                 </ul>
                 <Link href={`/${language}/mission`}>
                   <Button variant="link" className="mt-8 p-0 text-primary font-bold text-[10px] uppercase tracking-widest hover:text-primary/80 transition-colors">
-                    Learn about vetting <ExternalLink className="h-3 w-3 ml-2" />
+                    {t('article.learn_about_vetting')} <ExternalLink className="h-3 w-3 ml-2" />
                   </Button>
                 </Link>
               </div>

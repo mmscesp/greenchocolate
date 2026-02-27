@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Scale, AlertTriangle, Clock, ArrowRight } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface LegalPageProps {
   params: Promise<{ lang: string }>;
@@ -14,39 +15,40 @@ interface LegalPageProps {
 
 const legalGuides = [
   {
-    title: 'Is Weed Legal in Barcelona in 2026?',
+    titleKey: 'editorial.legal.guides.1.title',
     slug: 'is-weed-legal-barcelona-2026',
-    excerpt: 'The real rules, fines, and grey areas explained. What every visitor needs to know before arriving.',
+    excerptKey: 'editorial.legal.guides.1.excerpt',
     readTime: 8,
     featured: true,
   },
   {
-    title: 'Understanding Public Consumption Laws',
+    titleKey: 'editorial.legal.guides.2.title',
     slug: 'public-consumption-laws',
-    excerpt: 'Why private clubs exist and what happens if you consume in public spaces.',
+    excerptKey: 'editorial.legal.guides.2.excerpt',
     readTime: 6,
   },
   {
-    title: 'Your Rights During Police Interaction',
+    titleKey: 'editorial.legal.guides.3.title',
     slug: 'your-rights-police-interaction',
-    excerpt: 'What to do if approached by authorities. Know your rights and stay compliant.',
+    excerptKey: 'editorial.legal.guides.3.excerpt',
     readTime: 5,
   },
   {
-    title: 'The Grey Zone Explained',
+    titleKey: 'editorial.legal.guides.4.title',
     slug: 'grey-zone-explained',
-    excerpt: 'Spain\'s unique legal framework and what it means for club members.',
+    excerptKey: 'editorial.legal.guides.4.excerpt',
     readTime: 7,
   },
   {
-    title: 'Fines and Penalties: A Complete Guide',
+    titleKey: 'editorial.legal.guides.5.title',
     slug: 'fines-penalties-complete-guide',
-    excerpt: 'From €601 to more serious consequences. Understanding the enforcement landscape.',
+    excerptKey: 'editorial.legal.guides.5.excerpt',
     readTime: 10,
   },
 ];
 
 export default function LegalPage({ params }: LegalPageProps) {
+  const { t } = useLanguage();
   const [lang, setLang] = useState('en');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -93,7 +95,7 @@ export default function LegalPage({ params }: LegalPageProps) {
             <Button variant="outline" asChild className="mb-6 border-border text-muted-foreground hover:bg-muted hover:text-foreground">
               <Link href={`/${lang}/editorial`}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
-                Back to Knowledge Vault
+                {t('editorial.legal.back_to_vault')}
               </Link>
             </Button>
           </motion.div>
@@ -106,7 +108,7 @@ export default function LegalPage({ params }: LegalPageProps) {
               className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"
             >
               <Scale className="w-4 h-4" />
-              <Label size="sm">Legal Framework</Label>
+              <Label size="sm">{t('editorial.legal.badge')}</Label>
             </motion.div>
             
             <motion.div
@@ -115,9 +117,9 @@ export default function LegalPage({ params }: LegalPageProps) {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <H1 className="mb-6">
-                Understanding Spain&apos;s{' '}
+                {t('editorial.legal.title_prefix')}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                  Cannabis Laws
+                  {t('editorial.legal.title_highlight')}
                 </span>
               </H1>
             </motion.div>
@@ -128,9 +130,7 @@ export default function LegalPage({ params }: LegalPageProps) {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <Lead>
-                Spain&apos;s relationship with cannabis is nuanced. Unlike Amsterdam&apos;s coffee shops,
-                Spain operates under a private association model. Learn what this means for you,
-                your rights, and how to stay compliant.
+                {t('editorial.legal.lead')}
               </Lead>
             </motion.div>
           </div>
@@ -151,10 +151,9 @@ export default function LegalPage({ params }: LegalPageProps) {
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2">Public Consumption is Illegal</H4>
+                    <H4 className="mb-2">{t('editorial.legal.key_point_public.title')}</H4>
                     <Text size="sm" variant="muted">
-                      Consuming in public spaces can result in fines starting at €601.
-                      Always consume inside the private club premises only.
+                      {t('editorial.legal.key_point_public.description')}
                     </Text>
                   </div>
                 </div>
@@ -163,10 +162,9 @@ export default function LegalPage({ params }: LegalPageProps) {
                 <div className="flex items-start gap-3">
                   <Scale className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2">Private Associations are Legal</H4>
+                    <H4 className="mb-2">{t('editorial.legal.key_point_private.title')}</H4>
                     <Text size="sm" variant="muted">
-                      Clubs operate as private, non-profit associations. Members can
-                      consume on premises when following house rules.
+                      {t('editorial.legal.key_point_private.description')}
                     </Text>
                   </div>
                 </div>
@@ -181,7 +179,7 @@ export default function LegalPage({ params }: LegalPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <H2 className="mb-8">
-              Legal Guides & Resources
+              {t('editorial.legal.guides_title')}
             </H2>
             
             <div className="grid gap-4">
@@ -201,19 +199,19 @@ export default function LegalPage({ params }: LegalPageProps) {
                         <div className="flex items-center gap-3 mb-2">
                           {article.featured && (
                             <Badge className="bg-primary/10 text-primary border-primary/20">
-                              Featured
+                              {t('editorial.legal.featured')}
                             </Badge>
                           )}
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Clock className="w-3.5 h-3.5" />
-                            {article.readTime} min read
+                            {article.readTime} {t('editorial.min_read')}
                           </div>
                         </div>
                         <H3 className="mb-2 group-hover:text-primary transition-colors">
-                          {article.title}
+                          {t(article.titleKey)}
                         </H3>
                         <Text variant="muted">
-                          {article.excerpt}
+                          {t(article.excerptKey)}
                         </Text>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
@@ -236,9 +234,8 @@ export default function LegalPage({ params }: LegalPageProps) {
             transition={{ duration: 0.6, delay: 0.8 }}
           >
             <Text size="sm" variant="muted" className="text-center">
-              <strong className="text-foreground">Disclaimer:</strong> This information is for educational purposes only
-              and does not constitute legal advice. Laws may change. Consult with a qualified
-              legal professional for advice specific to your situation.
+              <strong className="text-foreground">{t('editorial.legal.disclaimer_prefix')}</strong>{' '}
+              {t('editorial.legal.disclaimer_body')}
             </Text>
           </motion.div>
         </div>

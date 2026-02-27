@@ -45,6 +45,8 @@ import { PulsingStatusDot } from '@/components/landing/editorial-concierge/inter
 import { PREMIUM_SPRING, FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-concierge/motion/config';
 
 function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAudit?: string }) {
+  const { t } = useLanguage();
+
   return (
     <div className="sticky top-16 md:top-20 z-50 w-full min-h-12 bg-black/80 backdrop-blur-md border-b border-white/10 flex items-center py-1">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-3">
@@ -56,20 +58,20 @@ function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAu
               <div className="w-2 h-2 rounded-full bg-zinc-500" />
             )}
             <ConciergeLabel size="xs" emphasis="high" className="truncate">
-              Status: {isVerified ? 'Verified' : 'Pending Audit'}
+              {t('club_profile.trust_strip.status')}: {isVerified ? t('club_profile.trust_strip.verified') : t('club_profile.trust_strip.pending_audit')}
             </ConciergeLabel>
           </div>
           {isVerified && (
             <div className="hidden md:flex items-center gap-4 border-l border-white/10 pl-6">
-              <ConciergeLabel size="xs">Last Audit: {lastAudit || 'Feb 2026'}</ConciergeLabel>
-              <ConciergeLabel size="xs" className="text-emerald-500/80">• Education First</ConciergeLabel>
-              <ConciergeLabel size="xs" className="text-emerald-500/80">• Privacy Always</ConciergeLabel>
+              <ConciergeLabel size="xs">{t('club_profile.trust_strip.last_audit')}: {lastAudit || t('club_profile.trust_strip.last_audit_fallback')}</ConciergeLabel>
+              <ConciergeLabel size="xs" className="text-emerald-500/80">• {t('club_profile.trust_strip.education_first')}</ConciergeLabel>
+              <ConciergeLabel size="xs" className="text-emerald-500/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
             </div>
           )}
         </div>
-        
+
         <div className="hidden sm:flex items-center gap-2 text-zinc-500">
-          <ConciergeLabel size="xs">We do not broker access</ConciergeLabel>
+          <ConciergeLabel size="xs">{t('club_profile.trust_strip.no_brokering')}</ConciergeLabel>
         </div>
       </div>
     </div>
@@ -112,7 +114,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         eligibilityAnswers: {},
       });
 
-      setFormState({ success: result.success, message: result.error ?? 'Application submitted successfully.' });
+      setFormState({ success: result.success, message: result.error ?? t('club_profile.form.success') });
 
       if (result.success) {
         setTimeout(() => {
@@ -124,7 +126,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
       console.error('Submit error:', error);
       setFormState({
         success: false,
-        message: 'An unexpected error occurred. Please try again.',
+        message: t('club_profile.form.error_unexpected'),
       });
     } finally {
       setIsSubmitting(false);
@@ -261,7 +263,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
                 <Sparkles className="h-5 w-5 text-emerald-600" />
               </div>
-              <EditorialHeading size="md" className="text-zinc-900">The Experience</EditorialHeading>
+              <EditorialHeading size="md" className="text-zinc-900">{t('club_profile.experience')}</EditorialHeading>
             </div>
             <p className="text-zinc-600 leading-relaxed text-lg font-serif">
               {club.description}
@@ -282,7 +284,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             <div className="relative bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm overflow-hidden group">
               <div className="flex items-center gap-3 mb-6 relative z-10">
                 <MapPin className="h-5 w-5 text-zinc-400" />
-                <h3 className="font-bold text-zinc-900">Location</h3>
+                <h3 className="font-bold text-zinc-900">{t('club_profile.location')}</h3>
               </div>
               
               {/* Blurred Content Background */}
@@ -300,9 +302,9 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <div className="w-12 h-12 bg-card rounded-full flex items-center justify-center mb-4 shadow-sm border border-zinc-100">
                   <Lock className="h-5 w-5 text-zinc-400" />
                 </div>
-                <h4 className="font-bold text-zinc-900 mb-2">Private Location</h4>
+                <h4 className="font-bold text-zinc-900 mb-2">{t('club_profile.private_location')}</h4>
                 <p className="text-zinc-500 text-sm mb-6 max-w-[200px] leading-relaxed">
-                  Address revealed after membership approval.
+                  {t('club_profile.private_location_description')}
                 </p>
                 
                 <div className="flex flex-col gap-2 w-full max-w-[240px]">
@@ -311,12 +313,12 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                       onClick={() => setShowPreRegistrationModal(true)}
                       className="w-full bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-500/20 font-bold"
                     >
-                      Pre-register with Club
+                      {t('club_profile.pre_register_with_club')}
                     </Button>
                   )}
                   <Link href={`/${language}/app`} className="w-full">
                     <Button variant="outline" className="w-full bg-card border-zinc-200 hover:bg-muted text-zinc-900 rounded-xl">
-                      Register on App
+                      {t('club_profile.register_on_app')}
                     </Button>
                   </Link>
                 </div>
@@ -327,7 +329,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             <div className="bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm">
               <div className="flex items-center gap-3 mb-6">
                 <Clock className="h-5 w-5 text-zinc-400" />
-                <h3 className="font-bold text-zinc-900">Opening Hours</h3>
+                <h3 className="font-bold text-zinc-900">{t('club_profile.opening_hours')}</h3>
               </div>
               <div className="space-y-3">
                 {Object.entries(club.openingHours as Record<string, string>).map(([day, hours]) => (
@@ -345,18 +347,18 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <Cannabis className="h-32 w-32" />
               </div>
               <div className="relative z-10">
-                <h3 className="font-bold text-zinc-400 mb-6">Club Details</h3>
+                <h3 className="font-bold text-zinc-400 mb-6">{t('club_profile.club_details')}</h3>
                 <div className="space-y-4">
                   <div>
-                    <div className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Capacity</div>
-                    <div className="text-2xl font-serif">{club.capacity} Members</div>
+                    <div className="text-zinc-500 text-xs uppercase tracking-wider mb-1">{t('club_profile.capacity')}</div>
+                    <div className="text-2xl font-serif">{club.capacity} {t('club_profile.members')}</div>
                   </div>
                   <div>
-                    <div className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Founded</div>
+                    <div className="text-zinc-500 text-xs uppercase tracking-wider mb-1">{t('club_profile.founded')}</div>
                     <div className="text-2xl font-serif">{club.foundedYear}</div>
                   </div>
                   <div>
-                    <div className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Price Range</div>
+                    <div className="text-zinc-500 text-xs uppercase tracking-wider mb-1">{t('club_profile.price_range')}</div>
                     <div className="text-emerald-400 font-mono">{club.priceRange}</div>
                   </div>
                 </div>
@@ -368,7 +370,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           <div className="md:col-span-3 bg-card rounded-[2rem] p-6 sm:p-8 border border-zinc-200 shadow-sm mt-6">
             <div className="flex items-center gap-3 mb-6">
               <Shield className="h-5 w-5 text-zinc-400" />
-              <EditorialHeading size="md" className="text-zinc-900">Services & Amenities</EditorialHeading>
+              <EditorialHeading size="md" className="text-zinc-900">{t('club_profile.services')}</EditorialHeading>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {club.amenities.map((amenity, i) => (
@@ -384,9 +386,9 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           <div className="md:col-span-3 mt-12 border-t border-zinc-200 pt-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div>
-                <EditorialHeading size="lg" className="mb-6">Get in Touch</EditorialHeading>
+                <EditorialHeading size="lg" className="mb-6">{t('club_profile.get_in_touch')}</EditorialHeading>
                 <p className="text-zinc-500 mb-8 max-w-md">
-                  Have questions before applying? Contact the club directly. Please respect their privacy and do not visit without an appointment.
+                  {t('club_profile.contact_description')}
                 </p>
                 <div className="space-y-4">
                   {club.website && (
@@ -401,20 +403,20 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center">
                       <Mail className="h-5 w-5" />
                     </div>
-                    <span>{club.contactEmail || 'Email hidden'}</span>
+                    <span>{club.contactEmail || t('club_profile.email_hidden')}</span>
                   </div>
                 </div>
               </div>
               
               <div className="bg-zinc-100 rounded-[2rem] p-6 sm:p-8 flex flex-col justify-center items-center text-center">
-                <ConciergeLabel className="mb-4 text-zinc-500">Ready to join?</ConciergeLabel>
-                <EditorialHeading size="md" className="mb-6">Apply for Membership</EditorialHeading>
+                <ConciergeLabel className="mb-4 text-zinc-500">{t('club_profile.ready_to_join')}</ConciergeLabel>
+                <EditorialHeading size="md" className="mb-6">{t('club_profile.apply_for_membership')}</EditorialHeading>
                 <Button
                   size="lg"
                   onClick={() => setShowPreRegistrationModal(true)}
                   className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-full min-h-11 px-6 sm:px-8"
                 >
-                  Start Application
+                  {t('club_profile.start_application')}
                 </Button>
               </div>
             </div>
@@ -443,7 +445,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-zinc-900" />
                 <Image src={club.images[0]} alt="Header" fill className="object-cover opacity-40" />
                 <div className="absolute bottom-0 left-0 p-6">
-                  <ConciergeLabel className="text-emerald-400 mb-2">Membership Application</ConciergeLabel>
+                  <ConciergeLabel className="text-emerald-400 mb-2">{t('club_profile.membership_application')}</ConciergeLabel>
                   <h3 className="text-2xl font-serif text-white">{club.name}</h3>
                 </div>
                 <button
@@ -479,7 +481,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
 
                   <div>
                     <label className="block text-sm font-medium text-zinc-400 mb-2">
-                      Personal Message <span className="text-emerald-500">*</span>
+                      {t('club_profile.form.personal_message')} <span className="text-emerald-500">*</span>
                     </label>
                     <textarea
                       name="message"
@@ -489,7 +491,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                       className="w-full p-4 bg-zinc-950 border border-zinc-800 rounded-xl text-white placeholder-zinc-600 focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all outline-none resize-none"
                     />
                     <p className="mt-2 text-xs text-zinc-500">
-                      Introduce yourself and explain why you want to join.
+                      {t('club_profile.form.personal_message_help')}
                     </p>
                   </div>
 

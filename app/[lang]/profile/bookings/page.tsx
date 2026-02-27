@@ -103,28 +103,28 @@ export default function BookingsPage() {
         return (
           <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
             <Check className="h-3 w-3 mr-1" />
-            Confirmed
+            {t('bookings.status.confirmed')}
           </Badge>
         );
       case 'pending':
         return (
           <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20">
             <Clock className="h-3 w-3 mr-1" />
-            Pending
+            {t('bookings.status.pending')}
           </Badge>
         );
       case 'cancelled':
         return (
           <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20">
             <X className="h-3 w-3 mr-1" />
-            Cancelled
+            {t('bookings.status.cancelled')}
           </Badge>
         );
       case 'completed':
         return (
           <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
             <Check className="h-3 w-3 mr-1" />
-            Completed
+            {t('bookings.status.completed')}
           </Badge>
         );
       default:
@@ -134,9 +134,9 @@ export default function BookingsPage() {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'visit': return 'Club Visit';
-      case 'event': return 'Event';
-      case 'tour': return 'Guided Tour';
+      case 'visit': return t('bookings.type.visit');
+      case 'event': return t('bookings.type.event');
+      case 'tour': return t('bookings.type.tour');
       default: return type;
     }
   };
@@ -148,13 +148,13 @@ export default function BookingsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('user.bookings')}</h1>
           <p className="text-muted-foreground mt-1">
-            Manage your club visits and reservations
+            {t('bookings.subtitle')}
           </p>
         </div>
         <Link href={`/${language}/clubs`}>
           <Button className="self-start gap-2">
             <CalendarDays className="h-4 w-4" />
-            Book New Visit
+            {t('bookings.book_new_visit')}
           </Button>
         </Link>
       </div>
@@ -164,7 +164,7 @@ export default function BookingsPage() {
         <Card className="shadow-sm">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Bookings</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.total')}</p>
               <p className="text-2xl font-bold text-foreground">{bookings.length}</p>
             </div>
             <div className="bg-primary/10 p-3 rounded-xl">
@@ -176,7 +176,7 @@ export default function BookingsPage() {
         <Card className="shadow-sm">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Upcoming</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.upcoming')}</p>
               <p className="text-2xl font-bold text-foreground">{upcomingCount}</p>
             </div>
             <div className="bg-green-500/10 p-3 rounded-xl">
@@ -188,7 +188,7 @@ export default function BookingsPage() {
         <Card className="shadow-sm">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Completed</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.completed')}</p>
               <p className="text-2xl font-bold text-foreground">
                 {bookings.filter(b => b.status === 'completed').length}
               </p>
@@ -202,7 +202,7 @@ export default function BookingsPage() {
         <Card className="shadow-sm">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Pending</p>
+              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.pending')}</p>
               <p className="text-2xl font-bold text-foreground">
                 {bookings.filter(b => b.status === 'pending').length}
               </p>
@@ -216,7 +216,7 @@ export default function BookingsPage() {
 
       {/* Filter Tabs */}
       <div className="flex gap-2">
-        {(['all', 'upcoming', 'past'] as const).map((filter) => (
+            {(['all', 'upcoming', 'past'] as const).map((filter) => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
@@ -226,7 +226,7 @@ export default function BookingsPage() {
                 : 'bg-muted text-muted-foreground hover:bg-muted/80'
             }`}
           >
-            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+            {t(`bookings.filters.${filter}`)}
           </button>
         ))}
       </div>
@@ -275,7 +275,7 @@ export default function BookingsPage() {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Users className="h-4 w-4 text-primary/70" />
-                        <span>{booking.guests} guests</span>
+                        <span>{booking.guests} {t('bookings.guests')}</span>
                       </div>
                     </div>
                   </div>
@@ -285,12 +285,12 @@ export default function BookingsPage() {
                     <Link href={`/${language}/clubs/${booking.clubId}`}>
                       <Button variant="outline" size="sm" className="gap-2">
                         <ExternalLink className="h-4 w-4" />
-                        View Club
+                        {t('bookings.view_club')}
                       </Button>
                     </Link>
                     {booking.status === 'confirmed' && (
                       <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                        Cancel
+                        {t('bookings.cancel')}
                       </Button>
                     )}
                   </div>
@@ -306,20 +306,20 @@ export default function BookingsPage() {
               <Calendar className="h-10 w-10 text-muted-foreground/50" />
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-2">
-              No bookings found
+              {t('bookings.empty.title')}
             </h3>
             <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
               {activeFilter === 'upcoming' 
-                ? "You don't have any upcoming bookings. Start exploring clubs!"
+                ? t('bookings.empty.upcoming')
                 : activeFilter === 'past'
-                ? "No past bookings yet."
-                : "Start booking visits to cannabis social clubs."
+                ? t('bookings.empty.past')
+                : t('bookings.empty.all')
               }
             </p>
             <Link href={`/${language}/clubs`}>
               <Button className="gap-2">
                 <Search className="h-4 w-4" />
-                Explore Clubs
+                {t('bookings.explore_clubs')}
               </Button>
             </Link>
           </CardContent>

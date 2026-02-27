@@ -8,22 +8,25 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Clock, User } from '@/lib/icons';
 import { type ArticleCard } from '@/app/actions/articles';
 import { trackEvent } from '@/lib/analytics';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface FeaturedVaultProps {
   articles: ArticleCard[];
 }
 
 export function FeaturedVault({ articles }: FeaturedVaultProps) {
+  const { t } = useLanguage();
+
   const fallbackArticles: ArticleCard[] = [
     {
       id: '1',
-      title: 'Navigating the 2026 Spanish Regulatory Landscape',
+      title: t('landing.featured.fallback.1.title'),
       slug: 'is-weed-legal-barcelona-2026',
-      excerpt: 'A detailed analysis of consumption regulations, administrative protocols, and member protections under current law.',
-      category: 'Legal Framework',
+      excerpt: t('landing.featured.fallback.1.excerpt'),
+      category: t('landing.featured.fallback.1.category'),
       tags: ['legal', 'spain'],
       readTime: 12,
-      authorName: 'Editorial Team',
+      authorName: t('landing.featured.author_fallback'),
       authorAvatar: null,
       heroImage: null,
       publishedAt: null,
@@ -32,13 +35,13 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
     },
     {
       id: '2',
-      title: 'Health Protocols & Responsible Consumption',
+      title: t('landing.featured.fallback.2.title'),
       slug: 'safety-and-harm-reduction-basics',
-      excerpt: 'Evidence-based guidelines on dosage, interaction risks, and maintaining a safe environment within private associations.',
-      category: 'Harm Reduction',
+      excerpt: t('landing.featured.fallback.2.excerpt'),
+      category: t('landing.featured.fallback.2.category'),
       tags: ['safety', 'harm-reduction'],
       readTime: 10,
-      authorName: 'Editorial Team',
+      authorName: t('landing.featured.author_fallback'),
       authorAvatar: null,
       heroImage: null,
       publishedAt: null,
@@ -47,13 +50,13 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
     },
     {
       id: '3',
-      title: 'Data Protection & Member Anonymity',
+      title: t('landing.featured.fallback.3.title'),
       slug: 'privacy-and-member-anonymity',
-      excerpt: 'Understanding how social clubs manage sensitive information and your rights regarding personal data in the digital age.',
-      category: 'Privacy',
+      excerpt: t('landing.featured.fallback.3.excerpt'),
+      category: t('landing.featured.fallback.3.category'),
       tags: ['privacy', 'trust'],
       readTime: 7,
-      authorName: 'Editorial Team',
+      authorName: t('landing.featured.author_fallback'),
       authorAvatar: null,
       heroImage: null,
       publishedAt: null,
@@ -67,8 +70,8 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
     <SectionWrapper glass>
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         <div className="max-w-2xl">
-          <ConciergeLabel className="mb-4 text-emerald-600">Knowledge Base</ConciergeLabel>
-          <EditorialHeading size="xl">Safety, Law & Harm Reduction</EditorialHeading>
+          <ConciergeLabel className="mb-4 text-emerald-600">{t('landing.featured.label')}</ConciergeLabel>
+          <EditorialHeading size="xl">{t('landing.featured.title')}</EditorialHeading>
         </div>
         <Link
           href="/editorial"
@@ -79,7 +82,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
             });
           }}
         >
-          Explore Archive <ArrowRight className="w-4 h-4" />
+          {t('landing.featured.explore_archive')} <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
 
@@ -119,7 +122,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
                 <div className="flex items-center gap-4 text-zinc-400">
                   <div className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
-                    <ConciergeLabel size="xs" emphasis="low">{article.readTime} min read</ConciergeLabel>
+                    <ConciergeLabel size="xs" emphasis="low">{article.readTime} {t('editorial.min_read')}</ConciergeLabel>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5" />
@@ -135,7 +138,7 @@ export function FeaturedVault({ articles }: FeaturedVaultProps) {
                 </p>
                 
                 <div className="pt-4 mt-4 border-t border-zinc-100 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-emerald-600 transition-colors duration-500">
-                  Examine Report
+                  {t('landing.featured.examine_report')}
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 text-emerald-600 group-hover:translate-x-1 transition-all duration-500" />
                 </div>
               </div>

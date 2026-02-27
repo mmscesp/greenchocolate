@@ -8,28 +8,30 @@ import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { Plus } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
-
-const FAQS = [
-  { q: "What is a Cannabis Social Club?", a: "A private, non-profit association where members consume cannabis in a social setting. They are not shops; they are member-only establishments with strict protocols." },
-  { q: "Is cannabis legal in Spain?", a: "Personal use and private cultivation are decriminalized. Public consumption remains illegal and subject to administrative fines. CSCs operate in a legal grey zone." },
-  { q: "Can I be rejected from a club?", a: "Yes. Private associations have their own membership criteria and are not obligated to accept new members. Many clubs have closed lists." },
-  { q: "What are the public consumption risks?", a: "Fines range from €601 to €30,000 under Organic Law 4/2015. Confiscation of product is standard. Discretion is essential." },
-  { q: "Why does privacy matter so much?", a: "The legal protection of CSCs relies on their private, non-promotional nature. Respecting members' privacy and neighbor silence is mandatory." },
-];
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function EditorialFAQ() {
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const faqs = [
+    { q: t('landing.faq.items.1.q'), a: t('landing.faq.items.1.a') },
+    { q: t('landing.faq.items.2.q'), a: t('landing.faq.items.2.a') },
+    { q: t('landing.faq.items.3.q'), a: t('landing.faq.items.3.a') },
+    { q: t('landing.faq.items.4.q'), a: t('landing.faq.items.4.a') },
+    { q: t('landing.faq.items.5.q'), a: t('landing.faq.items.5.a') },
+  ];
 
   return (
     <SectionWrapper glass>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
-          <ConciergeLabel className="text-emerald-600 mb-6 block">Intelligence</ConciergeLabel>
-          <EditorialHeading size="xl">Everything You Need to Know</EditorialHeading>
+          <ConciergeLabel className="text-emerald-600 mb-6 block">{t('landing.faq.label')}</ConciergeLabel>
+          <EditorialHeading size="xl">{t('landing.faq.title')}</EditorialHeading>
         </div>
 
         <div className="space-y-4">
-          {FAQS.map((faq, i) => (
+          {faqs.map((faq, i) => (
             <div key={i} className="group border-b border-zinc-200 py-8">
               <button
                 type="button"
@@ -64,8 +66,8 @@ export function EditorialFAQ() {
         </div>
         
         <div className="mt-20 p-6 sm:p-8 md:p-12 rounded-[2.5rem] bg-emerald-50 border border-emerald-100 text-center">
-          <EditorialHeading size="sm" className="text-emerald-900 mb-4">Still have questions?</EditorialHeading>
-          <p className="text-emerald-700 mb-8">Subscribe to the Intelligence Briefing or download the Safety Kit for deeper intelligence.</p>
+          <EditorialHeading size="sm" className="text-emerald-900 mb-4">{t('landing.faq.cta_title')}</EditorialHeading>
+          <p className="text-emerald-700 mb-8">{t('landing.faq.cta_description')}</p>
           <Link
             href="/safety"
             className="inline-flex min-h-11 items-center justify-center bg-emerald-600 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-emerald-700 transition-colors"
@@ -75,7 +77,7 @@ export function EditorialFAQ() {
               });
             }}
           >
-            Get the Safety Kit
+            {t('landing.faq.cta_button')}
           </Link>
         </div>
       </div>

@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { PREMIUM_SPRING } from '../motion/config';
-import { AlertTriangle, MapPin, Users, Building2, Dumbbell } from '@/lib/icons';
+import { AlertTriangle, MapPin, Building2 } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface FineScenario {
   amount: string;
@@ -17,55 +18,55 @@ interface FineScenario {
   scenarios: string[];
 }
 
-const LEVELS: FineScenario[] = [
-  { 
-    amount: '€601', 
-    label: 'Minor', 
-    risk: 'Low', 
-    color: 'text-emerald-400',
-    bgColor: 'bg-emerald-500/10',
-    borderColor: 'border-emerald-500/30',
-    icon: AlertTriangle,
-    scenarios: [
-      'Carrying outside the association premises',
-      'Minor possession in public view',
-      'First-time administrative warning'
-    ]
-  },
-  { 
-    amount: '€10,400', 
-    label: 'Serious', 
-    risk: 'Medium', 
-    color: 'text-amber-400',
-    bgColor: 'bg-amber-500/10',
-    borderColor: 'border-amber-500/30',
-    icon: MapPin,
-    scenarios: [
-      'Consumption in public spaces near schools',
-      'Group gatherings in residential zones',
-      'Noise complaints from neighbors'
-    ]
-  },
-  { 
-    amount: '€30,000', 
-    label: 'Severe', 
-    risk: 'High', 
-    color: 'text-red-400',
-    bgColor: 'bg-red-500/10',
-    borderColor: 'border-red-500/30',
-    icon: Building2,
-    scenarios: [
-      'Operating without proper association license',
-      'Commercial sale or advertising',
-      'Distribution to non-members',
-      'Minors on premises'
-    ]
-  },
-];
-
 export function RotaryFineEstimator() {
+  const { t } = useLanguage();
   const [level, setLevel] = useState(0);
-  const current = LEVELS[level];
+  const levels: FineScenario[] = [
+    {
+      amount: '€601',
+      label: t('landing.fine.levels.minor'),
+      risk: 'Low',
+      color: 'text-emerald-400',
+      bgColor: 'bg-emerald-500/10',
+      borderColor: 'border-emerald-500/30',
+      icon: AlertTriangle,
+      scenarios: [
+        t('landing.fine.scenarios.minor.1'),
+        t('landing.fine.scenarios.minor.2'),
+        t('landing.fine.scenarios.minor.3'),
+      ],
+    },
+    {
+      amount: '€10,400',
+      label: t('landing.fine.levels.serious'),
+      risk: 'Medium',
+      color: 'text-amber-400',
+      bgColor: 'bg-amber-500/10',
+      borderColor: 'border-amber-500/30',
+      icon: MapPin,
+      scenarios: [
+        t('landing.fine.scenarios.serious.1'),
+        t('landing.fine.scenarios.serious.2'),
+        t('landing.fine.scenarios.serious.3'),
+      ],
+    },
+    {
+      amount: '€30,000',
+      label: t('landing.fine.levels.severe'),
+      risk: 'High',
+      color: 'text-red-400',
+      bgColor: 'bg-red-500/10',
+      borderColor: 'border-red-500/30',
+      icon: Building2,
+      scenarios: [
+        t('landing.fine.scenarios.severe.1'),
+        t('landing.fine.scenarios.severe.2'),
+        t('landing.fine.scenarios.severe.3'),
+        t('landing.fine.scenarios.severe.4'),
+      ],
+    },
+  ];
+  const current = levels[level];
   const Icon = current.icon;
 
   return (
@@ -81,14 +82,14 @@ export function RotaryFineEstimator() {
         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${current.bgColor} ${current.borderColor} border mb-4`}>
           <Icon className={`w-4 h-4 ${current.color}`} />
           <span className={`font-mono text-xs uppercase tracking-wider ${current.color}`}>
-            {current.risk} Risk
+            {t(`landing.fine.risk.${current.risk.toLowerCase()}`)} {t('landing.fine.risk_suffix')}
           </span>
         </div>
         <div className={`text-6xl font-black font-mono mb-2 ${current.color}`}>
           {current.amount}
         </div>
         <ConciergeLabel emphasis="medium" className="text-muted-foreground">
-          Maximum Administrative Penalty
+          {t('landing.fine.maximum_penalty')}
         </ConciergeLabel>
       </motion.div>
       
@@ -102,7 +103,7 @@ export function RotaryFineEstimator() {
       >
         <div className={`p-5 rounded-2xl ${current.bgColor} border ${current.borderColor}`}>
           <ConciergeLabel size="xs" emphasis="medium" className="text-muted-foreground mb-3 block">
-            Triggered by:
+            {t('landing.fine.triggered_by')}
           </ConciergeLabel>
           <ul className="space-y-2">
             {current.scenarios.map((scenario, i) => (
@@ -127,7 +128,7 @@ export function RotaryFineEstimator() {
           
           {/* Snap points */}
           <div className="absolute inset-0 flex justify-between items-center -top-[5px]">
-            {LEVELS.map((l, i) => (
+            {levels.map((l, i) => (
               <button 
                 key={i}
                 onClick={() => setLevel(i)}
@@ -146,7 +147,7 @@ export function RotaryFineEstimator() {
         </div>
         
         <div className="flex justify-between w-full mt-6">
-          {LEVELS.map((l, i) => (
+          {levels.map((l, i) => (
             <button 
               key={i} 
               onClick={() => setLevel(i)}

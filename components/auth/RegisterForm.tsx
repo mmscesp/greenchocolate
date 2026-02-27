@@ -2,7 +2,6 @@
 
 import { useActionState, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { signUp, signInWithOAuth } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,11 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { LogoIcon } from '@/components/ui/logo';
 import { Mail, Lock, User, Loader2, Eye, EyeOff, CheckCircle } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 
 export default function RegisterForm() {
-  const router = useRouter();
+  const { language, t } = useLanguage();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -29,10 +29,10 @@ export default function RegisterForm() {
   });
 
   const passwordRequirements = [
-    { met: password.length >= 8, text: 'At least 8 characters' },
-    { met: /[A-Z]/.test(password), text: 'One uppercase letter' },
-    { met: /[0-9]/.test(password), text: 'One number' },
-    { met: /[!@#$%^&*(),.?":{}|<>]/.test(password), text: 'One special character' },
+    { met: password.length >= 8, text: t('auth.register.password_rules.min_length') },
+    { met: /[A-Z]/.test(password), text: t('auth.register.password_rules.uppercase') },
+    { met: /[0-9]/.test(password), text: t('auth.register.password_rules.number') },
+    { met: /[!@#$%^&*(),.?":{}|<>]/.test(password), text: t('auth.register.password_rules.special') },
   ];
 
   const allRequirementsMet = passwordRequirements.every(req => req.met);
@@ -43,19 +43,19 @@ export default function RegisterForm() {
     
     if (password !== confirmPassword) {
       e.preventDefault();
-      setClientError('Passwords do not match');
+      setClientError(t('auth.register.errors.password_mismatch'));
       return;
     }
 
     if (!allRequirementsMet) {
       e.preventDefault();
-      setClientError('Please meet all password requirements');
+      setClientError(t('auth.register.errors.password_requirements'));
       return;
     }
 
     if (!consent) {
       e.preventDefault();
-      setClientError('You must accept the terms and conditions');
+      setClientError(t('auth.register.errors.accept_terms'));
       return;
     }
   };
@@ -84,15 +84,14 @@ export default function RegisterForm() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
           <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
         </div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">Check Your Email</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">{t('auth.register.check_email.title')}</h1>
         <p className="text-muted-foreground mb-6">
-          We've sent a verification link to your email address.
-          Please check your inbox and verify your account.
+          {t('auth.register.check_email.description')}
         </p>
         <p className="text-sm text-muted-foreground">
-          Already verified?{' '}
-          <Link href="/account/login" className="text-primary hover:underline font-medium">
-            Sign in
+          {t('auth.register.check_email.already_verified')}{' '}
+          <Link href={`/${language}/account/login`} className="text-primary hover:underline font-medium">
+            {t('auth.login.submit')}
           </Link>
         </p>
       </div>
@@ -105,8 +104,8 @@ export default function RegisterForm() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
           <LogoIcon size="lg" />
         </div>
-        <h1 className="text-3xl font-bold text-foreground">Create Account</h1>
-        <p className="text-muted-foreground mt-2">Join our community of cannabis enthusiasts</p>
+        <h1 className="text-3xl font-bold text-foreground">{t('auth.register.title')}</h1>
+        <p className="text-muted-foreground mt-2">{t('auth.register.subtitle')}</p>
       </div>
 
       {/* OAuth Buttons */}
@@ -124,7 +123,7 @@ export default function RegisterForm() {
           ) : (
             <FcGoogle className="h-5 w-5" />
           )}
-          Sign up with Google
+          {t('auth.register.continue_google')}
         </Button>
         
         <Button
@@ -140,7 +139,7 @@ export default function RegisterForm() {
           ) : (
             <FaApple className="h-5 w-5" />
           )}
-          Sign up with Apple
+          {t('auth.register.continue_apple')}
         </Button>
       </div>
 
@@ -150,7 +149,7 @@ export default function RegisterForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with email
+            {t('auth.register.continue_email')}
           </span>
         </div>
       </div>
@@ -163,14 +162,14 @@ export default function RegisterForm() {
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="fullName">Full Name</Label>
+          <Label htmlFor="fullName">{t('form.full_name')}</Label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="fullName"
               name="fullName"
               type="text"
-              placeholder="John Doe"
+              placeholder={t('auth.placeholders.full_name')}
               className="pl-10"
               required
               disabled={isPending}
@@ -182,14 +181,14 @@ export default function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t('form.email')}</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('auth.placeholders.email')}
               className="pl-10"
               required
               disabled={isPending}
@@ -201,14 +200,14 @@ export default function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t('form.password')}</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="password"
               name="password"
               type={showPassword ? 'text' : 'password'}
-              placeholder="Create a password"
+              placeholder={t('auth.placeholders.create_password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="pl-10 pr-10"
@@ -238,14 +237,14 @@ export default function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword">{t('auth.register.confirm_password')}</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="confirmPassword"
               name="confirmPassword"
               type={showPassword ? 'text' : 'password'}
-              placeholder="Confirm your password"
+              placeholder={t('auth.placeholders.confirm_password')}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="pl-10"
@@ -254,17 +253,17 @@ export default function RegisterForm() {
             />
           </div>
           {confirmPassword && !passwordsMatch && (
-            <p className="text-sm text-destructive">Passwords do not match</p>
+            <p className="text-sm text-destructive">{t('auth.register.errors.password_mismatch')}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="phone" className="text-muted-foreground">Phone (Optional)</Label>
+          <Label htmlFor="phone" className="text-muted-foreground">{t('auth.register.phone_optional')}</Label>
           <Input
             id="phone"
             name="phone"
             type="tel"
-            placeholder="+1 (555) 000-0000"
+            placeholder={t('auth.placeholders.phone')}
             disabled={isPending}
           />
         </div>
@@ -282,10 +281,10 @@ export default function RegisterForm() {
               htmlFor="consent" 
               className="text-sm text-muted-foreground cursor-pointer"
             >
-              I agree to the Terms of Service and Privacy Policy
+              {t('auth.register.accept_terms')}
             </Label>
             <p className="text-xs text-muted-foreground">
-              <strong>Age Restriction:</strong> You must be 18+ to create an account.
+              <strong>{t('auth.register.age_restriction_label')}</strong> {t('auth.register.age_restriction_text')}
             </p>
           </div>
         </div>
@@ -300,17 +299,17 @@ export default function RegisterForm() {
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating account...
+              {t('auth.register.creating_account')}
             </>
           ) : (
-            'Create Account'
+            t('auth.register.submit')
           )}
         </Button>
 
         <div className="text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Link href="/account/login" className="text-primary hover:underline font-medium">
-            Sign in
+          {t('auth.register.has_account')}{' '}
+          <Link href={`/${language}/account/login`} className="text-primary hover:underline font-medium">
+            {t('auth.login.submit')}
           </Link>
         </div>
       </form>

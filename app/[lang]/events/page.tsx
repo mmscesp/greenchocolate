@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { getUpcomingEvents } from '@/app/actions/events';
 import { Badge } from '@/components/ui/badge';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 interface EventsPageProps {
   params: Promise<{ lang: string }>;
@@ -9,12 +11,14 @@ interface EventsPageProps {
 export default async function EventsPage({ params }: EventsPageProps) {
   const { lang } = await params;
   const events = await getUpcomingEvents(24);
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 space-y-8">
       <section className="rounded-2xl border bg-card p-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-3">Europe Events</h1>
-        <p className="text-muted-foreground">Cultural and industry events connected to the platform's trust-and-education mission.</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-3">{t('events.title_prefix')} {t('events.title_highlight')}</h1>
+        <p className="text-muted-foreground">{t('events.subtitle')}</p>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -35,7 +39,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
           </Link>
         )) : (
           <div className="col-span-full rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
-            No upcoming published events yet.
+            {t('events.empty')}
           </div>
         )}
       </section>

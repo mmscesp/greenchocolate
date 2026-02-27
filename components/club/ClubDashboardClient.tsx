@@ -21,6 +21,16 @@ interface MembershipRequest {
 
 export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
   const { t } = useLanguage();
+  const formatText = (key: string, values: Record<string, string | number>) => {
+    let message = t(key);
+
+    for (const [name, value] of Object.entries(values)) {
+      message = message.replace(`{{${name}}}`, String(value));
+    }
+
+    return message;
+  };
+
   const [pendingRequests, setPendingRequests] = useState(0);
   
   useEffect(() => {
@@ -52,14 +62,14 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
   // Use real club data
   const location = ('addressDisplay' in club && club.addressDisplay)
     ? club.addressDisplay
-    : (club.neighborhood || 'Location Pending');
+    : (club.neighborhood || t('club_dashboard.fallback.location_pending'));
 
   const displayClub = {
     name: club.name,
     location,
     members: club.capacity || 0,
     capacity: club.capacity || 100,
-    description: club.description || club.shortDescription || 'No description available.',
+    description: club.description || club.shortDescription || t('club_dashboard.fallback.no_description'),
     foundedYear: club.foundedYear || new Date().getFullYear(),
   };
 
@@ -77,31 +87,31 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard 
-          title="Total Members" 
+          title={t('club_dashboard.stats.total_members')} 
           value={displayClub.members} 
           icon={Users} 
           color="green" 
-          trend="+12% from last month"
+          trend={t('club_dashboard.stats.total_members_trend')}
         />
         <StatsCard 
-          title="Pending Requests" 
+          title={t('club_dashboard.stats.pending_requests')} 
           value={pendingRequests} 
           icon={FileText} 
           color="blue" 
-          trend="Requires attention"
+          trend={t('club_dashboard.stats.pending_requests_trend')}
         />
         <StatsCard 
-          title="Upcoming Events" 
+          title={t('club_dashboard.stats.upcoming_events')} 
           value="0" 
           icon={Calendar} 
           color="orange" 
         />
         <StatsCard 
-          title="Capacity Used" 
+          title={t('club_dashboard.stats.capacity_used')} 
           value={`${displayClub.capacity > 0 ? ((displayClub.members / displayClub.capacity) * 100).toFixed(0) : 0}%`} 
           icon={TrendingUp} 
           color="purple" 
-          trend="Healthy level"
+          trend={t('club_dashboard.stats.capacity_used_trend')}
         />
       </div>
 
@@ -110,29 +120,29 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
         {/* Club Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Club Information</CardTitle>
-            <CardDescription>Details about your club visible to members</CardDescription>
+            <CardTitle>{t('club_dashboard.info.title')}</CardTitle>
+            <CardDescription>{t('club_dashboard.info.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-4">
               <div className="space-y-1">
-                <span className="text-sm font-medium text-muted-foreground">Description</span>
+                <span className="text-sm font-medium text-muted-foreground">{t('club_dashboard.info.fields.description')}</span>
                 <p className="text-sm text-muted-foreground line-clamp-3">{displayClub.description}</p>
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <span className="text-sm font-medium text-muted-foreground">Founded</span>
+                  <span className="text-sm font-medium text-muted-foreground">{t('club_dashboard.info.fields.founded')}</span>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <span>{displayClub.foundedYear}</span>
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-sm font-medium text-muted-foreground">Capacity</span>
+                  <span className="text-sm font-medium text-muted-foreground">{t('club_dashboard.info.fields.capacity')}</span>
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
-                    <span>{displayClub.capacity} members</span>
+                    <span>{formatText('club_dashboard.info.capacity_value', { count: displayClub.capacity })}</span>
                   </div>
                 </div>
               </div>
@@ -140,7 +150,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
 
             <div className="pt-4">
               <Link href="/club-panel/dashboard/profile">
-                <Button className="w-full" variant="outline">Edit Profile</Button>
+                <Button className="w-full" variant="outline">{t('club_dashboard.actions.edit_profile')}</Button>
               </Link>
             </div>
           </CardContent>
@@ -149,15 +159,15 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
         {/* Quick Actions Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Manage your club operations</CardDescription>
+            <CardTitle>{t('club_dashboard.actions.title')}</CardTitle>
+            <CardDescription>{t('club_dashboard.actions.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <Link href="/club-panel/dashboard/profile" className="block">
               <Button variant="secondary" className="w-full justify-start h-auto py-4 px-6">
                 <div className="flex flex-col items-start text-left">
-                  <span className="font-semibold">Update Club Details</span>
-                  <span className="text-xs text-muted-foreground font-normal">Change name, location, or description</span>
+                  <span className="font-semibold">{t('club_dashboard.actions.update_details')}</span>
+                  <span className="text-xs text-muted-foreground font-normal">{t('club_dashboard.actions.update_details_desc')}</span>
                 </div>
               </Button>
             </Link>
@@ -165,12 +175,12 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
             <Link href="/club-panel/dashboard/requests" className="block">
               <Button variant="secondary" className="w-full justify-start h-auto py-4 px-6 relative overflow-hidden">
                 <div className="flex flex-col items-start text-left z-10">
-                  <span className="font-semibold">Review Membership Requests</span>
-                  <span className="text-xs text-muted-foreground font-normal">{pendingRequests} awaiting review</span>
+                  <span className="font-semibold">{t('club_dashboard.actions.review_requests')}</span>
+                  <span className="text-xs text-muted-foreground font-normal">{formatText('club_dashboard.actions.awaiting_review', { count: pendingRequests })}</span>
                 </div>
                 {pendingRequests > 0 && (
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">
-                    {pendingRequests} New
+                    {formatText('club_dashboard.actions.new_badge', { count: pendingRequests })}
                   </div>
                 )}
               </Button>
@@ -179,8 +189,8 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
             <Link href="/club-panel/dashboard/events" className="block">
               <Button variant="secondary" className="w-full justify-start h-auto py-4 px-6">
                 <div className="flex flex-col items-start text-left">
-                  <span className="font-semibold">Create Event</span>
-                  <span className="text-xs text-muted-foreground font-normal">Schedule a new event for members</span>
+                  <span className="font-semibold">{t('club_dashboard.actions.create_event')}</span>
+                  <span className="text-xs text-muted-foreground font-normal">{t('club_dashboard.actions.create_event_desc')}</span>
                 </div>
               </Button>
             </Link>

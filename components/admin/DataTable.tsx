@@ -1,6 +1,8 @@
+'use client';
+
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
 import { MoreHorizontal } from '@/lib/icons';
 
 export interface Column<T> {
@@ -21,6 +23,8 @@ export interface DataTableProps<T> {
 }
 
 export function DataTable<T>({ columns, data, title, onEdit, onDelete, onAction, actions }: DataTableProps<T>) {
+  const { t } = useLanguage();
+
   return (
     <Card className="p-6">
       {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
@@ -33,7 +37,7 @@ export function DataTable<T>({ columns, data, title, onEdit, onDelete, onAction,
                   {col.label}
                 </th>
               ))}
-              {(onEdit || onDelete || onAction || actions) && <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">Actions</th>}
+              {(onEdit || onDelete || onAction || actions) && <th className="text-left py-3 px-4 font-semibold text-sm text-gray-600">{t('common.actions')}</th>}
             </tr>
           </thead>
           <tbody>

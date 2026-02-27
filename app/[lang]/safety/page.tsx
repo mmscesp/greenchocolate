@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
 import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
 import { Shield, AlertTriangle, Heart, Clock, ArrowRight, CheckCircle, Phone, MapPin, Users, Leaf, Brain, Activity } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
@@ -13,64 +14,66 @@ interface SafetyPageProps {
   params: Promise<{ lang: string }>;
 }
 
-const safetyCategories = [
+const buildSafetyCategories = (t: (key: string) => string) => [
   {
     id: 'edibles',
-    title: 'Edibles & Concentrates',
-    description: 'Different rules apply to infused products. Onset times and dosing differ significantly from smoking.',
+    title: t('safety.categories.edibles.title'),
+    description: t('safety.categories.edibles.description'),
     icon: Clock,
     color: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
     tips: [
-      'Wait 2+ hours before taking more - onset can take up to 2 hours',
-      'Start with 5mg THC or less if you\'re new',
-      'Effects last 4-12 hours vs 1-3 hours from smoking',
-      'Edibles convert to more potent 11-hydroxy-THC in the liver'
+      t('safety.categories.edibles.tips.1'),
+      t('safety.categories.edibles.tips.2'),
+      t('safety.categories.edibles.tips.3'),
+      t('safety.categories.edibles.tips.4')
     ]
   },
   {
     id: 'first-time',
-    title: 'First Club Visit',
-    description: 'What to expect at your first visit to a cannabis social club.',
+    title: t('safety.categories.first_visit.title'),
+    description: t('safety.categories.first_visit.description'),
     icon: Users,
     color: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
     tips: [
-      'Bring valid photo ID (passport or EU ID card)',
-      'Most clubs are cash-only for consumption fees',
-      'You\'ll sign a membership agreement and house rules',
-      'Ask staff about their strains and consumption areas'
+      t('safety.categories.first_visit.tips.1'),
+      t('safety.categories.first_visit.tips.2'),
+      t('safety.categories.first_visit.tips.3'),
+      t('safety.categories.first_visit.tips.4')
     ]
   },
   {
     id: 'medical',
-    title: 'Medical Considerations',
-    description: 'Important information for those with health conditions or on medications.',
+    title: t('safety.categories.medical.title'),
+    description: t('safety.categories.medical.description'),
     icon: Activity,
     color: 'bg-red-500/10 text-red-600 border-red-500/20',
     tips: [
-      'Cannabis can interact with blood pressure and heart medications',
-      'Avoid if pregnant or breastfeeding',
-      'Start low and go slow with any new product',
-      'Consult your doctor if you have heart conditions'
+      t('safety.categories.medical.tips.1'),
+      t('safety.categories.medical.tips.2'),
+      t('safety.categories.medical.tips.3'),
+      t('safety.categories.medical.tips.4')
     ]
   },
   {
     id: 'mental',
-    title: 'Mental Health',
-    description: 'Understanding the psychological effects of cannabis.',
+    title: t('safety.categories.mental.title'),
+    description: t('safety.categories.mental.description'),
     icon: Brain,
     color: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
     tips: [
-      'High doses can cause anxiety or paranoia in some people',
-      'Take a break if you feel foggy or unmotivated',
-      'Cannabis can trigger underlying mental health conditions',
-      'Less is more - you can always take more, not less'
+      t('safety.categories.mental.tips.1'),
+      t('safety.categories.mental.tips.2'),
+      t('safety.categories.mental.tips.3'),
+      t('safety.categories.mental.tips.4')
     ]
   }
 ];
 
 export default function SafetyPage({ params }: SafetyPageProps) {
+  const { t } = useLanguage();
   const [lang, setLang] = useState('en');
   const [isLoading, setIsLoading] = useState(true);
+  const safetyCategories = buildSafetyCategories(t);
 
   useEffect(() => {
     params.then(({ lang: resolvedLang }) => {
@@ -113,25 +116,23 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
                 <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
-                  Knowledge is Safety
+                  {t('safety.badge')}
                 </Badge>
               </div>
               
               <H1 className="mb-6">
-                Responsible Use{' '}
+                {t('safety.title_prefix')}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                  Guide
+                  {t('safety.title_highlight')}
                 </span>
               </H1>
               
               <Lead className="mb-8">
-                Cannabis social clubs in Spain operate under a unique legal framework.
-                Understanding the rules, risks, and best practices ensures you have a safe,
-                enjoyable experience while respecting local laws.
+                {t('safety.subtitle')}
               </Lead>
 
               <div className="flex flex-wrap gap-3">
-                {['Evidence-based', '2026 Updated', 'Expert Reviewed'].map((item) => (
+                {[t('safety.tags.evidence_based'), t('safety.tags.updated'), t('safety.tags.expert_reviewed')].map((item) => (
                   <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-4 py-2 rounded-full">
                     <CheckCircle className="h-4 w-4 text-primary" />
                     {item}
@@ -155,10 +156,10 @@ export default function SafetyPage({ params }: SafetyPageProps) {
             className="mb-8"
           >
             <H2 className="mb-2">
-              Essential Knowledge
+              {t('safety.essential_knowledge.title')}
             </H2>
             <Text variant="muted">
-              Key information every club member should know
+              {t('safety.essential_knowledge.subtitle')}
             </Text>
           </motion.div>
 
@@ -208,9 +209,9 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               <AlertTriangle className="h-7 w-7 text-red-600" />
             </div>
             <div>
-              <H2 className="mb-2">Emergency Information</H2>
+              <H2 className="mb-2">{t('safety.emergency.title')}</H2>
               <Text variant="muted">
-                Save these numbers. In case of medical emergency, be honest with healthcare providers about cannabis consumption.
+                {t('safety.emergency.subtitle')}
               </Text>
             </div>
           </div>
@@ -219,30 +220,30 @@ export default function SafetyPage({ params }: SafetyPageProps) {
             <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <Phone className="h-5 w-5 text-red-600" />
-                <H3 className="font-bold">EU Emergency</H3>
+                <H3 className="font-bold">{t('safety.emergency.eu.title')}</H3>
               </div>
               <Text className="text-3xl font-black text-red-600 mb-2">112</Text>
-              <Text size="sm" variant="muted">Ambulance, Police, Fire</Text>
+              <Text size="sm" variant="muted">{t('safety.emergency.eu.description')}</Text>
             </div>
 
             <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <MapPin className="h-5 w-5 text-red-600" />
-                <H3 className="font-bold">Barcelona Hospitals</H3>
+                <H3 className="font-bold">{t('safety.emergency.hospitals.title')}</H3>
               </div>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Hospital Clínic - C/ Villarroel 170</li>
-                <li>Hospital de Sant Pau - C/ Sant Quintí 89</li>
+                <li>{t('safety.emergency.hospitals.1')}</li>
+                <li>{t('safety.emergency.hospitals.2')}</li>
               </ul>
             </div>
 
             <div className="bg-card rounded-xl p-5 sm:p-6 border border-red-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <Users className="h-5 w-5 text-red-600" />
-                <H3 className="font-bold">Mossos d'Esquadra</H3>
+                <H3 className="font-bold">{t('safety.emergency.police.title')}</H3>
               </div>
               <Text className="text-3xl font-black text-red-600 mb-2">088</Text>
-              <Text size="sm" variant="muted">Catalan Police (non-emergency)</Text>
+              <Text size="sm" variant="muted">{t('safety.emergency.police.description')}</Text>
             </div>
           </div>
         </motion.section>
@@ -260,14 +261,14 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 <Leaf className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <H3 className="text-xl font-bold">Ready to find a club?</H3>
-                <Text variant="muted">Browse verified cannabis social clubs.</Text>
+                <H3 className="text-xl font-bold">{t('safety.cta.title')}</H3>
+                <Text variant="muted">{t('safety.cta.subtitle')}</Text>
               </div>
             </div>
             <div className="flex w-full sm:w-auto gap-3">
               <Button asChild className="w-full sm:w-auto min-h-11 bg-primary hover:bg-primary/90">
                 <Link href={`/${lang}/clubs`}>
-                  Browse Clubs <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('safety.cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>

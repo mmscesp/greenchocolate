@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/sheet";
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Logo, LogoIcon } from '@/components/ui/logo';
+import { LogoIcon } from '@/components/ui/logo';
 
 interface ProfileSidebarProps {
   className?: string;
@@ -39,12 +39,12 @@ interface ProfileSidebarProps {
 }
 
 function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobile = false }: ProfileSidebarProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { profile, user, signOut } = useAuth();
   const pathname = usePathname();
 
   // Get user display info
-  const displayName = profile?.displayName || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  const displayName = profile?.displayName || user?.user_metadata?.full_name || user?.email?.split('@')[0] || t('user.fallback.name');
   const avatarUrl = profile?.avatarUrl || user?.user_metadata?.avatar_url;
   const memberSince = profile?.createdAt
     ? new Date(profile.createdAt).getFullYear().toString()
@@ -61,6 +61,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
   ];
 
   const showText = !isCollapsed || isMobile;
+  const withLocale = (path: string) => `/${language}${path}`;
 
   return (
     <div className={cn("flex flex-col h-full bg-card text-card-foreground", className)}>
@@ -70,7 +71,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
           <div className="bg-primary/10 p-1.5 rounded-lg shrink-0">
             <LogoIcon size="sm" />
           </div>
-          <span className="text-lg font-bold tracking-tight">SocialClubsMaps</span>
+          <span className="text-lg font-bold tracking-tight">{t('brand.name')}</span>
         </div>
       )}
 
@@ -117,7 +118,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={withLocale(item.href)}
                 onClick={onClose}
                 title={isCollapsed && !isMobile ? item.name : undefined}
                 className={cn(
@@ -163,7 +164,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
         "border-t space-y-2 bg-muted/10 transition-all duration-300",
         isCollapsed && !isMobile ? "p-2" : "p-4"
       )}>
-        <Link href="/" onClick={onClose} className="block">
+        <Link href={`/${language}`} onClick={onClose} className="block">
           <Button 
             variant="ghost" 
             className={cn(
@@ -228,6 +229,7 @@ export function ProfileSidebar({
 }
 
 export function ProfileMobileNav() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   return (
@@ -235,12 +237,12 @@ export function ProfileMobileNav() {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="lg:hidden h-11 w-11 hover:bg-accent rounded-full transition-colors">
           <Menu className="h-6 w-6 text-muted-foreground" />
-          <span className="sr-only">Toggle menu</span>
+          <span className="sr-only">{t('common.toggle_menu')}</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-[85vw] max-w-80 border-r-0 shadow-2xl">
         <SheetHeader className="sr-only">
-          <SheetTitle>Navigation</SheetTitle>
+          <SheetTitle>{t('profile.nav.title')}</SheetTitle>
         </SheetHeader>
         <ProfileSidebarContent onClose={() => setOpen(false)} isMobile={true} />
       </SheetContent>

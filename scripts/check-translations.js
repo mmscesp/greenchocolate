@@ -12,7 +12,7 @@ const path = require('path');
 
 const DICTIONARIES_DIR = path.join(__dirname, '..', 'dictionaries');
 const SOURCE_LANG = 'es';
-const LANGUAGES = ['es', 'en', 'fr', 'de', 'it', 'pl', 'ru', 'pt'];
+const LANGUAGES = ['es', 'en', 'fr', 'de'];
 
 /**
  * Flatten a nested object into dot-notation keys

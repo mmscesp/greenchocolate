@@ -68,7 +68,8 @@ export const desktopPrimaryItems: DesktopPrimaryItem[] = [
 ];
 
 export default function MainNavigation() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const withLocale = (path: string) => `/${language}${path}`;
 
   return (
     <NavigationMenu viewportClassName="bg-transparent border-none shadow-none">
@@ -80,7 +81,7 @@ export default function MainNavigation() {
           <NavigationMenuContent>
             <ul className="grid gap-3 p-4 w-[min(92vw,20rem)] sm:w-[24rem] md:w-[26rem] lg:w-[31rem] glass-dropdown mt-2 animate-in fade-in zoom-in-95 duration-200">
               {desktopExploreItems.map(({ href, titleKey, descriptionKey, Icon }) => (
-                <ListItem key={href} href={href} title={t(titleKey)} icon={<Icon className="h-4 w-4" />}>
+                <ListItem key={href} href={withLocale(href)} title={t(titleKey)} icon={<Icon className="h-4 w-4" />}>
                   {t(descriptionKey)}
                 </ListItem>
               ))}
@@ -90,7 +91,7 @@ export default function MainNavigation() {
 
         {desktopPrimaryItems.map(({ href, labelKey, Icon }) => (
           <NavigationMenuItem key={href}>
-            <Link href={href} className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-white/5 text-white hover:text-white transition-colors')}>
+            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), 'bg-transparent hover:bg-white/5 text-white hover:text-white transition-colors')}>
               {Icon ? (
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4" />

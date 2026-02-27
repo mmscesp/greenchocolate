@@ -4,6 +4,8 @@ import { getClubBySlug } from '@/app/actions/clubs';
 import { createClient } from '@/lib/supabase/server';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string; slug: string }>;
@@ -11,6 +13,15 @@ interface PageProps {
 
 export default async function CityClubDetailPage({ params }: PageProps) {
   const { lang, city, slug } = await params;
+  const dictionary = await getDictionary(lang as Locale);
+  const t = (key: string) => dictionary[key] || key;
+  const format = (key: string, vars: Record<string, string>) => {
+    const template = t(key);
+    return Object.entries(vars).reduce(
+      (acc, [name, value]) => acc.replaceAll(`{{${name}}}`, value),
+      template
+    );
+  };
   const club = await getClubBySlug(slug);
 
   if (!club || club.citySlug !== city) {
@@ -27,7 +38,7 @@ export default async function CityClubDetailPage({ params }: PageProps) {
       <section className="rounded-2xl border bg-card p-8">
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <h1 className="text-3xl md:text-4xl font-bold">{club.name}</h1>
-          {club.isVerified && <Badge>Verified</Badge>}
+          {club.isVerified && <Badge>{t('city_club_detail.verified')}</Badge>}
           <Badge variant="outline">{club.priceRange}</Badge>
         </div>
         <p className="text-muted-foreground mb-4">{club.shortDescription || club.description}</p>
@@ -40,23 +51,23 @@ export default async function CityClubDetailPage({ params }: PageProps) {
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <article className="rounded-xl border bg-card p-5">
-          <h2 className="font-semibold mb-2">Public Safety Snapshot</h2>
+          <h2 className="font-semibold mb-2">{t('city_club_detail.safety_title')}</h2>
           <ul className="text-sm text-muted-foreground space-y-1">
-            <li>Neighborhood: {club.neighborhood}</li>
-            <li>Capacity: {club.capacity} members</li>
-            <li>Founded: {club.foundedYear}</li>
-            <li>Public consumption remains illegal in Spain.</li>
+            <li>{format('city_club_detail.neighborhood', { neighborhood: club.neighborhood })}</li>
+            <li>{format('city_club_detail.capacity', { capacity: String(club.capacity) })}</li>
+            <li>{format('city_club_detail.founded', { year: String(club.foundedYear) })}</li>
+            <li>{t('city_club_detail.public_consumption_warning')}</li>
           </ul>
         </article>
         <article className="rounded-xl border bg-card p-5">
-          <h2 className="font-semibold mb-2">Access Policy</h2>
+          <h2 className="font-semibold mb-2">{t('city_club_detail.access_policy_title')}</h2>
           {user ? (
             <p className="text-sm text-muted-foreground">
-              You are logged in. Continue to the full club profile to request membership and view club-specific contact flow.
+              {t('city_club_detail.access_logged_in')}
             </p>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Full operational details are gated. Sign in to continue with membership-intent workflows.
+              {t('city_club_detail.access_logged_out')}
             </p>
           )}
         </article>
@@ -64,16 +75,16 @@ export default async function CityClubDetailPage({ params }: PageProps) {
 
       <section className="rounded-xl border bg-muted/30 p-5 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
         <div>
-          <h3 className="font-semibold">Continue</h3>
-          <p className="text-sm text-muted-foreground">Keep navigation safe and compliant with private-association rules.</p>
+          <h3 className="font-semibold">{t('city_club_detail.continue_title')}</h3>
+          <p className="text-sm text-muted-foreground">{t('city_club_detail.continue_description')}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
-            <Link href={`/${lang}/spain/${city}/clubs`}>Back to City Clubs</Link>
+            <Link href={`/${lang}/spain/${city}/clubs`}>{t('city_club_detail.back_to_city_clubs')}</Link>
           </Button>
           <Button asChild>
             <Link href={user ? `/${lang}/clubs/${club.slug}` : `/${lang}/account/login?redirect=/${lang}/clubs/${club.slug}`}>
-              {user ? 'Open Full Profile' : 'Login to Continue'}
+              {user ? t('city_club_detail.open_full_profile') : t('city_club_detail.login_to_continue')}
             </Link>
           </Button>
         </div>

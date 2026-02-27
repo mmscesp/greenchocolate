@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, AlertOctagon, Check, X } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function LegalDisclaimerModal() {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(() => {
     if (typeof window === 'undefined') {
       return false;
@@ -58,13 +60,11 @@ export default function LegalDisclaimerModal() {
                 </div>
                 
                 <h2 className="text-2xl font-serif font-bold mb-3 tracking-tight">
-                  Legal Compliance Check
+                  {t('trust.legal_modal.title')}
                 </h2>
                 
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  This platform provides educational content about Cannabis Social Clubs in Spain. 
-                  We do not sell cannabis. Access is restricted to adults (18+) under Spanish Law 
-                  (Ley Orgánica 4/2015).
+                  {t('trust.legal_modal.intro')}
                 </p>
               </div>
 
@@ -72,9 +72,8 @@ export default function LegalDisclaimerModal() {
                 <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50 border border-border/50">
                   <AlertOctagon className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                   <div className="text-xs text-left text-muted-foreground">
-                    <span className="font-semibold text-foreground block mb-1">Strict Regulatory Warning</span>
-                    Public consumption is illegal in Spain (fines start at €601). 
-                    This site is for informational purposes only.
+                    <span className="font-semibold text-foreground block mb-1">{t('trust.legal_modal.warning_title')}</span>
+                    {t('trust.legal_modal.warning_body')}
                   </div>
                 </div>
               </div>
@@ -86,7 +85,7 @@ export default function LegalDisclaimerModal() {
                   className="h-12 border-destructive/20 hover:bg-destructive/10 hover:text-destructive transition-colors"
                 >
                   <X className="mr-2 h-4 w-4" />
-                  Exit Site
+                  {t('trust.legal_modal.exit')}
                 </Button>
                 
                 <Button 
@@ -100,18 +99,18 @@ export default function LegalDisclaimerModal() {
                       className="absolute inset-0 flex items-center justify-center bg-emerald-600"
                     >
                       <Check className="mr-2 h-5 w-5" />
-                      Verified
+                      {t('trust.legal_modal.verified')}
                     </motion.div>
                   ) : (
                     <>
-                      I am 18+ & Agree
+                      {t('trust.legal_modal.agree')}
                     </>
                   )}
                 </Button>
               </div>
               
               <p className="text-[10px] text-center text-muted-foreground/50 mt-6 font-mono">
-                ID: {sessionId} • SECURE CONNECTION
+                {t('trust.legal_modal.session_prefix')} {sessionId} • {t('trust.legal_modal.secure_connection')}
               </p>
             </div>
           </motion.div>

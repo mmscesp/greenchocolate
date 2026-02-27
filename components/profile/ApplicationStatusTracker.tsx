@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, Clock, FileSearch, Shield, UserCheck, AlertCircle } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 type ApplicationStatus = 'draft' | 'submitted' | 'reviewing' | 'background_check' | 'approved' | 'rejected';
 
@@ -15,34 +16,34 @@ interface ApplicationStatusTrackerProps {
 
 interface Stage {
   id: ApplicationStatus;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
   icon: typeof CheckCircle2;
 }
 
 const stages: Stage[] = [
   {
     id: 'submitted',
-    label: 'Application Submitted',
-    description: 'Your documents have been received',
+    labelKey: 'application_status.stages.submitted.label',
+    descriptionKey: 'application_status.stages.submitted.description',
     icon: FileSearch
   },
   {
     id: 'reviewing',
-    label: 'Document Review',
-    description: 'Verifying ID and eligibility',
+    labelKey: 'application_status.stages.reviewing.label',
+    descriptionKey: 'application_status.stages.reviewing.description',
     icon: Shield
   },
   {
     id: 'background_check',
-    label: 'Background Verification',
-    description: 'Final compliance checks',
+    labelKey: 'application_status.stages.background_check.label',
+    descriptionKey: 'application_status.stages.background_check.description',
     icon: UserCheck
   },
   {
     id: 'approved',
-    label: 'Access Granted',
-    description: 'Your membership is active',
+    labelKey: 'application_status.stages.approved.label',
+    descriptionKey: 'application_status.stages.approved.description',
     icon: CheckCircle2
   }
 ];
@@ -53,6 +54,8 @@ export default function ApplicationStatusTracker({
   estimatedCompletion,
   className
 }: ApplicationStatusTrackerProps) {
+  const { t } = useLanguage();
+
   const getStageIndex = (s: ApplicationStatus) => {
     if (s === 'draft') return -1;
     if (s === 'rejected') return stages.length;
@@ -72,10 +75,10 @@ export default function ApplicationStatusTracker({
           <div className="p-2 bg-primary/10 rounded-xl">
             <Clock className="h-5 w-5 text-primary" />
           </div>
-          <h3 className="text-xl font-bold text-foreground">Application Status</h3>
+          <h3 className="text-xl font-bold text-foreground">{t('application_status.title')}</h3>
         </div>
         <p className="text-muted-foreground text-sm">
-          Track your membership verification progress
+          {t('application_status.subtitle')}
         </p>
       </div>
 
@@ -85,15 +88,15 @@ export default function ApplicationStatusTracker({
           <div className="flex items-center gap-3">
             <AlertCircle className="h-5 w-5 text-destructive" />
             <div>
-              <p className="text-destructive font-bold">Application Rejected</p>
-              <p className="text-destructive/70 text-sm">Please contact support for more information</p>
+              <p className="text-destructive font-bold">{t('application_status.rejected.title')}</p>
+              <p className="text-destructive/70 text-sm">{t('application_status.rejected.description')}</p>
             </div>
           </div>
         </div>
       ) : (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs uppercase tracking-widest text-muted-foreground font-medium">Progress</span>
+            <span className="text-xs uppercase tracking-widest text-muted-foreground font-medium">{t('application_status.progress')}</span>
             <span className="text-xs font-mono font-bold text-primary">{Math.round(progressPercentage)}%</span>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -106,7 +109,7 @@ export default function ApplicationStatusTracker({
           </div>
           {estimatedCompletion && (
             <p className="text-[10px] text-muted-foreground mt-2 text-right">
-              Est. completion: {estimatedCompletion.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+              {t('application_status.estimated_completion')}: {estimatedCompletion.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
             </p>
           )}
         </div>
@@ -154,15 +157,15 @@ export default function ApplicationStatusTracker({
                     isCurrent && "text-amber-600",
                     isPending && "text-muted-foreground"
                   )}>
-                    {stage.label}
+                    {t(stage.labelKey)}
                   </h4>
                   {isCurrent && (
                     <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] uppercase tracking-wider rounded-full font-bold">
-                      Current
+                      {t('application_status.current')}
                     </span>
                   )}
                 </div>
-                <p className="text-muted-foreground text-xs">{stage.description}</p>
+                <p className="text-muted-foreground text-xs">{t(stage.descriptionKey)}</p>
               </div>
 
               {isCurrent && (
@@ -180,9 +183,9 @@ export default function ApplicationStatusTracker({
       {/* Timeline */}
       <div className="mt-6 pt-5 border-t border-border/50">
         <div className="flex items-center justify-between text-[10px] text-muted-foreground uppercase tracking-wider">
-          <span>Submitted: {submittedAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+          <span>{t('application_status.submitted')}: {submittedAt.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
           {currentStageIndex >= 0 && currentStageIndex < stages.length && (
-            <span>Stage {currentStageIndex + 1} of {stages.length}</span>
+            <span>{t('application_status.stage')} {currentStageIndex + 1} {t('application_status.of')} {stages.length}</span>
           )}
         </div>
       </div>

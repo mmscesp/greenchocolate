@@ -10,9 +10,12 @@ import { Card } from '@/components/ui/card';
 import { Logo, LogoIcon } from '@/components/ui/logo';
 import { Lock, ArrowLeft, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from '@/lib/icons';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
+  const { language, t } = useLanguage();
+  const withLocale = (path: string) => `/${language}${path}`;
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +42,7 @@ export default function ResetPasswordPage() {
           clearAuthHash();
           setIsValidating(false);
         } else {
-          setError('Invalid session. Please request a new reset link.');
+          setError(t('auth.reset.errors.invalid_session'));
         }
       } else {
         clearAuthHash();
@@ -48,19 +51,19 @@ export default function ResetPasswordPage() {
     };
 
     checkSession();
-  }, [session]);
+  }, [session, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError(t('auth.reset.errors.min_length'));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('auth.register.errors.password_mismatch'));
       return;
     }
 
@@ -75,7 +78,7 @@ export default function ResetPasswordPage() {
         setSuccess(true);
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError(t('auth.reset.errors.unexpected'));
       console.error('Update password error:', err);
     } finally {
       setLoading(false);
@@ -100,20 +103,20 @@ export default function ResetPasswordPage() {
             <CheckCircle className="h-10 w-10 text-green-600" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Password Updated
+            {t('auth.reset.success.title')}
           </h2>
           <p className="text-gray-600 mb-8">
-            Your password has been reset successfully. You can now sign in with your new password.
+            {t('auth.reset.success.description')}
           </p>
           <div className="space-y-3">
-            <Link href="/account/login" className="block">
+            <Link href={withLocale('/account/login')} className="block">
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                Sign In
+                {t('auth.login.submit')}
               </Button>
             </Link>
-            <Link href="/" className="block">
+            <Link href={`/${language}`} className="block">
               <Button variant="outline" className="w-full">
-                Back to Home
+                {t('auth.forgot.back_to_home')}
               </Button>
             </Link>
           </div>
@@ -125,24 +128,24 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="w-full max-w-md">
-        <Link href="/account/login" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
+        <Link href={withLocale('/account/login')} className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          <span>Back</span>
+          <span>{t('auth.forgot.back')}</span>
         </Link>
 
         <Card className="p-8 shadow-xl border-2">
           <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4">
+            <Link href={`/${language}`} className="inline-flex items-center gap-2 mb-4">
               <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                SocialClubsMaps
+                {t('brand.name')}
               </span>
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              Reset Password
+              {t('auth.reset.title')}
             </h1>
             <p className="text-gray-600 mt-2">
-              Enter your new password below.
+              {t('auth.reset.subtitle')}
             </p>
           </div>
 
@@ -157,7 +160,7 @@ export default function ResetPasswordPage() {
             <div>
               <Label htmlFor="password" className="flex items-center gap-2 mb-2">
                 <Lock className="h-4 w-4 text-gray-500" />
-                New Password
+                {t('auth.reset.new_password')}
               </Label>
               <div className="relative">
                 <Input
@@ -179,13 +182,13 @@ export default function ResetPasswordPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
+              <p className="text-xs text-gray-500 mt-1">{t('auth.reset.minimum_characters')}</p>
             </div>
 
             <div>
               <Label htmlFor="confirmPassword" className="flex items-center gap-2 mb-2">
                 <Lock className="h-4 w-4 text-gray-500" />
-                Confirm Password
+                {t('auth.register.confirm_password')}
               </Label>
               <Input
                 id="confirmPassword"
@@ -207,10 +210,10 @@ export default function ResetPasswordPage() {
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Updating...
+                  {t('auth.reset.updating')}
                 </>
               ) : (
-                'Update Password'
+                t('auth.reset.update_password')
               )}
             </Button>
           </form>

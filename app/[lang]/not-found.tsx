@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Search, Home, ArrowLeft } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/hooks/useLanguage';
 
 /**
  * Global 404 Not Found Page
@@ -12,6 +13,7 @@ import { useRouter } from 'next/navigation';
  */
 export default function NotFound() {
   const router = useRouter();
+  const { language } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-16 md:pt-20">
@@ -32,7 +34,7 @@ export default function NotFound() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/" passHref>
+          <Link href={`/${language}`} passHref>
             <Button className="bg-green-600 hover:bg-green-700">
               <Home className="h-4 w-4 mr-2" />
               Volver al inicio
@@ -52,7 +54,7 @@ export default function NotFound() {
           <p className="text-sm text-gray-500">
             ¿Necesitas ayuda?{' '}
             <Link
-              href="/contacto"
+              href={`/${language}/contacto`}
               className="text-green-600 hover:text-green-700 font-medium"
             >
               Contáctanos

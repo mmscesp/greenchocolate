@@ -5,18 +5,19 @@ import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, 
-Users, 
-Calendar, 
-Settings, 
-LogOut, 
-Menu, 
-ChevronRight,
-ChevronLeft,
-Store,
-BarChart3,
-FileText,
-Home } from '@/lib/icons';
+import {
+  LayoutDashboard,
+  Users,
+  Calendar,
+  Settings,
+  LogOut,
+  Menu,
+  ChevronRight,
+  ChevronLeft,
+  Store,
+  BarChart3,
+  Home,
+} from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -25,10 +26,10 @@ import {
   SheetTrigger,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Logo, LogoIcon } from '@/components/ui/logo';
+import { LogoIcon } from '@/components/ui/logo';
 
 interface ClubSidebarProps {
   className?: string;
@@ -44,17 +45,17 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
   const pathname = usePathname();
 
   // Get club display info from metadata
-  const clubName = user?.user_metadata?.club_name || 'Club Admin';
+  const clubName = user?.user_metadata?.club_name || t('club_panel.common.club_admin_fallback');
   // In a real app, we'd fetch the club logo from a profile or club table
   const clubLogoUrl = user?.user_metadata?.avatar_url; 
   
   const navigation = [
-    { name: 'Overview', href: '/club-panel/dashboard', icon: LayoutDashboard },
-    { name: 'Club Profile', href: '/club-panel/dashboard/profile', icon: Store },
-    { name: 'Membership Requests', href: '/club-panel/dashboard/requests', icon: Users },
-    { name: 'Events', href: '/club-panel/dashboard/events', icon: Calendar },
-    { name: 'Analytics', href: '/club-panel/dashboard/analytics', icon: BarChart3 },
-    { name: 'Settings', href: '/club-panel/dashboard/settings', icon: Settings },
+    { nameKey: 'club_panel.nav.overview', href: '/club-panel/dashboard', icon: LayoutDashboard },
+    { nameKey: 'club_panel.nav.club_profile', href: '/club-panel/dashboard/profile', icon: Store },
+    { nameKey: 'club_panel.nav.membership_requests', href: '/club-panel/dashboard/requests', icon: Users },
+    { nameKey: 'club_panel.nav.events', href: '/club-panel/dashboard/events', icon: Calendar },
+    { nameKey: 'club_panel.nav.analytics', href: '/club-panel/dashboard/analytics', icon: BarChart3 },
+    { nameKey: 'club_panel.nav.settings', href: '/club-panel/dashboard/settings', icon: Settings },
   ];
 
   const showText = !isCollapsed || isMobile;
@@ -67,7 +68,7 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
           <div className="bg-primary/10 p-1.5 rounded-lg shrink-0">
             <LogoIcon size="sm" />
           </div>
-          <span className="text-lg font-bold tracking-tight">Club Panel</span>
+          <span className="text-lg font-bold tracking-tight">{t('club_panel.header.title')}</span>
         </div>
       )}
 
@@ -99,7 +100,7 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
                 className="overflow-hidden"
               >
                 <h3 className="font-bold truncate leading-none mb-1">{clubName}</h3>
-                <p className="text-xs text-muted-foreground truncate">Club Administration</p>
+                <p className="text-xs text-muted-foreground truncate">{t('club_panel.header.subtitle')}</p>
               </motion.div>
             )}
           </AnimatePresence>
@@ -118,7 +119,7 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                title={isCollapsed && !isMobile ? item.name : undefined}
+                title={isCollapsed && !isMobile ? t(item.nameKey) : undefined}
                 className={cn(
                   "group relative flex min-h-11 items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                   isActive
@@ -140,7 +141,7 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
                       exit={{ opacity: 0, width: 0 }}
                       className="flex-1 overflow-hidden"
                     >
-                      {item.name}
+                      {t(item.nameKey)}
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -227,6 +228,7 @@ export function ClubSidebar({
 }
 
 export function ClubMobileNav() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
 
   return (
@@ -234,12 +236,12 @@ export function ClubMobileNav() {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="lg:hidden h-11 w-11 hover:bg-accent rounded-full transition-colors">
           <Menu className="h-6 w-6 text-muted-foreground" />
-          <span className="sr-only">Toggle menu</span>
+          <span className="sr-only">{t('common.toggle_menu')}</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-[85vw] max-w-80 border-r-0 shadow-2xl">
         <SheetHeader className="sr-only">
-          <SheetTitle>Club Navigation</SheetTitle>
+          <SheetTitle>{t('club_panel.nav.title')}</SheetTitle>
         </SheetHeader>
         <ClubSidebarContent onClose={() => setOpen(false)} isMobile={true} />
       </SheetContent>

@@ -8,6 +8,7 @@ import { ConciergeLabel } from '../typography/ConciergeLabel';
 // import { MagneticButton } from '../interactive/MagneticButton';
 import { ArrowRight, BookOpen, ShieldAlert, Heart } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
+import { useLanguage } from '@/hooks/useLanguage';
 
 type OnrampExperimentArm = 'control' | 'benefit';
 
@@ -16,15 +17,41 @@ interface BeginnersOnrampProps {
 }
 
 export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampProps) {
+  const { t } = useLanguage();
+
   const heading =
     experimentArm === 'benefit'
-      ? 'Avoid mistakes. Stay safe. Start here.'
-      : 'First time smoking weed? Start here.';
+      ? t('landing.onramp.heading_benefit')
+      : t('landing.onramp.heading_control');
 
   const description =
     experimentArm === 'benefit'
-      ? 'Get the essentials fast: legal boundaries, etiquette, and harm-reduction basics so your first experience stays safe and respectful.'
-      : "Navigating Barcelona's social clubs requires respect, discretion, and preparation. Follow our safety-first guide for a seamless introduction to the culture.";
+      ? t('landing.onramp.description_benefit')
+      : t('landing.onramp.description_control');
+
+  const topics = [
+    {
+      title: t('landing.onramp.cards.legal.title'),
+      desc: t('landing.onramp.cards.legal.desc'),
+      icon: ShieldAlert,
+      href: '/editorial/legal',
+      analyticsTopic: 'Legal Framework',
+    },
+    {
+      title: t('landing.onramp.cards.etiquette.title'),
+      desc: t('landing.onramp.cards.etiquette.desc'),
+      icon: Heart,
+      href: '/editorial/etiquette',
+      analyticsTopic: 'Club Etiquette',
+    },
+    {
+      title: t('landing.onramp.cards.harm.title'),
+      desc: t('landing.onramp.cards.harm.desc'),
+      icon: BookOpen,
+      href: '/safety',
+      analyticsTopic: 'Harm Reduction',
+    },
+  ];
 
   return (
     <SectionWrapper glass className="">
@@ -32,7 +59,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
         {/* Left Side: Curated Path */}
         <div className="space-y-12">
           <div>
-            <ConciergeLabel className="text-emerald-600 mb-6">New Member Onboarding</ConciergeLabel>
+            <ConciergeLabel className="text-emerald-600 mb-6">{t('landing.onramp.label')}</ConciergeLabel>
             <EditorialHeading size="xl" className="mb-8">{heading}</EditorialHeading>
             <p className="text-lg text-zinc-500 leading-relaxed max-w-xl">
               {description}
@@ -40,18 +67,14 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
           </div>
 
           <div className="space-y-6">
-            {[
-              { title: 'Legal Framework', desc: 'Public vs Private: understanding the grey zone.', icon: ShieldAlert, href: '/editorial/legal' },
-              { title: 'Club Etiquette', desc: 'The unwritten rules of association membership.', icon: Heart, href: '/editorial/etiquette' },
-              { title: 'Harm Reduction', desc: 'Onset times, dosing, and responsible choices.', icon: BookOpen, href: '/safety' },
-            ].map((item, i) => (
+            {topics.map((item, i) => (
               <Link
                 key={i}
                 href={item.href}
                 className="block"
                 onClick={() => {
                   trackEvent('landing_onramp_topic_click', {
-                    topic: item.title,
+                    topic: item.analyticsTopic,
                     destination: item.href,
                   });
                 }}
@@ -95,10 +118,10 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
           <div className="absolute inset-0 bg-zinc-200 group-hover:scale-105 transition-transform duration-1000 z-0" />
           
           <div className="absolute inset-0 z-20 p-6 sm:p-8 lg:p-12 flex flex-col justify-end items-start text-left pointer-events-none">
-            <ConciergeLabel emphasis="high" className="mb-4">The Experience</ConciergeLabel>
-            <EditorialHeading size="lg" className="text-white mb-6">What does it feel like to be high?</EditorialHeading>
+            <ConciergeLabel emphasis="high" className="mb-4">{t('landing.onramp.experience_label')}</ConciergeLabel>
+            <EditorialHeading size="lg" className="text-white mb-6">{t('landing.onramp.experience_title')}</EditorialHeading>
             <p className="text-white/70 text-lg mb-8 max-w-sm">
-              Stay highly informed. A detailed harm-reduction explainer on effects, anxiety, and safer decision making.
+              {t('landing.onramp.experience_description')}
             </p>
             <Link
               href="/safety"
@@ -109,7 +132,7 @@ export function BeginnersOnramp({ experimentArm = 'control' }: BeginnersOnrampPr
                 });
               }}
             >
-              Read the Guide
+              {t('landing.onramp.read_guide')}
               <ArrowRight className="w-4 h-4 text-black/40 group-hover/btn:text-emerald-600 group-hover/btn:translate-x-1 transition-all duration-500" />
             </Link>
           </div>

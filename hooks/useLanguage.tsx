@@ -31,13 +31,19 @@ export function LanguageProvider({ children, locale, dictionary }: LanguageProvi
   const setLanguage = (newLang: Locale) => {
     if (newLang === locale) return;
 
-    void fetch('/api/locale', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ locale: newLang }),
-    });
+    void (async () => {
+      try {
+        await fetch('/api/locale', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ locale: newLang }),
+        });
+      } catch {
+        // Ignore cookie persistence failures; route locale still updates below.
+      }
+    })();
 
     // Construct new path: Replace /es/about with /en/about
     // We assume the first segment is always the locale due to middleware
@@ -49,7 +55,8 @@ export function LanguageProvider({ children, locale, dictionary }: LanguageProvi
     }
     const newPath = segments.join('/') || '/';
 
-    router.push(newPath);
+    router.replace(newPath);
+    router.refresh();
   };
 
   const t = (key: TranslationKey): string => {

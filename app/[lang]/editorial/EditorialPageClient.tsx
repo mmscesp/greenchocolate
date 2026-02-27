@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from '@/lib/icons';
 
 interface Article {
@@ -27,46 +28,39 @@ interface EditorialPageClientProps {
 }
 
 // Mock data
-const mockCategories: Category[] = [
-  { name: 'Legal', count: 5 },
-  { name: 'Etiquette', count: 4 },
-  { name: 'Harm Reduction', count: 3 },
-  { name: 'Culture', count: 6 },
-];
-
-const mockFeaturedArticles: Article[] = [
+const buildMockFeaturedArticles = (t: (key: string) => string): Article[] => [
   {
     id: '1',
     slug: 'is-weed-legal-barcelona-2026',
-    title: 'Is Weed Legal in Barcelona in 2026?',
-    excerpt: 'The real rules, fines, and grey areas explained. What every visitor needs to know before arriving.',
-    category: 'Legal',
+    title: t('editorial.mock.1.title'),
+    excerpt: t('editorial.mock.1.excerpt'),
+    category: t('editorial.mock.1.category'),
     readTime: 8,
-    cityName: 'Barcelona',
+    cityName: t('editorial.mock.1.city_name'),
   },
   {
     id: '2',
     slug: '5-mistakes-tourists-make',
-    title: '5 Mistakes Tourists Make',
-    excerpt: 'Don\'t be "that" tourist. Learn the local norms and club etiquette before you arrive.',
-    category: 'Etiquette',
+    title: t('editorial.mock.2.title'),
+    excerpt: t('editorial.mock.2.excerpt'),
+    category: t('editorial.mock.2.category'),
     readTime: 6,
   },
   {
     id: '3',
     slug: 'edibles-safety-guide',
-    title: 'Edibles Safety Guide',
-    excerpt: 'Start low, go slow. Essential harm reduction tips for cannabis edibles.',
-    category: 'Harm Reduction',
+    title: t('editorial.mock.3.title'),
+    excerpt: t('editorial.mock.3.excerpt'),
+    category: t('editorial.mock.3.category'),
     readTime: 5,
   },
 ];
 
-const CATEGORIES = [
+const buildCategories = (t: (key: string) => string) => [
   {
     slug: 'legal',
-    title: 'Legal Framework',
-    description: 'Understanding Spain\'s cannabis laws, fines, and your rights as a visitor.',
+    title: t('editorial.categories.legal.title'),
+    description: t('editorial.categories.legal.description'),
     icon: Scale,
     gradient: 'from-blue-500 to-indigo-500',
     bgColor: 'bg-blue-500/10',
@@ -76,8 +70,8 @@ const CATEGORIES = [
   },
   {
     slug: 'etiquette',
-    title: 'Club Etiquette',
-    description: 'Do\'s and don\'ts inside private associations. Be a respectful guest.',
+    title: t('editorial.categories.etiquette.title'),
+    description: t('editorial.categories.etiquette.description'),
     icon: Heart,
     gradient: 'from-green-500 to-emerald-500',
     bgColor: 'bg-green-500/10',
@@ -87,8 +81,8 @@ const CATEGORIES = [
   },
   {
     slug: 'safety',
-    title: 'Safety & Harm Reduction',
-    description: 'Stay safe. Edges, dosing, and emergency protocols.',
+    title: t('editorial.categories.safety.title'),
+    description: t('editorial.categories.safety.description'),
     icon: Shield,
     gradient: 'from-amber-500 to-orange-500',
     bgColor: 'bg-amber-500/10',
@@ -98,8 +92,8 @@ const CATEGORIES = [
   },
   {
     slug: 'culture',
-    title: 'Culture & History',
-    description: 'The story behind Spain\'s cannabis social club movement.',
+    title: t('editorial.categories.culture.title'),
+    description: t('editorial.categories.culture.description'),
     icon: History,
     gradient: 'from-purple-500 to-violet-500',
     bgColor: 'bg-purple-500/10',
@@ -110,7 +104,9 @@ const CATEGORIES = [
 ];
 
 export default function EditorialPageClient({ lang }: EditorialPageClientProps) {
-  const featuredArticles = mockFeaturedArticles;
+  const { t } = useLanguage();
+  const featuredArticles = buildMockFeaturedArticles(t);
+  const CATEGORIES = buildCategories(t);
 
   return (
     <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
@@ -131,7 +127,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
             >
               <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm border-emerald-500/20 text-zinc-400 bg-emerald-500/5">
                 <BookOpen className="w-4 h-4 mr-2" />
-                Knowledge Vault
+                {t('editorial.badge')}
               </Badge>
             </motion.div>
             
@@ -141,9 +137,9 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              Navigate Spain&apos;s Cannabis Culture{' '}
+              {t('editorial.title_prefix')}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                Confidently
+                {t('editorial.title_highlight')}
               </span>
             </motion.h1>
             
@@ -153,8 +149,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Authoritative guides on legal compliance, club etiquette, and harm reduction. 
-              Built by experts, verified by lawyers, designed for responsible adults.
+              {t('editorial.subtitle')}
             </motion.p>
           </div>
         </div>
@@ -169,7 +164,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            Browse by Topic
+            {t('editorial.browse_by_topic')}
           </motion.h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -199,7 +194,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-zinc-500">
-                        {category.articleCount} {category.articleCount === 1 ? 'article' : 'articles'}
+                        {category.articleCount} {category.articleCount === 1 ? t('editorial.article') : t('editorial.articles')}
                       </span>
                       <ArrowRight className="w-5 h-5 text-zinc-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
                     </div>
@@ -224,10 +219,10 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <h2 className="text-2xl md:text-3xl font-bold text-white">Featured Articles</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-white">{t('editorial.featured_articles')}</h2>
               <Button variant="outline" asChild className="border-emerald-500/15 text-zinc-300 hover:bg-emerald-500/10 hover:text-white rounded-xl">
                 <Link href={`/${lang}/editorial/legal`}>
-                  View all <ArrowRight className="ml-2 w-4 h-4" />
+                  {t('editorial.view_all')} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
             </motion.div>
@@ -260,7 +255,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                       <div className="flex items-center justify-between text-xs text-zinc-500">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
-                          {article.readTime} min read
+                          {article.readTime} {t('editorial.min_read')}
                         </div>
                         {article.cityName && (
                           <span>{article.cityName}</span>
@@ -284,36 +279,36 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">Our Editorial Standards</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">{t('editorial.standards.title')}</h2>
             <p className="text-zinc-400 mb-10">
-              Every article in our Knowledge Vault is researched, fact-checked, and reviewed by legal experts and harm reduction specialists.
+              {t('editorial.standards.subtitle')}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-14 h-14 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
                   <Scale className="w-7 h-7 text-blue-400" />
                 </div>
-                <h3 className="font-semibold mb-2 text-white">Legally Verified</h3>
+                <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.legal.title')}</h3>
                 <p className="text-sm text-zinc-400">
-                  Reviewed by legal professionals familiar with Spanish cannabis law
+                  {t('editorial.standards.items.legal.description')}
                 </p>
               </div>
               <div className="text-center">
                 <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
                   <Shield className="w-7 h-7 text-green-400" />
                 </div>
-                <h3 className="font-semibold mb-2 text-white">Harm Reduction Focused</h3>
+                <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.harm_reduction.title')}</h3>
                 <p className="text-sm text-zinc-400">
-                  Prioritizing safety and responsible consumption above all
+                  {t('editorial.standards.items.harm_reduction.description')}
                 </p>
               </div>
               <div className="text-center">
                 <div className="w-14 h-14 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-500/20">
                   <BookOpen className="w-7 h-7 text-purple-400" />
                 </div>
-                <h3 className="font-semibold mb-2 text-white">Regularly Updated</h3>
+                <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.updated.title')}</h3>
                 <p className="text-sm text-zinc-400">
-                  Laws change. We monitor updates and revise content accordingly
+                  {t('editorial.standards.items.updated.description')}
                 </p>
               </div>
             </div>

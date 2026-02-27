@@ -13,12 +13,13 @@ import { Menu, X } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export default function Navbar() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pillOffsetY = 16;
   const closeMobileMenu = () => setMobileMenuOpen(false);
+  const withLocale = (path: string) => `/${language}${path}`;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,24 +63,30 @@ export default function Navbar() {
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
           {/* Logo Section */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2 group">
-              <Logo size="md" showText={false} href="" className="transition-transform group-hover:scale-110" imageClassName="h-10 w-10" />
-              <span className="text-xl font-bold tracking-tight text-liquid-aware transition-all duration-300">
-                {t('brand.name')}
-              </span>
+            <Link href={`/${language}`} className="flex items-center gap-4 group">
+              <Logo size="lg" showText={false} href="" className="transition-transform group-hover:scale-105" />
+              <div className="flex flex-col justify-center -space-y-0.5 ml-1">
+                <span className="text-xl font-bold tracking-tight text-white transition-all duration-300">
+
+                  {t('brand.name')}
+                </span>
+                <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50">
+                  {t('brand.tagline')}
+                </span>
+              </div>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className={cn(
-            "hidden md:flex items-center rounded-full px-2 py-1 mx-4 transition-all duration-300 text-liquid-aware",
+            "hidden md:flex items-center rounded-full px-2 py-1 mx-4 transition-all duration-300 text-white",
             isScrolled ? "bg-white/5" : "bg-transparent"
           )}>
             <MainNavigation />
           </div>
 
           {/* Desktop Actions Section */}
-          <div className="hidden md:flex items-center gap-3 text-liquid-aware">
+          <div className="hidden md:flex items-center gap-3 text-white">
             <LanguageSelector />
             <UserProfileDropdown />
           </div>
@@ -88,7 +95,7 @@ export default function Navbar() {
           <div className="flex md:hidden items-center gap-1">
             <button
               onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 text-liquid-aware transition-colors"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -112,12 +119,12 @@ export default function Navbar() {
 
             <div className="flex flex-col gap-6 text-2xl font-semibold text-white/90 pt-2">
               {desktopPrimaryItems.map(({ href, labelKey }) => (
-                <Link key={href} href={href} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                   {t(labelKey)}
                 </Link>
               ))}
               {desktopExploreItems.map(({ href, titleKey }) => (
-                <Link key={href} href={href} onClick={closeMobileMenu} className="hover:text-white/85 hover:text-white transition-colors text-xl font-medium">
+                <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="hover:text-white/85 hover:text-white transition-colors text-xl font-medium">
                   {t(titleKey)}
                 </Link>
               ))}

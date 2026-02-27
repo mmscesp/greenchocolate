@@ -23,6 +23,7 @@ import {
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { Drawer } from 'vaul';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface UserProfileDropdownProps {
   className?: string;
@@ -31,11 +32,13 @@ interface UserProfileDropdownProps {
 }
 
 export default function UserProfileDropdown({ className = '', variant = 'dropdown', onMobileClose }: UserProfileDropdownProps) {
+  const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const router = useRouter();
+  const withLocale = (path: string) => `/${language}${path}`;
 
   useEffect(() => {
     let mounted = true;
@@ -78,13 +81,23 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
     setIsOpen(false);
     if (onMobileClose) onMobileClose();
     await signOut();
-    router.push('/');
+    router.push(`/${language}`);
     router.refresh();
   };
 
   const handleLinkClick = () => {
     setIsOpen(false);
     if (onMobileClose) onMobileClose();
+  };
+
+  const formatText = (key: string, values: Record<string, string | number>) => {
+    let message = t(key);
+
+    for (const [name, value] of Object.entries(values)) {
+      message = message.replace(`{{${name}}}`, String(value));
+    }
+
+    return message;
   };
 
   if (authLoading) {
@@ -100,16 +113,16 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
   if (!user) {
     return (
       <div className={cn('relative', className)}>
-        <Link href="/account/login">
+        <Link href={withLocale('/account/login')}>
           <Button variant="ghost" size="sm" className="h-10 px-4 rounded-full bg-white/5 border border-white/10 text-white/80 hover:text-white hover:bg-white/10 transition-all">
-            Log in
+            {t('auth.login')}
           </Button>
         </Link>
       </div>
     );
   }
 
-  const displayName = profile?.displayName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+  const displayName = profile?.displayName || user.user_metadata?.full_name || user.email?.split('@')[0] || t('user.fallback.name');
   const userEmail = profile?.email || user.email || '';
   const isAdmin = profile?.role === 'ADMIN';
   const isClubAdmin = profile?.role === 'CLUB_ADMIN';
@@ -140,16 +153,16 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
             <p className="text-sm md:text-xs text-white/50 truncate">{userEmail}</p>
             <div className="flex flex-wrap gap-1.5 mt-2">
               <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-white/10 text-white/60">
-                Since {memberSince}
+                {t('user.member_since')} {memberSince}
               </Badge>
               {isAdmin && (
                 <Badge className="text-[10px] py-0 px-1.5 bg-red-500/20 text-red-400 border-none">
-                  Admin
+                  {t('admin.common.admin')}
                 </Badge>
               )}
               {isClubAdmin && (
                 <Badge className="text-[10px] py-0 px-1.5 bg-brand/20 text-brand-light border-none">
-                  Club
+                  {t('user.role.club_admin')}
                 </Badge>
               )}
             </div>
@@ -163,23 +176,23 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
         {(isAdmin || isClubAdmin) && (
           <div className="px-3 md:px-2 py-3 md:py-2 border-b border-white/5 space-y-1">
             {isAdmin && (
-              <Link
-                href="/admin"
+                <Link
+                href={withLocale('/admin')}
                 onClick={handleLinkClick}
                 className="flex items-center gap-3 px-4 md:px-3 py-3 md:py-2 rounded-xl md:rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
               >
                 <PanelTop className="h-5 w-5 md:h-4 md:w-4" />
-                <span className="text-base md:text-sm font-medium">Platform Admin Portal</span>
+                <span className="text-base md:text-sm font-medium">{t('user.menu.platform_admin_portal')}</span>
               </Link>
             )}
             {isClubAdmin && (
               <Link
-                href="/club-panel/dashboard"
+                href={withLocale('/club-panel/dashboard')}
                 onClick={handleLinkClick}
                 className="flex items-center gap-3 px-4 md:px-3 py-3 md:py-2 rounded-xl md:rounded-lg bg-brand/10 text-brand-light hover:bg-brand/20 transition-colors"
               >
                 <LayoutDashboard className="h-5 w-5 md:h-4 md:w-4" />
-                <span className="text-base md:text-sm font-medium">Club Dashboard</span>
+                <span className="text-base md:text-sm font-medium">{t('nav.dashboard')}</span>
               </Link>
             )}
           </div>
@@ -187,22 +200,22 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
 
         {/* Main Menu Items */}
         <div className="px-3 md:px-2 py-3 md:py-2 space-y-1">
-          <MenuLink href="/profile" icon={<User className="h-5 w-5 md:h-4 md:w-4 text-blue-400" />} label="My Profile" sublabel="Account settings" onClick={handleLinkClick} />
-          <MenuLink href="/profile/favorites" icon={<Heart className="h-5 w-5 md:h-4 md:w-4 text-red-400" />} label="Saved Clubs" sublabel="Your favorites" onClick={handleLinkClick} />
-          <MenuLink href="/profile/reviews" icon={<Star className="h-5 w-5 md:h-4 md:w-4 text-yellow-400" />} label="My Reviews" sublabel="Your contributions" onClick={handleLinkClick} />
-          <MenuLink href="/profile/requests" icon={<ClipboardList className="h-5 w-5 md:h-4 md:w-4 text-green-400" />} label="Requests" sublabel="Membership status" onClick={handleLinkClick} />
+          <MenuLink href={withLocale('/profile')} icon={<User className="h-5 w-5 md:h-4 md:w-4 text-blue-400" />} label={t('user.my_profile')} sublabel={t('user.menu.profile_desc')} onClick={handleLinkClick} />
+          <MenuLink href={withLocale('/profile/favorites')} icon={<Heart className="h-5 w-5 md:h-4 md:w-4 text-red-400" />} label={t('user.favorite_clubs')} sublabel={t('user.menu.favorites_desc')} onClick={handleLinkClick} />
+          <MenuLink href={withLocale('/profile/reviews')} icon={<Star className="h-5 w-5 md:h-4 md:w-4 text-yellow-400" />} label={t('user.my_reviews')} sublabel={t('user.menu.reviews_desc')} onClick={handleLinkClick} />
+          <MenuLink href={withLocale('/profile/requests')} icon={<ClipboardList className="h-5 w-5 md:h-4 md:w-4 text-green-400" />} label={t('dashboard.requests')} sublabel={t('user.menu.requests_desc')} onClick={handleLinkClick} />
         </div>
 
         {/* Secondary Menu */}
         <div className="px-3 md:px-2 py-3 md:py-2 border-t border-white/5 space-y-1">
           <MenuLink 
-            href="/profile/notifications" 
+            href={withLocale('/profile/notifications')} 
             icon={<Bell className="h-5 w-5 md:h-4 md:w-4 text-purple-400" />} 
-            label="Notifications" 
-            sublabel={`${unreadNotifications} new`} 
+            label={t('user.notifications')} 
+            sublabel={formatText('user.menu.new_count', { count: unreadNotifications })} 
             onClick={handleLinkClick} 
           />
-          <MenuLink href="/profile/settings" icon={<Settings className="h-5 w-5 md:h-4 md:w-4 text-gray-400" />} label="Settings" sublabel="Preferences" onClick={handleLinkClick} />
+          <MenuLink href={withLocale('/profile/settings')} icon={<Settings className="h-5 w-5 md:h-4 md:w-4 text-gray-400" />} label={t('user.settings')} sublabel={t('user.settings_desc')} onClick={handleLinkClick} />
         </div>
 
         {/* Logout */}
@@ -215,7 +228,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
             <div className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
               {loading ? <Loader2 className="h-5 w-5 md:h-4 md:w-4 animate-spin" /> : <LogOut className="h-5 w-5 md:h-4 md:w-4" />}
             </div>
-            <span className="text-base md:text-sm font-medium">Log out</span>
+            <span className="text-base md:text-sm font-medium">{t('nav.logout')}</span>
           </button>
         </div>
       </div>
@@ -275,11 +288,11 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
         <h3 className="font-semibold text-xl text-white truncate">{displayName}</h3>
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-sm text-brand-light font-medium group-hover:text-brand-light/80 transition-colors">
-            View profile
+            {t('user.menu.view_profile')}
           </span>
           {unreadNotifications > 0 && (
             <Badge className="bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 border-none px-1.5 py-0">
-              {unreadNotifications} new
+              {formatText('user.menu.new_count', { count: unreadNotifications })}
             </Badge>
           )}
         </div>

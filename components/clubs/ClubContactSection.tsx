@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { Club } from '@/lib/types';
 import GatedContent from '@/components/clubs/GatedContent';
 import { MapPin, Phone, Mail, Globe } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface Props {
   club: Club;
@@ -9,11 +12,13 @@ interface Props {
 }
 
 export default function ClubContactSection({ club, isVerified }: Props) {
+  const { t } = useLanguage();
+
   if (!isVerified) {
     return (
       <GatedContent 
-        label="Forensic Access Required" 
-        description="Legal contact details and exact coordinates are restricted to verified members only."
+        label={t('clubs.contact.gated_label')} 
+        description={t('clubs.contact.gated_description')}
       />
     );
   }
@@ -24,7 +29,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
           <Mail className="h-5 w-5 text-primary" />
         </div>
-        Contact Information
+        {t('clubs.contact.title')}
       </h3>
       <div className="space-y-6">
         <div className="flex items-start gap-4">
@@ -32,7 +37,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
             <MapPin className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Address</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.address')}</span>
             <span className="text-sm text-white font-medium">{club.address}</span>
           </div>
         </div>
@@ -42,7 +47,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
             <Phone className="h-5 w-5 text-primary" />
           </div>
            <div>
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Phone</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.phone')}</span>
             <span className="text-sm text-white font-medium">{club.phoneNumber}</span>
           </div>
         </div>
@@ -52,7 +57,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
             <Mail className="h-5 w-5 text-primary" />
           </div>
            <div>
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Email</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.email')}</span>
             <span className="text-sm text-white font-medium">{club.contactEmail}</span>
           </div>
         </div>
@@ -63,7 +68,7 @@ export default function ClubContactSection({ club, isVerified }: Props) {
               <Globe className="h-5 w-5 text-primary" />
             </div>
              <div>
-              <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Website</span>
+              <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.website')}</span>
               <a href={`https://${club.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary/80 transition-colors font-medium">
                 {club.website}
               </a>

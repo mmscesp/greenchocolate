@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 interface LogoProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'mega';
   showText?: boolean;
   href?: string;
   imageClassName?: string;
@@ -16,7 +16,8 @@ const sizeConfig = {
   sm: { width: 32, height: 32, iconClass: 'h-6 w-6' },
   md: { width: 40, height: 40, iconClass: 'h-8 w-8' },
   lg: { width: 48, height: 48, iconClass: 'h-10 w-10' },
-  xl: { width: 64, height: 64, iconClass: 'h-12 w-12' },
+  xl: { width: 64, height: 64, iconClass: 'h-16 w-16' },
+  mega: { width: 96, height: 96, iconClass: 'h-24 w-24' },
 };
 
 export function Logo({ 
@@ -36,7 +37,7 @@ export function Logo({
           alt="SocialClubsMaps Logo"
           width={config.width}
           height={config.height}
-          className={cn('object-contain rounded-lg', imageClassName)}
+          className={cn('object-contain', imageClassName)}
           priority
         />
       </div>
@@ -71,7 +72,7 @@ export function LogoIcon({
   size = 'md' 
 }: { 
   className?: string; 
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'mega';
 }) {
   const config = sizeConfig[size];
 
@@ -82,7 +83,7 @@ export function LogoIcon({
         alt="SocialClubsMaps Logo"
         width={config.width}
         height={config.height}
-        className="object-contain rounded-lg"
+        className="object-contain"
         priority
       />
     </div>

@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { LogoIcon } from '@/components/ui/logo';
 import { Mail, Lock, Loader2, Eye, EyeOff } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 
 export default function LoginForm() {
+  const { language, t } = useLanguage();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '';
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -50,8 +52,8 @@ export default function LoginForm() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
           <LogoIcon size="lg" />
         </div>
-        <h1 className="text-3xl font-bold text-foreground">Welcome Back</h1>
-        <p className="text-muted-foreground mt-2">Sign in to your account to continue</p>
+        <h1 className="text-3xl font-bold text-foreground">{t('auth.login.title')}</h1>
+        <p className="text-muted-foreground mt-2">{t('auth.login.subtitle')}</p>
       </div>
 
       {/* OAuth Buttons */}
@@ -69,7 +71,7 @@ export default function LoginForm() {
           ) : (
             <FcGoogle className="h-5 w-5" />
           )}
-          Continue with Google
+          {t('auth.login.continue_google')}
         </Button>
         
         <Button
@@ -85,7 +87,7 @@ export default function LoginForm() {
           ) : (
             <FaApple className="h-5 w-5" />
           )}
-          Continue with Apple
+          {t('auth.login.continue_apple')}
         </Button>
       </div>
 
@@ -95,7 +97,7 @@ export default function LoginForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with email
+            {t('auth.login.continue_email')}
           </span>
         </div>
       </div>
@@ -114,14 +116,14 @@ export default function LoginForm() {
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t('form.email')}</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('auth.placeholders.email')}
               className="pl-10"
               required
               disabled={isPending}
@@ -134,12 +136,12 @@ export default function LoginForm() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              href="/forgot-password"
+            <Label htmlFor="password">{t('form.password')}</Label>
+              <Link
+              href={`/${language}/forgot-password`}
               className="text-sm text-primary hover:underline"
             >
-              Forgot password?
+              {t('auth.login.forgot_password')}
             </Link>
           </div>
           <div className="relative">
@@ -148,7 +150,7 @@ export default function LoginForm() {
               id="password"
               name="password"
               type={showPassword ? 'text' : 'password'}
-              placeholder="Enter your password"
+              placeholder={t('auth.placeholders.password')}
               className="pl-10 pr-10"
               required
               disabled={isPending}
@@ -177,7 +179,7 @@ export default function LoginForm() {
             htmlFor="rememberMe" 
             className="text-sm text-muted-foreground cursor-pointer"
           >
-            Remember me for 30 days
+            {t('auth.login.remember_me')}
           </Label>
         </div>
 
@@ -191,17 +193,17 @@ export default function LoginForm() {
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
+              {t('auth.login.signing_in')}
             </>
           ) : (
-            'Sign In'
+            t('auth.login.submit')
           )}
         </Button>
 
         <div className="text-center text-sm text-muted-foreground">
-          {"Don't have an account? "}
-          <Link href="/account/register" className="text-primary hover:underline font-medium">
-            Create one
+          {t('auth.login.no_account')}{' '}
+          <Link href={`/${language}/account/register`} className="text-primary hover:underline font-medium">
+            {t('auth.login.create_account')}
           </Link>
         </div>
       </form>

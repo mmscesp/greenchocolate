@@ -9,6 +9,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { MorphingText } from '@/components/ui/morphing-text';
+import { useLanguage } from '@/hooks/useLanguage';
 
 const HERO_CONFIG = {
   scrollHeight: '400vh',
@@ -24,8 +25,22 @@ const HERO_CONFIG = {
 } as const;
 
 export default function HeroSection() {
+  const { t, language } = useLanguage();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  const localCities = [
+    t('hero.section.cities.local.1'),
+    t('hero.section.cities.local.2'),
+    t('hero.section.cities.local.3'),
+    t('hero.section.cities.local.4'),
+  ];
+  const globalCities = [
+    t('hero.section.cities.global.1'),
+    t('hero.section.cities.global.2'),
+    t('hero.section.cities.global.3'),
+    t('hero.section.cities.global.4'),
+  ];
 
   // Scoping Root Ref for GSAP matchMedia
   const rootRef = useRef<HTMLElement>(null);
@@ -201,7 +216,7 @@ export default function HeroSection() {
               <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} priority quality={72} className="h-full w-full object-cover blur-xl brightness-[1.02] saturate-[1.02] select-none" />
             </div>
             <div ref={imageTrackRef} className="absolute inset-x-0 top-0 will-change-transform">
-              <Image src="/images/hero/barcelona-skyline.webp" alt="Barcelona Skyline" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} priority quality={88} className="h-auto w-full select-none" onLoad={() => setImageLoaded(true)} />
+              <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} priority quality={88} className="h-auto w-full select-none" onLoad={() => setImageLoaded(true)} />
             </div>
           </div>
 
@@ -220,34 +235,34 @@ export default function HeroSection() {
 
                   <div ref={headlineWrapRef} className="will-change-transform w-full">
                       <h1 className="sr-only">
-                        Social Clubs Maps: Cannabis Social Clubs in Barcelona, Madrid, Tenerife, Valencia compared to dispensaries and coffeeshops in Amsterdam, Los Angeles, Vancouver, and Bangkok.
+                        {t('hero.section.sr_title')}
                       </h1>
                       <p className="text-xs sm:text-base md:text-xl lg:text-2xl text-white tracking-[0.25em] uppercase font-light [text-shadow:0_2px_10px_rgba(0,0,0,0.8),0_4px_30px_rgba(0,0,0,0.6)]">
-                        Different city. Different rules.
+                        {t('hero.section.strapline_top')}
                       </p>
                       <p className="mt-2 text-xs sm:text-base md:text-xl lg:text-2xl text-[#D9534F] tracking-[0.25em] uppercase font-black [text-shadow:0_2px_10px_rgba(0,0,0,0.8),0_4px_30px_rgba(0,0,0,0.6)]">
-                        Different consequences.
+                        {t('hero.section.strapline_bottom')}
                       </p>
                       
                       <div className="mt-4 sm:mt-6 flex items-center justify-center w-full max-w-5xl mx-auto overflow-hidden">
                         <div className="flex-1 flex justify-center h-[3rem] sm:h-[4.5rem] md:h-[6.5rem] lg:h-[8rem] drop-shadow-[0_10px_40px_rgba(0,0,0,0.85)]">
-                          <MorphingText texts={["BARCELONA", "MADRID", "TENERIFE", "VALENCIA"]} className="text-[clamp(1.2rem,4.5vw,7.5rem)] font-black text-white tracking-tighter uppercase" />
+                          <MorphingText texts={localCities} className="text-[clamp(1.2rem,4.5vw,7.5rem)] font-black text-white tracking-tighter uppercase" />
                         </div>
                         <span aria-hidden="true" className="px-1 sm:px-4 text-[clamp(1.5rem,5.5vw,8rem)] text-[#E8A838] font-black leading-none shrink-0 drop-shadow-[0_0_30px_rgba(232,168,56,0.8)] pb-2 md:pb-4">
                           ×
                         </span>
                         <div className="flex-1 flex justify-center h-[3rem] sm:h-[4.5rem] md:h-[6.5rem] lg:h-[8rem] drop-shadow-[0_10px_40px_rgba(0,0,0,0.85)]">
-                          <MorphingText texts={["AMSTERDAM", "LOS ANGELES", "VANCOUVER", "BANGKOK"]} className="text-[clamp(1.2rem,4.5vw,7.5rem)] font-black text-white tracking-tighter uppercase" />
+                          <MorphingText texts={globalCities} className="text-[clamp(1.2rem,4.5vw,7.5rem)] font-black text-white tracking-tighter uppercase" />
                         </div>
                       </div>
                   </div>
 
                   <div ref={bodyRef} className="mx-auto mt-2 sm:mt-5 max-w-3xl will-change-transform px-4 relative z-10">
                     <p className="text-sm md:text-lg lg:text-xl text-gray-100 leading-relaxed font-medium [text-shadow:0_2px_8px_rgba(0,0,0,0.9),0_4px_20px_rgba(0,0,0,0.6)]">
-                      Spanish CSCs aren&apos;t coffeeshops. No walk-ins. No menus. No second chances.
+                      {t('hero.section.body')}
                     </p>
                     <p className="mt-3 text-base md:text-xl lg:text-2xl text-white font-bold uppercase tracking-[0.12em] [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_4px_30px_rgba(0,0,0,0.7)]">
-                      We&apos;re your verification layer.
+                      {t('hero.section.subbody')}
                     </p>
                   </div>
                 </div>
@@ -257,14 +272,14 @@ export default function HeroSection() {
               <div className="absolute inset-x-0 bottom-6 md:bottom-10 pointer-events-none flex flex-col items-center justify-end h-full">
                 <div ref={ctaRef} className="pointer-events-auto w-full max-w-3xl mx-auto will-change-transform mb-6">
                   <div className="flex flex-col md:flex-row justify-center gap-3 md:gap-5 px-4">
-                    <Link href="/safety" className="w-full md:w-auto">
+                    <Link href={`/${language}/safety`} className="w-full md:w-auto">
                       <Button size="lg" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] hover:scale-105 transition-all duration-300 shadow-[0_10px_40px_rgba(232,168,56,0.3)]">
-                        Get the Free Safety Guide →
+                        {t('hero.section.cta_safety')}
                       </Button>
                     </Link>
-                    <Link href="/editorial/legal" className="w-full md:w-auto">
+                    <Link href={`/${language}/editorial/legal`} className="w-full md:w-auto">
                       <Button size="lg" variant="outline" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full border-2 border-white text-white bg-black/30 backdrop-blur-md hover:bg-white/10 hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                        How It Works
+                        {t('hero.section.cta_how_it_works')}
                       </Button>
                     </Link>
                   </div>
@@ -273,10 +288,10 @@ export default function HeroSection() {
                 <div ref={statsRef} className="pointer-events-auto w-full will-change-transform px-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 max-w-5xl mx-auto">
                     {[
-                      { value: '4', label: 'Expert Guides', icon: BookOpen },
-                      { value: '2.5K+', label: 'Safety Kits', icon: Shield },
-                      { value: '€0', label: 'Fines', icon: AlertCircle },
-                      { value: 'Mar 26', label: 'Launch', icon: Calendar },
+                      { value: '4', label: t('hero.section.stats.desktop.guides'), icon: BookOpen },
+                      { value: '2.5K+', label: t('hero.section.stats.desktop.kits'), icon: Shield },
+                      { value: '€0', label: t('hero.section.stats.desktop.fines'), icon: AlertCircle },
+                      { value: 'Mar 26', label: t('hero.section.stats.desktop.launch'), icon: Calendar },
                     ].map((stat, i) => {
                       const Icon = stat.icon;
                       return (
@@ -309,7 +324,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 z-0">
           <div ref={mobileBgRef} className="w-full h-full will-change-transform">
             {/* object-[center_15%] drops the blue sky nicely for the typography */}
-            <Image src="/images/hero/barcelona-skyline.webp" alt="Barcelona Skyline" fill priority quality={80} className="object-cover object-[center_15%]" onLoad={() => setImageLoaded(true)} />
+            <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill priority quality={80} className="object-cover object-[center_15%]" onLoad={() => setImageLoaded(true)} />
           </div>
           
           {/* Global Vignette for Cinematic Mood */}
@@ -325,14 +340,14 @@ export default function HeroSection() {
           
           {/* TOP: Typography Stack */}
           <div className="flex flex-col items-center text-center w-full mt-8">
-            <h1 className="sr-only">Social Clubs Maps: Cannabis Social Clubs in Barcelona, Madrid, Tenerife, Valencia compared to dispensaries and coffeeshops in Amsterdam, Los Angeles, Vancouver, and Bangkok.</h1>
-            <p className="text-[11px] sm:text-xs text-white tracking-[0.3em] uppercase font-medium drop-shadow-md">Different city. Different rules.</p>
-            <p className="mt-4 text-[11px] sm:text-xs text-[#D9534F] tracking-[0.3em] uppercase font-black drop-shadow-md">Different consequences.</p>
+            <h1 className="sr-only">{t('hero.section.sr_title')}</h1>
+            <p className="text-[11px] sm:text-xs text-white tracking-[0.3em] uppercase font-medium drop-shadow-md">{t('hero.section.strapline_top')}</p>
+            <p className="mt-4 text-[11px] sm:text-xs text-[#D9534F] tracking-[0.3em] uppercase font-black drop-shadow-md">{t('hero.section.strapline_bottom')}</p>
             
             <div className="mt-6 flex flex-col items-center justify-center w-full">
               {/* Stacked Morphing Text for massive impact */}
               <div className="h-[18vw] sm:h-[6rem] flex items-center justify-center w-full overflow-visible">
-                <MorphingText texts={["BARCELONA", "MADRID", "TENERIFE", "VALENCIA"]} className="text-[13vw] sm:text-[5rem] font-black text-white tracking-tighter uppercase drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]" />
+                <MorphingText texts={localCities} className="text-[13vw] sm:text-[5rem] font-black text-white tracking-tighter uppercase drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]" />
               </div>
               
               <div className="h-[2.5rem] flex items-center justify-center">
@@ -340,15 +355,15 @@ export default function HeroSection() {
               </div>
               
               <div className="h-[18vw] sm:h-[6rem] flex items-center justify-center w-full overflow-visible">
-                <MorphingText texts={["AMSTERDAM", "LOS ANGELES", "VANCOUVER", "BANGKOK"]} className="text-[13vw] sm:text-[5rem] font-black text-white tracking-tighter uppercase drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]" />
+                <MorphingText texts={globalCities} className="text-[13vw] sm:text-[5rem] font-black text-white tracking-tighter uppercase drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]" />
               </div>
             </div>
 
             <p className="mt-10 text-[15px] sm:text-base text-gray-100 font-medium leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-2">
-              Spanish CSCs aren&apos;t coffeeshops. No walk-ins. No menus. No second chances.
+              {t('hero.section.body')}
             </p>
             <p className="mt-4 text-[16px] sm:text-lg text-white font-bold uppercase tracking-[0.1em] drop-shadow-[0_4px_15px_rgba(0,0,0,0.9)]">
-              We&apos;re your verification layer.
+              {t('hero.section.subbody')}
             </p>
           </div>
           
@@ -360,14 +375,14 @@ export default function HeroSection() {
             
             {/* Action Buttons */}
             <div className="flex flex-col gap-3">
-              <Link href="/safety" className="w-full">
+              <Link href={`/${language}/safety`} className="w-full">
                 <Button size="lg" className="w-full py-7 text-base font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] shadow-[0_4px_20px_rgba(232,168,56,0.3)]">
-                  Get the Free Safety Guide →
+                  {t('hero.section.cta_safety')}
                 </Button>
               </Link>
-              <Link href="/editorial/legal" className="w-full">
+              <Link href={`/${language}/editorial/legal`} className="w-full">
                 <Button size="lg" variant="outline" className="w-full py-7 text-base font-bold rounded-full border border-white/40 text-white bg-white/10 backdrop-blur-md">
-                  How It Works
+                  {t('hero.section.cta_how_it_works')}
                 </Button>
               </Link>
             </div>
@@ -375,10 +390,10 @@ export default function HeroSection() {
             {/* Native Glassmorphic Stats */}
             <div className="grid grid-cols-2 gap-3">
               {[
-                { value: '4', label: 'Guides', icon: BookOpen },
-                { value: '2.5K+', label: 'Kits', icon: Shield },
-                { value: '€0', label: 'Fines', icon: AlertCircle },
-                { value: 'Mar 26', label: 'Launch', icon: Calendar },
+                { value: '4', label: t('hero.section.stats.mobile.guides'), icon: BookOpen },
+                { value: '2.5K+', label: t('hero.section.stats.mobile.kits'), icon: Shield },
+                { value: '€0', label: t('hero.section.stats.mobile.fines'), icon: AlertCircle },
+                { value: 'Mar 26', label: t('hero.section.stats.mobile.launch'), icon: Calendar },
               ].map((stat, i) => {
                 const Icon = stat.icon;
                 return (
@@ -400,7 +415,7 @@ export default function HeroSection() {
       <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900 transition-opacity duration-1000 ${imageLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="flex flex-col items-center gap-6">
           <div className="w-20 h-20 md:w-28 md:h-28 border-4 border-[#E8A838] border-t-transparent rounded-full animate-spin" />
-          <p className="text-white/70 text-sm md:text-base tracking-wider">Loading experience...</p>
+          <p className="text-white/70 text-sm md:text-base tracking-wider">{t('hero.section.loading')}</p>
         </div>
       </div>
 

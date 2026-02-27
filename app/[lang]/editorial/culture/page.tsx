@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, History, Calendar, MapPin, Clock, ArrowRight } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface CulturePageProps {
   params: Promise<{ lang: string }>;
@@ -14,39 +15,40 @@ interface CulturePageProps {
 
 const cultureGuides = [
   {
-    title: 'The Barcelona Cannabis Club Movement',
+    titleKey: 'editorial.culture.guides.1.title',
     slug: 'barcelona-cannabis-club-movement',
-    excerpt: 'How a protest movement became a cultural institution. The history behind Spain\'s unique model.',
+    excerptKey: 'editorial.culture.guides.1.excerpt',
     readTime: 12,
     featured: true,
   },
   {
-    title: 'Interview: Club Founders on 20 Years of Change',
+    titleKey: 'editorial.culture.guides.2.title',
     slug: 'interview-club-founders',
-    excerpt: 'Perspectives from pioneers who shaped the movement from the beginning.',
+    excerptKey: 'editorial.culture.guides.2.excerpt',
     readTime: 15,
   },
   {
-    title: 'From Stigma to Acceptance',
+    titleKey: 'editorial.culture.guides.3.title',
     slug: 'stigma-to-acceptance',
-    excerpt: 'How public perception has evolved over the past two decades.',
+    excerptKey: 'editorial.culture.guides.3.excerpt',
     readTime: 8,
   },
   {
-    title: 'The Club as Community Center',
+    titleKey: 'editorial.culture.guides.4.title',
     slug: 'club-as-community-center',
-    excerpt: 'Beyond cannabis—how clubs serve as hubs for art, music, and social connection.',
+    excerptKey: 'editorial.culture.guides.4.excerpt',
     readTime: 6,
   },
   {
-    title: 'Madrid vs Barcelona: A Cultural Comparison',
+    titleKey: 'editorial.culture.guides.5.title',
     slug: 'madrid-vs-barcelona-comparison',
-    excerpt: 'How the two major cities developed different club cultures and atmospheres.',
+    excerptKey: 'editorial.culture.guides.5.excerpt',
     readTime: 7,
   },
 ];
 
 export default function CulturePage({ params }: CulturePageProps) {
+  const { t } = useLanguage();
   const [lang, setLang] = useState('en');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -93,7 +95,7 @@ export default function CulturePage({ params }: CulturePageProps) {
             <Button variant="outline" asChild className="mb-6 border-border text-muted-foreground hover:bg-muted hover:text-foreground">
               <Link href={`/${lang}/editorial`}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
-                Back to Knowledge Vault
+                {t('editorial.culture.back_to_vault')}
               </Link>
             </Button>
           </motion.div>
@@ -106,7 +108,7 @@ export default function CulturePage({ params }: CulturePageProps) {
               className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"
             >
               <History className="w-4 h-4" />
-              <Label size="sm">Culture & History</Label>
+              <Label size="sm">{t('editorial.culture.badge')}</Label>
             </motion.div>
             
             <motion.div
@@ -115,9 +117,9 @@ export default function CulturePage({ params }: CulturePageProps) {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <H1 className="mb-6">
-                The Story Behind Spain&apos;s{' '}
+                {t('editorial.culture.title_prefix')}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-                  Cannabis Movement
+                  {t('editorial.culture.title_highlight')}
                 </span>
               </H1>
             </motion.div>
@@ -128,8 +130,7 @@ export default function CulturePage({ params }: CulturePageProps) {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <Lead>
-                From underground beginnings to cultural institutions. Discover how Spain&apos;s
-                cannabis social clubs became a model for responsible adult use.
+                {t('editorial.culture.lead')}
               </Lead>
             </motion.div>
           </div>
@@ -140,7 +141,7 @@ export default function CulturePage({ params }: CulturePageProps) {
       <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <H3 className="mb-6">A Brief History</H3>
+            <H3 className="mb-6">{t('editorial.culture.history_title')}</H3>
             
             <motion.div 
               className="space-y-6"
@@ -156,11 +157,10 @@ export default function CulturePage({ params }: CulturePageProps) {
                   <div className="w-0.5 h-full bg-emerald-500/20 mt-2" />
                 </div>
                 <div className="pb-6">
-                  <span className="text-sm text-zinc-500">1990s</span>
-                  <H4 className="text-white mb-2">The Movement Begins</H4>
+                  <span className="text-sm text-zinc-500">{t('editorial.culture.timeline.1990s.period')}</span>
+                  <H4 className="text-white mb-2">{t('editorial.culture.timeline.1990s.title')}</H4>
                   <Text size="sm" variant="muted">
-                    Activists start advocating for cannabis decriminalization.
-                    The concept of &quot;cannabis clubs&quot; emerges from social movements.
+                    {t('editorial.culture.timeline.1990s.description')}
                   </Text>
                 </div>
               </div>
@@ -173,11 +173,10 @@ export default function CulturePage({ params }: CulturePageProps) {
                   <div className="w-0.5 h-full bg-emerald-500/20 mt-2" />
                 </div>
                 <div className="pb-6">
-                  <span className="text-sm text-zinc-500">2006-2010</span>
-                  <H4 className="text-white mb-2">Barcelona Emerges</H4>
+                  <span className="text-sm text-zinc-500">{t('editorial.culture.timeline.2006_2010.period')}</span>
+                  <H4 className="text-white mb-2">{t('editorial.culture.timeline.2006_2010.title')}</H4>
                   <Text size="sm" variant="muted">
-                    Barcelona becomes the epicenter. The first formal clubs
-                    open, creating a new model for private consumption.
+                    {t('editorial.culture.timeline.2006_2010.description')}
                   </Text>
                 </div>
               </div>
@@ -189,11 +188,10 @@ export default function CulturePage({ params }: CulturePageProps) {
                   </div>
                 </div>
                 <div>
-                  <span className="text-sm text-zinc-500">Present Day</span>
-                  <H4 className="text-white mb-2">A Growing Movement</H4>
+                  <span className="text-sm text-zinc-500">{t('editorial.culture.timeline.present.period')}</span>
+                  <H4 className="text-white mb-2">{t('editorial.culture.timeline.present.title')}</H4>
                   <Text size="sm" variant="muted">
-                    Thousands of members across Spain. Continued evolution
-                    of the model and ongoing policy discussions.
+                    {t('editorial.culture.timeline.present.description')}
                   </Text>
                 </div>
               </div>
@@ -207,7 +205,7 @@ export default function CulturePage({ params }: CulturePageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <H2 className="mb-8">
-              Culture Guides
+              {t('editorial.culture.guides_title')}
             </H2>
             
             <div className="grid gap-4">
@@ -227,19 +225,19 @@ export default function CulturePage({ params }: CulturePageProps) {
                         <div className="flex items-center gap-3 mb-2">
                           {article.featured && (
                             <Badge className="bg-primary/10 text-primary border-primary/20">
-                              Featured
+                              {t('editorial.culture.featured')}
                             </Badge>
                           )}
                           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                             <Clock className="w-3.5 h-3.5" />
-                            {article.readTime} min read
+                            {article.readTime} {t('editorial.min_read')}
                           </div>
                         </div>
                         <H3 className="mb-2 group-hover:text-primary transition-colors">
-                          {article.title}
+                          {t(article.titleKey)}
                         </H3>
                         <Text variant="muted">
-                          {article.excerpt}
+                          {t(article.excerptKey)}
                         </Text>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TrustStrip } from './blocks/TrustStrip';
 import { KnowledgeRouter } from './blocks/KnowledgeRouter';
 import { RealityCheck } from './blocks/RealityCheck';
@@ -53,19 +53,21 @@ const ONRAMP_EXPERIMENT_ARMS = ['control', 'benefit'] as const;
  */
 export default function EditorialConciergeFlow({ featuredArticles }: EditorialConciergeFlowProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const searchParams = useMemo(
-    () => (typeof window === 'undefined' ? undefined : new URLSearchParams(window.location.search)),
-    []
-  );
+  const [onrampAssignment] = useState<{ arm: string; source: 'query' | 'storage' | 'random' }>(
+    () => {
+      if (typeof window === 'undefined') {
+        return {
+          arm: ONRAMP_EXPERIMENT_ARMS[0],
+          source: 'random' as const,
+        };
+      }
 
-  const onrampAssignment = useMemo(
-    () =>
-      resolveExperimentArm({
+      return resolveExperimentArm({
         experimentId: ONRAMP_EXPERIMENT_ID,
         allowedArms: ONRAMP_EXPERIMENT_ARMS,
-        searchParams,
-      }),
-    [searchParams]
+        searchParams: new URLSearchParams(window.location.search),
+      });
+    }
   );
 
   useEffect(() => {
