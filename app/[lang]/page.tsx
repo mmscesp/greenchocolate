@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import HeroSection from '@/components/HeroSection';
-import { AtmosphericCanvas } from '@/components/AtmosphericCanvas';
-import EditorialConciergeFlow from '@/components/landing/editorial-concierge/EditorialConciergeFlow';
+import DeferredEditorialConcierge from '@/components/landing/editorial-concierge/DeferredEditorialConcierge';
 
 const OG_LOCALE_BY_LANG: Record<string, string> = {
   es: 'es_ES',
@@ -52,9 +51,7 @@ export default async function HomePage() {
   return (
     <div className="relative min-h-screen">
       <HeroSection />
-      <AtmosphericCanvas>
-        <EditorialConciergeFlow />
-      </AtmosphericCanvas>
+      <DeferredEditorialConcierge />
     </div>
   );
 }

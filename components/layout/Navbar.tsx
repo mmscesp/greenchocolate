@@ -113,6 +113,9 @@ export default function Navbar() {
           <div className="flex md:hidden items-center gap-1">
             <button
               onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-site-menu"
               className={cn(
                 'relative flex h-10 w-10 items-center justify-center rounded-full transition-colors',
                 useLightNavForeground ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-slate-900'
@@ -131,6 +134,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
+            id="mobile-site-menu"
             className="fixed inset-0 z-40 md:hidden glass-liquid pt-24 px-6 flex flex-col gap-6"
           >
             {/* Rich Profile Header inside Mobile Menu */}

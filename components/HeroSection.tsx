@@ -27,6 +27,8 @@ const HERO_CONFIG = {
 export default function HeroSection() {
   const { t, language } = useLanguage();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [overlayHidden, setOverlayHidden] = useState(false);
+  const [animationReady, setAnimationReady] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const localCities = [
@@ -70,8 +72,37 @@ export default function HeroSection() {
     return () => mediaQuery.removeEventListener('change', updatePreference);
   }, []);
 
-  useGSAP(() => {
+  useEffect(() => {
     if (!imageLoaded) return;
+
+    let frameOne = 0;
+    let frameTwo = 0;
+
+    frameOne = window.requestAnimationFrame(() => {
+      frameTwo = window.requestAnimationFrame(() => {
+        setAnimationReady(true);
+      });
+    });
+
+    return () => {
+      if (frameOne) {
+        window.cancelAnimationFrame(frameOne);
+      }
+      if (frameTwo) {
+        window.cancelAnimationFrame(frameTwo);
+      }
+    };
+  }, [imageLoaded]);
+
+  const handleHeroImageLoad = () => {
+    setImageLoaded(true);
+    window.requestAnimationFrame(() => {
+      setOverlayHidden(true);
+    });
+  };
+
+  useGSAP(() => {
+    if (!imageLoaded || !animationReady) return;
     gsap.registerPlugin(ScrollTrigger);
 
     const mm = gsap.matchMedia();
@@ -192,7 +223,7 @@ export default function HeroSection() {
 
     return () => mm.revert();
 
-  }, { scope: rootRef, dependencies: [imageLoaded, prefersReducedMotion] });
+  }, { scope: rootRef, dependencies: [imageLoaded, animationReady, prefersReducedMotion] });
 
   const sectionStyle = prefersReducedMotion ? undefined : ({ height: HERO_CONFIG.scrollHeight } as const);
   const stageClasses = prefersReducedMotion
@@ -210,13 +241,13 @@ export default function HeroSection() {
           {/* --- DRONE BACKGROUND --- */}
           <div className="absolute inset-0 bg-black">
             <div ref={imageBaseRef} className="absolute inset-[-10%] will-change-transform">
-              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} priority quality={82} className="h-full w-full object-cover brightness-[1.02] saturate-[1.02] select-none" />
+              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="(min-width: 768px) 120vw, 100vw" quality={78} loading="lazy" decoding="async" fetchPriority="low" className="h-full w-full object-cover brightness-[1.02] saturate-[1.02] select-none" />
             </div>
             <div ref={imageEdgeRef} className="absolute inset-[-14%] will-change-transform" style={{ WebkitMaskImage: 'radial-gradient(ellipse 125% 120% at 50% 45%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 1) 100%)', maskImage: 'radial-gradient(ellipse 125% 120% at 50% 45%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 1) 100%)' }}>
-              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} priority quality={72} className="h-full w-full object-cover blur-xl brightness-[1.02] saturate-[1.02] select-none" />
+              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="(min-width: 768px) 128vw, 100vw" quality={68} loading="lazy" decoding="async" fetchPriority="low" className="h-full w-full object-cover blur-xl brightness-[1.02] saturate-[1.02] select-none" />
             </div>
             <div ref={imageTrackRef} className="absolute inset-x-0 top-0 will-change-transform">
-              <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} priority quality={88} className="h-auto w-full select-none" onLoad={() => setImageLoaded(true)} />
+              <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="100vw" priority quality={88} className="h-auto w-full select-none" onLoad={handleHeroImageLoad} />
             </div>
           </div>
 
@@ -324,7 +355,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 z-0">
           <div ref={mobileBgRef} className="relative w-full h-full will-change-transform">
             {/* object-[center_15%] drops the blue sky nicely for the typography */}
-            <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill priority quality={80} className="object-cover object-[center_15%]" onLoad={() => setImageLoaded(true)} />
+            <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill quality={80} sizes="100vw" loading="lazy" decoding="async" className="object-cover object-[center_15%]" onLoad={handleHeroImageLoad} />
           </div>
           
           {/* Global Vignette for Cinematic Mood */}
@@ -412,7 +443,7 @@ export default function HeroSection() {
       {/* ========================================================= */}
       {/* GLOBAL LOADING OVERLAY                                    */}
       {/* ========================================================= */}
-      <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900 transition-opacity duration-1000 ${imageLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900 transition-opacity duration-1000 ${overlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="flex flex-col items-center gap-6">
           <div className="w-20 h-20 md:w-28 md:h-28 border-4 border-[#E8A838] border-t-transparent rounded-full animate-spin" />
           <p className="text-white/70 text-sm md:text-base tracking-wider">{t('hero.section.loading')}</p>

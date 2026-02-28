@@ -1,9 +1,9 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import type { User, Session } from '@supabase/supabase-js';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 // Types for the auth context
@@ -63,11 +63,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const pathname = usePathname();
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   // Fetch user profile from our API
-  const fetchProfile = async (authId: string): Promise<Profile | null> => {
+  const fetchProfile = async (): Promise<Profile | null> => {
     try {
       const response = await fetch('/api/profile/me');
       if (response.ok) {
@@ -82,21 +81,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Initialize auth state
   useEffect(() => {
+    let isMounted = true;
+
     const initializeAuth = async () => {
       try {
         // Get initial session
         const { data: { session: initialSession } } = await supabase.auth.getSession();
+        if (!isMounted) return;
         setSession(initialSession);
         setUser(initialSession?.user ?? null);
 
         if (initialSession?.user) {
-          const userProfile = await fetchProfile(initialSession.user.id);
+          const userProfile = await fetchProfile();
+          if (!isMounted) return;
           setProfile(userProfile);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -110,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(true);
 
         if (currentSession?.user) {
-          const userProfile = await fetchProfile(currentSession.user.id);
+          const userProfile = await fetchProfile();
           setProfile(userProfile);
 
           // Show toast on sign in
@@ -136,9 +141,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     return () => {
+      isMounted = false;
       subscription.unsubscribe();
     };
-  }, [supabase, router, pathname]);
+  }, [supabase]);
 
   // Sign in with email and password
   const signIn = async (email: string, password: string): Promise<{ error: Error | null }> => {
@@ -298,7 +304,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Refresh profile data
   const refreshProfile = async () => {
     if (user) {
-      const userProfile = await fetchProfile(user.id);
+      const userProfile = await fetchProfile();
       setProfile(userProfile);
     }
   };

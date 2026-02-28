@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    unoptimized: true,
+    unoptimized: false,
     qualities: [72, 75, 80, 82, 85, 88, 90],
   },
   async headers() {
