@@ -14,6 +14,7 @@ npm run dev
 - `npm run test` / `npm run test:run` - Run unit tests.
 - `npm run test:e2e` - Run Playwright E2E tests.
 - `npm run build` - Build production bundle.
+- `npm run verify:chunks` - Validate that deployed HTML only references existing JS chunks (`SITE_URL` and `SITE_ROUTE` override defaults).
 - `npm run translations:check` - Validate translations.
 
 ## Contribution Expectations
@@ -28,4 +29,5 @@ npm run dev
 1. Lint passes.
 2. Unit tests pass.
 3. Build passes.
-4. Critical route flows smoke-tested.
+4. Chunk integrity check passes on production URL (`npm run verify:chunks`).
+5. Critical route flows smoke-tested.
