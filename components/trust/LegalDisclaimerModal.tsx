@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useId, useState, useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, AlertOctagon, Check, X } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
@@ -8,27 +8,35 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 export default function LegalDisclaimerModal() {
   const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(() => {
-    if (typeof window === 'undefined') {
-      return false;
-    }
+  const subscribeToConsent = useCallback((onStoreChange: () => void) => {
+    const onConsentUpdate = () => {
+      onStoreChange();
+    };
 
-    return !localStorage.getItem('legal_consent_v1');
-  });
+    window.addEventListener('storage', onConsentUpdate);
+    window.addEventListener('legal-consent-updated', onConsentUpdate);
+
+    return () => {
+      window.removeEventListener('storage', onConsentUpdate);
+      window.removeEventListener('legal-consent-updated', onConsentUpdate);
+    };
+  }, []);
+
+  const isOpen = useSyncExternalStore(
+    subscribeToConsent,
+    () => !localStorage.getItem('legal_consent_v1'),
+    () => false,
+  );
   const [hasAgreed, setHasAgreed] = useState(false);
-  const [sessionId] = useState(() => {
-    if (typeof window === 'undefined') {
-      return 'INIT';
-    }
-
-    return crypto.randomUUID().slice(0, 8);
-  });
+  const idSeed = useId();
+  const sessionId = idSeed.replace(/[^a-zA-Z0-9]/g, '').slice(-8).padStart(8, '0');
 
   const handleAgree = () => {
     setHasAgreed(true);
     setTimeout(() => {
       localStorage.setItem('legal_consent_v1', 'true');
-      setIsOpen(false);
+      window.dispatchEvent(new Event('legal-consent-updated'));
+      setHasAgreed(false);
     }, 800);
   };
 
