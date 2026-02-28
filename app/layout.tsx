@@ -72,6 +72,11 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
     creator: '@socialclubsmaps',
   },
+  icons: {
+    icon: '/images/SCM_Logo_OG.svg',
+    shortcut: '/images/SCM_Logo_OG.svg',
+    apple: '/images/SCM_Logo_OG.svg',
+  },
   alternates: {
     canonical: 'https://socialclubsmaps.com',
     languages: {

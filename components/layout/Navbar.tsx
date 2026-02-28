@@ -26,14 +26,25 @@ export default function Navbar() {
   const useLightNavForeground = isHomepageOverlay || isScrolled;
 
   useEffect(() => {
+    let frameId: number | null = null;
+
     const handleScroll = () => {
-      // Transition to pill mode after 100px of scrolling
-      setIsScrolled(window.scrollY > 100);
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        const nextScrolled = window.scrollY > 100;
+        setIsScrolled((current) => (current === nextScrolled ? current : nextScrolled));
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
   }, []);
 
   // Lock body scroll when mobile menu is open
@@ -70,7 +81,7 @@ export default function Navbar() {
           {/* Logo Section */}
           <div className="flex items-center">
             <Link href={`/${language}`} className="flex items-center gap-4 group">
-              <Logo size="lg" showText={false} href="" className="transition-transform group-hover:scale-105" />
+              <Logo size="lg" showText={false} href="" priority className="transition-transform group-hover:scale-105" />
               <div className="flex flex-col justify-center -space-y-0.5 ml-1">
                 <span className={cn('text-xl font-bold tracking-tight transition-all duration-300', useLightNavForeground ? 'text-white' : 'text-slate-900')}>
 

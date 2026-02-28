@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     unoptimized: true,
-    qualities: [75, 85, 90],
+    qualities: [72, 75, 80, 82, 85, 88, 90],
   },
   async headers() {
     const csp = [

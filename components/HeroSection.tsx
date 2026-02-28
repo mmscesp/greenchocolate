@@ -322,7 +322,7 @@ export default function HeroSection() {
         
         {/* Background Layer with Dark Gradients */}
         <div className="absolute inset-0 z-0">
-          <div ref={mobileBgRef} className="w-full h-full will-change-transform">
+          <div ref={mobileBgRef} className="relative w-full h-full will-change-transform">
             {/* object-[center_15%] drops the blue sky nicely for the typography */}
             <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill priority quality={80} className="object-cover object-[center_15%]" onLoad={() => setImageLoaded(true)} />
           </div>

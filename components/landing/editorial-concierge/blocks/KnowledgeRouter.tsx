@@ -17,14 +17,14 @@ export function KnowledgeRouter() {
   const router = useRouter();
 
   const topics = [
-    { id: 'laws', title: t('landing.router.topics.laws.title'), desc: t('landing.router.topics.laws.desc'), size: 'large' as const, img: '/images/topics/laws.webp', href: '/editorial/legal' },
-    { id: 'cbd', title: t('landing.router.topics.cbd.title'), desc: t('landing.router.topics.cbd.desc'), size: 'small' as const, img: '/images/topics/cbd.webp', href: '/editorial' },
-    { id: 'products', title: t('landing.router.topics.products.title'), desc: t('landing.router.topics.products.desc'), size: 'small' as const, img: '/images/topics/products.webp', href: '/safety' },
-    { id: 'body', title: t('landing.router.topics.body.title'), desc: t('landing.router.topics.body.desc'), size: 'medium' as const, img: '/images/topics/body.webp', href: '/safety' },
-    { id: 'plant', title: t('landing.router.topics.plant.title'), desc: t('landing.router.topics.plant.desc'), size: 'medium' as const, img: '/images/topics/plant.webp', href: '/editorial' },
-    { id: 'history', title: t('landing.router.topics.history.title'), desc: t('landing.router.topics.history.desc'), size: 'small' as const, img: '/images/topics/history.webp', href: '/editorial/culture' },
-    { id: 'dictionary', title: t('landing.router.topics.dictionary.title'), desc: t('landing.router.topics.dictionary.desc'), size: 'small' as const, img: '/images/topics/dictionary.webp', href: '/editorial' },
-    { id: 'start', title: t('landing.router.topics.start.title'), desc: t('landing.router.topics.start.desc'), size: 'large' as const, img: '/images/topics/start.webp', href: '/safety' },
+    { id: 'laws', title: t('landing.router.topics.laws.title'), desc: t('landing.router.topics.laws.desc'), size: 'large' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial/legal' },
+    { id: 'cbd', title: t('landing.router.topics.cbd.title'), desc: t('landing.router.topics.cbd.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial' },
+    { id: 'products', title: t('landing.router.topics.products.title'), desc: t('landing.router.topics.products.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/safety' },
+    { id: 'body', title: t('landing.router.topics.body.title'), desc: t('landing.router.topics.body.desc'), size: 'medium' as const, img: '/images/hero/barcelona-skyline.webp', href: '/safety' },
+    { id: 'plant', title: t('landing.router.topics.plant.title'), desc: t('landing.router.topics.plant.desc'), size: 'medium' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial' },
+    { id: 'history', title: t('landing.router.topics.history.title'), desc: t('landing.router.topics.history.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial/culture' },
+    { id: 'dictionary', title: t('landing.router.topics.dictionary.title'), desc: t('landing.router.topics.dictionary.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial' },
+    { id: 'start', title: t('landing.router.topics.start.title'), desc: t('landing.router.topics.start.desc'), size: 'large' as const, img: '/images/hero/barcelona-skyline.webp', href: '/safety' },
   ];
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

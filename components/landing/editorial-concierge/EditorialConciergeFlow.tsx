@@ -48,22 +48,26 @@ const ONRAMP_EXPERIMENT_ARMS = ['control', 'benefit'] as const;
  */
 export default function EditorialConciergeFlow() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [onrampAssignment] = useState<{ arm: string; source: 'query' | 'storage' | 'random' }>(
-    () => {
-      if (typeof window === 'undefined') {
-        return {
-          arm: ONRAMP_EXPERIMENT_ARMS[0],
-          source: 'random' as const,
-        };
-      }
+  const [onrampAssignment, setOnrampAssignment] = useState<{ arm: string; source: 'query' | 'storage' | 'random' }>({
+    arm: ONRAMP_EXPERIMENT_ARMS[0],
+    source: 'random',
+  });
 
-      return resolveExperimentArm({
-        experimentId: ONRAMP_EXPERIMENT_ID,
-        allowedArms: ONRAMP_EXPERIMENT_ARMS,
-        searchParams: new URLSearchParams(window.location.search),
-      });
-    }
-  );
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setOnrampAssignment(
+        resolveExperimentArm({
+          experimentId: ONRAMP_EXPERIMENT_ID,
+          allowedArms: ONRAMP_EXPERIMENT_ARMS,
+          searchParams: new URLSearchParams(window.location.search),
+        })
+      );
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   useEffect(() => {
     setAnalyticsContext({
@@ -125,10 +129,10 @@ export default function EditorialConciergeFlow() {
   useEffect(() => {
     const milestones = [25, 50, 75, 100];
     const fired = new Set<number>();
+    let scrollable = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    let frameId: number | null = null;
 
-    const onScroll = () => {
-      const doc = document.documentElement;
-      const scrollable = doc.scrollHeight - window.innerHeight;
+    const updateDepth = () => {
       if (scrollable <= 0) return;
       const percent = Math.round((window.scrollY / scrollable) * 100);
 
@@ -142,11 +146,29 @@ export default function EditorialConciergeFlow() {
       }
     };
 
+    const onScroll = () => {
+      if (frameId !== null) return;
+      frameId = window.requestAnimationFrame(() => {
+        frameId = null;
+        updateDepth();
+      });
+    };
+
+    const onResize = () => {
+      scrollable = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      onScroll();
+    };
+
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('resize', onResize, { passive: true });
+    updateDepth();
 
     return () => {
       window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
     };
   }, []);
 

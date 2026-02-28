@@ -10,6 +10,7 @@ interface LogoProps {
   showText?: boolean;
   href?: string;
   imageClassName?: string;
+  priority?: boolean;
 }
 
 const sizeConfig = {
@@ -25,7 +26,8 @@ export function Logo({
   size = 'md', 
   showText = true,
   href = '/',
-  imageClassName
+  imageClassName,
+  priority = false,
 }: LogoProps) {
   const config = sizeConfig[size];
 
@@ -38,7 +40,7 @@ export function Logo({
           width={config.width}
           height={config.height}
           className={cn('object-contain', imageClassName)}
-          priority
+          priority={priority}
         />
       </div>
       {showText && (
@@ -69,10 +71,12 @@ export function Logo({
 
 export function LogoIcon({ 
   className, 
-  size = 'md' 
+  size = 'md',
+  priority = false,
 }: { 
   className?: string; 
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'mega';
+  priority?: boolean;
 }) {
   const config = sizeConfig[size];
 
@@ -84,7 +88,7 @@ export function LogoIcon({
         width={config.width}
         height={config.height}
         className="object-contain"
-        priority
+        priority={priority}
       />
     </div>
   );
