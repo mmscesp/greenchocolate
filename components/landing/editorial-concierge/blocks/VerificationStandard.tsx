@@ -1,107 +1,121 @@
 'use client';
 
-import React from 'react';
-import { SectionWrapper } from '../layout/SectionWrapper';
-import { EditorialHeading } from '../typography/EditorialHeading';
-import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { CheckCircle2, ShieldCheck, Fingerprint, Lock } from '@/lib/icons';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
-
-const ICONS: Record<string, React.ElementType> = {
-  ShieldCheck,
-  Lock,
-  Fingerprint,
-};
+import { CheckCircle2, ArrowRight } from '@/lib/icons';
 
 export function VerificationStandard() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [email, setEmail] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const verifyItems = [
-    { title: t('landing.verification.items.legal.title'), desc: t('landing.verification.items.legal.desc'), iconName: 'ShieldCheck' },
-    { title: t('landing.verification.items.privacy.title'), desc: t('landing.verification.items.privacy.desc'), iconName: 'Lock' },
-    { title: t('landing.verification.items.transparency.title'), desc: t('landing.verification.items.transparency.desc'), iconName: 'Fingerprint' },
-  ];
-
-  const verifyList = [
-    t('landing.verification.list.verify.1'),
-    t('landing.verification.list.verify.2'),
-    t('landing.verification.list.verify.3'),
-    t('landing.verification.list.verify.4'),
-  ];
-
-  const cannotGuaranteeList = [
-    t('landing.verification.list.cannot.1'),
-    t('landing.verification.list.cannot.2'),
-    t('landing.verification.list.cannot.3'),
-  ];
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    // Integrate actual subscription logic here
+  };
 
   return (
-    <SectionWrapper glass>
-      <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-20 items-center">
-        <div>
-          <ConciergeLabel className="text-emerald-600 mb-6">{t('landing.verification.label')}</ConciergeLabel>
-          <EditorialHeading size="xl" className="mb-8">{t('landing.verification.title')}</EditorialHeading>
-          <p className="text-lg text-zinc-500 leading-relaxed mb-12">
-            {t('landing.verification.description_line_1')}
-            {' '}
-            {t('landing.verification.description_line_2')}
+    <section className="bg-zinc-900 py-24 md:py-32 px-4 md:px-8 overflow-hidden relative">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4">
+            The Clubs We&apos;ve Verified. So Far.
+          </h2>
+          <p className="text-lg md:text-xl text-zinc-400 font-medium mb-6">
+            We add one new verified club every week. Each one takes time. That&apos;s the point.
           </p>
-          
-          <div className="space-y-8">
-            {verifyItems.map((item, i) => {
-              const Icon = ICONS[item.iconName] || ShieldCheck;
-              return (
-                <div key={i} className="flex gap-6">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                    <Icon className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-zinc-900 mb-1">{item.title}</h4>
-                    <p className="text-sm text-zinc-500">{item.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <p className="text-sm md:text-base text-zinc-500 leading-relaxed max-w-2xl mx-auto">
+            Most directories scrape hundreds of unverified listings and call it comprehensive. We do the opposite — we visit, we verify, we build a relationship with every club before it appears here. If it&apos;s listed, it earned it.
+          </p>
         </div>
 
-        <div className="bg-zinc-900 rounded-[3rem] p-6 sm:p-8 lg:p-14 text-white relative overflow-hidden min-h-[320px] sm:min-h-[420px] lg:min-h-[480px] flex flex-col justify-center">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0" style={{ 
-              backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 1px, transparent 0)', 
-              backgroundSize: '32px 32px' 
-            }} />
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide">
+          {/* Club Card 1 */}
+          <div className="min-w-[300px] md:min-w-[340px] bg-black border border-white/10 rounded-2xl p-6 md:p-8 flex-shrink-0 snap-center group hover:border-[#E8A838]/50 transition-colors duration-300">
+            <div className="flex justify-between items-start mb-6">
+              <span className="px-3 py-1 bg-[#E8A838] text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
+                Barcelona
+              </span>
+              <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">Club 311 Barcelona</h3>
+            <div className="space-y-2 mb-8 text-sm text-zinc-400 font-medium">
+              <p>Relaxed atmosphere · Est. 2018</p>
+              <p>International members welcome</p>
+              <p>Avg. response time: 12–24h</p>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
+              <CheckCircle2 className="w-4 h-4" /> Verified — SocialClubsMaps
+            </div>
+            <Link href={`/${language}/clubs`} className="text-white hover:text-[#E8A838] text-sm font-bold flex items-center gap-2 transition-colors">
+              View Profile <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-          
-          <div className="relative z-10">
-            <ConciergeLabel emphasis="high" className="mb-12 block">{t('landing.verification.forensic_label')}</ConciergeLabel>
-            
-            <div className="space-y-8">
-              <div className="pb-8 border-b border-white/10">
-                <h4 className="font-serif text-xl mb-4 text-emerald-400 font-bold">{t('landing.verification.what_we_verify')}</h4>
-                <ul className="space-y-3">
-                  {verifyList.map((s) => (
-                    <li key={s} className="flex items-center gap-3 text-sm text-zinc-300">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500" /> {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+
+          {/* Club Card 2 */}
+          <div className="min-w-[300px] md:min-w-[340px] bg-black border border-white/10 rounded-2xl p-6 md:p-8 flex-shrink-0 snap-center group hover:border-[#E8A838]/50 transition-colors duration-300">
+            <div className="flex justify-between items-start mb-6">
+              <span className="px-3 py-1 bg-[#E8A838] text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
+                Madrid
+              </span>
+              <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">The Green Lounge</h3>
+            <div className="space-y-2 mb-8 text-sm text-zinc-400 font-medium">
+              <p>Premium Lounge · Est. 2020</p>
+              <p>Strict referral policy (verified)</p>
+              <p>Avg. response time: 2–4h</p>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
+              <CheckCircle2 className="w-4 h-4" /> Verified — SocialClubsMaps
+            </div>
+            <Link href={`/${language}/clubs`} className="text-white hover:text-[#E8A838] text-sm font-bold flex items-center gap-2 transition-colors">
+              View Profile <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Coming Next Card */}
+          <div className="min-w-[300px] md:min-w-[340px] bg-black/50 border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex-shrink-0 snap-center flex flex-col justify-center items-center text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(232,168,56,0.05),transparent)] pointer-events-none" />
+            <div className="relative z-10 w-full">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-2">Next Club Verified</p>
+              <p className="text-xl font-bold text-white mb-8">Week of March 30, 2026</p>
               
-              <div>
-                <h4 className="font-serif text-xl mb-4 text-zinc-400 font-bold">{t('landing.verification.what_we_cannot_guarantee')}</h4>
-                <ul className="space-y-3 opacity-60">
-                  {cannotGuaranteeList.map((s) => (
-                    <li key={s} className="flex items-center gap-3 text-sm text-zinc-400">
-                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-600" /> {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {isSubmitted ? (
+                <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 text-sm font-bold">
+                  You&apos;ll be the first to know.
+                </div>
+              ) : (
+                <form onSubmit={handleSubscribe} className="flex flex-col gap-3 w-full">
+                  <input
+                    type="email"
+                    placeholder="Your email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E8A838] focus:ring-1 focus:ring-[#E8A838] transition-all"
+                  />
+                  <button
+                    type="submit"
+                    className="w-full px-4 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg text-sm transition-colors border border-white/5"
+                  >
+                    Notify Me
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>
+
+        <div className="mt-12 text-center">
+          <Link href={`/${language}/clubs`} className="inline-flex items-center gap-2 text-zinc-500 hover:text-white font-bold uppercase tracking-widest text-xs transition-colors">
+            View the Full Directory <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

@@ -3,15 +3,15 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { TrustStrip } from './blocks/TrustStrip';
-import { WhoWeAre } from './blocks/WhoWeAre';
-import { KnowledgeRouter } from './blocks/KnowledgeRouter';
 import { RealityCheck } from './blocks/RealityCheck';
-import { BeginnersOnramp } from './blocks/BeginnersOnramp';
+import { WhoWeAre } from './blocks/WhoWeAre';
+import { FeaturedVault } from './blocks/FeaturedVault';
 import { ConciergeTools } from './blocks/ConciergeTools';
-import { NewsletterDrop } from './blocks/NewsletterDrop';
-
 import { VerificationStandard } from './blocks/VerificationStandard';
+import { NewsletterDrop } from './blocks/NewsletterDrop';
 import { CommunityRoadmap } from './blocks/CommunityRoadmap';
+import { KnowledgeRouter } from './blocks/KnowledgeRouter';
+import { BeginnersOnramp } from './blocks/BeginnersOnramp';
 import { EditorialFAQ } from './blocks/EditorialFAQ';
 import { FinalMicDrop } from './blocks/FinalMicDrop';
 import { clearAnalyticsContext, setAnalyticsContext, trackEvent } from '@/lib/analytics';
@@ -19,15 +19,16 @@ import { resolveExperimentArm } from '@/lib/experiments';
 
 const SECTION_KEYS = [
   'trust_strip',
-  'who_we_are',
-  'beginners_onramp',
-  'knowledge_router',
   'reality_check',
-  'verification_standard',
+  'who_we_are',
+  'featured_vault',
   'concierge_tools',
+  'verification_standard',
   'newsletter_drop',
-  'editorial_faq',
   'community_roadmap',
+  'knowledge_router',
+  'beginners_onramp',
+  'editorial_faq',
   'final_mic_drop',
 ] as const;
 
@@ -40,12 +41,6 @@ const LANDING_EXPERIMENT_CONTEXT = {
 const ONRAMP_EXPERIMENT_ID = 'landing_onramp_copy_v1';
 const ONRAMP_EXPERIMENT_ARMS = ['control', 'benefit'] as const;
 
-/**
- * Editorial Concierge Landing Page
- * 
- * Main entry point for the "God-Level" rebranding.
- * Follows a premium editorial aesthetic.
- */
 export default function EditorialConciergeFlow() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [onrampAssignment, setOnrampAssignment] = useState<{ arm: string; source: 'query' | 'storage' | 'random' }>({
@@ -173,29 +168,42 @@ export default function EditorialConciergeFlow() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative font-sans antialiased text-zinc-900 selection:bg-emerald-100 selection:text-emerald-900">
-      {/* 1. Trust Anchor (Fixed on scroll) */}
+    <div ref={containerRef} className="relative font-sans antialiased bg-black text-zinc-900 selection:bg-[#E8A838] selection:text-black">
+      {/* Section 2: Trust Strip (The Marquee) */}
       <section data-landing-section={SECTION_KEYS[0]}><TrustStrip /></section>
-      {/* 2. Who We Are (Identity + trust) */}
-      <section data-landing-section={SECTION_KEYS[1]}><WhoWeAre /></section>
-      {/* 3. Beginners Onramp (Welcome first!) */}
-      <section data-landing-section={SECTION_KEYS[2]}><BeginnersOnramp experimentArm={onrampAssignment.arm as 'control' | 'benefit'} /></section>
-      {/* 4. Knowledge Router (Bento Grid) */}
-      <section data-landing-section={SECTION_KEYS[3]}><KnowledgeRouter /></section>
-      {/* 5. Reality Check (Warnings after trust context) */}
-      <section data-landing-section={SECTION_KEYS[4]}><RealityCheck /></section>
-      {/* 6. Verification Standard (Reassure after warnings) */}
+      
+      {/* Section 3: Reality Check (Three Mistakes) */}
+      <section data-landing-section={SECTION_KEYS[1]}><RealityCheck /></section>
+      
+      {/* Section 4: Who We Are (The Three Pillars) */}
+      <section data-landing-section={SECTION_KEYS[2]}><WhoWeAre /></section>
+      
+      {/* Section 5: Content Showcase (Featured Vault) */}
+      <section data-landing-section={SECTION_KEYS[3]}><FeaturedVault /></section>
+      
+      {/* Section 6: Interactive Tool (Concierge Tools / Quiz) */}
+      <section data-landing-section={SECTION_KEYS[4]}><ConciergeTools /></section>
+      
+      {/* Section 7: Directory Teaser (Verification Standard) */}
       <section data-landing-section={SECTION_KEYS[5]}><VerificationStandard /></section>
-      {/* 7. Concierge Tools (Interactive) */}
-      <section data-landing-section={SECTION_KEYS[6]}><ConciergeTools /></section>
-      {/* 8. Newsletter Drop (Conversion) */}
-      <section data-landing-section={SECTION_KEYS[7]}><NewsletterDrop /></section>
-      {/* 9. FAQ (Before commitment) */}
-      <section data-landing-section={SECTION_KEYS[8]}><EditorialFAQ /></section>
-      {/* 10. Barcelona Roadmap (Vertical Timeline) */}
-      <section data-landing-section={SECTION_KEYS[9]}><CommunityRoadmap /></section>
-      {/* 11. Final Mic Drop (100vh CTA) */}
-      <section data-landing-section={SECTION_KEYS[10]}><FinalMicDrop /></section>
+      
+      {/* Section 8: Newsletter Drop (The Climax) */}
+      <section data-landing-section={SECTION_KEYS[6]}><NewsletterDrop /></section>
+      
+      {/* Section 9: City Previews (Community Roadmap Repurposed) */}
+      <section data-landing-section={SECTION_KEYS[7]}><CommunityRoadmap /></section>
+      
+      {/* Section 10: Events Bar (Knowledge Router Repurposed) */}
+      <section data-landing-section={SECTION_KEYS[8]}><KnowledgeRouter /></section>
+      
+      {/* Section 11: The Manifesto (Beginners Onramp Repurposed) */}
+      <section data-landing-section={SECTION_KEYS[9]}><BeginnersOnramp /></section>
+      
+      {/* Section 12: Editorial FAQ */}
+      <section data-landing-section={SECTION_KEYS[10]}><EditorialFAQ /></section>
+      
+      {/* Section 13: Final Mic Drop */}
+      <section data-landing-section={SECTION_KEYS[11]}><FinalMicDrop /></section>
     </div>
   );
 }

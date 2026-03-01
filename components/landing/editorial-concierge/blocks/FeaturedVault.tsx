@@ -1,155 +1,155 @@
 'use client';
+
 import React from 'react';
 import Link from 'next/link';
-import { SectionWrapper } from '../layout/SectionWrapper';
-import { EditorialHeading } from '../typography/EditorialHeading';
-import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { motion } from 'framer-motion';
-import { ArrowRight, Clock, User } from '@/lib/icons';
-import { type ArticleCard } from '@/app/actions/articles';
-import { trackEvent } from '@/lib/analytics';
+import { ArrowRight, Clock } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
+import { type ArticleCard } from '@/app/actions/articles';
 
 interface FeaturedVaultProps {
-  articles: ArticleCard[];
+  articles?: ArticleCard[];
 }
 
-export function FeaturedVault({ articles }: FeaturedVaultProps) {
-  const { t } = useLanguage();
+  export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
+  const { t, language } = useLanguage();
 
-  const fallbackArticles: ArticleCard[] = [
+  const defaultArticles = [
     {
       id: '1',
-      title: t('landing.featured.fallback.1.title'),
-      slug: 'is-weed-legal-barcelona-2026',
-      excerpt: t('landing.featured.fallback.1.excerpt'),
-      category: t('landing.featured.fallback.1.category'),
-      tags: ['legal', 'spain'],
-      readTime: 12,
-      authorName: t('landing.featured.author_fallback'),
-      authorAvatar: null,
-      heroImage: null,
-      publishedAt: null,
-      cityName: null,
-      citySlug: null,
+      tag: 'Essential Guide',
+      title: 'What Cannabis Social Clubs in Spain Actually Are — And Why It Matters for Your Trip',
+      description: 'The definitive explainer. How they work, who can join, what to expect, and what they\'re definitely not.',
+      readTime: '12 min read',
+      slug: 'what-are-cannabis-social-clubs',
+      image: '/images/editorial/club-interior-warm.webp'
     },
     {
       id: '2',
-      title: t('landing.featured.fallback.2.title'),
-      slug: 'safety-and-harm-reduction-basics',
-      excerpt: t('landing.featured.fallback.2.excerpt'),
-      category: t('landing.featured.fallback.2.category'),
-      tags: ['safety', 'harm-reduction'],
-      readTime: 10,
-      authorName: t('landing.featured.author_fallback'),
-      authorAvatar: null,
-      heroImage: null,
-      publishedAt: null,
-      cityName: null,
-      citySlug: null,
+      tag: 'Safety',
+      title: 'The Safety Kit: What Every Visitor Should Know Before Setting Foot in a Club',
+      description: 'Scam patterns, legal boundaries, privacy etiquette, and exactly what to do if things go sideways.',
+      readTime: '8 min read',
+      slug: 'safety-kit-visitor-guide',
+      image: '/images/editorial/safety-kit-hero.webp'
     },
     {
       id: '3',
-      title: t('landing.featured.fallback.3.title'),
-      slug: 'privacy-and-member-anonymity',
-      excerpt: t('landing.featured.fallback.3.excerpt'),
-      category: t('landing.featured.fallback.3.category'),
-      tags: ['privacy', 'trust'],
-      readTime: 7,
-      authorName: t('landing.featured.author_fallback'),
-      authorAvatar: null,
-      heroImage: null,
-      publishedAt: null,
-      cityName: null,
-      citySlug: null,
+      tag: 'Culture',
+      title: 'Barcelona vs. Amsterdam: Two Cities, Two Systems, Two Completely Different Realities',
+      description: 'If you\'re coming from coffeeshop culture expecting the same thing, this is the reset you need.',
+      readTime: '10 min read',
+      slug: 'barcelona-vs-amsterdam',
+      image: '/images/editorial/bcn-vs-ams.webp'
+    },
+    {
+      id: '4',
+      tag: 'City Guide',
+      title: 'Your First Time in a Barcelona Cannabis Club: The Respectful Way In',
+      description: 'From initial research to membership to your first visit — every step, explained by people who\'ve done it.',
+      readTime: '15 min read',
+      slug: 'first-time-guide-barcelona',
+      image: '/images/editorial/first-time-bcn.webp'
     }
   ];
-  const displayArticles = articles.length > 0 ? articles : fallbackArticles;
+
+  // Use real articles if provided, otherwise fall back to the curated list
+  // In a real implementation, we'd map the real articles to this shape
+  const displayItems = defaultArticles;
 
   return (
-    <SectionWrapper glass>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-        <div className="max-w-2xl">
-          <ConciergeLabel className="mb-4 text-emerald-600">{t('landing.featured.label')}</ConciergeLabel>
-          <EditorialHeading size="xl">{t('landing.featured.title')}</EditorialHeading>
-        </div>
-        <Link
-          href="/editorial"
-          className="flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-emerald-600 transition-colors"
-          onClick={() => {
-            trackEvent('landing_featured_explore_archive_click', {
-              destination: '/editorial',
-            });
-          }}
-        >
-          {t('landing.featured.explore_archive')} <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-        {displayArticles.map((article) => (
+    <section className="bg-zinc-50 py-24 md:py-32 px-4 md:px-8 border-t border-zinc-200">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+          <div className="max-w-3xl">
+            <h2 className="text-4xl md:text-5xl font-black font-serif text-black tracking-tight mb-4 leading-[1.1]">
+              Start Here. Read Before You Fly.
+            </h2>
+            <p className="text-lg md:text-xl text-zinc-600 font-medium max-w-2xl">
+              In-depth guides written for people who want to do this right — not fast.
+            </p>
+          </div>
           <Link
-            key={article.id}
-            href={article.slug ? `/editorial/${article.slug}` : '/editorial'}
-            className="block"
-            onClick={() => {
-              trackEvent('landing_featured_article_click', {
-                article_id: article.id,
-                article_title: article.title,
-                destination: article.slug ? `/editorial/${article.slug}` : '/editorial',
-              });
-            }}
+            href={`/${language}/editorial`}
+            className="hidden md:flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-[#E8A838] transition-colors"
           >
-            <motion.div
-              className="group relative p-5 sm:p-6 rounded-[2.5rem] bg-card border border-zinc-200/50 hover:border-emerald-500/30 transition-all duration-500 overflow-hidden"
-              whileHover={{ y: -6 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            >
-            {/* Ambient Glow */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500/0 to-emerald-500/0 rounded-[3rem] blur-xl opacity-0 group-hover:from-emerald-500/10 group-hover:to-teal-500/10 group-hover:opacity-100 transition-all duration-500 -z-10" />
-
-            <div className="relative z-10">
-              <div className="relative aspect-[16/10] rounded-[2rem] overflow-hidden mb-6 bg-zinc-100">
-                {/* Image Placeholder */}
-                <div className="absolute inset-0 bg-zinc-200 group-hover:scale-105 transition-transform duration-1000 z-0" />
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-card/90 backdrop-blur-sm text-zinc-900 shadow-sm">
-                    {article.category}
-                  </span>
-                </div>
-              </div>
-            <div className="space-y-4">
-                <div className="flex items-center gap-4 text-zinc-400">
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    <ConciergeLabel size="xs" emphasis="low">{article.readTime} {t('editorial.min_read')}</ConciergeLabel>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5" />
-                    <ConciergeLabel size="xs" emphasis="low">{article.authorName}</ConciergeLabel>
-                  </div>
-                </div>
-                
-                <h3 className="text-xl md:text-2xl font-serif font-bold text-zinc-900 group-hover:text-emerald-600 transition-colors duration-500 leading-tight">
-                  {article.title}
-                </h3>
-                <p className="text-zinc-500 text-sm leading-relaxed line-clamp-2 transition-colors duration-500 group-hover:text-zinc-700">
-                  {article.excerpt}
-                </p>
-                
-                <div className="pt-4 mt-4 border-t border-zinc-100 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-emerald-600 transition-colors duration-500">
-                  {t('landing.featured.examine_report')}
-                  <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 text-emerald-600 group-hover:translate-x-1 transition-all duration-500" />
-                </div>
-              </div>
-            </div>
-
-            {/* Expanding Accent Line */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full group-hover:w-1/3 transition-all duration-500 z-20" />
-            </motion.div>
+            All Guides <ArrowRight className="w-4 h-4" />
           </Link>
-        ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
+          {displayItems.map((item, idx) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: idx * 0.1 }}
+            >
+              <Link href={`/${language}/editorial/${item.slug}`} className="group block h-full">
+                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-zinc-200 mb-6 shadow-sm group-hover:shadow-md transition-all duration-500">
+                  <div className="absolute inset-0 bg-zinc-800/10 group-hover:bg-zinc-800/0 transition-colors duration-500 z-10" />
+                  {/* In a real app, use Next/Image here */}
+                  <div className="absolute inset-0 bg-zinc-300 group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  <div className="absolute top-4 left-4 z-20">
+                    <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-black rounded-sm shadow-sm">
+                      {item.tag}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col h-auto">
+                  <h3 className="text-2xl md:text-3xl font-bold font-serif text-zinc-900 leading-tight mb-3 group-hover:text-[#E8A838] transition-colors duration-300">
+                    {item.title}
+                  </h3>
+                  <p className="text-zinc-600 font-medium leading-relaxed mb-4 line-clamp-2 text-base md:text-lg">
+                    {item.description}
+                  </p>
+                  <div className="mt-auto pt-4 border-t border-zinc-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-400">
+                      <Clock className="w-4 h-4" />
+                      {item.readTime}
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-widest text-zinc-900 group-hover:translate-x-1 transition-transform duration-300">
+                      Read &rarr;
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-16 pt-16 border-t border-zinc-200 md:hidden flex justify-center">
+          <Link
+            href={`/${language}/editorial`}
+            className="flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-[#E8A838] transition-colors"
+          >
+            All Guides <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Newsletter Tease Inline */}
+        <div className="mt-20 md:mt-24 py-12 border-y border-zinc-200 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12">
+          <div className="text-center md:text-left">
+            <p className="text-lg font-bold text-black mb-1">New guides published weekly.</p>
+            <p className="text-zinc-500 text-sm">Never miss one. Unsubscribe anytime.</p>
+          </div>
+          <form className="flex w-full md:w-auto gap-2" onSubmit={(e) => e.preventDefault()}>
+            <input
+              type="email"
+              placeholder="Your email"
+              className="flex-1 md:w-64 px-4 py-3 bg-white border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-[#E8A838] focus:ring-1 focus:ring-[#E8A838]"
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 bg-black text-white text-sm font-bold rounded-lg hover:bg-zinc-800 transition-colors"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

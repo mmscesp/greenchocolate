@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import CityPageClient from './CityPageClient';
+
+const COMING_SOON_CITY_SLUGS = new Set(['valencia', 'tenerife']);
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string; city: string }> }): Promise<Metadata> {
   const { lang, city } = await params;
@@ -259,5 +262,11 @@ interface CityPageProps {
 
 export default async function CityPage({ params }: CityPageProps) {
   const { lang, city } = await params;
-  return <CityPageClient lang={lang} city={city.toLowerCase()} />;
+  const citySlug = city.toLowerCase();
+
+  if (COMING_SOON_CITY_SLUGS.has(citySlug)) {
+    notFound();
+  }
+
+  return <CityPageClient lang={lang} city={citySlug} />;
 }

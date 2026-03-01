@@ -1,76 +1,102 @@
- 'use client';
+'use client';
 
 import React from 'react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { trackEvent } from '@/lib/analytics';
-import { SectionWrapper } from '../layout/SectionWrapper';
-import { EditorialHeading } from '../typography/EditorialHeading';
-import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { BentoCard } from '../interactive/BentoCard';
-import { Search } from '@/lib/icons';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
+import { ArrowRight, MapPin } from '@/lib/icons';
 
 export function KnowledgeRouter() {
-  const { t } = useLanguage();
-  const [query, setQuery] = useState('');
-  const router = useRouter();
+  const { t, language } = useLanguage();
 
-  const topics = [
-    { id: 'laws', title: t('landing.router.topics.laws.title'), desc: t('landing.router.topics.laws.desc'), size: 'large' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial/legal' },
-    { id: 'cbd', title: t('landing.router.topics.cbd.title'), desc: t('landing.router.topics.cbd.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial' },
-    { id: 'products', title: t('landing.router.topics.products.title'), desc: t('landing.router.topics.products.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/safety' },
-    { id: 'body', title: t('landing.router.topics.body.title'), desc: t('landing.router.topics.body.desc'), size: 'medium' as const, img: '/images/hero/barcelona-skyline.webp', href: '/safety' },
-    { id: 'plant', title: t('landing.router.topics.plant.title'), desc: t('landing.router.topics.plant.desc'), size: 'medium' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial' },
-    { id: 'history', title: t('landing.router.topics.history.title'), desc: t('landing.router.topics.history.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial/culture' },
-    { id: 'dictionary', title: t('landing.router.topics.dictionary.title'), desc: t('landing.router.topics.dictionary.desc'), size: 'small' as const, img: '/images/hero/barcelona-skyline.webp', href: '/editorial' },
-    { id: 'start', title: t('landing.router.topics.start.title'), desc: t('landing.router.topics.start.desc'), size: 'large' as const, img: '/images/hero/barcelona-skyline.webp', href: '/safety' },
+  const events = [
+    {
+      date: 'APR 17–19',
+      name: 'Spannabis Bilbao 2026',
+      location: 'Bilbao, Spain',
+      desc: 'Spain\'s flagship cannabis fair moves to a new home.',
+      href: `/${language}/events`
+    },
+    {
+      date: 'APR 13–15',
+      name: 'ICBC Berlin 2026',
+      location: 'Berlin, Germany',
+      desc: 'Europe\'s premier cannabis business conference.',
+      href: `/${language}/events`
+    },
+    {
+      date: 'MAY 26–27',
+      name: 'Cannabis Europa London 2026',
+      location: 'London, UK',
+      desc: 'Where policy meets industry.',
+      href: `/${language}/events`
+    }
   ];
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const trimmed = query.trim();
-    trackEvent('landing_knowledge_search_submit', {
-      has_query: Boolean(trimmed),
-      query_length: trimmed.length,
-    });
-    router.push(trimmed ? `/editorial?q=${encodeURIComponent(trimmed)}` : '/editorial');
-  };
-
   return (
-    <SectionWrapper glass>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-        <div className="max-w-2xl">
-          <ConciergeLabel className="mb-4 text-emerald-600">{t('landing.router.label')}</ConciergeLabel>
-          <EditorialHeading size="xl">{t('landing.router.title')}</EditorialHeading>
+    <section className="bg-zinc-50 py-16 md:py-20 px-4 md:px-8 border-t border-zinc-200">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-black font-serif text-black tracking-tight mb-2">
+              What&apos;s Happening Across Europe
+            </h2>
+            <p className="text-zinc-600 font-medium">
+              The events shaping cannabis culture, policy, and community — covered by us.
+            </p>
+          </div>
+          <Link
+            href={`/${language}/events`}
+            className="hidden md:inline-flex items-center gap-2 text-zinc-500 hover:text-[#E8A838] font-bold uppercase tracking-widest text-xs transition-colors"
+          >
+            Full Events Calendar <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
-        
-        <form onSubmit={handleSubmit} className="relative group w-full md:w-96">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-emerald-500 transition-colors" />
-          <label htmlFor="knowledge-router-search" className="sr-only">{t('landing.router.search_aria_label')}</label>
-          <input 
-            id="knowledge-router-search"
-            type="text" 
-            placeholder={t('landing.router.search_placeholder')}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="w-full bg-card border border-zinc-200 rounded-full py-4 pl-12 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 transition-all"
-          />
-        </form>
-      </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[200px] md:auto-rows-[240px] gap-4 md:gap-6">
-        {topics.map((topic) => (
-          <BentoCard 
-            key={topic.id}
-            title={topic.title}
-            desc={topic.desc}
-            size={topic.size}
-            imageSrc={topic.img}
-            href={topic.href}
-          />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {events.map((event, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              className="group bg-white border border-zinc-200 hover:border-[#E8A838]/50 rounded-xl p-5 md:p-6 transition-colors shadow-sm hover:shadow-md"
+            >
+              <div className="mb-4">
+                <span className="inline-block px-3 py-1 bg-black text-[#E8A838] text-[10px] font-bold uppercase tracking-widest rounded-sm">
+                  {event.date}
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-zinc-900 mb-2 group-hover:text-[#E8A838] transition-colors">
+                {event.name}
+              </h3>
+              <div className="flex items-center gap-1.5 text-zinc-500 text-sm font-medium mb-4">
+                <MapPin className="w-3.5 h-3.5" />
+                {event.location}
+              </div>
+              <p className="text-zinc-600 text-sm mb-6">
+                {event.desc}
+              </p>
+              <Link
+                href={event.href}
+                className="inline-flex items-center gap-2 text-black font-bold text-sm hover:translate-x-1 transition-transform"
+              >
+                Read Our Guide <ArrowRight className="w-4 h-4" />
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center md:hidden">
+          <Link
+            href={`/${language}/events`}
+            className="inline-flex items-center gap-2 text-zinc-500 hover:text-[#E8A838] font-bold uppercase tracking-widest text-xs transition-colors"
+          >
+            Full Events Calendar <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

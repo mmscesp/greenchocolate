@@ -80,17 +80,18 @@ export default function Navbar() {
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
           {/* Logo Section */}
           <div className="flex items-center">
-            <Link href={`/${language}`} className="flex items-center gap-4 group">
-              <Logo size="lg" showText={false} href="" priority className="transition-transform group-hover:scale-105" />
-              <div className="flex flex-col justify-center -space-y-0.5 ml-1">
-                <span className={cn('text-xl font-bold tracking-tight transition-all duration-300', useLightNavForeground ? 'text-white' : 'text-slate-900')}>
-
-                  {t('brand.name')}
-                </span>
-                <span className={cn('text-[10px] font-semibold tracking-[0.2em] uppercase', useLightNavForeground ? 'text-white/50' : 'text-slate-600')}>
-                  {t('brand.tagline')}
-                </span>
-              </div>
+            <Logo
+              href={localizedHomePath}
+              size={isScrolled ? 'md' : 'lg'}
+              showText={false}
+              className="gap-3"
+              imageClassName="drop-shadow-[0_1px_4px_rgba(0,0,0,0.25)]"
+              priority
+            />
+            <Link href={localizedHomePath} className="flex items-center">
+              <span className={cn('text-xl font-bold tracking-tight transition-all duration-300', useLightNavForeground ? 'text-white' : 'text-slate-900')}>
+                SocialClubsMaps
+              </span>
             </Link>
           </div>
 
@@ -104,9 +105,12 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Actions Section */}
-          <div className={cn('hidden md:flex items-center gap-3', useLightNavForeground ? 'text-white' : 'text-slate-900')}>
-            <LanguageSelector tone={useLightNavForeground ? 'light' : 'dark'} />
-            <UserProfileDropdown tone={useLightNavForeground ? 'light' : 'dark'} />
+          <div className={cn('hidden md:flex items-center gap-3')}>
+            <Link href={withLocale('/safety-kit')}>
+              <button className="px-5 py-2 text-sm font-bold bg-[#E8A838] text-black rounded-full hover:bg-[#d4962e] transition-colors shadow-sm">
+                Get the Safety Kit
+              </button>
+            </Link>
           </div>
 
           {/* Mobile Actions Section */}
@@ -126,7 +130,6 @@ export default function Navbar() {
           </div>
         </div>
       </motion.nav>
-
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -143,23 +146,44 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col gap-6 text-2xl font-semibold text-white/90 pt-2">
-              {desktopPrimaryItems.map(({ href, labelKey }) => (
-                <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="hover:text-white transition-colors">
-                  {t(labelKey)}
-                </Link>
-              ))}
-              {desktopExploreItems.map(({ href, titleKey }) => (
-                <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="hover:text-white/85 hover:text-white transition-colors text-xl font-medium">
-                  {t(titleKey)}
-                </Link>
-              ))}
+              <Link href={withLocale('/editorial')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.guides')}
+              </Link>
+              <Link href={withLocale('/clubs')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.clubs_directory')}
+              </Link>
+              <Link href={withLocale('/events')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.events')}
+              </Link>
+              <div className="pt-4 border-t border-white/10 flex flex-col gap-6">
+                <span className="block text-sm uppercase tracking-wider text-white/50">{t('nav.cities')}</span>
+                {desktopExploreItems.map(({ href, titleKey, comingSoon }) => {
+                  if (comingSoon || !href) {
+                    return (
+                      <div key={titleKey} className="flex items-center justify-between gap-3 text-white/60 text-xl font-medium cursor-not-allowed" aria-disabled="true">
+                        <span>{t(titleKey)}</span>
+                        <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/80">
+                          {t('nav.coming_soon')}
+                        </span>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="block hover:text-white/85 hover:text-white transition-colors text-xl font-medium">
+                      {t(titleKey)}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mt-auto pb-12 flex flex-col gap-6 border-t border-white/10 pt-8">
-              <div className="flex items-center justify-between">
-                <span className="text-white/60 font-medium">{t('language.label')}</span>
-                <LanguageSelector direction="up" />
-              </div>
+              <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="w-full">
+                <button className="w-full py-4 text-lg font-bold bg-[#E8A838] text-black rounded-full hover:bg-[#d4962e] transition-colors shadow-sm">
+                  Get the Safety Kit
+                </button>
+              </Link>
             </div>
           </motion.div>
         )}

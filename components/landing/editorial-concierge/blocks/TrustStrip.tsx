@@ -1,36 +1,58 @@
 'use client';
 
 import React from 'react';
-import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { PulsingStatusDot } from '../interactive/PulsingStatusDot';
-import { useLanguage } from '@/hooks/useLanguage';
+
+const phrases = [
+  "Independent & Unsponsored",
+  "Verified Clubs Only",
+  "No Walk-In Referrals",
+  "Updated Weekly",
+  "Free to Read",
+  "Written From Spain",
+  "Zero Paid Placements"
+];
 
 export function TrustStrip() {
-  const { t } = useLanguage();
-
   return (
-    <div className="sticky top-16 z-40 w-full min-h-12 bg-black/90 backdrop-blur-xl border-b border-white/10 flex items-center py-1 shadow-lg transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-3">
-        
-        <div className="flex items-center gap-3 sm:gap-6 min-w-0">
-          <div className="flex items-center gap-2">
-            <PulsingStatusDot />
-            <ConciergeLabel size="xs" emphasis="high" className="text-white truncate">{t('landing.trust.status_verified')}</ConciergeLabel>
-            </div>
-          <div className="hidden md:flex items-center gap-4 border-l border-white/10 pl-6">
-            <ConciergeLabel size="xs" className="text-zinc-400">{t('landing.trust.last_audit')}</ConciergeLabel>
-            <ConciergeLabel size="xs" className="text-emerald-400 font-medium">{t('landing.trust.education_first')}</ConciergeLabel>
-            <ConciergeLabel size="xs" className="text-emerald-400 font-medium">{t('landing.trust.privacy_always')}</ConciergeLabel>
-          </div>
-        </div>
-        
-        <div className="hidden md:flex items-center gap-2 text-zinc-500">
-          <ConciergeLabel size="xs" className="uppercase tracking-widest font-semibold text-[10px]">
-            {t('landing.trust.no_brokerage')}
-          </ConciergeLabel>
-        </div>
-
+    <div className="w-full h-12 md:h-14 bg-[#141414] overflow-hidden flex items-center border-y border-white/5 relative z-40 select-none">
+      {/* Desktop View */}
+      <div className="hidden lg:flex items-center justify-center w-full max-w-7xl mx-auto gap-4 xl:gap-6 px-4">
+        {phrases.map((phrase, i) => (
+          <React.Fragment key={i}>
+            <span className="text-[10px] xl:text-[11px] font-semibold uppercase tracking-wider text-[#E8A838]/80 whitespace-nowrap">
+              {phrase}
+            </span>
+            {i < phrases.length - 1 && (
+              <span className="text-white/30 text-xs">&middot;</span>
+            )}
+          </React.Fragment>
+        ))}
       </div>
+
+      {/* Mobile/Tablet Marquee */}
+      <div className="lg:hidden flex items-center w-full relative">
+        <div className="flex animate-marquee whitespace-nowrap">
+          {/* We duplicate the array multiple times to ensure seamless infinite scrolling */}
+          {[...phrases, ...phrases, ...phrases, ...phrases].map((phrase, i) => (
+            <React.Fragment key={i}>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#E8A838]/80 mx-3 sm:mx-4">
+                {phrase}
+              </span>
+              <span className="text-white/30 text-xs mx-1">&middot;</span>
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }

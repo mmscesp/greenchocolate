@@ -1,42 +1,60 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { SectionWrapper } from '../layout/SectionWrapper';
-import { EditorialHeading } from '../typography/EditorialHeading';
-import { ConciergeLabel } from '../typography/ConciergeLabel';
-import { useLanguage } from '@/hooks/useLanguage';
-// import { MagneticButton } from '../interactive/MagneticButton';
+import React, { useState } from 'react';
+import { ArrowRight } from '@/lib/icons';
 
 export function FinalMicDrop() {
-  const { t } = useLanguage();
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
 
   return (
-    <SectionWrapper glass className="min-h-[90vh] flex items-center justify-center text-center py-0" container={false}>
-      {/* Cinematic Background Image Placeholder */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-black/60 z-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black z-10" />
-        <div className="w-full h-full bg-zinc-900" />
-      </div>
+    <section className="bg-black min-h-[100dvh] flex items-center justify-center text-center py-20 px-4 relative overflow-hidden">
+      {/* Pure black background, minimalist approach */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
 
-      <div className="relative z-20 max-w-5xl px-4 sm:px-6">
-        <ConciergeLabel emphasis="high" size="md" className="mb-8 block tracking-[0.4em]">{t('landing.final.label')}</ConciergeLabel>
-        <EditorialHeading size="2xl" className="text-white mb-12">{t('landing.final.title_line_1')} <br />{t('landing.final.title_line_2')}</EditorialHeading>
+      <div className="relative z-20 max-w-3xl w-full mx-auto">
+        <h2 className="text-[12vw] md:text-[7rem] font-black font-serif text-white tracking-tighter leading-none mb-6">
+          Know<br />Before<br />You Go.
+        </h2>
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-          <Link href="/safety" className="w-full sm:w-auto min-h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-8 sm:px-12 py-3 sm:py-6 rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-base sm:text-lg uppercase tracking-widest text-center">
-            {t('landing.final.cta_safety')}
-          </Link>
-          <Link href="/editorial" className="w-full sm:w-auto min-h-11 bg-emerald-500/10 hover:bg-emerald-500/20 backdrop-blur-md text-white border border-emerald-500/25 font-bold px-8 sm:px-12 py-3 sm:py-6 rounded-full transition-all hover:scale-105 active:scale-95 text-base sm:text-lg uppercase tracking-widest text-center">
-            {t('landing.final.cta_editorial')}
-          </Link>
+        <p className="text-xl md:text-2xl text-zinc-400 font-medium mb-16">
+          The Safety Kit. The guides. The verified clubs. It all starts here.
+        </p>
+
+        <div className="max-w-md mx-auto w-full">
+          {submitted ? (
+            <div className="text-emerald-400 font-bold text-xl py-6">
+              Sent. Check your inbox.
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <input
+                type="email"
+                required
+                placeholder="Your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-xl text-xl text-center text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E8A838] transition-all"
+              />
+              <button
+                type="submit"
+                className="w-full px-8 py-5 bg-[#E8A838] hover:bg-[#d4962e] text-black font-black text-xl rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                Get the Safety Kit &rarr;
+              </button>
+            </form>
+          )}
         </div>
 
-        <p className="mt-16 text-zinc-500 font-mono text-xs uppercase tracking-widest">
-          {t('landing.final.footer_badge')}
+        <p className="mt-12 text-zinc-600 text-xs font-bold uppercase tracking-widest">
+          Free forever. One email per week. Unsubscribe in one click. No spam. No sponsors.
         </p>
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

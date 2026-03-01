@@ -1,86 +1,96 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { useState } from 'react';
-import { SectionWrapper } from '../layout/SectionWrapper';
-import { EditorialHeading } from '../typography/EditorialHeading';
-import { ConciergeLabel } from '../typography/ConciergeLabel';
+import React, { useState } from 'react';
 import { Plus } from '@/lib/icons';
-import { trackEvent } from '@/lib/analytics';
-import { useLanguage } from '@/hooks/useLanguage';
 
 export function EditorialFAQ() {
-  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqs = [
-    { q: t('landing.faq.items.1.q'), a: t('landing.faq.items.1.a') },
-    { q: t('landing.faq.items.2.q'), a: t('landing.faq.items.2.a') },
-    { q: t('landing.faq.items.3.q'), a: t('landing.faq.items.3.a') },
-    { q: t('landing.faq.items.4.q'), a: t('landing.faq.items.4.a') },
-    { q: t('landing.faq.items.5.q'), a: t('landing.faq.items.5.a') },
+    { 
+      q: "Are Cannabis Social Clubs legal in Spain?", 
+      a: "It's genuinely complicated — and that complexity is exactly why we built this. Cannabis Social Clubs operate in a legal grey zone. There is no national law that explicitly legalizes them. Spain's Supreme Court has issued rulings that narrow what's considered non-criminal activity within an association. Catalonia attempted to regulate CSCs in 2017, but that law was declared unconstitutional in 2018. What IS clear: private consumption in a private space is treated very differently from public consumption, which is an administrative offense with fines from €601 to €30,000. We cover all of this in depth in our legal guide — but we're not lawyers, and nothing we publish should be taken as legal advice." 
+    },
+    { 
+      q: "Can tourists actually join a Cannabis Social Club?", 
+      a: "Some clubs accept international visitors. Many don't. Every club sets its own membership policy independently. What's universally true: you cannot walk in without prior membership, you will need valid identification, and the process takes time — sometimes days. Our directory shows which clubs are open to visitors and lists their specific requirements, including language support, response times, and intake policies." 
+    },
+    { 
+      q: "Why don't you list more clubs?", 
+      a: "Because we verify every single one. We don't scrape listings from Google Maps, TripAdvisor, or other directories. We don't accept payment for placement. We don't list clubs we haven't assessed against our verification standard. We add one new club per week because that's the pace at which we can do this properly without compromising the standard. Every directory that prioritized quantity over quality in this space eventually became part of the problem. We refuse to be that." 
+    },
+    { 
+      q: "Is SocialClubsMaps free?", 
+      a: "All our guides, safety resources, educational content, and the city quiz are completely free and always will be. The directory is free to browse. We may introduce optional premium features in the future — such as expedited verification or concierge-level trip support — but the core of what we do will remain open. We believe safety information should never be paywalled." 
+    },
+    { 
+      q: "How is this different from other cannabis directories?", 
+      a: "Most directories in this space fall into one of three categories: they scrape unverified listings to look comprehensive, they accept payment from clubs for placement, or they operate as thinly-veiled fronts for specific clubs looking to attract tourists. We are independent. We are unsponsored. We verify every listing. We don't publish sensitive details on public pages. And we invest in the educational content that helps you understand the entire landscape — not just find an address. That's the difference, and it's not close." 
+    },
+    {
+      q: "Do you sell cannabis or facilitate purchases?",
+      a: "No. Absolutely not. SocialClubsMaps is an educational platform and a curated directory. We do not sell, broker, or facilitate the sale or purchase of any controlled substance. Cannabis Social Clubs are private associations — what occurs between a club and its members is their private matter, governed by their own house rules and the laws of Spain. We help people understand how the system works and connect with clubs that meet our verification standard. That's where our role ends."
+    }
   ];
 
   return (
-    <SectionWrapper glass>
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-20">
-          <ConciergeLabel className="text-emerald-600 mb-6 block">{t('landing.faq.label')}</ConciergeLabel>
-          <EditorialHeading size="xl">{t('landing.faq.title')}</EditorialHeading>
+    <section className="bg-[#0a0a0a] py-24 md:py-32 px-4 md:px-8 border-t border-white/5">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-16 md:mb-20 text-center">
+          <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight">
+            Questions We Hear Most
+          </h2>
         </div>
+
+        {/* Schema markup for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": faqs.map(faq => ({
+                "@type": "Question",
+                "name": faq.q,
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": faq.a
+                }
+              }))
+            })
+          }}
+        />
 
         <div className="space-y-4">
           {faqs.map((faq, i) => (
-            <div key={i} className="group border-b border-zinc-200 py-8">
+            <div key={i} className="group bg-[#111] rounded-2xl border border-white/5 overflow-hidden transition-colors hover:border-white/10">
               <button
                 type="button"
-                onClick={() => {
-                  const nextOpen = openIndex === i ? null : i;
-                  setOpenIndex(nextOpen);
-                  trackEvent('landing_faq_toggle', {
-                    question: faq.q,
-                    opened: nextOpen === i,
-                  });
-                }}
-                className="w-full flex items-center justify-between gap-4 sm:gap-8 text-left"
+                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                className="w-full flex items-center justify-between gap-4 p-6 md:p-8 text-left focus:outline-none"
                 aria-expanded={openIndex === i}
-                aria-controls={`editorial-faq-panel-${i}`}
               >
-                <h4 className="text-lg sm:text-xl md:text-2xl font-serif font-bold text-zinc-900 group-hover:text-emerald-600 transition-colors">
+                <h4 className="text-lg md:text-xl font-bold text-white pr-8">
                   {faq.q}
                 </h4>
-                <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0 group-hover:bg-emerald-50 transition-colors">
-                  <Plus className={`w-4 h-4 text-zinc-400 group-hover:text-emerald-600 transition-transform duration-500 ${openIndex === i ? 'rotate-45' : ''}`} />
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all duration-300 ${openIndex === i ? 'bg-[#E8A838] border-[#E8A838] text-black rotate-45' : 'border-white/10 text-zinc-500'}`}>
+                  <Plus className="w-4 h-4" />
                 </div>
               </button>
-              {openIndex === i && (
-                <div id={`editorial-faq-panel-${i}`} className="mt-6 max-w-3xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-500">
-                  <p className="text-lg text-zinc-500 leading-relaxed">
+              
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${openIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+              >
+                <div className="overflow-hidden">
+                  <p className="px-6 md:px-8 pb-6 md:pb-8 text-zinc-400 leading-relaxed text-base md:text-lg">
                     {faq.a}
                   </p>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>
-        
-        <div className="mt-20 p-6 sm:p-8 md:p-12 rounded-[2.5rem] bg-emerald-50 border border-emerald-100 text-center">
-          <EditorialHeading size="sm" className="text-emerald-900 mb-4">{t('landing.faq.cta_title')}</EditorialHeading>
-          <p className="text-emerald-700 mb-8">{t('landing.faq.cta_description')}</p>
-          <Link
-            href="/safety"
-            className="inline-flex min-h-11 items-center justify-center bg-emerald-600 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-emerald-700 transition-colors"
-            onClick={() => {
-              trackEvent('landing_faq_safety_kit_click', {
-                destination: '/safety',
-              });
-            }}
-          >
-            {t('landing.faq.cta_button')}
-          </Link>
-        </div>
       </div>
-    </SectionWrapper>
+    </section>
   );
 }

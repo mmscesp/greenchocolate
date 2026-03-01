@@ -108,7 +108,7 @@ export default function HeroSection() {
     const mm = gsap.matchMedia();
 
     // ==========================================
-    // DESKTOP: Scroll-Driven Cinematic Experience
+    // DESKTOP: The "Reverse Dolly" Cinematic
     // ==========================================
     mm.add("(min-width: 768px)", () => {
       if (!desktopContainerRef.current) return;
@@ -122,70 +122,111 @@ export default function HeroSection() {
         return;
       }
 
-      const aspectRatio = HERO_CONFIG.image.height / HERO_CONFIG.image.width;
-      const getViewportHeight = () => window.visualViewport?.height || window.innerHeight;
-      const getBaseImageHeight = () => window.innerWidth * aspectRatio;
-      const getTravel = (scale = 1) => Math.max(0, getBaseImageHeight() * scale - getViewportHeight());
-
-      const getInitialY = () => -getTravel(HERO_CONFIG.focal.initialZoom) * HERO_CONFIG.focal.initialTravel;
-      const getAct2Y = () => -getTravel(1.08) * HERO_CONFIG.focal.act2Travel;
-      const getAct3Y = () => -getTravel(1.04) * HERO_CONFIG.focal.act3Travel;
-      const getFinalY = () => -getTravel(HERO_CONFIG.focal.finalScale) * HERO_CONFIG.focal.act4Travel;
-
+      // --- SETUP: Initial State (The "Close-up") ---
+      // 1. Camera starts zoomed in on the skyline
       gsap.set([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
-        scale: HERO_CONFIG.focal.initialZoom,
-        y: getInitialY,
-        transformOrigin: '50% 62%',
+        scale: 1.25, // Start closer for more dramatic pull-back
+        transformOrigin: '50% 60%', // Pivot around Sagrada Familia/City Center
       });
-      gsap.set(imageEdgeRef.current, { opacity: 0.36 });
-      gsap.set(vignetteRef.current, { opacity: 0 }); 
       
-      gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1, transformOrigin: '50% 0%' });
-      gsap.set(narrativeWrapRef.current, { y: 0, opacity: 1 });
-      gsap.set(bodyRef.current, { opacity: 0, y: "4vh" });
-      gsap.set(ctaRef.current, { opacity: 0, y: "4vh" });
-      gsap.set(statsRef.current, { opacity: 0, y: "6vh" });
+      // 2. Depth Layers
+      gsap.set(imageEdgeRef.current, { opacity: 0.4 }); // Subtle blur bloom
+      gsap.set(vignetteRef.current, { opacity: 0 }); // Start bright
+      
+      // 3. Content Stage (The "Clean Slate")
+      gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
+      gsap.set(bodyRef.current, { opacity: 0, y: 60, filter: 'blur(10px)' }); // Prepare for "Rack Focus" entry
+      gsap.set(narrativeWrapRef.current, { y: 0 });
+      gsap.set(ctaRef.current, { opacity: 0, y: 40 });
+      gsap.set(statsRef.current, { opacity: 0 });
 
+      // --- TIMELINE: The Story ---
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: desktopContainerRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 1.2,
-          snap: {
-            snapTo: "labels",
-            duration: { min: 0.2, max: 0.6 },
-            delay: 0.1,
-            ease: "power2.inOut",
-          }
+          scrub: 1.5, // Heavier scrub for "expensive" camera feel
+          // SNAP REMOVED: Fluid control is more premium
         }
       });
 
-      const ACT = 1;
-      tl.addLabel('act1', 0);
-
-      tl.to([imageTrackRef.current, imageBaseRef.current], { scale: 1.08, y: getAct2Y, ease: 'none', duration: ACT }, 0)
-        .to(imageEdgeRef.current, { scale: 1.08, y: getAct2Y, opacity: 0.34, ease: 'none', duration: ACT }, 0)
-        .to(headlineWrapRef.current, { scale: 0.8, y: "-3vh", ease: 'power2.inOut', duration: ACT }, 0)
-        .to(bodyRef.current, { opacity: 1, y: 0, ease: 'power2.out', duration: ACT * 0.8 }, 0.2);
+      // --- ACT 1: THE HOOK (0% -> 35%) ---
+      // "Spain has cannabis clubs..." fades out as we widen the shot.
       
-      tl.addLabel('act2', 1);
+      // Camera: Pull back significantly
+      tl.to([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
+        scale: 1.15,
+        duration: 1,
+        ease: 'power1.inOut'
+      }, 0);
 
-      tl.to([imageTrackRef.current, imageBaseRef.current], { scale: 1.04, y: getAct3Y, ease: 'none', duration: ACT }, 1)
-        .to(imageEdgeRef.current, { scale: 1.04, y: getAct3Y, opacity: 0.32, ease: 'none', duration: ACT }, 1)
-        .to(narrativeWrapRef.current, { y: "-8vh", ease: 'power2.inOut', duration: ACT }, 1)
-        .to(ctaRef.current, { opacity: 1, y: 0, ease: 'power2.out', duration: ACT * 0.8 }, 1.2);
+      // Headline: Cinematic Exit (Blur + Fly Up + Expand)
+      tl.to(headlineWrapRef.current, {
+        opacity: 0,
+        y: -80,
+        scale: 1.05, // Slight growth implies moving "past" the camera
+        filter: 'blur(12px)', // Cinematic rack focus exit
+        duration: 0.8,
+        ease: 'power2.in'
+      }, 0);
+
+      // Vignette: Creep in to prep for readability
+      tl.to(vignetteRef.current, { opacity: 0.4, duration: 1 }, 0);
+
+      // --- ACT 2: THE CONTEXT (35% -> 70%) ---
+      // "Most people get them wrong..." paragraph enters crisply.
       
-      tl.addLabel('act3', 2);
+      // Body: Enter from below (The "Rack Focus" effect)
+      tl.to(bodyRef.current, {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.8,
+        ease: 'power2.out'
+      }, 0.3); // Overlap slightly with headline exit
 
-      tl.to([imageTrackRef.current, imageBaseRef.current], { scale: HERO_CONFIG.focal.finalScale, y: getFinalY, ease: 'power1.out', duration: ACT }, 2)
-        .to(imageEdgeRef.current, { scale: HERO_CONFIG.focal.finalScale, y: getFinalY, opacity: 0.30, ease: 'power1.out', duration: ACT }, 2)
-        .to(vignetteRef.current, { opacity: 1, ease: 'power2.inOut', duration: ACT }, 2) 
-        .to(narrativeWrapRef.current, { y: "-14vh", scale: 0.9, ease: 'power2.inOut', duration: ACT }, 2)
-        .to(ctaRef.current, { y: "-4vh", scale: 0.95, ease: 'power2.inOut', duration: ACT }, 2)
-        .to(statsRef.current, { opacity: 1, y: 0, ease: 'power2.out', duration: ACT * 0.8 }, 2.2);
+      // Camera: Continue steady pull back
+      tl.to([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
+        scale: 1.08,
+        duration: 1,
+        ease: 'none' // Linear middle movement
+      }, 1);
 
-      tl.addLabel('act4', 3);
+      // Narrative Container: Slide up to make room for footer
+      tl.to(narrativeWrapRef.current, {
+        y: -60, 
+        duration: 1,
+        ease: 'power1.inOut'
+      }, 1);
+
+      // Vignette: Darken fully for contrast
+      tl.to(vignetteRef.current, { opacity: 0.7, duration: 1 }, 1);
+
+      // --- ACT 3: THE ACTION (70% -> 100%) ---
+      // Paragraph dims slightly, Buttons & Stats reveal.
+
+      // Camera: Final lock to 1.0
+      tl.to([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
+        scale: 1.0,
+        duration: 1,
+        ease: 'power2.out' // Soft landing
+      }, 2);
+
+      // CTAs: Stagger in from below
+      tl.to(ctaRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, 2.2);
+
+      // Stats: Subtle fade in
+      tl.to(statsRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6
+      }, 2.4);
     });
 
     // ==========================================
@@ -265,35 +306,23 @@ export default function HeroSection() {
                   <div className="absolute inset-0 z-[-1] w-[150%] h-[150%] -left-[25%] -top-[25%] bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.45)_0%,transparent_65%)] pointer-events-none blur-md" />
 
                   <div ref={headlineWrapRef} className="will-change-transform w-full">
-                      <h1 className="sr-only">
-                        {t('hero.section.sr_title')}
+                      <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] font-black font-serif text-white tracking-tight leading-[1.1] drop-shadow-[0_10px_40px_rgba(0,0,0,0.85)] max-w-4xl mx-auto">
+                        Spain has cannabis clubs.<br />
+                        <span className="text-white/70">Most people get them completely wrong.</span><br />
+                        <span className="text-[#E8A838]">That&apos;s Why We&apos;re Here.</span>
                       </h1>
-                      <p className="text-xs sm:text-base md:text-xl lg:text-2xl text-white tracking-[0.25em] uppercase font-light [text-shadow:0_2px_10px_rgba(0,0,0,0.8),0_4px_30px_rgba(0,0,0,0.6)]">
-                        {t('hero.section.strapline_top')}
-                      </p>
-                      <p className="mt-2 text-xs sm:text-base md:text-xl lg:text-2xl text-[#D9534F] tracking-[0.25em] uppercase font-black [text-shadow:0_2px_10px_rgba(0,0,0,0.8),0_4px_30px_rgba(0,0,0,0.6)]">
-                        {t('hero.section.strapline_bottom')}
-                      </p>
                       
-                      <div className="mt-4 sm:mt-6 flex items-center justify-center w-full max-w-5xl mx-auto overflow-hidden">
-                        <div className="flex-1 flex justify-center h-[3rem] sm:h-[4.5rem] md:h-[6.5rem] lg:h-[8rem] drop-shadow-[0_10px_40px_rgba(0,0,0,0.85)]">
-                          <MorphingText texts={localCities} className="text-[clamp(1.2rem,4.5vw,7.5rem)] font-black text-white tracking-tighter uppercase" />
-                        </div>
-                        <span aria-hidden="true" className="px-1 sm:px-4 text-[clamp(1.5rem,5.5vw,8rem)] text-[#E8A838] font-black leading-none shrink-0 drop-shadow-[0_0_30px_rgba(232,168,56,0.8)] pb-2 md:pb-4">
-                          ×
-                        </span>
-                        <div className="flex-1 flex justify-center h-[3rem] sm:h-[4.5rem] md:h-[6.5rem] lg:h-[8rem] drop-shadow-[0_10px_40px_rgba(0,0,0,0.85)]">
-                          <MorphingText texts={globalCities} className="text-[clamp(1.2rem,4.5vw,7.5rem)] font-black text-white tracking-tighter uppercase" />
+                      <div className="mt-8 flex items-center justify-center gap-2 text-sm sm:text-base md:text-lg text-white/80 font-medium tracking-widest uppercase">
+                        <span>Currently covering:</span>
+                        <div className="flex items-center text-[#E8A838] font-bold">
+                          <MorphingText texts={['Barcelona', 'Madrid', 'Valencia', 'Tenerife']} className="inline-block" />
                         </div>
                       </div>
                   </div>
 
-                  <div ref={bodyRef} className="mx-auto mt-2 sm:mt-5 max-w-3xl will-change-transform px-4 relative z-10">
-                    <p className="text-sm md:text-lg lg:text-xl text-gray-100 leading-relaxed font-medium [text-shadow:0_2px_8px_rgba(0,0,0,0.9),0_4px_20px_rgba(0,0,0,0.6)]">
-                      {t('hero.section.body')}
-                    </p>
-                    <p className="mt-3 text-base md:text-xl lg:text-2xl text-white font-bold uppercase tracking-[0.12em] [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_4px_30px_rgba(0,0,0,0.7)]">
-                      {t('hero.section.subbody')}
+                  <div ref={bodyRef} className="mx-auto mt-6 sm:mt-10 max-w-3xl will-change-transform px-4 relative z-10">
+                    <p className="text-base md:text-lg lg:text-xl text-gray-100 leading-relaxed font-medium [text-shadow:0_2px_8px_rgba(0,0,0,0.9),0_4px_20px_rgba(0,0,0,0.6)]">
+                      Cannabis Social Clubs are private, members-only associations operating in Spain&apos;s legal grey zone. They can&apos;t advertise, can&apos;t recruit publicly, and can&apos;t vet visitors on their own. We do that work — through independent verification, education, and the most comprehensive safety resources in the space.
                     </p>
                   </div>
                 </div>
@@ -303,49 +332,30 @@ export default function HeroSection() {
               <div className="absolute inset-x-0 bottom-6 md:bottom-10 pointer-events-none flex flex-col items-center justify-end h-full">
                 <div ref={ctaRef} className="pointer-events-auto w-full max-w-3xl mx-auto will-change-transform mb-6">
                   <div className="flex flex-col md:flex-row justify-center gap-3 md:gap-5 px-4">
-                    <Link href={`/${language}/safety`} className="w-full md:w-auto">
+                    <Link href={`/${language}/safety-kit`} className="w-full md:w-auto">
                       <Button size="lg" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] hover:scale-105 transition-all duration-300 shadow-[0_10px_40px_rgba(232,168,56,0.3)]">
-                        {t('hero.section.cta_safety')}
+                        Get the Free Safety Kit
                       </Button>
                     </Link>
                     <Link href={`/${language}/editorial/legal`} className="w-full md:w-auto">
                       <Button size="lg" variant="outline" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full border-2 border-white text-white bg-black/30 backdrop-blur-md hover:bg-white/10 hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                        {t('hero.section.cta_how_it_works')}
+                        How Clubs Actually Work &rarr;
                       </Button>
                     </Link>
                   </div>
                 </div>
 
-                <div ref={statsRef} className="pointer-events-auto w-full will-change-transform px-4">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 max-w-5xl mx-auto">
-                    {[
-                      { value: '4', label: t('hero.section.stats.desktop.guides'), icon: BookOpen },
-                      { value: '2.5K+', label: t('hero.section.stats.desktop.kits'), icon: Shield },
-                      { value: '€0', label: t('hero.section.stats.desktop.fines'), icon: AlertCircle },
-                      { value: 'Mar 26', label: t('hero.section.stats.desktop.launch'), icon: Calendar },
-                    ].map((stat, i) => {
-                      const Icon = stat.icon;
-                      return (
-                        <div key={i} className="bg-black/60 backdrop-blur-xl border border-white/20 p-3 md:px-5 md:py-4 rounded-xl text-center shadow-[0_20px_80px_rgba(0,0,0,0.6)]">
-                          <div className="mb-2 flex justify-center">
-                            <Icon className="h-4 w-4 md:h-6 md:w-6 text-[#E8A838]" />
-                          </div>
-                          <div className="text-xl md:text-3xl lg:text-4xl font-black text-white mb-0.5">{stat.value}</div>
-                          <div className="text-[9px] md:text-[11px] font-bold text-[#E8A838] uppercase tracking-[0.18em]">
-                            {stat.label}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                <div ref={statsRef} className="pointer-events-auto w-full will-change-transform px-4 flex justify-center pb-4">
+                   <div className="flex flex-col items-center gap-2 text-white/60 animate-bounce">
+                     <span className="text-sm font-medium tracking-widest uppercase">What most tourists get wrong</span>
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                   </div>
                 </div>
-              </div>
-
             </div>
           </div>
         </div>
       </div>
-
+    </div>
       {/* ========================================================= */}
       {/* MOBILE NATIVE EXPERIENCE (Hidden on desktop)                */}
       {/* ========================================================= */}
@@ -371,30 +381,20 @@ export default function HeroSection() {
           
           {/* TOP: Typography Stack */}
           <div className="flex flex-col items-center text-center w-full mt-8">
-            <h1 className="sr-only">{t('hero.section.sr_title')}</h1>
-            <p className="text-[11px] sm:text-xs text-white tracking-[0.3em] uppercase font-medium drop-shadow-md">{t('hero.section.strapline_top')}</p>
-            <p className="mt-4 text-[11px] sm:text-xs text-[#D9534F] tracking-[0.3em] uppercase font-black drop-shadow-md">{t('hero.section.strapline_bottom')}</p>
-            
-            <div className="mt-6 flex flex-col items-center justify-center w-full">
-              {/* Stacked Morphing Text for massive impact */}
-              <div className="h-[18vw] sm:h-[6rem] flex items-center justify-center w-full overflow-visible">
-                <MorphingText texts={localCities} className="text-[13vw] sm:text-[5rem] font-black text-white tracking-tighter uppercase drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]" />
-              </div>
-              
-              <div className="h-[2.5rem] flex items-center justify-center">
-                <span className="text-[#E8A838] text-[3rem] font-black leading-none drop-shadow-lg">×</span>
-              </div>
-              
-              <div className="h-[18vw] sm:h-[6rem] flex items-center justify-center w-full overflow-visible">
-                <MorphingText texts={globalCities} className="text-[13vw] sm:text-[5rem] font-black text-white tracking-tighter uppercase drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]" />
+            <h1 className="text-[8vw] leading-[1.15] font-black font-serif text-white tracking-tight drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)] max-w-sm mx-auto">
+              Spain has cannabis clubs.<br />
+              <span className="text-white/70">Most people get them completely wrong.</span><br />
+              <span className="text-[#E8A838]">That&apos;s Why We&apos;re Here.</span>
+            </h1>
+            <div className="mt-8 flex flex-col items-center justify-center gap-1 text-[11px] text-white/80 font-medium tracking-widest uppercase">
+              <span>Currently covering:</span>
+              <div className="text-[#E8A838] font-bold h-[20px] overflow-hidden">
+                <MorphingText texts={['Barcelona', 'Madrid', 'Valencia', 'Tenerife']} className="inline-block" />
               </div>
             </div>
 
-            <p className="mt-10 text-[15px] sm:text-base text-gray-100 font-medium leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-2">
-              {t('hero.section.body')}
-            </p>
-            <p className="mt-4 text-[16px] sm:text-lg text-white font-bold uppercase tracking-[0.1em] drop-shadow-[0_4px_15px_rgba(0,0,0,0.9)]">
-              {t('hero.section.subbody')}
+            <p className="mt-8 text-[15px] sm:text-base text-gray-100 font-medium leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-2">
+              Cannabis Social Clubs are private, members-only associations operating in Spain&apos;s legal grey zone. They can&apos;t advertise, can&apos;t recruit publicly, and can&apos;t vet visitors on their own. We do that work — through independent verification, education, and the most comprehensive safety resources in the space.
             </p>
           </div>
           
@@ -406,35 +406,22 @@ export default function HeroSection() {
             
             {/* Action Buttons */}
             <div className="flex flex-col gap-3">
-              <Link href={`/${language}/safety`} className="w-full">
+              <Link href={`/${language}/safety-kit`} className="w-full">
                 <Button size="lg" className="w-full py-7 text-base font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] shadow-[0_4px_20px_rgba(232,168,56,0.3)]">
-                  {t('hero.section.cta_safety')}
+                  Get the Free Safety Kit
                 </Button>
               </Link>
               <Link href={`/${language}/editorial/legal`} className="w-full">
                 <Button size="lg" variant="outline" className="w-full py-7 text-base font-bold rounded-full border border-white/40 text-white bg-white/10 backdrop-blur-md">
-                  {t('hero.section.cta_how_it_works')}
+                  How Clubs Actually Work &rarr;
                 </Button>
               </Link>
             </div>
 
-            {/* Native Glassmorphic Stats */}
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { value: '4', label: t('hero.section.stats.mobile.guides'), icon: BookOpen },
-                { value: '2.5K+', label: t('hero.section.stats.mobile.kits'), icon: Shield },
-                { value: '€0', label: t('hero.section.stats.mobile.fines'), icon: AlertCircle },
-                { value: 'Mar 26', label: t('hero.section.stats.mobile.launch'), icon: Calendar },
-              ].map((stat, i) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={i} className="bg-black/50 backdrop-blur-lg border border-white/15 p-4 rounded-xl text-center shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
-                    <div className="mb-2 flex justify-center"><Icon className="h-5 w-5 text-[#E8A838]" /></div>
-                    <div className="text-2xl font-black text-white mb-0.5">{stat.value}</div>
-                    <div className="text-[10px] font-bold text-[#E8A838] uppercase tracking-[0.15em]">{stat.label}</div>
-                  </div>
-                );
-              })}
+            {/* Scroll Indicator */}
+            <div className="flex flex-col items-center justify-center gap-2 text-white/60 animate-bounce mt-4 pb-2">
+              <span className="text-[10px] font-medium tracking-widest uppercase">What most tourists get wrong</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
             </div>
           </div>
 
