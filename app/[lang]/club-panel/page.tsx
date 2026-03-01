@@ -10,21 +10,22 @@ import { LogIn, UserPlus, Shield } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ClubPanelChooser() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const withLocale = (path: string) => `/${language}${path}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100/40 pt-16 md:pt-20">
       <nav className="bg-card/95 backdrop-blur-md shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href={withLocale('')} className="flex items-center gap-2">
               <LogoIcon size="md" />
               <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 {t('brand.name')}
               </span>
             </Link>
             <div className="flex items-center">
-              <Link href="/">
+              <Link href={withLocale('')}>
                 <Button variant="ghost">{t('club_panel.entry.back_to_home')}</Button>
               </Link>
             </div>
@@ -48,7 +49,7 @@ export default function ClubPanelChooser() {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <Card className="p-8 hover:shadow-xl transition-all duration-300 border-2 hover:border-green-200 cursor-pointer group">
-            <Link href="/club-panel/login">
+            <Link href={withLocale('/club-panel/login')}>
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6 group-hover:scale-110 transition-transform">
                   <LogIn className="h-8 w-8 text-green-600" />
@@ -68,7 +69,7 @@ export default function ClubPanelChooser() {
           </Card>
 
           <Card className="p-8 hover:shadow-xl transition-all duration-300 border-2 hover:border-green-200 cursor-pointer group">
-            <Link href="/club-panel/signup">
+            <Link href={withLocale('/club-panel/signup')}>
               <div className="text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-6 group-hover:scale-110 transition-transform">
                   <UserPlus className="h-8 w-8 text-emerald-600" />

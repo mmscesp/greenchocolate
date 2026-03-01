@@ -82,7 +82,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link 
-                  href={withLocale('/club-panel/dashboard')} 
+                  href={withLocale('/club-panel')} 
                   className="group flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Users className="h-4 w-4 text-neutral-400 group-hover:text-brand transition-colors" />
@@ -97,14 +97,14 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-foreground mb-4">{t('footer.support')}</h3>
             <ul className="space-y-3">
               <li>
-                <Link href={withLocale('/editorial')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href={withLocale('/help')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.help_center')}
                 </Link>
               </li>
               <li>
-                <a href="mailto:hello@socialclubsmaps.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Link href={withLocale('/contact')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.contact')}
-                </a>
+                </Link>
               </li>
               <li>
                 <Link href={withLocale('/terms')} className="text-sm text-muted-foreground hover:text-foreground transition-colors">

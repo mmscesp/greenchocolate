@@ -87,13 +87,19 @@ export function CommunityRoadmap() {
                     {city.tagline}
                   </p>
                   
-                  <Link
-                    href={city.href}
-                    className={`inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-colors ${city.active ? 'text-[#E8A838] hover:text-white' : 'text-zinc-600 cursor-not-allowed'}`}
-                  >
-                    {city.active ? 'Explore ' + city.name : 'Coming Soon'}
-                    {city.active && <ArrowRight className="w-4 h-4" />}
-                  </Link>
+                  {city.active ? (
+                    <Link
+                      href={city.href}
+                      className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-[#E8A838] hover:text-white transition-colors"
+                    >
+                      {'Explore ' + city.name}
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  ) : (
+                    <span className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-600" aria-disabled="true">
+                      Coming Soon
+                    </span>
+                  )}
                 </div>
               </div>
             </motion.div>

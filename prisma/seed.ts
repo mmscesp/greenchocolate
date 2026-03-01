@@ -1,369 +1,317 @@
-// Seed Script for MVP Launch
-// Populates database with cities, clubs, and articles
-
 import { config } from 'dotenv';
 import { resolve } from 'path';
-
-// Load environment variables from .env.local
-config({ path: resolve(process.cwd(), '.env.local') });
-
 import { prisma } from '../lib/prisma';
 
-// ==========================================
-// CITIES SEED DATA
-// ==========================================
+config({ path: resolve(process.cwd(), '.env') });
+config({ path: resolve(process.cwd(), '.env.local') });
 
 const cities = [
-  {
-    name: 'Madrid',
-    slug: 'madrid',
-    country: 'Spain',
-    region: 'Community of Madrid',
-    description: 'Discover the best cannabis social clubs in Madrid. From Malasaña to Chueca, find your community in Spain\'s vibrant capital.',
-    metaTitle: 'Cannabis Social Clubs in Madrid | Madrid Directory',
-    metaDescription: 'Find verified cannabis social clubs in Madrid. Browse Malasaña, Chueca, La Latina and more neighborhoods.',
-    latitude: 40.4168,
-    longitude: -3.7038,
-  },
   {
     name: 'Barcelona',
     slug: 'barcelona',
     country: 'Spain',
     region: 'Catalonia',
-    description: 'Explore the cannabis social club scene in Barcelona. From Gothic Quarter to Eixample, find your perfect club.',
-    metaTitle: 'Cannabis Social Clubs in Barcelona | Barcelona Directory',
-    metaDescription: 'Find verified cannabis social clubs in Barcelona. Browse top neighborhoods and discover your community.',
+    description: 'Barcelona cannabis social club directory and city guidance.',
+    metaTitle: 'Cannabis Social Clubs in Barcelona | SocialClubsMaps',
+    metaDescription: 'Browse verified cannabis social clubs and guides for Barcelona.',
     latitude: 41.3851,
     longitude: 2.1734,
   },
+  {
+    name: 'Madrid',
+    slug: 'madrid',
+    country: 'Spain',
+    region: 'Community of Madrid',
+    description: 'Madrid cannabis social club directory and city guidance.',
+    metaTitle: 'Cannabis Social Clubs in Madrid | SocialClubsMaps',
+    metaDescription: 'Browse verified cannabis social clubs and guides for Madrid.',
+    latitude: 40.4168,
+    longitude: -3.7038,
+  },
 ];
 
-// ==========================================
-// CLUBS SEED DATA (Madrid)
-// ==========================================
-
-const madridClubs = [
+const clubs = [
   {
-    name: 'Green Harmony Madrid',
-    slug: 'green-harmony-madrid',
-    description: 'Un espacio acogedor en el corazón de Malasaña donde la comunidad cannabis se reúne para compartir experiencias, conocimiento y momentos de relajación. Nuestro ambiente combina lo tradicional con lo moderno.',
-    shortDescription: 'Cozy community space in Malasaña',
-    cityName: 'Madrid',
-    neighborhood: 'Malasaña',
-    addressDisplay: 'Calle del Espíritu Santo, 15, Malasaña, Madrid',
-    coordinates: { lat: 40.4245, lng: -3.7038 },
-    contactEmail: 'info@greenharmony.es',
-    phoneNumber: '+34 91 123 4567',
-    website: 'www.greenharmony.es',
-    socialMedia: {
-      instagram: '@greenharmonymadrid',
-      facebook: 'greenharmonymadrid',
-    },
+    name: 'Club 311 Barcelona',
+    slug: 'club-311-barcelona',
+    description: 'A verified private members club in Barcelona focused on safety and respectful visitor onboarding.',
+    shortDescription: 'Verified private club in Barcelona',
+    citySlug: 'barcelona',
+    neighborhood: 'Eixample',
+    addressDisplay: 'Eixample, Barcelona',
+    coordinates: { lat: 41.3902, lng: 2.154 },
+    contactEmail: 'contact@club311barcelona.com',
+    phoneNumber: '+34 93 000 0311',
+    website: 'https://club311barcelona.com',
+    socialMedia: { instagram: '@club311barcelona' },
     isVerified: true,
     isActive: true,
     allowsPreRegistration: true,
     openingHours: {
-      monday: '16:00 - 00:00',
-      tuesday: '16:00 - 00:00',
-      wednesday: '16:00 - 00:00',
-      thursday: '16:00 - 02:00',
-      friday: '16:00 - 02:00',
-      saturday: '14:00 - 02:00',
-      sunday: '14:00 - 00:00',
+      monday: '16:00 - 23:00',
+      tuesday: '16:00 - 23:00',
+      wednesday: '16:00 - 23:00',
+      thursday: '16:00 - 00:00',
+      friday: '16:00 - 00:00',
+      saturday: '14:00 - 00:00',
+      sunday: '14:00 - 22:00',
     },
-    amenities: ['WiFi Gratis', 'Zona Chill Out', 'Juegos de Mesa', 'Música en Vivo', 'Snacks', 'Bebidas'],
-    vibeTags: ['Relajado', 'Social', 'Creativo'],
+    amenities: ['WiFi', 'Chill Lounge', 'Snacks'],
+    vibeTags: ['Respectful', 'Community', 'Quiet'],
     priceRange: '$$',
-    capacity: 85,
+    capacity: 90,
+    foundedYear: 2018,
+    images: ['https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg'],
+  },
+  {
+    name: 'The Green Lounge Madrid',
+    slug: 'the-green-lounge-madrid',
+    description: 'A verified Madrid members club with a calm environment and structured first-time visitor process.',
+    shortDescription: 'Verified members lounge in Madrid',
+    citySlug: 'madrid',
+    neighborhood: 'Malasana',
+    addressDisplay: 'Malasana, Madrid',
+    coordinates: { lat: 40.4245, lng: -3.7038 },
+    contactEmail: 'hello@thegreenloungemadrid.com',
+    phoneNumber: '+34 91 000 4555',
+    website: 'https://thegreenloungemadrid.com',
+    socialMedia: { instagram: '@thegreenloungemadrid' },
+    isVerified: true,
+    isActive: true,
+    allowsPreRegistration: true,
+    openingHours: {
+      monday: '16:00 - 23:00',
+      tuesday: '16:00 - 23:00',
+      wednesday: '16:00 - 23:00',
+      thursday: '16:00 - 00:00',
+      friday: '16:00 - 00:00',
+      saturday: '14:00 - 00:00',
+      sunday: '14:00 - 22:00',
+    },
+    amenities: ['WiFi', 'Library', 'Quiet Areas'],
+    vibeTags: ['Calm', 'Educational', 'Private'],
+    priceRange: '$$',
+    capacity: 80,
     foundedYear: 2019,
-    images: [
-      'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
-      'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-      'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
-    ],
-    rating: 4.8,
-    reviewCount: 142,
-  },
-  {
-    name: 'Cannabis Culture Centro',
-    slug: 'cannabis-culture-centro',
-    description: 'Ubicado en el centro histórico de Madrid, somos pioneros en educación cannábica y cultura responsable. Un espacio elegante que combina tradición y vanguardia.',
-    shortDescription: 'Pioneers in cannabis education in Madrid Centro',
-    cityName: 'Madrid',
-    neighborhood: 'Centro',
-    addressDisplay: 'Plaza Mayor, 8, Centro, Madrid',
-    coordinates: { lat: 40.4168, lng: -3.7038 },
-    contactEmail: 'hola@cannabisculture.es',
-    phoneNumber: '+34 91 234 5678',
-    socialMedia: {
-      instagram: '@cannabisculturecentro',
-    },
-    isVerified: true,
-    isActive: true,
-    allowsPreRegistration: true,
-    openingHours: {
-      monday: '15:00 - 23:00',
-      tuesday: '15:00 - 23:00',
-      wednesday: '15:00 - 23:00',
-      thursday: '15:00 - 01:00',
-      friday: '15:00 - 01:00',
-      saturday: '13:00 - 01:00',
-      sunday: '13:00 - 23:00',
-    },
-    amenities: ['WiFi Gratis', 'Biblioteca Cannabis', 'Talleres', 'Arte Local', 'Terraza', 'Eventos Privados'],
-    vibeTags: ['Educativo', 'Cultural', 'Íntimo'],
-    priceRange: '$$$',
-    capacity: 120,
-    foundedYear: 2017,
-    images: [
-      'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
-      'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
-      'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-    ],
-    rating: 4.9,
-    reviewCount: 203,
-  },
-  {
-    name: 'Chill Zone Chueca',
-    slug: 'chill-zone-chueca',
-    description: 'El lugar perfecto para relajarse en Chueca. Ambiente distendido, música ambient y una comunidad diversa que valora la inclusión y el respeto mutuo.',
-    shortDescription: 'Relaxed atmosphere in diverse Chueca',
-    cityName: 'Madrid',
-    neighborhood: 'Chueca',
-    addressDisplay: 'Calle de Hortaleza, 32, Chueca, Madrid',
-    coordinates: { lat: 40.4215, lng: -3.6960 },
-    contactEmail: 'info@chillzonechueca.com',
-    phoneNumber: '+34 91 345 6789',
-    isVerified: true,
-    isActive: true,
-    allowsPreRegistration: true,
-    openingHours: {
-      monday: '17:00 - 00:00',
-      tuesday: '17:00 - 00:00',
-      wednesday: '17:00 - 00:00',
-      thursday: '17:00 - 01:00',
-      friday: '17:00 - 02:00',
-      saturday: '15:00 - 02:00',
-      sunday: '15:00 - 00:00',
-    },
-    amenities: ['Zona Chill Out', 'Playstation', 'Snacks', 'Bebidas', 'WiFi Gratis'],
-    vibeTags: ['Relajado', 'Inclusivo', 'Alternativo'],
-    priceRange: '$',
-    capacity: 60,
-    foundedYear: 2020,
-    images: [
-      'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-      'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
-    ],
-    rating: 4.5,
-    reviewCount: 89,
+    images: ['https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg'],
   },
 ];
 
-// ==========================================
-// ARTICLES SEED DATA
-// ==========================================
-
-const articles = [
+const launchArticles = [
   {
-    title: 'Guía Completa de Cannabis Medicinal en España 2026',
-    slug: 'guia-cannabis-medicinal-espana-2026',
-    excerpt: 'Todo lo que necesitas saber sobre el acceso legal al cannabis medicinal en España, desde la prescripción hasta los productos disponibles.',
-    content: `# Cannabis Medicinal en España: Guía Completa 2026
-
-El cannabis medicinal en España ha experimentado importantes avances legislativos en los últimos años. Los clubs sociales operan en un marco legal específico que permite el consumo compartido en espacios privados.
-
-## Marco Legal Actual
-
-En España, el cannabis medicinal está regulado por la Agencia Española de Medicamentos y Productos Sanitarios. Los pacientes pueden acceder a tratamientos con cannabis a través de:
-
-1. **Prescripción médica**: Solo ciertos especialistas pueden prescribir cannabis medicinal
-2. **Farmacias autorizadas**: Dispensación con receta oficial
-3. **Centros especializados**: Bajo supervisión médica adecuada
-
-## Productos Disponibles
-
-Los productos de cannabis medicinal disponibles en España incluyen:
-- Extractos estandarizados
-- Formulations farmacéuticas
-- Aceites de CBD
-- Preparaciones magistrales
-
-## Consideraciones Importantes
-
-Es fundamental consultar con profesionales de la salud antes de iniciar cualquier tratamiento con cannabis.`,
-    category: 'Salud & Bienestar',
-    tags: ['cannabis medicinal', 'legislación', 'salud', 'España'],
-    heroImage: 'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-    heroImageAlt: 'Cannabis medicinal en España',
-    authorName: 'Dr. María González',
-    authorBio: 'Médico especializada en tratamientos con cannabis. Experta en legislación sanitaria española.',
-    isPublished: true,
-    publishedAt: new Date('2026-01-15'),
-    featuredOrder: 1,
-    readTime: 8,
-    citySlug: 'madrid',
-  },
-  {
-    title: 'Los Mejores Eventos Cannabis de Madrid en 2026',
-    slug: 'mejores-eventos-cannabis-madrid-2026',
-    excerpt: 'Descubre los eventos más importantes de la cultura cannabis en Madrid este año, desde conferencias hasta festivales.',
-    content: `# Eventos Cannabis en Madrid 2026
-
-Madrid se consolida como epicentro de la cultura cannabis en España con una agenda repleta de eventos para todos los intereses.
-
-## Eventos Destacados
-
-### 1. Madrid Cannabis Week
-La semana del cannabis más esperada del año incluye:
-- Ferias de productos
-- Conferencias educativas
-- Eventos sociales
-- Workshops de cultivadores
-
-### 2. Ferias del Cannabis
-Encuentra los mejores productos y conoce a los expertos del sector.
-
-### 3. Eventos Culturales
-Exposiciones, arte y música inspirada en la cultura cannabis.
-
-## Calendario 2026
-
-Mantente actualizado con nuestro calendario de eventos para no perderte ninguna actividad.`,
-    category: 'Eventos',
-    tags: ['eventos', 'Madrid', 'cultura cannabis', 'festivales'],
+    title: 'What Cannabis Social Clubs in Spain Actually Are — And Why It Matters for Your Trip',
+    slug: 'what-are-cannabis-social-clubs-spain',
+    excerpt: 'Foundational guide to what CSCs are and how they differ from public models.',
+    content: 'Launch article placeholder. Source-of-truth body is currently MDX editorial content.',
+    category: 'Essential Guide',
+    tags: ['Launch', 'CSC', 'Guide'],
     heroImage: 'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
-    heroImageAlt: 'Eventos de cannabis en Madrid',
-    authorName: 'Carlos Ruiz',
-    authorBio: 'Periodista especializado en cultura cannabis y eventos.',
+    heroImageAlt: 'Cannabis social clubs in Spain',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
     isPublished: true,
-    publishedAt: new Date('2026-01-12'),
-    featuredOrder: 2,
-    readTime: 6,
-    citySlug: 'madrid',
+    publishedAt: new Date('2026-03-01T10:00:00.000Z'),
+    featuredOrder: 1,
+    readTime: 12,
+    metaTitle: 'What Cannabis Social Clubs in Spain Actually Are',
+    metaDescription: 'Understand CSC basics before your trip.',
+    citySlug: 'barcelona',
   },
   {
-    title: 'Cómo Elegir tu Primer Club Social de Cannabis',
-    slug: 'como-elegir-primer-club-cannabis',
-    excerpt: 'Consejos esenciales para nuevos miembros: qué buscar, qué preguntar y cómo tomar la mejor decisión.',
-    content: `# Guía para Elegir tu Primer Club de Cannabis
-
-Elegir tu primer club social de cannabis puede parecer abrumador, pero con la información correcta, tomarás la mejor decisión.
-
-## Qué Buscar en un Club
-
-### 1. Legalidad y Transparencia
-- Verifica que esté registrado legalmente
-- Revisa sus políticas claras
-- Comprueba las medidas de seguridad
-
-### 2. Comunidad y Ambiente
-- Observa el ambiente general
-- Conoce a los miembros actuales
-- Evalúa la inclusividad
-
-### 3. Instalaciones y Servicios
-- Calidad de los productos
-- Horarios convenientes
-- Actividades y eventos
-
-## Preguntas Clave
-
-Antes de unirte, considera:
-- ¿El club tiene buena reputación?
-- ¿Los precios son transparentes?
-- ¿Hay actividades de tu interés?
-
-## Tu Primera Visita
-
-Recomendamos visitar varios clubs antes de decidirte. Muchos ofrecen días de puertas abiertas para nuevos interesados.`,
-    category: 'Educación',
-    tags: ['principiantes', 'clubs sociales', 'consejos', 'educación'],
-    heroImage: 'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
-    heroImageAlt: 'Elegir club de cannabis',
-    authorName: 'Ana López',
-    authorBio: 'Experta en regulación de clubs sociales con 10 años de experiencia.',
+    title: 'The Safety Kit: What Every Visitor Should Know Before Setting Foot in a Club',
+    slug: 'safety-kit-visitors-spain',
+    excerpt: 'Safety-first launch guide: red flags, legal lines, and practical protection.',
+    content: 'Launch article placeholder. Source-of-truth body is currently MDX editorial content.',
+    category: 'Safety',
+    tags: ['Launch', 'Safety', 'Visitors'],
+    heroImage: 'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
+    heroImageAlt: 'Visitor safety kit',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
     isPublished: true,
-    publishedAt: new Date('2026-01-10'),
+    publishedAt: new Date('2026-03-01T10:05:00.000Z'),
+    featuredOrder: 2,
+    readTime: 8,
+    metaTitle: 'Safety Kit for Visitors in Spain',
+    metaDescription: 'Safety checklist for cannabis club visitors in Spain.',
+    citySlug: 'barcelona',
+  },
+  {
+    title: 'Barcelona vs. Amsterdam: Two Cities, Two Systems, Two Completely Different Realities',
+    slug: 'barcelona-vs-amsterdam-cannabis',
+    excerpt: 'Direct comparison to reset expectations for travelers.',
+    content: 'Launch article placeholder. Source-of-truth body is currently MDX editorial content.',
+    category: 'Culture',
+    tags: ['Launch', 'Culture', 'Comparison'],
+    heroImage: 'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
+    heroImageAlt: 'Barcelona vs Amsterdam comparison',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
+    isPublished: true,
+    publishedAt: new Date('2026-03-01T10:10:00.000Z'),
     featuredOrder: 3,
-    readTime: 5,
+    readTime: 10,
+    metaTitle: 'Barcelona vs Amsterdam Cannabis Systems',
+    metaDescription: 'Understand why Barcelona clubs are not Amsterdam coffeeshops.',
+    citySlug: 'barcelona',
+  },
+  {
+    title: 'Your First Time in a Barcelona Cannabis Club: The Respectful Way In',
+    slug: 'first-time-barcelona-cannabis-club',
+    excerpt: 'Step-by-step first-visit guide for Barcelona newcomers.',
+    content: 'Launch article placeholder. Source-of-truth body is currently MDX editorial content.',
+    category: 'City Guide',
+    tags: ['Launch', 'Barcelona', 'First Time'],
+    heroImage: 'https://images.pexels.com/photos/3799197/pexels-photo-3799197.jpeg',
+    heroImageAlt: 'First time guide Barcelona',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
+    isPublished: true,
+    publishedAt: new Date('2026-03-01T10:15:00.000Z'),
+    featuredOrder: 4,
+    readTime: 15,
+    metaTitle: 'First Time Barcelona Cannabis Club Guide',
+    metaDescription: 'How to prepare, apply, and visit safely in Barcelona.',
+    citySlug: 'barcelona',
+  },
+  {
+    title: "Spain's Cannabis Laws: What Tourists Actually Need to Know",
+    slug: 'spain-cannabis-laws-tourists',
+    excerpt: 'Legal-context launch guide focused on tourist-facing realities.',
+    content: 'Launch article placeholder. Source-of-truth body is currently MDX editorial content.',
+    category: 'Legal',
+    tags: ['Launch', 'Legal', 'Tourists'],
+    heroImage: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg',
+    heroImageAlt: 'Spain legal guide',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
+    isPublished: true,
+    publishedAt: new Date('2026-03-01T10:20:00.000Z'),
+    featuredOrder: 5,
+    readTime: 10,
+    metaTitle: "Spain's Cannabis Laws for Tourists",
+    metaDescription: 'Private vs public and legal boundaries in Spain.',
+    citySlug: 'barcelona',
+  },
+  {
+    title: 'Spannabis Bilbao 2026: What to Know Before You Go',
+    slug: 'spannabis-bilbao-2026',
+    excerpt: 'Launch event guide for Spannabis Bilbao 2026.',
+    content: 'Launch article placeholder for event editorial guide.',
+    category: 'Events',
+    tags: ['Launch', 'Events', 'Spannabis'],
+    heroImage: 'https://images.pexels.com/photos/3586966/pexels-photo-3586966.jpeg',
+    heroImageAlt: 'Spannabis event guide',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
+    isPublished: true,
+    publishedAt: new Date('2026-03-01T10:25:00.000Z'),
+    featuredOrder: 6,
+    readTime: 6,
+    metaTitle: 'Spannabis Bilbao 2026 Guide',
+    metaDescription: 'Key details for Spannabis Bilbao 2026.',
     citySlug: null,
   },
   {
-    title: 'Variedades de Cannabis: Sativa vs Indica vs Híbridos',
-    slug: 'variedades-cannabis-sativa-indica-hibridos',
-    excerpt: 'Comprende las diferencias entre las principales variedades de cannabis y sus efectos para decisiones informadas.',
-    content: `# Variedades de Cannabis: Guía Completa
-
-La clasificación del cannabis en sativa, indica e híbridos es fundamental para entender los efectos de cada variedad.
-
-## Cannabis Sativa
-
-**Origen:** Regiones tropicales y ecuatoriales
-**Características:** Plantas altas, hojas largas y estrechas
-**Efectos:** 
-- Energizante
-- Creatividad estimulada
-- Mejora del estado de ánimo
-- Ideal para uso diurno
-
-## Cannabis Indica
-
-**Origen:** Regiones montañosas de Asia Central
-**Características:** Plantas compactas, hojas anchas
-**Efectos:**
-- Relajante
-- Sedante suave
-- Alivio del estrés
-- Ideal para uso nocturno
-
-## Híbridos
-
-Combinaciones deliberadas de sativa e indica:
-- Indica-dominantes: Relajación con euforia
-- Sativa-dominantes: Energía con calma
-- Equilibrados: Efectos intermedios
-
-## Cómo Elegir
-
-Considera:
-- Tu tolerancia
-- El momento del día
-- Los efectos deseados
-- Tu experiencia previa`,
-    category: 'Educación',
-    tags: ['variedades', 'sativa', 'indica', 'educación', 'efectos'],
-    heroImage: 'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-    heroImageAlt: 'Variedades de cannabis',
-    authorName: 'Jorge Mendez',
-    authorBio: 'Cultivador experto y educador cannábico con 15 años de experiencia.',
+    title: "ICBC Berlin 2026: Europe's Cannabis Business Conference",
+    slug: 'icbc-berlin-2026',
+    excerpt: 'Launch event guide for ICBC Berlin 2026.',
+    content: 'Launch article placeholder for event editorial guide.',
+    category: 'Events',
+    tags: ['Launch', 'Events', 'ICBC'],
+    heroImage: 'https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg',
+    heroImageAlt: 'ICBC Berlin event guide',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
     isPublished: true,
-    publishedAt: new Date('2026-01-08'),
-    featuredOrder: 0,
-    readTime: 7,
+    publishedAt: new Date('2026-03-01T10:30:00.000Z'),
+    featuredOrder: 7,
+    readTime: 5,
+    metaTitle: 'ICBC Berlin 2026 Guide',
+    metaDescription: 'Key details for ICBC Berlin 2026.',
+    citySlug: null,
+  },
+  {
+    title: 'Cannabis Europa London 2026: Where Policy Meets Industry',
+    slug: 'cannabis-europa-london-2026',
+    excerpt: 'Launch event guide for Cannabis Europa London 2026.',
+    content: 'Launch article placeholder for event editorial guide.',
+    category: 'Events',
+    tags: ['Launch', 'Events', 'Cannabis Europa'],
+    heroImage: 'https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg',
+    heroImageAlt: 'Cannabis Europa London event guide',
+    authorName: 'SocialClubsMaps Editorial',
+    authorBio: 'Launch editorial team.',
+    isPublished: true,
+    publishedAt: new Date('2026-03-01T10:35:00.000Z'),
+    featuredOrder: 8,
+    readTime: 5,
+    metaTitle: 'Cannabis Europa London 2026 Guide',
+    metaDescription: 'Key details for Cannabis Europa London 2026.',
     citySlug: null,
   },
 ];
 
-// ==========================================
-// MAIN SEED FUNCTION
-// ==========================================
+const launchEvents = [
+  {
+    name: 'Spannabis Bilbao 2026',
+    slug: 'spannabis-bilbao-2026',
+    description: 'Flagship cannabis fair with exhibitors, talks, and culture programming.',
+    startDate: new Date('2026-04-17T09:00:00.000Z'),
+    endDate: new Date('2026-04-19T18:00:00.000Z'),
+    location: 'Bilbao Exhibition Centre (BEC), Barakaldo, Spain',
+    isPublished: true,
+    imageUrl: 'https://images.pexels.com/photos/3586966/pexels-photo-3586966.jpeg',
+    eventUrl: 'https://www.spannabis.com',
+    citySlug: null,
+    clubSlug: null,
+  },
+  {
+    name: 'ICBC Berlin 2026',
+    slug: 'icbc-berlin-2026',
+    description: 'Business and policy conference for the European cannabis sector.',
+    startDate: new Date('2026-04-13T09:00:00.000Z'),
+    endDate: new Date('2026-04-15T18:00:00.000Z'),
+    location: 'Berlin, Germany',
+    isPublished: true,
+    imageUrl: 'https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg',
+    eventUrl: 'https://internationalcbc.com',
+    citySlug: null,
+    clubSlug: null,
+  },
+  {
+    name: 'Cannabis Europa London 2026',
+    slug: 'cannabis-europa-london-2026',
+    description: 'Policy, regulation, and industry leadership conference in London.',
+    startDate: new Date('2026-05-26T09:00:00.000Z'),
+    endDate: new Date('2026-05-27T18:00:00.000Z'),
+    location: 'London, United Kingdom',
+    isPublished: true,
+    imageUrl: 'https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg',
+    eventUrl: 'https://www.cannabis-europa.com',
+    citySlug: null,
+    clubSlug: null,
+  },
+];
 
 async function main() {
-  console.log('🌱 Starting database seed...\n');
+  console.log('🌱 Starting launch-aligned database seed...\n');
 
-  // Clear existing data (in reverse order of dependencies)
   console.log('🗑️  Clearing existing data...');
   await prisma.auditLog.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.applicationStageHistory.deleteMany();
   await prisma.consentRecord.deleteMany();
   await prisma.membershipRequest.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.favorite.deleteMany();
+  await prisma.event.deleteMany();
   await prisma.article.deleteMany();
   await prisma.club.deleteMany();
   await prisma.profile.deleteMany();
   await prisma.city.deleteMany();
   console.log('✅ Existing data cleared\n');
 
-  // Create Cities
   console.log('🏙️  Creating cities...');
   for (const city of cities) {
     await prisma.city.create({ data: city });
@@ -371,59 +319,71 @@ async function main() {
   }
   console.log('✅ Cities created\n');
 
-  // Create Madrid Clubs
-  console.log('🌿 Creating Madrid clubs...');
-  const madridCity = await prisma.city.findUnique({ where: { slug: 'madrid' } });
-  
-  for (const club of madridClubs) {
-    const { cityName, ...clubData } = club;
+  console.log('🌿 Creating clubs...');
+  for (const club of clubs) {
+    const { citySlug, ...clubData } = club;
+    const city = await prisma.city.findUnique({ where: { slug: citySlug } });
+    if (!city) {
+      throw new Error(`City not found for club ${club.slug}: ${citySlug}`);
+    }
     await prisma.club.create({
       data: {
         ...clubData,
-        cityId: madridCity!.id,
+        cityId: city.id,
       },
     });
     console.log(`   Created club: ${club.name}`);
   }
   console.log('✅ Clubs created\n');
 
-  // Create Articles
-  console.log('📝 Creating articles...');
-  for (const article of articles) {
+  console.log('🗓️  Creating events...');
+  for (const event of launchEvents) {
+    const { citySlug, clubSlug, ...eventData } = event;
+    const city = citySlug ? await prisma.city.findUnique({ where: { slug: citySlug } }) : null;
+    const club = clubSlug ? await prisma.club.findUnique({ where: { slug: clubSlug } }) : null;
+
+    await prisma.event.create({
+      data: {
+        ...eventData,
+        cityId: city?.id ?? null,
+        clubId: club?.id ?? null,
+      },
+    });
+    console.log(`   Created event: ${event.name}`);
+  }
+  console.log('✅ Events created\n');
+
+  console.log('📝 Creating launch articles...');
+  for (const article of launchArticles) {
     const { citySlug, ...articleData } = article;
-    
-    let cityId = null;
-    if (citySlug) {
-      const city = await prisma.city.findUnique({ where: { slug: citySlug } });
-      cityId = city?.id || null;
-    }
+    const city = citySlug ? await prisma.city.findUnique({ where: { slug: citySlug } }) : null;
 
     await prisma.article.create({
       data: {
         ...articleData,
-        cityId,
+        cityId: city?.id ?? null,
       },
     });
     console.log(`   Created article: ${article.title}`);
   }
-  console.log('✅ Articles created\n');
+  console.log('✅ Launch articles created\n');
 
-  console.log('🎉 Database seeded successfully!\n');
-  
-  // Summary
   const cityCount = await prisma.city.count();
   const clubCount = await prisma.club.count();
+  const eventCount = await prisma.event.count();
   const articleCount = await prisma.article.count();
-  
+
+  console.log('🎉 Launch seed completed successfully!\n');
   console.log('📊 Summary:');
   console.log(`   Cities: ${cityCount}`);
   console.log(`   Clubs: ${clubCount}`);
+  console.log(`   Events: ${eventCount}`);
   console.log(`   Articles: ${articleCount}`);
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Seed failed:', e);
+  .catch((error) => {
+    console.error('❌ Seed failed:', error);
     process.exit(1);
   })
   .finally(async () => {

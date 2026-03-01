@@ -8,6 +8,7 @@ This folder is the single source of truth for project documentation.
 - `docs/product/overview.md` - What the platform is and who it serves.
 - `docs/product/requirements.md` - Current functional and non-functional requirements.
 - `docs/product/routes-and-flows.md` - Main user journeys and route map.
+- `docs/product/launch-implementation-anchor.md` - Launch execution anchor, phases, and verification gates.
 
 ### Architecture
 - `docs/architecture/overview.md` - Application architecture and data boundaries.

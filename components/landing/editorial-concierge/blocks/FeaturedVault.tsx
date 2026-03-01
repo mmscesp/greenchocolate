@@ -14,14 +14,14 @@ interface FeaturedVaultProps {
 export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
   const { language } = useLanguage();
 
-  const defaultArticles = [
+  const fallbackArticles = [
     {
       id: '1',
       tag: 'Essential Guide',
       title: 'What Cannabis Social Clubs in Spain Actually Are — And Why It Matters for Your Trip',
       description: 'How they work. Who can join. What to expect. What they\'re not.',
       readTime: '12 min read',
-      slug: 'what-are-cannabis-social-clubs',
+      slug: 'what-are-cannabis-social-clubs-spain',
       image: '/images/editorial/club-interior-warm.webp'
     },
     {
@@ -30,7 +30,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       title: 'The Safety Kit: What Every Visitor Should Know Before Setting Foot in a Club',
       description: 'Scam patterns. Legal lines. Privacy etiquette. What to do when things go sideways.',
       readTime: '8 min read',
-      slug: 'safety-kit-visitor-guide',
+      slug: 'safety-kit-visitors-spain',
       image: '/images/editorial/safety-kit-hero.webp'
     },
     {
@@ -39,7 +39,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       title: 'Barcelona vs. Amsterdam: Two Cities, Two Systems, Two Completely Different Realities',
       description: 'If you\'re coming from coffeeshop culture expecting the same thing, this is the reset you need.',
       readTime: '10 min read',
-      slug: 'barcelona-vs-amsterdam',
+      slug: 'barcelona-vs-amsterdam-cannabis',
       image: '/images/editorial/bcn-vs-ams.webp'
     },
     {
@@ -48,14 +48,22 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       title: 'Your First Time in a Barcelona Cannabis Club: The Respectful Way In',
       description: 'From initial research to membership to your first visit — every step, explained by people who\'ve done it.',
       readTime: '15 min read',
-      slug: 'first-time-guide-barcelona',
+      slug: 'first-time-barcelona-cannabis-club',
       image: '/images/editorial/first-time-bcn.webp'
     }
   ];
 
-  // Use real articles if provided, otherwise fall back to the curated list
-  // In a real implementation, we'd map the real articles to this shape
-  const displayItems = defaultArticles;
+  const displayItems = articles.length > 0
+    ? articles.slice(0, 4).map((article) => ({
+        id: article.id,
+        tag: article.category,
+        title: article.title,
+        description: article.excerpt,
+        readTime: `${article.readTime} min read`,
+        slug: article.slug,
+        image: article.heroImage || '/images/editorial/club-interior-warm.webp',
+      }))
+    : fallbackArticles;
 
   return (
     <section className="bg-zinc-50 py-24 md:py-32 px-4 md:px-8 border-t border-zinc-200">

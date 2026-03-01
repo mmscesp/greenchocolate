@@ -15,21 +15,21 @@ export function KnowledgeRouter() {
       name: 'Spannabis Bilbao 2026',
       location: 'Bilbao, Spain',
       desc: 'Spain\'s flagship cannabis fair moves to a new home.',
-      href: `/${language}/events`
+      href: `/${language}/editorial/spannabis-bilbao-2026`
     },
     {
       date: 'APR 13–15',
       name: 'ICBC Berlin 2026',
       location: 'Berlin, Germany',
       desc: 'Europe\'s premier cannabis business conference.',
-      href: `/${language}/events`
+      href: `/${language}/editorial/icbc-berlin-2026`
     },
     {
       date: 'MAY 26–27',
       name: 'Cannabis Europa London 2026',
       location: 'London, UK',
       desc: 'Where policy meets industry.',
-      href: `/${language}/events`
+      href: `/${language}/editorial/cannabis-europa-london-2026`
     }
   ];
 
