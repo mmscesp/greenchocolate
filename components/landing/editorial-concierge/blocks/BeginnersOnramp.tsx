@@ -14,7 +14,7 @@ export function BeginnersOnramp() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-black font-serif text-white tracking-tight mb-12 leading-tight">
-            Tourists Deserve Better Than Guesswork. So We Built Something Real.
+            People Deserve Better Than Guesswork. So We Built Something Real.
           </h2>
 
           <div className="space-y-8 text-lg md:text-xl text-zinc-400 font-medium leading-relaxed">

@@ -330,7 +330,7 @@ export default function HeroSection() {
 
                 <div ref={statsRef} className="pointer-events-auto w-full will-change-transform px-4 flex justify-center pb-4">
                    <div className="flex flex-col items-center gap-2 text-white/60 animate-bounce">
-                     <span className="text-sm font-medium tracking-widest uppercase">What most tourists get wrong ↓</span>
+                     <span className="text-sm font-medium tracking-widest uppercase">What most visitors get wrong ↓</span>
                    </div>
                 </div>
             </div>
@@ -399,7 +399,7 @@ export default function HeroSection() {
 
             {/* Scroll Indicator */}
             <div className="flex flex-col items-center justify-center gap-2 text-white/60 animate-bounce mt-4 pb-2">
-              <span className="text-[10px] font-medium tracking-widest uppercase">What most tourists get wrong ↓</span>
+              <span className="text-[10px] font-medium tracking-widest uppercase">What most visitors get wrong ↓</span>
             </div>
           </div>
 

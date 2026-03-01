@@ -31,12 +31,12 @@ export function RealityCheck() {
     {
       title: "THE WALK-IN",
       myth: "\"I'll just show up and walk in.\"",
-      reality: "No tourist entrance. No guest policy. No walk-ins. Private members-only — full stop. Try it and you'll meet the unlicensed street dealers who wait outside for exactly this moment."
+      reality: "No public walk-in entrance. No guest policy. No walk-ins. Private members-only — full stop. Try it and you'll meet the unlicensed street dealers who wait outside for exactly this moment."
     },
     {
       title: "THE STREET FIXER",
       myth: "\"The guy outside said he could get me in.\"",
-      reality: "Street promoters aren't affiliated with the clubs they stand near. Inflated fees. Fake introductions. Unverified products. The number one way tourists get burned. Approached unsolicited? Walk away."
+      reality: "Street promoters aren't affiliated with the clubs they stand near. Inflated fees. Fake introductions. Unverified products. The number one way visitors get burned. Approached unsolicited? Walk away."
     },
     {
       title: "THE LEGAL ASSUMPTION",
@@ -50,7 +50,7 @@ export function RealityCheck() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4 leading-tight">
-            Three Mistakes Tourists Make Every Single Day in Spain
+            Three Mistakes Visitors Make Every Single Day in Spain
           </h2>
           <p className="text-lg md:text-xl text-white/60 font-medium">
             Each one is avoidable. None of them are obvious.

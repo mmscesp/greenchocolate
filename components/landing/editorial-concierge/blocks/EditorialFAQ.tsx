@@ -12,7 +12,7 @@ export function EditorialFAQ() {
       a: "Genuinely complicated. No national law explicitly legalizes them. What IS clear: public consumption carries fines from €601 to €30,000. Private spaces are treated very differently. Read our legal guide." 
     },
     { 
-      q: "Can tourists actually join a Cannabis Social Club?", 
+      q: "Can international visitors actually join a Cannabis Social Club?", 
       a: "Some clubs accept international visitors. Many don't. You'll need prior membership, valid ID, and patience. Our directory shows who's open and what's required." 
     },
     { 
