@@ -3,6 +3,12 @@ const nextConfig = {
   images: {
     unoptimized: false,
     qualities: [72, 75, 80, 82, 85, 88, 90],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
+      },
+    ],
   },
   async headers() {
     const csp = [
