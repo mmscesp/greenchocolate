@@ -19,7 +19,7 @@ export function FinalMicDrop() {
 
       <div className="relative z-20 max-w-3xl w-full mx-auto">
         <h2 className="text-[12vw] md:text-[7rem] font-black font-serif text-white tracking-tighter leading-none mb-6">
-          Know<br />Before<br />You Go.
+          Know Before You Go.
         </h2>
         
         <p className="text-xl md:text-2xl text-zinc-400 font-medium mb-16">

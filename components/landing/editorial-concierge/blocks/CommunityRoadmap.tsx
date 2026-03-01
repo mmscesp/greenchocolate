@@ -7,7 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight } from '@/lib/icons';
 
 export function CommunityRoadmap() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   const cities = [
     {

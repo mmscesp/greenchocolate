@@ -7,7 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { CheckCircle2, ArrowRight } from '@/lib/icons';
 
 export function VerificationStandard() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -27,9 +27,6 @@ export function VerificationStandard() {
           <p className="text-lg md:text-xl text-zinc-400 font-medium mb-6">
             We add one new verified club every week. Each one takes time. That&apos;s the point.
           </p>
-          <p className="text-sm md:text-base text-zinc-500 leading-relaxed max-w-2xl mx-auto">
-            Most directories scrape hundreds of unverified listings and call it comprehensive. We do the opposite — we visit, we verify, we build a relationship with every club before it appears here. If it&apos;s listed, it earned it.
-          </p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide">
@@ -44,8 +41,8 @@ export function VerificationStandard() {
             <h3 className="text-2xl font-bold text-white mb-2">Club 311 Barcelona</h3>
             <div className="space-y-2 mb-8 text-sm text-zinc-400 font-medium">
               <p>Relaxed atmosphere · Est. 2018</p>
-              <p>International members welcome</p>
-              <p>Avg. response time: 12–24h</p>
+              <p><span className="text-zinc-300">Visitor policy:</span> International members welcome</p>
+              <p><span className="text-zinc-300">Response time:</span> Avg. response time: 12–24h</p>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
               <CheckCircle2 className="w-4 h-4" /> Verified — SocialClubsMaps
@@ -66,8 +63,8 @@ export function VerificationStandard() {
             <h3 className="text-2xl font-bold text-white mb-2">The Green Lounge</h3>
             <div className="space-y-2 mb-8 text-sm text-zinc-400 font-medium">
               <p>Premium Lounge · Est. 2020</p>
-              <p>Strict referral policy (verified)</p>
-              <p>Avg. response time: 2–4h</p>
+              <p><span className="text-zinc-300">Visitor policy:</span> Strict referral policy (verified)</p>
+              <p><span className="text-zinc-300">Response time:</span> Avg. response time: 2–4h</p>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
               <CheckCircle2 className="w-4 h-4" /> Verified — SocialClubsMaps

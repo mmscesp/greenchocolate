@@ -20,7 +20,7 @@ const cardVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 24 }
+    transition: { type: 'spring' as const, stiffness: 300, damping: 24 }
   }
 };
 
@@ -31,17 +31,17 @@ export function RealityCheck() {
     {
       title: "THE WALK-IN",
       myth: "\"I'll just show up and walk in.\"",
-      reality: "Cannabis Social Clubs are private associations. There is no tourist entrance. No guest policy. No exceptions. You cannot walk in off the street — period. Visitors who try get turned away at the door, or worse, get approached by unlicensed street dealers who position themselves outside clubs specifically to intercept confused tourists. That's not a hypothetical. It happens every day, in every major Spanish city."
+      reality: "No tourist entrance. No guest policy. No walk-ins. Private members-only — full stop. Try it and you'll meet the unlicensed street dealers who wait outside for exactly this moment."
     },
     {
       title: "THE STREET FIXER",
       myth: "\"The guy outside said he could get me in.\"",
-      reality: "Street promoters near popular clubs are not affiliated with those clubs. They're unlicensed middlemen — sometimes individuals, sometimes organized — who charge inflated fees for introductions that may not work, products that aren't verified, or access to unlicensed operations that aren't real clubs at all. This is the number one way tourists lose money, receive unsafe products, or end up in situations that carry genuine legal risk. If someone approaches you unsolicited, walk away."
+      reality: "Street promoters aren't affiliated with the clubs they stand near. Inflated fees. Fake introductions. Unverified products. The number one way tourists get burned. Approached unsolicited? Walk away."
     },
     {
       title: "THE LEGAL ASSUMPTION",
       myth: "\"Cannabis is basically legal here, right?\"",
-      reality: "Not even close. Cannabis Social Clubs operate in a legal grey zone — no national law explicitly legalizes them, and Spain's Supreme Court has repeatedly narrowed what courts consider non-criminal. Catalonia tried to regulate clubs in 2017; that law was struck down as unconstitutional. What IS black and white: public possession or consumption is an administrative offense carrying fines from €601 to €30,000. Private and public are two completely different legal universes in Spain. If you don't know the line, you're gambling."
+      reality: "Not even close. No national law explicitly legalizes them. Public possession or consumption? Fines from €601 to €30,000. Private and public are two different legal universes. Don't know the line? You're gambling."
     }
   ];
 
@@ -95,7 +95,7 @@ export function RealityCheck() {
             className="inline-flex items-center text-[#E8A838] hover:text-[#d4962e] font-bold text-lg transition-colors group"
           >
             Read the full legal landscape
-            <span className="ml-2 transform transition-transform group-hover:translate-x-1">&rarr;</span>
+            <span className="ml-2 transform transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </motion.div>
       </div>

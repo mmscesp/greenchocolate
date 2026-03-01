@@ -18,7 +18,7 @@ const cardVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 24 }
+    transition: { type: 'spring' as const, stiffness: 300, damping: 24 }
   }
 };
 
@@ -29,21 +29,21 @@ export function WhoWeAre() {
     {
       label: "EDUCATE",
       when: "Before you travel",
-      body: "Everything you need to understand about how Cannabis Social Clubs actually work — city by city, rule by rule, mistake by mistake. Interactive guides, legal explainers, etiquette breakdowns, scam-avoidance checklists, and cultural context that turns confusion into confidence. All free. All independent. All written by people who live in Spain and navigate this world firsthand.",
+      body: "How CSCs actually work — city by city, rule by rule. Legal explainers. Etiquette guides. Scam checklists. Free. Always.",
       cta: "Start with the Guides →",
       href: `/${language}/editorial`
     },
     {
       label: "VERIFY",
       when: "Before you visit",
-      body: "Every club in our directory has been personally vetted against our verification standard. We don't list clubs that pay us. We don't accept sponsorships. We don't bulk-scrape listings from other sites and call it a directory. A club earns its place here by meeting our criteria — and we add them one at a time, slowly, deliberately, because speed and trust don't live in the same sentence in this space.",
+      body: "Every listed club is personally vetted — so you don't have to guess. No paid placements. No sponsorships. No scraped listings. One at a time — because speed and trust don't live in the same sentence.",
       cta: "See the Directory →",
       href: `/${language}/clubs`
     },
     {
       label: "PROTECT",
       when: "Before anything goes wrong",
-      body: "The Safety Kit is our most important resource — and it's free. It covers what to say and what never to say, how to spot a fake club or a street scam, what to do if something goes sideways, how to understand your rights as a visitor in Spain, and how to protect your privacy throughout the process. Over 2,500 kits distributed to travelers across Europe.",
+      body: "The Safety Kit covers what to say, what never to say, how to spot a scam, and what to do when things go sideways. Free. Always. Over 2,500 distributed across Europe.",
       cta: "Get the Free Safety Kit →",
       href: `/${language}/safety-kit`
     }

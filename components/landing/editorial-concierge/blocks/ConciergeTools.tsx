@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2 } from '@/lib/icons';
+import { CheckCircle2 } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function ConciergeTools() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
@@ -20,12 +19,12 @@ export function ConciergeTools() {
     {
       id: 'experience',
       question: 'What\'s your experience with Cannabis Social Clubs?',
-      options: ['Complete beginner — never been', 'I\'ve visited coffeeshops', 'I\'ve been to CSCs before', 'I\'m a member somewhere']
+      options: ['Complete beginner — never been', 'I\'ve visited coffeeshops (Amsterdam / etc.)', 'I\'ve been to CSCs before', 'I\'m a member somewhere']
     },
     {
       id: 'city',
       question: 'Which city are you interested in?',
-      options: ['Barcelona', 'Madrid', 'Valencia', 'Tenerife', 'Not sure yet']
+      options: ['Barcelona', 'Madrid', 'Valencia', 'Tenerife', 'Not sure yet — help me decide']
     }
   ];
 
@@ -40,7 +39,7 @@ export function ConciergeTools() {
 
   // Simulate dynamic result generation
   const getResult = () => {
-    const city = answers.city === 'Not sure yet' ? 'Spain' : answers.city || 'Barcelona';
+    const city = answers.city === 'Not sure yet — help me decide' ? 'Barcelona' : answers.city || 'Barcelona';
     const level = answers.experience === 'Complete beginner — never been' ? 'first-timer' : 'experienced';
     return { city, level };
   };
@@ -101,40 +100,44 @@ export function ConciergeTools() {
               >
                 <div className="flex items-center gap-3 mb-6 text-emerald-600 bg-emerald-50 w-fit px-4 py-2 rounded-full">
                   <CheckCircle2 className="w-5 h-5" />
-                  <span className="font-bold text-sm uppercase tracking-wide">Your Plan is Ready</span>
+                  <span className="font-bold text-sm uppercase tracking-wide">Your plan is ready</span>
                 </div>
                 
                 <h3 className="text-2xl font-black text-zinc-900 mb-6">
-                  Your {getResult().city} plan — {getResult().level} edition
+                  Your plan for {getResult().city} — {getResult().level} edition:
                 </h3>
 
                 <div className="space-y-4 mb-8">
                   <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">1</div>
                     <div>
-                      <h4 className="font-bold text-zinc-900">Read first: What CSCs Actually Are</h4>
-                      <p className="text-sm text-zinc-500 mt-1">Your essential foundation.</p>
+                      <h4 className="font-bold text-zinc-900">Read first: What Cannabis Social Clubs Actually Are →</h4>
+                      <p className="text-sm text-zinc-500 mt-1">Your essential foundation before you do anything else.</p>
                     </div>
                   </div>
                   <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">2</div>
                     <div>
-                      <h4 className="font-bold text-zinc-900">Read next: The Safety Kit</h4>
-                      <p className="text-sm text-zinc-500 mt-1">Scam avoidance & legal boundaries.</p>
+                      <h4 className="font-bold text-zinc-900">Read next: The Safety Kit →</h4>
+                      <p className="text-sm text-zinc-500 mt-1">Scam avoidance, legal boundaries, privacy etiquette.</p>
                     </div>
                   </div>
                   <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">3</div>
                     <div>
-                      <h4 className="font-bold text-zinc-900">Browse: Verified Clubs in {getResult().city}</h4>
-                      <p className="text-sm text-zinc-500 mt-1">Vetted clubs that accept visitors.</p>
+                      <h4 className="font-bold text-zinc-900">Then browse: Verified clubs in {getResult().city} →</h4>
+                      <p className="text-sm text-zinc-500 mt-1">Clubs we&apos;ve vetted that accept international visitors.</p>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
+                    <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">4</div>
+                    <div>
+                      <h4 className="font-bold text-zinc-900">Get the full toolkit: Download the Free Safety Kit →</h4>
+                      <p className="text-sm text-zinc-500 mt-1">Everything in one resource, sent to your inbox.</p>
                     </div>
                   </div>
                 </div>
 
-                <button className="w-full py-4 bg-[#E8A838] hover:bg-[#d4962e] text-black font-bold rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-[0.98]">
-                  Get the Full Toolkit Sent to Email
-                </button>
                 <button onClick={() => setStep(0)} className="w-full mt-4 text-sm font-bold text-zinc-400 hover:text-zinc-600">
                   Start Over
                 </button>

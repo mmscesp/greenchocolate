@@ -11,15 +11,15 @@ interface FeaturedVaultProps {
   articles?: ArticleCard[];
 }
 
-  export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
-  const { t, language } = useLanguage();
+export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
+  const { language } = useLanguage();
 
   const defaultArticles = [
     {
       id: '1',
       tag: 'Essential Guide',
       title: 'What Cannabis Social Clubs in Spain Actually Are — And Why It Matters for Your Trip',
-      description: 'The definitive explainer. How they work, who can join, what to expect, and what they\'re definitely not.',
+      description: 'How they work. Who can join. What to expect. What they\'re not.',
       readTime: '12 min read',
       slug: 'what-are-cannabis-social-clubs',
       image: '/images/editorial/club-interior-warm.webp'
@@ -28,7 +28,7 @@ interface FeaturedVaultProps {
       id: '2',
       tag: 'Safety',
       title: 'The Safety Kit: What Every Visitor Should Know Before Setting Foot in a Club',
-      description: 'Scam patterns, legal boundaries, privacy etiquette, and exactly what to do if things go sideways.',
+      description: 'Scam patterns. Legal lines. Privacy etiquette. What to do when things go sideways.',
       readTime: '8 min read',
       slug: 'safety-kit-visitor-guide',
       image: '/images/editorial/safety-kit-hero.webp'
@@ -111,7 +111,7 @@ interface FeaturedVaultProps {
                       {item.readTime}
                     </div>
                     <span className="text-xs font-bold uppercase tracking-widest text-zinc-900 group-hover:translate-x-1 transition-transform duration-300">
-                      Read &rarr;
+                      Read →
                     </span>
                   </div>
                 </div>

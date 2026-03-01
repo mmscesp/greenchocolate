@@ -4,11 +4,9 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Shield, AlertCircle, Calendar } from '@/lib/icons';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { MorphingText } from '@/components/ui/morphing-text';
 import { useLanguage } from '@/hooks/useLanguage';
 
 const HERO_CONFIG = {
@@ -30,19 +28,6 @@ export default function HeroSection() {
   const [overlayHidden, setOverlayHidden] = useState(false);
   const [animationReady, setAnimationReady] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  const localCities = [
-    t('hero.section.cities.local.1'),
-    t('hero.section.cities.local.2'),
-    t('hero.section.cities.local.3'),
-    t('hero.section.cities.local.4'),
-  ];
-  const globalCities = [
-    t('hero.section.cities.global.1'),
-    t('hero.section.cities.global.2'),
-    t('hero.section.cities.global.3'),
-    t('hero.section.cities.global.4'),
-  ];
 
   // Scoping Root Ref for GSAP matchMedia
   const rootRef = useRef<HTMLElement>(null);
@@ -312,17 +297,15 @@ export default function HeroSection() {
                         <span className="text-[#E8A838]">That&apos;s Why We&apos;re Here.</span>
                       </h1>
                       
-                      <div className="mt-8 flex items-center justify-center gap-2 text-sm sm:text-base md:text-lg text-white/80 font-medium tracking-widest uppercase">
-                        <span>Currently covering:</span>
-                        <div className="flex items-center text-[#E8A838] font-bold">
-                          <MorphingText texts={['Barcelona', 'Madrid', 'Valencia', 'Tenerife']} className="inline-block" />
-                        </div>
+                      <div className="mt-8 text-sm sm:text-base md:text-lg text-white/80 font-medium tracking-wide">
+                        <span>Currently covering: </span>
+                        <span className="text-[#E8A838] font-bold">Barcelona &middot; Madrid &middot; Valencia &middot; Tenerife</span>
                       </div>
                   </div>
 
                   <div ref={bodyRef} className="mx-auto mt-6 sm:mt-10 max-w-3xl will-change-transform px-4 relative z-10">
                     <p className="text-base md:text-lg lg:text-xl text-gray-100 leading-relaxed font-medium [text-shadow:0_2px_8px_rgba(0,0,0,0.9),0_4px_20px_rgba(0,0,0,0.6)]">
-                      Cannabis Social Clubs are private, members-only associations operating in Spain&apos;s legal grey zone. They can&apos;t advertise, can&apos;t recruit publicly, and can&apos;t vet visitors on their own. We do that work — through independent verification, education, and the most comprehensive safety resources in the space.
+                      Misinformation everywhere. Scams on every corner. We cut through it — with guides, verified listings, and real safety resources.
                     </p>
                   </div>
                 </div>
@@ -339,7 +322,7 @@ export default function HeroSection() {
                     </Link>
                     <Link href={`/${language}/editorial/legal`} className="w-full md:w-auto">
                       <Button size="lg" variant="outline" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full border-2 border-white text-white bg-black/30 backdrop-blur-md hover:bg-white/10 hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                        How Clubs Actually Work &rarr;
+                        How Clubs Actually Work →
                       </Button>
                     </Link>
                   </div>
@@ -347,8 +330,7 @@ export default function HeroSection() {
 
                 <div ref={statsRef} className="pointer-events-auto w-full will-change-transform px-4 flex justify-center pb-4">
                    <div className="flex flex-col items-center gap-2 text-white/60 animate-bounce">
-                     <span className="text-sm font-medium tracking-widest uppercase">What most tourists get wrong</span>
-                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                     <span className="text-sm font-medium tracking-widest uppercase">What most tourists get wrong ↓</span>
                    </div>
                 </div>
             </div>
@@ -386,15 +368,12 @@ export default function HeroSection() {
               <span className="text-white/70">Most people get them completely wrong.</span><br />
               <span className="text-[#E8A838]">That&apos;s Why We&apos;re Here.</span>
             </h1>
-            <div className="mt-8 flex flex-col items-center justify-center gap-1 text-[11px] text-white/80 font-medium tracking-widest uppercase">
-              <span>Currently covering:</span>
-              <div className="text-[#E8A838] font-bold h-[20px] overflow-hidden">
-                <MorphingText texts={['Barcelona', 'Madrid', 'Valencia', 'Tenerife']} className="inline-block" />
-              </div>
+            <div className="mt-8 flex flex-col items-center justify-center gap-1 text-[11px] text-white/80 font-medium tracking-wide">
+              <span>Currently covering: <span className="text-[#E8A838] font-bold">Barcelona &middot; Madrid &middot; Valencia &middot; Tenerife</span></span>
             </div>
 
             <p className="mt-8 text-[15px] sm:text-base text-gray-100 font-medium leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-2">
-              Cannabis Social Clubs are private, members-only associations operating in Spain&apos;s legal grey zone. They can&apos;t advertise, can&apos;t recruit publicly, and can&apos;t vet visitors on their own. We do that work — through independent verification, education, and the most comprehensive safety resources in the space.
+              Misinformation everywhere. Scams on every corner. We cut through it — with guides, verified listings, and real safety resources.
             </p>
           </div>
           
@@ -413,15 +392,14 @@ export default function HeroSection() {
               </Link>
               <Link href={`/${language}/editorial/legal`} className="w-full">
                 <Button size="lg" variant="outline" className="w-full py-7 text-base font-bold rounded-full border border-white/40 text-white bg-white/10 backdrop-blur-md">
-                  How Clubs Actually Work &rarr;
+                  How Clubs Actually Work →
                 </Button>
               </Link>
             </div>
 
             {/* Scroll Indicator */}
             <div className="flex flex-col items-center justify-center gap-2 text-white/60 animate-bounce mt-4 pb-2">
-              <span className="text-[10px] font-medium tracking-widest uppercase">What most tourists get wrong</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+              <span className="text-[10px] font-medium tracking-widest uppercase">What most tourists get wrong ↓</span>
             </div>
           </div>
 

@@ -7,7 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight, MapPin } from '@/lib/icons';
 
 export function KnowledgeRouter() {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
 
   const events = [
     {

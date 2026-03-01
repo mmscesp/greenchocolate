@@ -9,27 +9,27 @@ export function EditorialFAQ() {
   const faqs = [
     { 
       q: "Are Cannabis Social Clubs legal in Spain?", 
-      a: "It's genuinely complicated — and that complexity is exactly why we built this. Cannabis Social Clubs operate in a legal grey zone. There is no national law that explicitly legalizes them. Spain's Supreme Court has issued rulings that narrow what's considered non-criminal activity within an association. Catalonia attempted to regulate CSCs in 2017, but that law was declared unconstitutional in 2018. What IS clear: private consumption in a private space is treated very differently from public consumption, which is an administrative offense with fines from €601 to €30,000. We cover all of this in depth in our legal guide — but we're not lawyers, and nothing we publish should be taken as legal advice." 
+      a: "Genuinely complicated. No national law explicitly legalizes them. What IS clear: public consumption carries fines from €601 to €30,000. Private spaces are treated very differently. Read our legal guide." 
     },
     { 
       q: "Can tourists actually join a Cannabis Social Club?", 
-      a: "Some clubs accept international visitors. Many don't. Every club sets its own membership policy independently. What's universally true: you cannot walk in without prior membership, you will need valid identification, and the process takes time — sometimes days. Our directory shows which clubs are open to visitors and lists their specific requirements, including language support, response times, and intake policies." 
+      a: "Some clubs accept international visitors. Many don't. You'll need prior membership, valid ID, and patience. Our directory shows who's open and what's required." 
     },
     { 
       q: "Why don't you list more clubs?", 
-      a: "Because we verify every single one. We don't scrape listings from Google Maps, TripAdvisor, or other directories. We don't accept payment for placement. We don't list clubs we haven't assessed against our verification standard. We add one new club per week because that's the pace at which we can do this properly without compromising the standard. Every directory that prioritized quantity over quality in this space eventually became part of the problem. We refuse to be that." 
+      a: "Because we verify every one. No scraped listings. No paid placements. One new club per week — that's the pace at which quality stays uncompromised." 
     },
     { 
       q: "Is SocialClubsMaps free?", 
-      a: "All our guides, safety resources, educational content, and the city quiz are completely free and always will be. The directory is free to browse. We may introduce optional premium features in the future — such as expedited verification or concierge-level trip support — but the core of what we do will remain open. We believe safety information should never be paywalled." 
+      a: "Everything is free. Always will be. Safety information should never be paywalled." 
     },
     { 
       q: "How is this different from other cannabis directories?", 
-      a: "Most directories in this space fall into one of three categories: they scrape unverified listings to look comprehensive, they accept payment from clubs for placement, or they operate as thinly-veiled fronts for specific clubs looking to attract tourists. We are independent. We are unsponsored. We verify every listing. We don't publish sensitive details on public pages. And we invest in the educational content that helps you understand the entire landscape — not just find an address. That's the difference, and it's not close." 
+      a: "Independent. Unsponsored. Every listing verified personally. No sensitive details on public pages. Education first — not just addresses." 
     },
     {
       q: "Do you sell cannabis or facilitate purchases?",
-      a: "No. Absolutely not. SocialClubsMaps is an educational platform and a curated directory. We do not sell, broker, or facilitate the sale or purchase of any controlled substance. Cannabis Social Clubs are private associations — what occurs between a club and its members is their private matter, governed by their own house rules and the laws of Spain. We help people understand how the system works and connect with clubs that meet our verification standard. That's where our role ends."
+      a: "No. We're an educational platform and curated directory. We don't sell, broker, or facilitate the sale of any substance. What occurs between a club and its members is their private matter."
     }
   ];
 

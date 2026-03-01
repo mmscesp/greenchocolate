@@ -2,20 +2,16 @@
 
 import React, { useState } from 'react';
 import { ArrowRight, Check } from '@/lib/icons';
-import { useLanguage } from '@/hooks/useLanguage';
 import { trackEvent } from '@/lib/analytics';
 
 export function NewsletterDrop() {
-  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
   const benefits = [
-    'Immediate access to the complete Safety Kit',
-    'Weekly "New Club Verified" notification',
-    'City-specific guides the moment we publish them',
-    'Scam alerts and legal updates for travelers',
-    'Zero sponsored content. Zero ads. Just the work.'
+    'Complete Safety Kit — sent instantly',
+    'Weekly verified club alerts + city guides',
+    'Zero ads. Zero sponsors. Just the work.'
   ];
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -42,8 +38,17 @@ export function NewsletterDrop() {
         </h2>
 
         <p className="text-lg md:text-2xl text-zinc-400 mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
-          If you&apos;re planning a trip, researching your options, or just trying to understand how this world actually works — this is the most useful thing you&apos;ll find in your inbox.
+          The most useful email for anyone navigating Spain&apos;s cannabis club scene. Free forever.
         </p>
+
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-left max-w-3xl mx-auto mb-10">
+          {benefits.map((benefit, i) => (
+            <div key={i} className="flex items-center gap-2 text-zinc-400 text-sm font-medium">
+              <Check className="w-4 h-4 text-[#E8A838] flex-shrink-0" />
+              <span>{benefit}</span>
+            </div>
+          ))}
+        </div>
 
         {status === 'success' ? (
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-8 max-w-lg mx-auto mb-12">
@@ -73,7 +78,7 @@ export function NewsletterDrop() {
                 className="w-full px-8 py-4 bg-[#E8A838] hover:bg-[#d4962e] disabled:opacity-50 disabled:cursor-not-allowed text-black font-black text-lg rounded-xl shadow-[0_10px_40px_rgba(232,168,56,0.2)] hover:shadow-[0_10px_40px_rgba(232,168,56,0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 {status === 'loading' ? 'Joining...' : 'Subscribe — It\'s Free'}
-                {!status && <ArrowRight className="w-5 h-5" />}
+                {status !== 'loading' && <ArrowRight className="w-5 h-5" />}
               </button>
             </div>
             <p className="text-zinc-600 text-xs font-bold uppercase tracking-widest">
@@ -81,15 +86,6 @@ export function NewsletterDrop() {
             </p>
           </form>
         )}
-
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-left max-w-3xl mx-auto">
-          {benefits.map((benefit, i) => (
-            <div key={i} className="flex items-center gap-2 text-zinc-400 text-sm font-medium">
-              <Check className="w-4 h-4 text-[#E8A838] flex-shrink-0" />
-              <span>{benefit}</span>
-            </div>
-          ))}
-        </div>
 
         <p className="mt-12 text-zinc-700 text-xs">
           We send one email per week. No spam. No partners. Unsubscribe in one click.
