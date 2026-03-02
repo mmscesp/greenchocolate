@@ -7,37 +7,37 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight } from '@/lib/icons';
 
 export function CommunityRoadmap() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const cities = [
     {
       name: 'Barcelona',
-      status: 'X verified clubs',
-      tagline: 'The most developed scene in Spain. The most traps for tourists.',
+      status: t('landing.community_roadmap.cities.barcelona.status'),
+      tagline: t('landing.community_roadmap.cities.barcelona.tagline'),
       image: '/images/cities/barcelona-dusk.webp', // Placeholder path
       href: `/${language}/spain/barcelona`,
       active: true
     },
     {
       name: 'Madrid',
-      status: 'Coming soon',
-      tagline: 'Fewer tourists, fewer scams, better odds — if you know where to look.',
+      status: t('landing.community_roadmap.cities.madrid.status'),
+      tagline: t('landing.community_roadmap.cities.madrid.tagline'),
       image: '/images/cities/madrid-night.webp',
       href: `/${language}/spain/madrid`,
       active: true
     },
     {
       name: 'Valencia',
-      status: 'Coming soon',
-      tagline: 'Emerging. Intimate. Under the radar. Worth watching.',
+      status: t('landing.community_roadmap.cities.valencia.status'),
+      tagline: t('landing.community_roadmap.cities.valencia.tagline'),
       image: '/images/cities/valencia-arts.webp',
       href: `/${language}/spain/valencia`,
       active: false
     },
     {
       name: 'Tenerife',
-      status: 'Coming soon',
-      tagline: 'Island culture — small, tight-knit, and surprisingly sophisticated.',
+      status: t('landing.community_roadmap.cities.tenerife.status'),
+      tagline: t('landing.community_roadmap.cities.tenerife.tagline'),
       image: '/images/cities/tenerife-coast.webp',
       href: `/${language}/spain/tenerife`,
       active: false
@@ -49,10 +49,10 @@ export function CommunityRoadmap() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 md:mb-24 max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4">
-            Four Cities. Four Completely Different Scenes.
+            {t('landing.community_roadmap.title')}
           </h2>
           <p className="text-lg md:text-xl text-zinc-400 font-medium">
-            The rules change. The culture changes. The risks change. Where you go matters more than you think.
+            {t('landing.community_roadmap.subtitle')}
           </p>
         </div>
 
@@ -92,12 +92,12 @@ export function CommunityRoadmap() {
                       href={city.href}
                       className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-[#E8A838] hover:text-white transition-colors"
                     >
-                      {'Explore ' + city.name}
+                      {t('landing.community_roadmap.explore_prefix')} {city.name}
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                   ) : (
                     <span className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-600" aria-disabled="true">
-                      Coming Soon
+                      {t('landing.community_roadmap.coming_soon')}
                     </span>
                   )}
                 </div>

@@ -6,25 +6,41 @@ import { CheckCircle2 } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function ConciergeTools() {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const questions = [
     {
       id: 'timeline',
-      question: 'When are you heading to Spain?',
-      options: ['This weekend', 'Within a month', 'A few months out', 'I already live here']
+      question: t('landing.concierge_tools.questions.timeline.question'),
+      options: [
+        t('landing.concierge_tools.questions.timeline.options.this_weekend'),
+        t('landing.concierge_tools.questions.timeline.options.within_month'),
+        t('landing.concierge_tools.questions.timeline.options.few_months'),
+        t('landing.concierge_tools.questions.timeline.options.already_here'),
+      ]
     },
     {
       id: 'experience',
-      question: 'What\'s your experience with Cannabis Social Clubs?',
-      options: ['Complete beginner — never been', 'I\'ve visited coffeeshops (Amsterdam / etc.)', 'I\'ve been to CSCs before', 'I\'m a member somewhere']
+      question: t('landing.concierge_tools.questions.experience.question'),
+      options: [
+        t('landing.concierge_tools.questions.experience.options.beginner'),
+        t('landing.concierge_tools.questions.experience.options.coffeeshops'),
+        t('landing.concierge_tools.questions.experience.options.been_before'),
+        t('landing.concierge_tools.questions.experience.options.member_somewhere'),
+      ]
     },
     {
       id: 'city',
-      question: 'Which city are you interested in?',
-      options: ['Barcelona', 'Madrid', 'Valencia', 'Tenerife', 'Not sure yet — help me decide']
+      question: t('landing.concierge_tools.questions.city.question'),
+      options: [
+        t('landing.concierge_tools.questions.city.options.barcelona'),
+        t('landing.concierge_tools.questions.city.options.madrid'),
+        t('landing.concierge_tools.questions.city.options.valencia'),
+        t('landing.concierge_tools.questions.city.options.tenerife'),
+        t('landing.concierge_tools.questions.city.options.not_sure'),
+      ]
     }
   ];
 
@@ -39,8 +55,10 @@ export function ConciergeTools() {
 
   // Simulate dynamic result generation
   const getResult = () => {
-    const city = answers.city === 'Not sure yet — help me decide' ? 'Barcelona' : answers.city || 'Barcelona';
-    const level = answers.experience === 'Complete beginner — never been' ? 'first-timer' : 'experienced';
+    const notSureOption = t('landing.concierge_tools.questions.city.options.not_sure');
+    const beginnerOption = t('landing.concierge_tools.questions.experience.options.beginner');
+    const city = answers.city === notSureOption ? t('landing.concierge_tools.default_city') : answers.city || t('landing.concierge_tools.default_city');
+    const level = answers.experience === beginnerOption ? t('landing.concierge_tools.level.first_timer') : t('landing.concierge_tools.level.experienced');
     return { city, level };
   };
 
@@ -49,10 +67,10 @@ export function ConciergeTools() {
       <div className="max-w-2xl mx-auto w-full relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-black tracking-tight mb-4">
-            Not Sure Where to Start?
+            {t('landing.concierge_tools.title')}
           </h2>
           <p className="text-lg md:text-xl text-zinc-600 font-medium">
-            45 seconds. Three questions. A plan built for your trip.
+            {t('landing.concierge_tools.subtitle')}
           </p>
         </div>
 
@@ -100,46 +118,46 @@ export function ConciergeTools() {
               >
                 <div className="flex items-center gap-3 mb-6 text-emerald-600 bg-emerald-50 w-fit px-4 py-2 rounded-full">
                   <CheckCircle2 className="w-5 h-5" />
-                  <span className="font-bold text-sm uppercase tracking-wide">Your plan is ready</span>
+                  <span className="font-bold text-sm uppercase tracking-wide">{t('landing.concierge_tools.result.ready')}</span>
                 </div>
                 
                 <h3 className="text-2xl font-black text-zinc-900 mb-6">
-                  Your plan for {getResult().city} — {getResult().level} edition:
+                  {t('landing.concierge_tools.result.plan_prefix')} {getResult().city} - {getResult().level} {t('landing.concierge_tools.result.plan_suffix')}
                 </h3>
 
                 <div className="space-y-4 mb-8">
                   <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">1</div>
                     <div>
-                      <h4 className="font-bold text-zinc-900">Read first: What Cannabis Social Clubs Actually Are →</h4>
-                      <p className="text-sm text-zinc-500 mt-1">Your essential foundation before you do anything else.</p>
+                      <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_1.title')}</h4>
+                      <p className="text-sm text-zinc-500 mt-1">{t('landing.concierge_tools.result.steps.step_1.body')}</p>
                     </div>
                   </div>
                   <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">2</div>
                     <div>
-                      <h4 className="font-bold text-zinc-900">Read next: The Safety Kit →</h4>
-                      <p className="text-sm text-zinc-500 mt-1">Scam avoidance, legal boundaries, privacy etiquette.</p>
+                      <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_2.title')}</h4>
+                      <p className="text-sm text-zinc-500 mt-1">{t('landing.concierge_tools.result.steps.step_2.body')}</p>
                     </div>
                   </div>
                   <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">3</div>
                     <div>
-                      <h4 className="font-bold text-zinc-900">Then browse: Verified clubs in {getResult().city} →</h4>
-                      <p className="text-sm text-zinc-500 mt-1">Clubs we&apos;ve vetted that accept international visitors.</p>
+                      <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_3.title_prefix')} {getResult().city} {t('landing.concierge_tools.result.steps.step_3.title_suffix')}</h4>
+                      <p className="text-sm text-zinc-500 mt-1">{t('landing.concierge_tools.result.steps.step_3.body')}</p>
                     </div>
                   </div>
                   <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">4</div>
                     <div>
-                      <h4 className="font-bold text-zinc-900">Get the full toolkit: Download the Free Safety Kit →</h4>
-                      <p className="text-sm text-zinc-500 mt-1">Everything in one resource, sent to your inbox.</p>
+                      <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_4.title')}</h4>
+                      <p className="text-sm text-zinc-500 mt-1">{t('landing.concierge_tools.result.steps.step_4.body')}</p>
                     </div>
                   </div>
                 </div>
 
                 <button onClick={() => setStep(0)} className="w-full mt-4 text-sm font-bold text-zinc-400 hover:text-zinc-600">
-                  Start Over
+                  {t('landing.concierge_tools.restart')}
                 </button>
               </motion.div>
             )}

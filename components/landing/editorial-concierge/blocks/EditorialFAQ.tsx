@@ -2,34 +2,36 @@
 
 import React, { useState } from 'react';
 import { Plus } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function EditorialFAQ() {
+  const { t } = useLanguage();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqs = [
     { 
-      q: "Are Cannabis Social Clubs legal in Spain?", 
-      a: "Genuinely complicated. No national law explicitly legalizes them. What IS clear: public consumption carries fines from €601 to €30,000. Private spaces are treated very differently. Read our legal guide." 
+      q: t('landing.editorial_faq.items.legal.question'),
+      a: t('landing.editorial_faq.items.legal.answer'),
     },
     { 
-      q: "Can international visitors actually join a Cannabis Social Club?", 
-      a: "Some clubs accept international visitors. Many don't. You'll need prior membership, valid ID, and patience. Our directory shows who's open and what's required." 
+      q: t('landing.editorial_faq.items.international.question'),
+      a: t('landing.editorial_faq.items.international.answer'),
     },
     { 
-      q: "Why don't you list more clubs?", 
-      a: "Because we verify every one. No scraped listings. No paid placements. One new club per week — that's the pace at which quality stays uncompromised." 
+      q: t('landing.editorial_faq.items.listing_volume.question'),
+      a: t('landing.editorial_faq.items.listing_volume.answer'),
     },
     { 
-      q: "Is SocialClubsMaps free?", 
-      a: "Everything is free. Always will be. Safety information should never be paywalled." 
+      q: t('landing.editorial_faq.items.free.question'),
+      a: t('landing.editorial_faq.items.free.answer'),
     },
     { 
-      q: "How is this different from other cannabis directories?", 
-      a: "Independent. Unsponsored. Every listing verified personally. No sensitive details on public pages. Education first — not just addresses." 
+      q: t('landing.editorial_faq.items.difference.question'),
+      a: t('landing.editorial_faq.items.difference.answer'),
     },
     {
-      q: "Do you sell cannabis or facilitate purchases?",
-      a: "No. We're an educational platform and curated directory. We don't sell, broker, or facilitate the sale of any substance. What occurs between a club and its members is their private matter."
+      q: t('landing.editorial_faq.items.sales.question'),
+      a: t('landing.editorial_faq.items.sales.answer'),
     }
   ];
 
@@ -38,7 +40,7 @@ export function EditorialFAQ() {
       <div className="max-w-3xl mx-auto">
         <div className="mb-16 md:mb-20 text-center">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight">
-            Questions We Hear Most
+            {t('landing.editorial_faq.title')}
           </h2>
         </div>
 

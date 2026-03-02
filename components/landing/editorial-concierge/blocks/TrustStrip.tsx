@@ -1,18 +1,20 @@
 'use client';
 
 import React from 'react';
-
-const phrases = [
-  "Independent & Unsponsored",
-  "Verified Clubs Only",
-  "No Walk-In Referrals",
-  "Updated Weekly",
-  "Free to Read",
-  "Written From Spain",
-  "Zero Paid Placements"
-];
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function TrustStrip() {
+  const { t } = useLanguage();
+  const phrases = [
+    t('landing.trust_strip.items.independent_unsponsored'),
+    t('landing.trust_strip.items.verified_only'),
+    t('landing.trust_strip.items.no_walk_in_referrals'),
+    t('landing.trust_strip.items.updated_weekly'),
+    t('landing.trust_strip.items.free_to_read'),
+    t('landing.trust_strip.items.written_from_spain'),
+    t('landing.trust_strip.items.zero_paid_placements'),
+  ];
+
   return (
     <div className="w-full h-12 md:h-14 bg-[#141414] overflow-hidden flex items-center border-y border-white/5 relative z-40 select-none">
       {/* Desktop View */}

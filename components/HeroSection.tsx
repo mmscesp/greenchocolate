@@ -292,20 +292,20 @@ export default function HeroSection() {
 
                   <div ref={headlineWrapRef} className="will-change-transform w-full">
                       <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] font-black font-serif text-white tracking-tight leading-[1.1] drop-shadow-[0_10px_40px_rgba(0,0,0,0.85)] max-w-4xl mx-auto">
-                        Spain has cannabis clubs.<br />
-                        <span className="text-white/70">Most people get them completely wrong.</span><br />
-                        <span className="text-[#E8A838]">That&apos;s Why We&apos;re Here.</span>
+                        {t('hero.section.headline.line_1')}<br />
+                        <span className="text-white/70">{t('hero.section.headline.line_2')}</span><br />
+                        <span className="text-[#E8A838]">{t('hero.section.headline.line_3')}</span>
                       </h1>
                       
                       <div className="mt-8 text-sm sm:text-base md:text-lg text-white/80 font-medium tracking-wide">
-                        <span>Currently covering: </span>
-                        <span className="text-[#E8A838] font-bold">Barcelona &middot; Madrid &middot; Valencia &middot; Tenerife</span>
+                        <span>{t('hero.section.covering_label')} </span>
+                        <span className="text-[#E8A838] font-bold">{t('hero.section.covering_cities')}</span>
                       </div>
                   </div>
 
                   <div ref={bodyRef} className="mx-auto mt-6 sm:mt-10 max-w-3xl will-change-transform px-4 relative z-10">
                     <p className="text-base md:text-lg lg:text-xl text-gray-100 leading-relaxed font-medium [text-shadow:0_2px_8px_rgba(0,0,0,0.9),0_4px_20px_rgba(0,0,0,0.6)]">
-                      Misinformation everywhere. Scams on every corner. We cut through it — with guides, verified listings, and real safety resources.
+                      {t('hero.section.body')}
                     </p>
                   </div>
                 </div>
@@ -317,12 +317,12 @@ export default function HeroSection() {
                   <div className="flex flex-col md:flex-row justify-center gap-3 md:gap-5 px-4">
                     <Link href={`/${language}/safety-kit`} className="w-full md:w-auto">
                       <Button size="lg" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] hover:scale-105 transition-all duration-300 shadow-[0_10px_40px_rgba(232,168,56,0.3)]">
-                        Get the Free Safety Kit
+                        {t('hero.section.cta_primary')}
                       </Button>
                     </Link>
                     <Link href={`/${language}/editorial/legal`} className="w-full md:w-auto">
                       <Button size="lg" variant="outline" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full border-2 border-white text-white bg-black/30 backdrop-blur-md hover:bg-white/10 hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                        How Clubs Actually Work →
+                        {t('hero.section.cta_secondary')}
                       </Button>
                     </Link>
                   </div>
@@ -330,7 +330,7 @@ export default function HeroSection() {
 
                 <div ref={statsRef} className="pointer-events-auto w-full will-change-transform px-4 flex justify-center pb-4">
                    <div className="flex flex-col items-center gap-2 text-white/60 animate-bounce">
-                     <span className="text-sm font-medium tracking-widest uppercase">What most visitors get wrong ↓</span>
+                     <span className="text-sm font-medium tracking-widest uppercase">{t('hero.section.scroll_hint')}</span>
                    </div>
                 </div>
             </div>
@@ -364,16 +364,16 @@ export default function HeroSection() {
           {/* TOP: Typography Stack */}
           <div className="flex flex-col items-center text-center w-full mt-8">
             <h1 className="text-[8vw] leading-[1.15] font-black font-serif text-white tracking-tight drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)] max-w-sm mx-auto">
-              Spain has cannabis clubs.<br />
-              <span className="text-white/70">Most people get them completely wrong.</span><br />
-              <span className="text-[#E8A838]">That&apos;s Why We&apos;re Here.</span>
+              {t('hero.section.headline.line_1')}<br />
+              <span className="text-white/70">{t('hero.section.headline.line_2')}</span><br />
+              <span className="text-[#E8A838]">{t('hero.section.headline.line_3')}</span>
             </h1>
             <div className="mt-8 flex flex-col items-center justify-center gap-1 text-[11px] text-white/80 font-medium tracking-wide">
-              <span>Currently covering: <span className="text-[#E8A838] font-bold">Barcelona &middot; Madrid &middot; Valencia &middot; Tenerife</span></span>
+              <span>{t('hero.section.covering_label')} <span className="text-[#E8A838] font-bold">{t('hero.section.covering_cities')}</span></span>
             </div>
 
             <p className="mt-8 text-[15px] sm:text-base text-gray-100 font-medium leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-2">
-              Misinformation everywhere. Scams on every corner. We cut through it — with guides, verified listings, and real safety resources.
+              {t('hero.section.body')}
             </p>
           </div>
           
@@ -387,19 +387,19 @@ export default function HeroSection() {
             <div className="flex flex-col gap-3">
               <Link href={`/${language}/safety-kit`} className="w-full">
                 <Button size="lg" className="w-full py-7 text-base font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] shadow-[0_4px_20px_rgba(232,168,56,0.3)]">
-                  Get the Free Safety Kit
+                  {t('hero.section.cta_primary')}
                 </Button>
               </Link>
               <Link href={`/${language}/editorial/legal`} className="w-full">
                 <Button size="lg" variant="outline" className="w-full py-7 text-base font-bold rounded-full border border-white/40 text-white bg-white/10 backdrop-blur-md">
-                  How Clubs Actually Work →
+                  {t('hero.section.cta_secondary')}
                 </Button>
               </Link>
             </div>
 
             {/* Scroll Indicator */}
             <div className="flex flex-col items-center justify-center gap-2 text-white/60 animate-bounce mt-4 pb-2">
-              <span className="text-[10px] font-medium tracking-widest uppercase">What most visitors get wrong ↓</span>
+              <span className="text-[10px] font-medium tracking-widest uppercase">{t('hero.section.scroll_hint')}</span>
             </div>
           </div>
 

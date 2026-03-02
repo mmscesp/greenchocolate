@@ -7,7 +7,7 @@ import { Logo } from '@/components/ui/logo';
 import { Instagram, Twitter, TikTok } from '@/lib/icons';
 
 export default function Footer() {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const withLocale = (path: string) => `/${language}${path}`;
 
   return (
@@ -27,9 +27,7 @@ export default function Footer() {
             <div className="mb-6">
               <Logo href={withLocale('/')} size="md" showText={true} />
             </div>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-8 font-medium">
-              The independent guide to Cannabis Social Clubs in Spain.
-            </p>
+            <p className="text-sm text-zinc-400 leading-relaxed mb-8 font-medium">{t('footer.new.description')}</p>
             <div className="flex items-center gap-4">
               <a 
                 href="https://www.instagram.com/socialclubsmaps"
@@ -64,7 +62,7 @@ export default function Footer() {
           {/* Column 2: Learn */}
           <div>
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E8A838] mb-8">
-              Learn
+              {t('footer.new.columns.learn')}
             </h3>
             <ul className="space-y-4">
               <li>
@@ -72,7 +70,7 @@ export default function Footer() {
                   href={withLocale('/editorial')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  All Guides
+                  {t('footer.new.learn.all_guides')}
                 </Link>
               </li>
               <li>
@@ -80,7 +78,7 @@ export default function Footer() {
                   href={withLocale('/safety-kit')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  The Safety Kit
+                  {t('footer.new.learn.safety_kit')}
                 </Link>
               </li>
               <li>
@@ -88,7 +86,7 @@ export default function Footer() {
                   href={withLocale('/editorial/legal')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Legal Explainer
+                  {t('footer.new.learn.legal_explainer')}
                 </Link>
               </li>
               <li>
@@ -96,7 +94,7 @@ export default function Footer() {
                   href={withLocale('/editorial')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  How Clubs Work
+                  {t('footer.new.learn.how_clubs_work')}
                 </Link>
               </li>
               <li>
@@ -104,7 +102,7 @@ export default function Footer() {
                   href={withLocale('/help')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  FAQ
+                  {t('footer.new.learn.faq')}
                 </Link>
               </li>
             </ul>
@@ -113,7 +111,7 @@ export default function Footer() {
           {/* Column 3: Explore */}
           <div>
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E8A838] mb-8">
-              Explore
+              {t('footer.new.columns.explore')}
             </h3>
             <ul className="space-y-4">
               <li>
@@ -121,7 +119,7 @@ export default function Footer() {
                   href={withLocale('/clubs')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  The Directory
+                  {t('footer.new.explore.directory')}
                 </Link>
               </li>
               <li>
@@ -145,7 +143,7 @@ export default function Footer() {
                   href={withLocale('/spain/valencia')} 
                   className="text-sm text-zinc-500 hover:text-zinc-400 transition-colors group flex items-center"
                 >
-                  Valencia <span className="text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 ml-2 py-0.5 px-1.5 rounded bg-[#E8A838]/5 border border-[#E8A838]/10">Soon</span>
+                  {t('footer.new.explore.valencia')} <span className="text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 ml-2 py-0.5 px-1.5 rounded bg-[#E8A838]/5 border border-[#E8A838]/10">{t('common.coming_soon')}</span>
                 </Link>
               </li>
               <li>
@@ -153,7 +151,7 @@ export default function Footer() {
                   href={withLocale('/spain/tenerife')} 
                   className="text-sm text-zinc-500 hover:text-zinc-400 transition-colors group flex items-center"
                 >
-                  Tenerife <span className="text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 ml-2 py-0.5 px-1.5 rounded bg-[#E8A838]/5 border border-[#E8A838]/10">Soon</span>
+                  {t('footer.new.explore.tenerife')} <span className="text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 ml-2 py-0.5 px-1.5 rounded bg-[#E8A838]/5 border border-[#E8A838]/10">{t('common.coming_soon')}</span>
                 </Link>
               </li>
               <li>
@@ -161,7 +159,7 @@ export default function Footer() {
                   href={withLocale('/events')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Events Calendar
+                  {t('footer.new.explore.events')}
                 </Link>
               </li>
             </ul>
@@ -170,7 +168,7 @@ export default function Footer() {
           {/* Column 4: About */}
           <div>
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E8A838] mb-8">
-              About
+              {t('footer.new.columns.about')}
             </h3>
             <ul className="space-y-4">
               <li>
@@ -178,7 +176,7 @@ export default function Footer() {
                   href={withLocale('/mission')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Our Story
+                  {t('footer.new.about.our_story')}
                 </Link>
               </li>
               <li>
@@ -186,7 +184,7 @@ export default function Footer() {
                   href={withLocale('/clubs')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Verification Standard
+                  {t('footer.new.about.verification_standard')}
                 </Link>
               </li>
               <li>
@@ -194,7 +192,7 @@ export default function Footer() {
                   href={withLocale('/contact')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Contact
+                  {t('footer.new.about.contact')}
                 </Link>
               </li>
               <li>
@@ -202,7 +200,7 @@ export default function Footer() {
                   href={withLocale('/privacy')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Privacy Policy
+                  {t('footer.new.about.privacy_policy')}
                 </Link>
               </li>
               <li>
@@ -210,7 +208,7 @@ export default function Footer() {
                   href={withLocale('/terms')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Terms of Service
+                  {t('footer.new.about.terms_of_service')}
                 </Link>
               </li>
               <li>
@@ -218,7 +216,7 @@ export default function Footer() {
                   href={withLocale('/cookies')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Cookie Policy
+                  {t('footer.new.about.cookie_policy')}
                 </Link>
               </li>
             </ul>
@@ -229,7 +227,7 @@ export default function Footer() {
         <div className="border-t border-white/5 mt-20 pt-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 text-center md:text-left">
-              © {new Date().getFullYear()} SocialClubsMaps. Independent. Unsponsored. No club has ever paid for placement.
+              {t('footer.new.copyright_prefix')} {new Date().getFullYear()} SocialClubsMaps. {t('footer.new.copyright_body')}
             </p>
             <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
               {(['en', 'es', 'fr', 'de'] as const).map((loc, index) => (

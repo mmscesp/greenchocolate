@@ -25,23 +25,23 @@ const cardVariants = {
 };
 
 export function RealityCheck() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const cards = [
     {
-      title: "THE WALK-IN",
-      myth: "\"I'll just show up and walk in.\"",
-      reality: "No public walk-in entrance. No guest policy. No walk-ins. Private members-only — full stop. Try it and you'll meet the unlicensed street dealers who wait outside for exactly this moment."
+      title: t('landing.reality_check.cards.walk_in.title'),
+      myth: t('landing.reality_check.cards.walk_in.myth'),
+      reality: t('landing.reality_check.cards.walk_in.reality'),
     },
     {
-      title: "THE STREET FIXER",
-      myth: "\"The guy outside said he could get me in.\"",
-      reality: "Street promoters aren't affiliated with the clubs they stand near. Inflated fees. Fake introductions. Unverified products. The number one way visitors get burned. Approached unsolicited? Walk away."
+      title: t('landing.reality_check.cards.street_fixer.title'),
+      myth: t('landing.reality_check.cards.street_fixer.myth'),
+      reality: t('landing.reality_check.cards.street_fixer.reality'),
     },
     {
-      title: "THE LEGAL ASSUMPTION",
-      myth: "\"Cannabis is basically legal here, right?\"",
-      reality: "Not even close. No national law explicitly legalizes them. Public possession or consumption? Fines from €601 to €30,000. Private and public are two different legal universes. Don't know the line? You're gambling."
+      title: t('landing.reality_check.cards.legal_assumption.title'),
+      myth: t('landing.reality_check.cards.legal_assumption.myth'),
+      reality: t('landing.reality_check.cards.legal_assumption.reality'),
     }
   ];
 
@@ -50,10 +50,10 @@ export function RealityCheck() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4 leading-tight">
-            Three Mistakes Visitors Make Every Single Day in Spain
+            {t('landing.reality_check.title')}
           </h2>
           <p className="text-lg md:text-xl text-white/60 font-medium">
-            Each one is avoidable. None of them are obvious.
+            {t('landing.reality_check.subtitle')}
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export function RealityCheck() {
             href={`/${language}/editorial/legal`}
             className="inline-flex items-center text-[#E8A838] hover:text-[#d4962e] font-bold text-lg transition-colors group"
           >
-            Read the full legal landscape
+            {t('landing.reality_check.cta')}
             <span className="ml-2 transform transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </motion.div>

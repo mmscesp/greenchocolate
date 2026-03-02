@@ -23,28 +23,28 @@ const cardVariants = {
 };
 
 export function WhoWeAre() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const pillars = [
     {
-      label: "EDUCATE",
-      when: "Before you travel",
-      body: "How CSCs actually work — city by city, rule by rule. Legal explainers. Etiquette guides. Scam checklists. Free. Always.",
-      cta: "Start with the Guides →",
+      label: t('landing.who_we_are.pillars.educate.label'),
+      when: t('landing.who_we_are.pillars.educate.when'),
+      body: t('landing.who_we_are.pillars.educate.body'),
+      cta: t('landing.who_we_are.pillars.educate.cta'),
       href: `/${language}/editorial`
     },
     {
-      label: "VERIFY",
-      when: "Before you visit",
-      body: "Every listed club is personally vetted — so you don't have to guess. No paid placements. No sponsorships. No scraped listings. One at a time — because speed and trust don't live in the same sentence.",
-      cta: "See the Directory →",
+      label: t('landing.who_we_are.pillars.verify.label'),
+      when: t('landing.who_we_are.pillars.verify.when'),
+      body: t('landing.who_we_are.pillars.verify.body'),
+      cta: t('landing.who_we_are.pillars.verify.cta'),
       href: `/${language}/clubs`
     },
     {
-      label: "PROTECT",
-      when: "Before anything goes wrong",
-      body: "The Safety Kit covers what to say, what never to say, how to spot a scam, and what to do when things go sideways. Free. Always. Over 2,500 distributed across Europe.",
-      cta: "Get the Free Safety Kit →",
+      label: t('landing.who_we_are.pillars.protect.label'),
+      when: t('landing.who_we_are.pillars.protect.when'),
+      body: t('landing.who_we_are.pillars.protect.body'),
+      cta: t('landing.who_we_are.pillars.protect.cta'),
       href: `/${language}/safety-kit`
     }
   ];
@@ -55,17 +55,17 @@ export function WhoWeAre() {
         {/* Header Section */}
         <div className="mb-20 md:mb-28 max-w-4xl">
           <h2 className="text-4xl md:text-6xl font-black font-serif text-black tracking-tight mb-8 leading-[1.1]">
-            We Got Tired of the Scams.<br />
-            <span className="text-zinc-400">So We Built the Standard.</span>
+            {t('landing.who_we_are.header.title_line_1')}<br />
+            <span className="text-zinc-400">{t('landing.who_we_are.header.title_line_2')}</span>
           </h2>
           <div className="space-y-6 text-lg md:text-xl font-medium text-zinc-600 leading-relaxed max-w-3xl border-l-4 border-[#E8A838] pl-6 md:pl-8">
             <p>
-              As locals living in Barcelona, we constantly saw visitors misled by street promoters, confused by grey-area laws, and scammed into unsafe situations. We built this platform to fix that.
+              {t('landing.who_we_are.header.paragraph_1')}
             </p>
             <p>
-              Every club listed here is personally vetted. Every guide is written from firsthand experience. We aren't brokers or promoters — we're a community-driven trust layer, dedicated to keeping you safe, informed, and on the right side of the rules.
+              {t('landing.who_we_are.header.paragraph_2')}
             </p>
-            <p className="text-black font-bold pt-2">— The SCM Team, Barcelona</p>
+            <p className="text-black font-bold pt-2">{t('landing.who_we_are.header.signature')}</p>
           </div>
         </div>
 
@@ -78,7 +78,7 @@ export function WhoWeAre() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
         >
           <div className="md:col-span-3 mb-8">
-            <h3 className="text-sm font-bold tracking-[0.2em] text-zinc-400 uppercase">We Do Three Things. Nothing Else.</h3>
+            <h3 className="text-sm font-bold tracking-[0.2em] text-zinc-400 uppercase">{t('landing.who_we_are.pillars_title')}</h3>
           </div>
 
           {pillars.map((pillar, idx) => (

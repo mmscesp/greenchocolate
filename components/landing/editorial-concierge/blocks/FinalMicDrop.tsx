@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowRight } from '@/lib/icons';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export function FinalMicDrop() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -19,24 +20,24 @@ export function FinalMicDrop() {
 
       <div className="relative z-20 max-w-3xl w-full mx-auto">
         <h2 className="text-[12vw] md:text-[7rem] font-black font-serif text-white tracking-tighter leading-none mb-6">
-          Know Before You Go.
+          {t('landing.final_mic_drop.title')}
         </h2>
         
         <p className="text-xl md:text-2xl text-zinc-400 font-medium mb-16">
-          The Safety Kit. The guides. The verified clubs. It all starts here.
+          {t('landing.final_mic_drop.subtitle')}
         </p>
 
         <div className="max-w-md mx-auto w-full">
           {submitted ? (
             <div className="text-emerald-400 font-bold text-xl py-6">
-              Sent. Check your inbox.
+              {t('landing.final_mic_drop.success')}
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <input
                 type="email"
                 required
-                placeholder="Your email address"
+                placeholder={t('landing.final_mic_drop.email_placeholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-xl text-xl text-center text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E8A838] transition-all"
@@ -45,14 +46,14 @@ export function FinalMicDrop() {
                 type="submit"
                 className="w-full px-8 py-5 bg-[#E8A838] hover:bg-[#d4962e] text-black font-black text-xl rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                Get the Safety Kit &rarr;
+                {t('landing.final_mic_drop.cta')}
               </button>
             </form>
           )}
         </div>
 
         <p className="mt-12 text-zinc-600 text-xs font-bold uppercase tracking-widest">
-          Free forever. One email per week. Unsubscribe in one click. No spam. No sponsors.
+          {t('landing.final_mic_drop.disclaimer')}
         </p>
       </div>
     </section>

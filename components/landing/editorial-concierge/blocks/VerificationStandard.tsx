@@ -7,7 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { CheckCircle2, ArrowRight } from '@/lib/icons';
 
 export function VerificationStandard() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -22,10 +22,10 @@ export function VerificationStandard() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4">
-            The Clubs We&apos;ve Verified. So Far.
+            {t('landing.verification_standard.title')}
           </h2>
           <p className="text-lg md:text-xl text-zinc-400 font-medium mb-6">
-            We add one new verified club every week. Each one takes time. That&apos;s the point.
+            {t('landing.verification_standard.subtitle')}
           </p>
         </div>
 
@@ -38,17 +38,17 @@ export function VerificationStandard() {
               </span>
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">Club 311 Barcelona</h3>
+            <h3 className="text-2xl font-bold text-white mb-2">{t('landing.verification_standard.cards.barcelona.name')}</h3>
             <div className="space-y-2 mb-8 text-sm text-zinc-400 font-medium">
-              <p>Relaxed atmosphere · Est. 2018</p>
-              <p><span className="text-zinc-300">Visitor policy:</span> International members welcome</p>
-              <p><span className="text-zinc-300">Response time:</span> Avg. response time: 12–24h</p>
+              <p>{t('landing.verification_standard.cards.barcelona.line_1')}</p>
+              <p><span className="text-zinc-300">{t('landing.verification_standard.labels.visitor_policy')}</span> {t('landing.verification_standard.cards.barcelona.visitor_policy')}</p>
+              <p><span className="text-zinc-300">{t('landing.verification_standard.labels.response_time')}</span> {t('landing.verification_standard.cards.barcelona.response_time')}</p>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
-              <CheckCircle2 className="w-4 h-4" /> Verified — SocialClubsMaps
+              <CheckCircle2 className="w-4 h-4" /> {t('landing.verification_standard.verified_badge')}
             </div>
             <Link href={`/${language}/clubs`} className="text-white hover:text-[#E8A838] text-sm font-bold flex items-center gap-2 transition-colors">
-              View Profile <ArrowRight className="w-4 h-4" />
+              {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
@@ -60,17 +60,17 @@ export function VerificationStandard() {
               </span>
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">The Green Lounge</h3>
+            <h3 className="text-2xl font-bold text-white mb-2">{t('landing.verification_standard.cards.madrid.name')}</h3>
             <div className="space-y-2 mb-8 text-sm text-zinc-400 font-medium">
-              <p>Premium Lounge · Est. 2020</p>
-              <p><span className="text-zinc-300">Visitor policy:</span> Strict referral policy (verified)</p>
-              <p><span className="text-zinc-300">Response time:</span> Avg. response time: 2–4h</p>
+              <p>{t('landing.verification_standard.cards.madrid.line_1')}</p>
+              <p><span className="text-zinc-300">{t('landing.verification_standard.labels.visitor_policy')}</span> {t('landing.verification_standard.cards.madrid.visitor_policy')}</p>
+              <p><span className="text-zinc-300">{t('landing.verification_standard.labels.response_time')}</span> {t('landing.verification_standard.cards.madrid.response_time')}</p>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
-              <CheckCircle2 className="w-4 h-4" /> Verified — SocialClubsMaps
+              <CheckCircle2 className="w-4 h-4" /> {t('landing.verification_standard.verified_badge')}
             </div>
             <Link href={`/${language}/clubs`} className="text-white hover:text-[#E8A838] text-sm font-bold flex items-center gap-2 transition-colors">
-              View Profile <ArrowRight className="w-4 h-4" />
+              {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
@@ -78,18 +78,18 @@ export function VerificationStandard() {
           <div className="min-w-[300px] md:min-w-[340px] bg-black/50 border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex-shrink-0 snap-center flex flex-col justify-center items-center text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(232,168,56,0.05),transparent)] pointer-events-none" />
             <div className="relative z-10 w-full">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-2">Next Club Verified</p>
-              <p className="text-xl font-bold text-white mb-8">Week of March 30, 2026</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-2">{t('landing.verification_standard.next_verified')}</p>
+              <p className="text-xl font-bold text-white mb-8">{t('landing.verification_standard.next_week')}</p>
               
               {isSubmitted ? (
                 <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400 text-sm font-bold">
-                  You&apos;ll be the first to know.
+                  {t('landing.verification_standard.subscribe_success')}
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} className="flex flex-col gap-3 w-full">
                   <input
                     type="email"
-                    placeholder="Your email"
+                    placeholder={t('landing.verification_standard.email_placeholder')}
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -99,7 +99,7 @@ export function VerificationStandard() {
                     type="submit"
                     className="w-full px-4 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg text-sm transition-colors border border-white/5"
                   >
-                    Notify Me
+                    {t('landing.verification_standard.notify_me')}
                   </button>
                 </form>
               )}
@@ -109,7 +109,7 @@ export function VerificationStandard() {
 
         <div className="mt-12 text-center">
           <Link href={`/${language}/clubs`} className="inline-flex items-center gap-2 text-zinc-500 hover:text-white font-bold uppercase tracking-widest text-xs transition-colors">
-            View the Full Directory <ArrowRight className="w-4 h-4" />
+            {t('landing.verification_standard.view_full_directory')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

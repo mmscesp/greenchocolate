@@ -7,28 +7,28 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight, MapPin } from '@/lib/icons';
 
 export function KnowledgeRouter() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   const events = [
     {
       date: 'APR 17–19',
       name: 'Spannabis Bilbao 2026',
       location: 'Bilbao, Spain',
-      desc: 'Spain\'s flagship cannabis fair moves to a new home.',
+      desc: t('landing.knowledge_router.events.spannabis.description'),
       href: `/${language}/editorial/spannabis-bilbao-2026`
     },
     {
       date: 'APR 13–15',
       name: 'ICBC Berlin 2026',
       location: 'Berlin, Germany',
-      desc: 'Europe\'s premier cannabis business conference.',
+      desc: t('landing.knowledge_router.events.icbc.description'),
       href: `/${language}/editorial/icbc-berlin-2026`
     },
     {
       date: 'MAY 26–27',
       name: 'Cannabis Europa London 2026',
       location: 'London, UK',
-      desc: 'Where policy meets industry.',
+      desc: t('landing.knowledge_router.events.europa.description'),
       href: `/${language}/editorial/cannabis-europa-london-2026`
     }
   ];
@@ -39,17 +39,17 @@ export function KnowledgeRouter() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <h2 className="text-2xl md:text-3xl font-black font-serif text-black tracking-tight mb-2">
-              What&apos;s Happening Across Europe
+              {t('landing.knowledge_router.title')}
             </h2>
             <p className="text-zinc-600 font-medium">
-              The events shaping cannabis culture, policy, and community — covered by us.
+              {t('landing.knowledge_router.subtitle')}
             </p>
           </div>
           <Link
             href={`/${language}/events`}
             className="hidden md:inline-flex items-center gap-2 text-zinc-500 hover:text-[#E8A838] font-bold uppercase tracking-widest text-xs transition-colors"
           >
-            Full Events Calendar <ArrowRight className="w-4 h-4" />
+            {t('landing.knowledge_router.full_events')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
@@ -82,7 +82,7 @@ export function KnowledgeRouter() {
                 href={event.href}
                 className="inline-flex items-center gap-2 text-black font-bold text-sm hover:translate-x-1 transition-transform"
               >
-                Read Our Guide <ArrowRight className="w-4 h-4" />
+                {t('landing.knowledge_router.read_guide')} <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
           ))}
@@ -93,7 +93,7 @@ export function KnowledgeRouter() {
             href={`/${language}/events`}
             className="inline-flex items-center gap-2 text-zinc-500 hover:text-[#E8A838] font-bold uppercase tracking-widest text-xs transition-colors"
           >
-            Full Events Calendar <ArrowRight className="w-4 h-4" />
+            {t('landing.knowledge_router.full_events')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
