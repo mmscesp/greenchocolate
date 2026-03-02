@@ -25,9 +25,9 @@ const HERO_CONFIG = {
   /* Act 2 resting positions — single source of truth for both
      the scroll timeline end-state AND the reduced-motion static layout */
   act2: {
-    headline: { scale: 0.88, y: '-22vh' },
-    body: { y: '2vh' },
-    cta: { y: '18vh' },
+    headline: { scale: 0.92, y: '-8vh' },
+    body: { y: '18vh' },
+    cta: { y: '34vh' },
     vignette: { opacity: 0.85 },
     blur: { opacity: 0.22 },
   },
@@ -429,11 +429,13 @@ export default function HeroSection() {
               </h1>
 
               <p
-                className="mt-4 text-sm md:text-base lg:text-lg text-white/85 font-medium tracking-wide"
-                style={{ textShadow: '0 2px 8px rgba(0,0,0,0.6)' }}
+                className="mt-5 flex flex-wrap items-center justify-center gap-2 text-sm md:text-base lg:text-lg text-white font-semibold tracking-[0.01em]"
+                style={{ textShadow: '0 2px 10px rgba(0,0,0,0.78)' }}
               >
-                {t('hero.section.covering_label')}{' '}
-                <span className="text-[#E8A838] font-bold">
+                <span className="rounded-full border border-white/15 bg-black/55 px-3 py-1 backdrop-blur-md">
+                  {t('hero.section.covering_label')}
+                </span>
+                <span className="rounded-full border border-[#E8A838]/45 bg-[#E8A838]/20 px-3 py-1 font-bold text-[#FFD57B]">
                   {t('hero.section.covering_cities')}
                 </span>
               </p>
@@ -535,9 +537,14 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p className="mt-4 text-xs text-white/85 font-medium tracking-wide">
-              {t('hero.section.covering_label')}{' '}
-              <span className="text-[#E8A838] font-bold">
+            <p
+              className="mt-5 flex flex-wrap items-center justify-center gap-2 text-sm text-white font-semibold tracking-[0.01em]"
+              style={{ textShadow: '0 2px 10px rgba(0,0,0,0.78)' }}
+            >
+              <span className="rounded-full border border-white/20 bg-black/55 px-2.5 py-1 backdrop-blur-md">
+                {t('hero.section.covering_label')}
+              </span>
+              <span className="rounded-full border border-[#E8A838]/45 bg-[#E8A838]/20 px-2.5 py-1 font-bold text-[#FFD57B]">
                 {t('hero.section.covering_cities')}
               </span>
             </p>
