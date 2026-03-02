@@ -16,9 +16,9 @@ interface Event {
   startDate: string;
   endDate: string;
   location: string;
-  cityName?: string;
-  clubName?: string;
-  imageUrl?: string;
+  cityName?: string | null;
+  clubName?: string | null;
+  imageUrl?: string | null;
 }
 
 interface EventsPageClientProps {
