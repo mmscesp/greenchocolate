@@ -55,7 +55,7 @@ export function LanguageProvider({ children, locale, dictionary }: LanguageProvi
     }
     const newPath = segments.join('/') || '/';
 
-    router.replace(newPath);
+    router.replace(newPath, { scroll: false });
     router.refresh();
   };
 

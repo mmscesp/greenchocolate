@@ -100,7 +100,11 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
   const [isLoading, setIsLoading] = useState(!initialEvents);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 500);
+    const timeoutId = window.setTimeout(() => setIsLoading(false), 500);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, []);
 
   if (isLoading) {

@@ -3,6 +3,8 @@ import { i18n, type Locale } from '@/lib/i18n-config';
 import { LanguageProvider } from '@/hooks/useLanguage';
 import { notFound } from 'next/navigation';
 import { AuthProvider } from '@/components/auth/AuthProvider';
+import MotionProvider from '@/components/MotionProvider';
+import ScrollRestoration from '@/components/ScrollRestoration';
 import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/layout/Navbar';
 import ConditionalFooter from '@/components/layout/ConditionalFooter';
@@ -33,17 +35,20 @@ export default async function LocaleLayout({
     <LanguageProvider locale={lang as Locale} dictionary={dictionary}>
       <LanguageUpdater />
       <AuthProvider>
-        <SmoothScroll>
-          <div className="min-h-screen flex flex-col">
-            <LegalDisclaimerModal />
-            <Navbar />
-            <PlatformBackground />
-            <main className="flex-1">
-              {children}
-            </main>
-            <ConditionalFooter />
-          </div>
-        </SmoothScroll>
+        <MotionProvider>
+          <ScrollRestoration />
+          <SmoothScroll>
+            <div className="min-h-screen flex flex-col">
+              <LegalDisclaimerModal />
+              <Navbar />
+              <PlatformBackground />
+              <main className="flex-1">
+                {children}
+              </main>
+              <ConditionalFooter />
+            </div>
+          </SmoothScroll>
+        </MotionProvider>
       </AuthProvider>
     </LanguageProvider>
   );

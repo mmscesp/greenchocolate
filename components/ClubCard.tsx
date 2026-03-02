@@ -40,6 +40,7 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
               src={club.images[0]}
               alt={club.name}
               fill
+              sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
             />
           </Link>

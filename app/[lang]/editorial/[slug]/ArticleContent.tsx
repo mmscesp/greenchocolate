@@ -26,11 +26,26 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
   useEffect(() => {
+    let frameId = 0;
     const handleScroll = () => {
-      setShowStickyCTA(window.scrollY > 500);
+      if (frameId !== 0) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        setShowStickyCTA(window.scrollY > 500);
+        frameId = 0;
+      });
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frameId !== 0) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
   }, []);
 
   return (

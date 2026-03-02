@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -37,6 +37,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const previousBodyOverflowRef = useRef<string | null>(null);
   const { user, profile, signOut, loading: authLoading } = useAuth();
   const router = useRouter();
   const withLocale = (path: string) => `/${language}${path}`;
@@ -69,12 +70,20 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
 
   useEffect(() => {
     if (isOpen && typeof window !== 'undefined' && window.innerWidth < 768) {
+      if (previousBodyOverflowRef.current === null) {
+        previousBodyOverflowRef.current = document.body.style.overflow;
+      }
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = previousBodyOverflowRef.current ?? '';
+      previousBodyOverflowRef.current = null;
     }
+
     return () => {
-      document.body.style.overflow = 'unset';
+      if (previousBodyOverflowRef.current !== null) {
+        document.body.style.overflow = previousBodyOverflowRef.current;
+        previousBodyOverflowRef.current = null;
+      }
     };
   }, [isOpen]);
 
