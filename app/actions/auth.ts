@@ -476,16 +476,6 @@ export async function signInWithOAuth(provider: OAuthProvider) {
 }
 
 /**
- * Update lastActive timestamp
- */
-async function updateLastActive(authId: string) {
-  await prisma.profile.update({
-    where: { authId },
-    data: { lastActiveAt: new Date() },
-  });
-}
-
-/**
  * Decrypt User PII (for admin viewing)
  */
 export async function decryptUserPII(userId: string): Promise<ActionState> {

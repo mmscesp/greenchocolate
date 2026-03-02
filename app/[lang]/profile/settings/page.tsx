@@ -33,9 +33,39 @@ Lock,
 Trash2 } from '@/lib/icons';
 import { toast } from 'sonner';
 
+type NotificationSettings = {
+  email: boolean;
+  push: boolean;
+  sms: boolean;
+  marketing: boolean;
+  clubUpdates: boolean;
+  newReviews: boolean;
+  favoriteClubEvents: boolean;
+};
+
+type PrivacySettings = {
+  profileVisibility: 'public' | 'friends' | 'private';
+  showEmail: boolean;
+  showPhone: boolean;
+  showLocation: boolean;
+  allowMessages: boolean;
+};
+
+type SecuritySettings = {
+  twoFactor: boolean;
+  loginAlerts: boolean;
+  sessionTimeout: number;
+};
+
+type UserSettings = {
+  notifications: NotificationSettings;
+  privacy: PrivacySettings;
+  security: SecuritySettings;
+};
+
 export default function SettingsPage() {
   const { t } = useLanguage();
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<UserSettings>({
     notifications: {
       email: true,
       push: true,
@@ -61,15 +91,23 @@ export default function SettingsPage() {
 
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = async () => {
+  const handleSave = async (): Promise<void> => {
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsSaving(false);
-    toast.success(t('settings.save_success'));
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      toast.success(t('settings.save_success'));
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      toast.error('Failed to save settings. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const updateNotificationSetting = (key: string, value: boolean) => {
+  const updateNotificationSetting = <K extends keyof NotificationSettings>(
+    key: K,
+    value: NotificationSettings[K]
+  ): void => {
     setSettings(prev => ({
       ...prev,
       notifications: {
@@ -79,7 +117,10 @@ export default function SettingsPage() {
     }));
   };
 
-  const updatePrivacySetting = (key: string, value: any) => {
+  const updatePrivacySetting = <K extends keyof PrivacySettings>(
+    key: K,
+    value: PrivacySettings[K]
+  ): void => {
     setSettings(prev => ({
       ...prev,
       privacy: {
@@ -89,7 +130,10 @@ export default function SettingsPage() {
     }));
   };
 
-  const updateSecuritySetting = (key: string, value: any) => {
+  const updateSecuritySetting = <K extends keyof SecuritySettings>(
+    key: K,
+    value: SecuritySettings[K]
+  ): void => {
     setSettings(prev => ({
       ...prev,
       security: {
@@ -153,7 +197,7 @@ export default function SettingsPage() {
               <Switch
                 id={`notifications-${item.id}`}
                 checked={settings.notifications[item.id as keyof typeof settings.notifications]}
-                onCheckedChange={(checked) => updateNotificationSetting(item.id, checked)}
+                onCheckedChange={(checked) => updateNotificationSetting(item.id as keyof NotificationSettings, checked)}
               />
             </div>
           ))}
@@ -178,7 +222,7 @@ export default function SettingsPage() {
             <Label className="text-base font-medium">{t('settings.privacy.visibility')}</Label>
             <RadioGroup
               value={settings.privacy.profileVisibility}
-              onValueChange={(value) => updatePrivacySetting('profileVisibility', value)}
+              onValueChange={(value) => updatePrivacySetting('profileVisibility', value as PrivacySettings['profileVisibility'])}
               className="space-y-2"
             >
               {[
