@@ -39,17 +39,19 @@ export interface BlogArticleRecord {
 }
 
 function parseFrontmatter(source: string): { frontmatter: ParsedFrontmatter; body: string } {
-  if (!source.startsWith('---\n')) {
-    return { frontmatter: {}, body: source };
+  const normalizedSource = source.replace(/\r\n/g, '\n');
+
+  if (!normalizedSource.startsWith('---\n')) {
+    return { frontmatter: {}, body: normalizedSource };
   }
 
-  const end = source.indexOf('\n---\n', 4);
+  const end = normalizedSource.indexOf('\n---\n', 4);
   if (end === -1) {
-    return { frontmatter: {}, body: source };
+    return { frontmatter: {}, body: normalizedSource };
   }
 
-  const rawFrontmatter = source.slice(4, end);
-  const body = source.slice(end + 5);
+  const rawFrontmatter = normalizedSource.slice(4, end);
+  const body = normalizedSource.slice(end + 5);
   const frontmatter: ParsedFrontmatter = {};
 
   for (const line of rawFrontmatter.split('\n')) {
