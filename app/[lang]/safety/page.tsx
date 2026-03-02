@@ -83,6 +83,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
   }, [params]);
 
   if (isLoading) {
+    return (
       <div className="min-h-screen bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse space-y-8">
@@ -95,6 +96,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
           </div>
         </div>
       </div>
+    );
 
   }
 
@@ -108,8 +110,6 @@ export default function SafetyPage({ params }: SafetyPageProps) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 relative z-10">
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12">
         {/* Hero with Quiz */}
         <motion.section 
           className="rounded-3xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm shadow-2xl p-6 sm:p-8 md:p-12 mb-12 relative overflow-hidden"
@@ -205,6 +205,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
             ))}
           </div>
 
+        </section>
 
         {/* Emergency */}
         <motion.section 

@@ -24,52 +24,52 @@ export default function ClubContactSection({ club, isVerified }: Props) {
   }
 
   return (
-    <div className="bg-midnight-charcoal/50 backdrop-blur-md rounded-3xl border border-white/5 p-8 hover:border-primary/30 transition-all duration-500">
-      <h3 className="text-xl font-serif text-white mb-6 flex items-center gap-3">
-        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-          <Mail className="h-5 w-5 text-primary" />
+    <div className="bg-[#0A0A0A] backdrop-blur-md rounded-[2rem] border border-white/5 p-8 hover:border-[#E8A838]/20 transition-all duration-500 shadow-2xl">
+      <h3 className="text-xl font-serif text-white mb-8 flex items-center gap-3">
+        <div className="w-10 h-10 bg-[#E8A838]/10 rounded-xl flex items-center justify-center border border-[#E8A838]/20">
+          <Mail className="h-5 w-5 text-[#E8A838]" />
         </div>
         {t('clubs.contact.title')}
       </h3>
       <div className="space-y-6">
         <div className="flex items-start gap-4">
-          <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
-            <MapPin className="h-5 w-5 text-primary" />
+          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/5">
+            <MapPin className="h-5 w-5 text-[#E8A838]" />
           </div>
           <div>
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.address')}</span>
-            <span className="text-sm text-white font-medium">{club.address}</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('clubs.contact.address')}</span>
+            <span className="text-sm text-zinc-300 font-medium font-serif italic">{club.address}</span>
           </div>
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
-            <Phone className="h-5 w-5 text-primary" />
+          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/5">
+            <Phone className="h-5 w-5 text-[#E8A838]" />
           </div>
            <div>
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.phone')}</span>
-            <span className="text-sm text-white font-medium">{club.phoneNumber}</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('clubs.contact.phone')}</span>
+            <span className="text-sm text-zinc-300 font-medium font-mono">{club.phoneNumber}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
-            <Mail className="h-5 w-5 text-primary" />
+          <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/5">
+            <Mail className="h-5 w-5 text-[#E8A838]" />
           </div>
            <div>
-            <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.email')}</span>
-            <span className="text-sm text-white font-medium">{club.contactEmail}</span>
+            <span className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('clubs.contact.email')}</span>
+            <span className="text-sm text-zinc-300 font-medium font-mono">{club.contactEmail}</span>
           </div>
         </div>
 
         {club.website && (
           <div className="flex items-center gap-4">
-            <div className="p-2.5 bg-emerald-500/10 rounded-xl shrink-0 border border-emerald-500/20">
-              <Globe className="h-5 w-5 text-primary" />
+            <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/5">
+              <Globe className="h-5 w-5 text-[#E8A838]" />
             </div>
              <div>
-              <span className="block text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{t('clubs.contact.website')}</span>
-              <a href={`https://${club.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:text-primary/80 transition-colors font-medium">
+              <span className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('clubs.contact.website')}</span>
+              <a href={`https://${club.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-[#E8A838] hover:text-[#d4962e] transition-colors font-bold underline decoration-[#E8A838]/20 underline-offset-4">
                 {club.website}
               </a>
             </div>

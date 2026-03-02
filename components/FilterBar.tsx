@@ -98,14 +98,14 @@ export default function FilterBar({
       {/* Search Result Summary */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-zinc-900 rounded-full flex items-center justify-center">
-            <Search className="h-4 w-4 text-emerald-500" />
+          <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center border border-white/5">
+            <Search className="h-4 w-4 text-[#E8A838]" />
           </div>
           <div>
-            <EditorialHeading size="sm" className="text-zinc-900">
+            <EditorialHeading size="sm" className="text-white">
               {totalResults} {t('filters.results_found')}
             </EditorialHeading>
-            <ConciergeLabel size="xs" emphasis="low">{t('filters.precision_screening')}</ConciergeLabel>
+            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.precision_screening')}</ConciergeLabel>
           </div>
         </div>
         
@@ -113,7 +113,7 @@ export default function FilterBar({
           <button 
             type="button"
             onClick={clearAllFilters}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-red-500 transition-colors"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-red-400 transition-colors bg-white/5 border border-white/5"
           >
             <X className="h-3 w-3" /> {t('filters.clear_all')}
           </button>
@@ -126,8 +126,8 @@ export default function FilterBar({
         {/* Neighborhood Filter */}
         <div className="space-y-6">
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-zinc-400" />
-                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.neighborhood')}</EditorialHeading>
+            <MapPin className="h-3.5 w-3.5 text-[#E8A838]/60" />
+            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.neighborhood')}</ConciergeLabel>
           </div>
           <div className="flex flex-wrap gap-2">
             {neighborhoods.map((neighborhood) => (
@@ -137,10 +137,10 @@ export default function FilterBar({
                 onClick={() => updateFilter('neighborhood',
                   filters.neighborhood === neighborhood ? '' : neighborhood
                 )}
-                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                className={`min-h-11 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all border ${
                   filters.neighborhood === neighborhood
-                    ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
-                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-[0_4px_15px_rgba(232,168,56,0.3)]'
+                    : 'bg-white/5 border-white/10 text-zinc-400 hover:border-[#E8A838]/30'
                 }`}
               >
                 {neighborhood}
@@ -152,8 +152,8 @@ export default function FilterBar({
         {/* Amenities Filter */}
         <div className="space-y-6">
           <div className="flex items-center gap-2">
-            <LayoutGrid className="h-4 w-4 text-zinc-400" />
-                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.amenities')}</EditorialHeading>
+            <LayoutGrid className="h-3.5 w-3.5 text-[#E8A838]/60" />
+            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.amenities')}</ConciergeLabel>
           </div>
           <div className="flex flex-wrap gap-2">
             {amenities.map((amenity) => (
@@ -161,10 +161,10 @@ export default function FilterBar({
                 type="button"
                 key={amenity}
                 onClick={() => toggleArrayFilter('amenities', amenity)}
-                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                className={`min-h-11 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all border ${
                   filters.amenities.includes(amenity)
-                    ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
-                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-[0_4px_15px_rgba(232,168,56,0.3)]'
+                    : 'bg-white/5 border-white/10 text-zinc-400 hover:border-[#E8A838]/30'
                 }`}
               >
                 {amenity}
@@ -176,8 +176,8 @@ export default function FilterBar({
         {/* Vibes Filter */}
         <div className="space-y-6">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-zinc-400" />
-                  <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.vibes')}</EditorialHeading>
+            <Sparkles className="h-3.5 w-3.5 text-[#E8A838]/60" />
+            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.vibes')}</ConciergeLabel>
           </div>
           <div className="flex flex-wrap gap-2">
             {vibes.map((vibe) => (
@@ -185,10 +185,10 @@ export default function FilterBar({
                 type="button"
                 key={vibe}
                 onClick={() => toggleArrayFilter('vibes', vibe)}
-                className={`min-h-11 px-4 py-2.5 rounded-full text-xs font-bold transition-all border ${
+                className={`min-h-11 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all border ${
                   filters.vibes.includes(vibe)
-                    ? 'bg-zinc-900 border-zinc-900 text-white shadow-lg'
-                    : 'bg-card border-zinc-200 text-zinc-600 hover:border-zinc-400'
+                    ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-[0_4px_15px_rgba(232,168,56,0.3)]'
+                    : 'bg-white/5 border-white/10 text-zinc-400 hover:border-[#E8A838]/30'
                 }`}
               >
                 {vibe}
@@ -198,7 +198,7 @@ export default function FilterBar({
         </div>
 
         {/* Boolean & Range Filters */}
-        <div className="grid grid-cols-1 gap-8 pt-8 border-t border-zinc-100">
+        <div className="grid grid-cols-1 gap-8 pt-10 border-t border-white/5">
           
           {/* Verified Only */}
           <button
@@ -207,19 +207,19 @@ export default function FilterBar({
             className="flex items-center justify-between gap-4 group"
           >
             <div className="flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                filters.isVerified ? 'bg-emerald-500' : 'bg-zinc-100 group-hover:bg-zinc-200'
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all border ${
+                filters.isVerified ? 'bg-[#E8A838] border-[#E8A838]' : 'bg-white/5 border-white/10 group-hover:border-[#E8A838]/30'
               }`}>
-                <Shield className={`h-4 w-4 ${filters.isVerified ? 'text-white' : 'text-zinc-400'}`} />
+                <Shield className={`h-4 w-4 ${filters.isVerified ? 'text-black' : 'text-zinc-500'}`} />
               </div>
               <div className="text-left">
-                <span className="block text-xs font-bold uppercase tracking-widest text-zinc-900">{t('filters.verified_only')}</span>
-                <span className="text-[10px] text-zinc-400">{t('filters.verified_only_desc')}</span>
+                <span className="block text-[11px] font-bold uppercase tracking-widest text-white">{t('filters.verified_only')}</span>
+                <span className="text-[10px] text-zinc-500 uppercase tracking-wider">{t('filters.verified_only_desc')}</span>
               </div>
             </div>
-            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filters.isVerified ? 'bg-emerald-500' : 'bg-zinc-200'}`}>
+            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filters.isVerified ? 'bg-[#E8A838]' : 'bg-zinc-800'}`}>
               <motion.div 
-                className="w-4 h-4 bg-card rounded-full shadow-sm"
+                className={`w-4 h-4 rounded-full shadow-sm ${filters.isVerified ? 'bg-black' : 'bg-zinc-500'}`}
                 animate={{ x: filters.isVerified ? 16 : 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
@@ -229,8 +229,8 @@ export default function FilterBar({
           {/* Price Range */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-zinc-400" />
-              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.price_range')}</EditorialHeading>
+              <DollarSign className="h-3.5 w-3.5 text-[#E8A838]/60" />
+              <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.price_range')}</ConciergeLabel>
             </div>
             <div className="flex gap-2">
               {['$', '$$', '$$$'].map(price => (
@@ -238,10 +238,10 @@ export default function FilterBar({
                   type="button"
                   key={price}
                   onClick={() => toggleArrayFilter('priceRange', price)}
-                  className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${
+                  className={`flex-1 py-3 rounded-xl text-xs font-bold border transition-all ${
                     filters.priceRange.includes(price)
-                      ? 'bg-zinc-900 border-zinc-900 text-white'
-                      : 'bg-card border-zinc-200 text-zinc-400 hover:border-zinc-300'
+                      ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-lg'
+                      : 'bg-white/5 border-white/10 text-zinc-500 hover:border-[#E8A838]/30'
                   }`}
                 >
                   {price}
@@ -253,8 +253,8 @@ export default function FilterBar({
           {/* Minimum Rating */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-zinc-400" />
-              <EditorialHeading size="sm" className="text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('filters.minimum_rating')}</EditorialHeading>
+              <Star className="h-3.5 w-3.5 text-[#E8A838]/60" />
+              <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.minimum_rating')}</ConciergeLabel>
             </div>
             <div className="flex gap-2">
               {[4, 4.5, 5].map(rating => (
@@ -262,10 +262,10 @@ export default function FilterBar({
                   type="button"
                   key={rating}
                   onClick={() => updateFilter('rating', filters.rating === rating ? 0 : rating)}
-                  className={`flex-1 py-3 rounded-xl text-sm font-bold border transition-all ${
+                  className={`flex-1 py-3 rounded-xl text-xs font-bold border transition-all ${
                     filters.rating === rating
-                      ? 'bg-zinc-900 border-zinc-900 text-white'
-                      : 'bg-card border-zinc-200 text-zinc-400 hover:border-zinc-300'
+                      ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-lg'
+                      : 'bg-white/5 border-white/10 text-zinc-500 hover:border-[#E8A838]/30'
                   }`}
                 >
                   {rating}

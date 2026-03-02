@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
+import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Calendar, MapPin, Star, Clock, ArrowRight } from '@/lib/icons';
 
@@ -22,6 +23,7 @@ interface Event {
 
 interface EventsPageClientProps {
   lang: string;
+  initialEvents?: Event[];
 }
 
 const buildMockEvents = (t: (key: string) => string): Event[] => [
@@ -92,10 +94,10 @@ const buildMockEvents = (t: (key: string) => string): Event[] => [
   },
 ];
 
-export default function EventsPageClient({ lang }: EventsPageClientProps) {
+export default function EventsPageClient({ lang, initialEvents }: EventsPageClientProps) {
   const { t } = useLanguage();
-  const [events] = useState<Event[]>(() => buildMockEvents(t));
-  const [isLoading, setIsLoading] = useState(true);
+  const [events] = useState<Event[]>(() => initialEvents || buildMockEvents(t));
+  const [isLoading, setIsLoading] = useState(!initialEvents);
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 500);
@@ -103,13 +105,14 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="min-h-screen bg-black text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 pt-24 md:pt-32">
           <div className="animate-pulse">
-            <div className="h-64 bg-muted rounded-3xl mb-12" />
+            <div className="h-64 bg-zinc-900/40 rounded-3xl mb-12 border border-white/5" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-80 bg-muted rounded-2xl" />
+                <div key={i} className="h-80 bg-zinc-900/40 rounded-2xl border border-white/5" />
               ))}
             </div>
           </div>
@@ -119,106 +122,122 @@ export default function EventsPageClient({ lang }: EventsPageClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background relative">
-      {/* Background Effects - subtle */}
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-[#E8A838]/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-[#E8A838]/5 blur-[120px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 relative">
-        <motion.section 
-          className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-8 md:p-12 mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-              <Calendar className="h-5 w-5 text-primary" />
-            </div>
-            <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
-              {t('events.badge')}
-            </Badge>
-          </div>
-          
-          <h1 className="text-4xl md:text-6xl font-black text-foreground mb-6">
-            {t('events.title_prefix')}{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
-              {t('events.title_highlight')}
-            </span>
-          </h1>
-          
-          <p className="text-xl text-muted-foreground max-w-3xl leading-relaxed">
-            {t('events.subtitle')}
-          </p>
-        </motion.section>
-
-        <motion.section 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          {events.length > 0 ? events.map((event, index) => (
+      <div className="relative z-10">
+        {/* Hero Section */}
+        <section className="pt-24 md:pt-32 pb-16 md:pb-24 border-b border-white/5">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
-              key={event.id}
-              initial={{ opacity: 0, y: 20 }}
+              className="max-w-3xl mx-auto text-center"
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.6 }}
             >
-              <Link
-                href={`/${lang}/events/${event.slug}`}
-                className="group block rounded-2xl border bg-card p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 h-full relative"
-              >
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {event.cityName && (
-                    <Badge variant="outline" className="border-border text-muted-foreground bg-muted">
-                      <MapPin className="h-3 w-3 mr-1" /> {event.cityName}
-                    </Badge>
-                  )}
-                  {event.clubName && (
-                    <Badge className="bg-primary/10 text-primary border-primary/20">
-                      <Star className="h-3 w-3 mr-1" /> {event.clubName}
-                    </Badge>
-                  )}
-                </div>
-                
-                <h2 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                  {event.name}
-                </h2>
-                
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                  {event.description}
-                </p>
-                
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
-                    <span>{event.location}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <span className="text-xs text-muted-foreground font-medium">{t('events.view_details')}</span>
-                  <ArrowRight className="h-4 w-4 text-primary group-hover:translate-x-1 transition-transform" />
-                </div>
-
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-primary rounded-full group-hover:w-1/4 transition-all duration-300" />
-              </Link>
+              <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-[#E8A838]">
+                <Calendar className="w-4 h-4" />
+                {t('events.badge')}
+              </Eyebrow>
+              
+              <H1 size="xl" className="mb-6 text-white font-serif tracking-tight">
+                {t('events.title_prefix')} <span className="text-[#E8A838]">{t('events.title_highlight')}</span>
+              </H1>
+              
+              <Lead className="mb-8 text-zinc-400">
+                {t('events.subtitle')}
+              </Lead>
             </motion.div>
-          )) : (
-            <div className="col-span-full rounded-2xl border border-dashed border-border p-8 text-center">
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <p className="text-muted-foreground">{t('events.empty')}</p>
-            </div>
-          )}
-        </motion.section>
+          </div>
+        </section>
+
+        {/* Events Grid */}
+        <section className="py-16 md:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              {events.length > 0 ? events.map((event, index) => (
+                <motion.div
+                  key={event.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Link
+                    href={`/${lang}/events/${event.slug}`}
+                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 md:p-8 hover:border-[#E8A838]/50 transition-all duration-500 h-full flex flex-col"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#E8A838]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative flex flex-col h-full">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className={`inline-flex p-3 rounded-xl bg-[#E8A838]/10 text-[#E8A838] border border-[#E8A838]/20 transition-transform duration-500 group-hover:scale-110`}>
+                          <Calendar className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-wrap gap-2 justify-end">
+                          {event.cityName && (
+                            <Badge variant="outline" className="border-white/10 text-zinc-400 bg-white/5 uppercase tracking-widest text-[10px]">
+                              {event.cityName}
+                            </Badge>
+                          )}
+                          {event.clubName && (
+                            <Badge className="bg-[#E8A838] text-black border-none font-bold uppercase tracking-widest text-[10px]">
+                              {event.clubName}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <H3 className="mb-3 text-white group-hover:text-[#E8A838] transition-colors font-serif">
+                        {event.name}
+                      </H3>
+                      
+                      <Text variant="muted" className="mb-6 text-zinc-400 line-clamp-2">
+                        {event.description}
+                      </Text>
+                      
+                      <div className="space-y-2 mb-8 text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-auto">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-3.5 w-3.5 text-[#E8A838]" />
+                          <span>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-3.5 w-3.5 text-[#E8A838]" />
+                          <span>{event.location}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                        <Text size="sm" variant="muted" className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
+                          {t('events.view_details')}
+                        </Text>
+                        <div className="flex items-center gap-2 text-[#E8A838] font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                          <span>Explore</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              )) : (
+                <div className="col-span-full rounded-2xl border border-dashed border-white/10 p-12 text-center bg-zinc-900/20">
+                  <div className="w-16 h-16 bg-[#E8A838]/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#E8A838]/20">
+                    <Calendar className="h-8 w-8 text-[#E8A838]" />
+                  </div>
+                  <Text variant="muted">{t('events.empty')}</Text>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </section>
       </div>
     </div>
   );

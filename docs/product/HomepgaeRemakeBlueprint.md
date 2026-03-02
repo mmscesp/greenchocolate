@@ -13,18 +13,7 @@ Act III — Engagement (Sections 7–9): "Now make it personal. See the clubs. F
 Act IV — Conviction (Sections 10–14): "We're bigger than you thought. We care more than you expected. And everything starts with one email."
 Every section earns the right for the next one. Nothing is filler. If it doesn't move someone from Confusion → Clarity → Trust → Action, it gets cut.
 
-SECTION 0 — THE NAVIGATION
-Purpose: Orient instantly. Signal that this is a serious publication, not a shady directory. Provide one persistent conversion opportunity.
-Layout: It is made already, just needs correction sof the texts and butons inside it, both in desktop view and mobiule view.
-Structure:
-Left: SocialClubsMaps — wordmark logo. Clean. No icon. No cannabis leaf. Just the name, set in your display typeface, just like it is now.
-Center links (desktop only — hamburger on mobile):
-Guides → your editorial hub
-The Directory → verified clubs listing
-Cities → dropdown: Barcelona · Madrid · Valencia · Tenerife
-Events → Europe-wide events calendar
-Right: One button — "Get the Safety Kit" — small, gold/amber fill, always visible. This is the single most important element in the nav because it's visible on every scroll position.
-Why only one CTA: Decision fatigue kills conversion. If you give someone three buttons, they click none. The Safety Kit is your best hook because it addresses the #1 fear (getting scammed, fined, or lost in a grey market) before they even articulate it.
+
 
 SECTION 1 — THE HERO
 Purpose: Stop the scroll. Create productive tension. Establish why this platform needs to exist — not what it does, but why the world demanded it.
