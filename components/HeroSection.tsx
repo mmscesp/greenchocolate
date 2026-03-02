@@ -82,14 +82,15 @@ export default function HeroSection() {
   /* ---------------------------------------------------------------- */
   useEffect(() => {
     if (!imageLoaded) return;
+    const rafSnapshot = rafRefs.current;
     rafRefs.current.f1 = requestAnimationFrame(() => {
       rafRefs.current.f2 = requestAnimationFrame(() => {
         setAnimationReady(true);
       });
     });
     return () => {
-      if (rafRefs.current.f1) cancelAnimationFrame(rafRefs.current.f1);
-      if (rafRefs.current.f2) cancelAnimationFrame(rafRefs.current.f2);
+      if (rafSnapshot.f1) cancelAnimationFrame(rafSnapshot.f1);
+      if (rafSnapshot.f2) cancelAnimationFrame(rafSnapshot.f2);
     };
   }, [imageLoaded]);
 
