@@ -61,3 +61,4 @@ export { TrashIcon as Trash2 } from '@phosphor-icons/react/ssr';
 export { TrendUpIcon as TrendingUp } from '@phosphor-icons/react/ssr';
 export { TwitterLogoIcon as Twitter } from '@phosphor-icons/react/ssr';
 export { LightningIcon as Zap } from '@phosphor-icons/react/ssr';
+export { TiktokLogoIcon as TikTok } from '@phosphor-icons/react/ssr';

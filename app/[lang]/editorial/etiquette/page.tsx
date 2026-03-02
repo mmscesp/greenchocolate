@@ -61,13 +61,13 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/25">
+      <div className="min-h-screen bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse space-y-8">
-            <div className="h-48 bg-muted rounded-3xl" />
+            <div className="h-48 bg-zinc-900 rounded-3xl" />
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 bg-muted rounded-2xl" />
+                <div key={i} className="h-32 bg-zinc-900 rounded-2xl" />
               ))}
             </div>
           </div>
@@ -77,22 +77,23 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-amber-50/25 relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 via-black to-zinc-900/50 pointer-events-none" />
       {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-emerald-500/10 to-transparent" />
-        <div className="absolute top-[34%] right-[8%] h-[300px] w-[300px] rounded-full bg-gold/10 blur-3xl" />
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-[#E8A838]/5 to-transparent" />
+        <div className="absolute top-[34%] right-[8%] h-[300px] w-[300px] rounded-full bg-[#E8A838]/5 blur-[100px]" />
       </div>
 
       {/* Hero */}
-      <section className="relative pt-24 md:pt-32 pb-16 lg:pb-24">
+      <section className="relative pt-24 md:pt-32 pb-16 lg:pb-24 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Button variant="outline" asChild className="mb-6 border-border text-muted-foreground hover:bg-muted hover:text-foreground">
+            <Button variant="outline" asChild className="mb-6 border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white rounded-full">
               <Link href={`/${lang}/editorial`}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
                 {t('editorial.etiquette.back_to_vault')}
@@ -105,7 +106,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"
+              className="inline-flex items-center gap-2 bg-[#E8A838]/10 border border-[#E8A838]/20 text-[#E8A838] px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6"
             >
               <Heart className="w-4 h-4" />
               <Label size="sm">{t('editorial.etiquette.badge')}</Label>
@@ -116,9 +117,9 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <H1 className="mb-6">
+              <H1 className="mb-6 text-white font-serif tracking-tight">
                 {t('editorial.etiquette.title_prefix')}{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/80">
+                <span className="text-[#E8A838]">
                   {t('editorial.etiquette.title_highlight')}
                 </span>
               </H1>
@@ -129,7 +130,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <Lead>
+              <Lead className="text-zinc-400">
                 {t('editorial.etiquette.lead')}
               </Lead>
             </motion.div>
@@ -147,23 +148,23 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
+              <div className="rounded-2xl border border-[#E8A838]/20 bg-[#E8A838]/5 p-6 backdrop-blur-sm">
                 <div className="flex items-start gap-3">
-                  <Smartphone className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <Smartphone className="w-5 h-5 text-[#E8A838] shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2">{t('editorial.etiquette.tip_phone.title')}</H4>
-                    <Text size="sm" variant="muted">
+                    <H4 className="mb-2 text-white font-serif">{t('editorial.etiquette.tip_phone.title')}</H4>
+                    <Text size="sm" variant="muted" className="text-zinc-400">
                       {t('editorial.etiquette.tip_phone.description')}
                     </Text>
                   </div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                 <div className="flex items-start gap-3">
-                  <Users className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <Users className="w-5 h-5 text-zinc-300 shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2">{t('editorial.etiquette.tip_privacy.title')}</H4>
-                    <Text size="sm" variant="muted">
+                    <H4 className="mb-2 text-white font-serif">{t('editorial.etiquette.tip_privacy.title')}</H4>
+                    <Text size="sm" variant="muted" className="text-zinc-400">
                       {t('editorial.etiquette.tip_privacy.description')}
                     </Text>
                   </div>
@@ -178,7 +179,7 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
       <section className="py-16 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <H2 className="mb-8">
+            <H2 className="mb-8 text-white font-serif tracking-tight">
               {t('editorial.etiquette.guides_title')}
             </H2>
             
@@ -192,29 +193,32 @@ export default function EtiquettePage({ params }: EtiquettePageProps) {
                 >
                   <Link
                     href={`/${lang}/editorial/${article.slug}`}
-                    className="group block rounded-2xl border bg-card p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                    className="group block rounded-2xl border border-white/10 bg-zinc-900/40 p-6 hover:border-[#E8A838]/50 hover:shadow-2xl hover:shadow-[#E8A838]/5 transition-all duration-500"
                   >
                     <div className="flex flex-col md:flex-row md:items-center gap-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-3">
                           {article.featured && (
-                            <Badge className="bg-primary/10 text-primary border-primary/20">
+                            <Badge className="bg-[#E8A838] text-black border-none font-bold uppercase tracking-widest text-[10px]">
                               {t('editorial.etiquette.featured')}
                             </Badge>
                           )}
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
                             <Clock className="w-3.5 h-3.5" />
                             {article.readTime} {t('editorial.min_read')}
                           </div>
                         </div>
-                        <H3 className="mb-2 group-hover:text-primary transition-colors">
+                        <H3 className="mb-2 text-white group-hover:text-[#E8A838] transition-colors font-serif">
                           {t(article.titleKey)}
                         </H3>
-                        <Text variant="muted">
+                        <Text variant="muted" className="text-zinc-400 line-clamp-2">
                           {t(article.excerptKey)}
                         </Text>
                       </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
+                      <div className="flex items-center gap-2 text-[#E8A838] font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 shrink-0">
+                        <span>Read</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
                     </div>
                   </Link>
                 </motion.div>

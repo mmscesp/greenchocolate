@@ -5,49 +5,43 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Scale, AlertTriangle, Clock, ArrowRight } from '@/lib/icons';
+import { ArrowLeft, Shield, AlertTriangle, Clock, ArrowRight, Heart, Brain, Activity } from '@/lib/icons';
 import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 import { useLanguage } from '@/hooks/useLanguage';
 
-interface LegalPageProps {
+interface SafetyEditorialPageProps {
   params: Promise<{ lang: string }>;
 }
 
-const legalGuides = [
+const safetyGuides = [
   {
-    titleKey: 'editorial.legal.guides.1.title',
-    slug: 'is-weed-legal-barcelona-2026',
-    excerptKey: 'editorial.legal.guides.1.excerpt',
-    readTime: 8,
+    titleKey: 'editorial.mock.3.title',
+    slug: 'edibles-safety-guide',
+    excerptKey: 'editorial.mock.3.excerpt',
+    readTime: 5,
     featured: true,
   },
   {
-    titleKey: 'editorial.legal.guides.2.title',
-    slug: 'public-consumption-laws',
-    excerptKey: 'editorial.legal.guides.2.excerpt',
-    readTime: 6,
-  },
-  {
-    titleKey: 'editorial.legal.guides.3.title',
-    slug: 'your-rights-police-interaction',
-    excerptKey: 'editorial.legal.guides.3.excerpt',
-    readTime: 5,
-  },
-  {
-    titleKey: 'editorial.legal.guides.4.title',
-    slug: 'grey-zone-explained',
-    excerptKey: 'editorial.legal.guides.4.excerpt',
+    titleKey: 'safety.categories.edibles.title',
+    slug: 'edibles-dosing-onset-times',
+    excerptKey: 'safety.categories.edibles.description',
     readTime: 7,
   },
   {
-    titleKey: 'editorial.legal.guides.5.title',
-    slug: 'fines-penalties-complete-guide',
-    excerptKey: 'editorial.legal.guides.5.excerpt',
-    readTime: 10,
+    titleKey: 'safety.categories.mental.title',
+    slug: 'understanding-mental-health-cannabis',
+    excerptKey: 'safety.categories.mental.description',
+    readTime: 6,
+  },
+  {
+    titleKey: 'safety.categories.medical.title',
+    slug: 'medical-considerations-cannabis',
+    excerptKey: 'safety.categories.medical.description',
+    readTime: 8,
   },
 ];
 
-export default function LegalPage({ params }: LegalPageProps) {
+export default function SafetyEditorialPage({ params }: SafetyEditorialPageProps) {
   const { t } = useLanguage();
   const [lang, setLang] = useState('en');
   const [isLoading, setIsLoading] = useState(true);
@@ -96,7 +90,7 @@ export default function LegalPage({ params }: LegalPageProps) {
             <Button variant="outline" asChild className="mb-6 border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white rounded-full">
               <Link href={`/${lang}/editorial`}>
                 <ArrowLeft className="mr-2 w-4 h-4" />
-                {t('editorial.legal.back_to_vault')}
+                {t('editorial.culture.back_to_vault')}
               </Link>
             </Button>
           </motion.div>
@@ -108,8 +102,8 @@ export default function LegalPage({ params }: LegalPageProps) {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="inline-flex items-center gap-2 bg-[#E8A838]/10 border border-[#E8A838]/20 text-[#E8A838] px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6"
             >
-              <Scale className="w-4 h-4" />
-              <Label size="sm">{t('editorial.legal.badge')}</Label>
+              <Shield className="w-4 h-4" />
+              <Label size="sm">{t('editorial.categories.safety.title')}</Label>
             </motion.div>
             
             <motion.div
@@ -118,9 +112,9 @@ export default function LegalPage({ params }: LegalPageProps) {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <H1 className="mb-6 text-white font-serif tracking-tight">
-                {t('editorial.legal.title_prefix')}{' '}
+                {t('safety.title_prefix')}{' '}
                 <span className="text-[#E8A838]">
-                  {t('editorial.legal.title_highlight')}
+                  {t('safety.title_highlight')}
                 </span>
               </H1>
             </motion.div>
@@ -131,14 +125,14 @@ export default function LegalPage({ params }: LegalPageProps) {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <Lead className="text-zinc-400">
-                {t('editorial.legal.lead')}
+                {t('safety.subtitle')}
               </Lead>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Key Points */}
+      {/* Quick Safety Tips */}
       <section className="py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
@@ -150,22 +144,22 @@ export default function LegalPage({ params }: LegalPageProps) {
             >
               <div className="rounded-2xl border border-[#E8A838]/20 bg-[#E8A838]/5 p-6 backdrop-blur-sm">
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-[#E8A838] shrink-0 mt-0.5" />
+                  <Activity className="w-5 h-5 text-[#E8A838] shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2 text-white font-serif">{t('editorial.legal.key_point_public.title')}</H4>
+                    <H4 className="mb-2 text-white font-serif">{t('safety.essential_knowledge.title')}</H4>
                     <Text size="sm" variant="muted" className="text-zinc-400">
-                      {t('editorial.legal.key_point_public.description')}
+                      {t('safety.essential_knowledge.subtitle')}
                     </Text>
                   </div>
                 </div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
                 <div className="flex items-start gap-3">
-                  <Scale className="w-5 h-5 text-zinc-300 shrink-0 mt-0.5" />
+                  <Brain className="w-5 h-5 text-zinc-300 shrink-0 mt-0.5" />
                   <div>
-                    <H4 className="mb-2 text-white font-serif">{t('editorial.legal.key_point_private.title')}</H4>
+                    <H4 className="mb-2 text-white font-serif">{t('safety.categories.mental.title')}</H4>
                     <Text size="sm" variant="muted" className="text-zinc-400">
-                      {t('editorial.legal.key_point_private.description')}
+                      {t('safety.categories.mental.description')}
                     </Text>
                   </div>
                 </div>
@@ -180,11 +174,11 @@ export default function LegalPage({ params }: LegalPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <H2 className="mb-8 text-white font-serif tracking-tight">
-              {t('editorial.legal.guides_title')}
+              {t('editorial.standards.items.harm_reduction.title')}
             </H2>
             
             <div className="grid gap-4">
-              {legalGuides.map((article, index) => (
+              {safetyGuides.map((article, index) => (
                 <motion.div
                   key={article.slug}
                   initial={{ opacity: 0, y: 20 }}
@@ -200,7 +194,7 @@ export default function LegalPage({ params }: LegalPageProps) {
                         <div className="flex items-center gap-3 mb-3">
                           {article.featured && (
                             <Badge className="bg-[#E8A838] text-black border-none font-bold uppercase tracking-widest text-[10px]">
-                              {t('editorial.legal.featured')}
+                              {t('editorial.etiquette.featured')}
                             </Badge>
                           )}
                           <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
@@ -225,23 +219,6 @@ export default function LegalPage({ params }: LegalPageProps) {
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Disclaimer */}
-      <section className="py-16 relative z-10 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            className="max-w-3xl mx-auto text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-          >
-            <Text size="sm" variant="muted" className="text-center text-zinc-500 italic">
-              <strong className="text-white not-italic">{t('editorial.legal.disclaimer_prefix')}</strong>{' '}
-              {t('editorial.legal.disclaimer_body')}
-            </Text>
-          </motion.div>
         </div>
       </section>
     </div>
