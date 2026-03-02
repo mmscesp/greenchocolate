@@ -31,7 +31,7 @@ interface EditorialPageClientProps {
 const buildMockFeaturedArticles = (t: (key: string) => string): Article[] => [
   {
     id: '1',
-    slug: 'is-weed-legal-barcelona-2026',
+    slug: 'is-weed-legal',
     title: t('editorial.mock.1.title'),
     excerpt: t('editorial.mock.1.excerpt'),
     category: t('editorial.mock.1.category'),

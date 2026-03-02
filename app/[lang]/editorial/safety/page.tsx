@@ -23,21 +23,15 @@ const safetyGuides = [
   },
   {
     titleKey: 'safety.categories.edibles.title',
-    slug: 'edibles-dosing-onset-times',
+    slug: 'safety-kit-visitors-spain',
     excerptKey: 'safety.categories.edibles.description',
     readTime: 7,
   },
   {
     titleKey: 'safety.categories.mental.title',
-    slug: 'understanding-mental-health-cannabis',
+    slug: 'emergency-resources',
     excerptKey: 'safety.categories.mental.description',
     readTime: 6,
-  },
-  {
-    titleKey: 'safety.categories.medical.title',
-    slug: 'medical-considerations-cannabis',
-    excerptKey: 'safety.categories.medical.description',
-    readTime: 8,
   },
 ];
 

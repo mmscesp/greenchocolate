@@ -23,27 +23,9 @@ const etiquetteGuides = [
   },
   {
     titleKey: 'editorial.etiquette.guides.2.title',
-    slug: 'photography-rules-clubs',
+    slug: 'first-time-barcelona-cannabis-club',
     excerptKey: 'editorial.etiquette.guides.2.excerpt',
     readTime: 4,
-  },
-  {
-    titleKey: 'editorial.etiquette.guides.3.title',
-    slug: 'tipping-contribution-culture',
-    excerptKey: 'editorial.etiquette.guides.3.excerpt',
-    readTime: 5,
-  },
-  {
-    titleKey: 'editorial.etiquette.guides.4.title',
-    slug: 'conversations-locals',
-    excerptKey: 'editorial.etiquette.guides.4.excerpt',
-    readTime: 4,
-  },
-  {
-    titleKey: 'editorial.etiquette.guides.5.title',
-    slug: 'respecting-club-hierarchy',
-    excerptKey: 'editorial.etiquette.guides.5.excerpt',
-    readTime: 5,
   },
 ];
 

@@ -79,7 +79,7 @@ export default function ClubsPageClient({
       />
 
       {/* Hero Header */}
-      <SectionWrapper dark className="pt-32 pb-24 relative overflow-hidden">
+      <SectionWrapper dark className="pt-32 pb-24 relative overflow-hidden bg-black backdrop-blur-none">
         {/* Background Gradients */}
         <div className="absolute inset-0 z-0">
           <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#E8A838]/5 rounded-full blur-[120px] -translate-y-1/2" />
@@ -117,30 +117,6 @@ export default function ClubsPageClient({
               </p>
             </motion.div>
 
-            {/* Quick Stats Grid */}
-            <motion.div 
-              variants={FADE_UP}
-              className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-16 max-w-4xl mx-auto border-t border-white/5 pt-16"
-            >
-              <div>
-                <div className="text-4xl md:text-5xl font-serif text-white mb-2">{clubs.length}+</div>
-                <ConciergeLabel size="xs" emphasis="low" className="uppercase tracking-[0.2em]">
-                  {t('clubs.clubs_count')}
-                </ConciergeLabel>
-              </div>
-              <div className="hidden md:block">
-                <div className="text-4xl md:text-5xl font-serif text-[#E8A838] mb-2">100%</div>
-                <ConciergeLabel size="xs" emphasis="low" className="uppercase tracking-[0.2em]">
-                  {t('clubs.verified')}
-                </ConciergeLabel>
-              </div>
-              <div>
-                <div className="text-4xl md:text-5xl font-serif text-white mb-2">{neighborhoods.length}</div>
-                <ConciergeLabel size="xs" emphasis="low" className="uppercase tracking-[0.2em]">
-                  {t('clubs.neighborhoods')}
-                </ConciergeLabel>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </SectionWrapper>

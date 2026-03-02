@@ -7,7 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 const ARTICLES = [
   {
     titleKey: 'home.editorial_feed.articles.barcelona_legal.title',
-    slug: 'is-weed-legal-barcelona-2026',
+    slug: 'is-weed-legal',
     categoryKey: 'home.editorial_feed.categories.legal',
     excerptKey: 'home.editorial_feed.articles.barcelona_legal.excerpt',
   },

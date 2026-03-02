@@ -16,32 +16,38 @@ interface CulturePageProps {
 const cultureGuides = [
   {
     titleKey: 'editorial.culture.guides.1.title',
-    slug: 'barcelona-cannabis-club-movement',
+    slug: 'what-are-cannabis-social-clubs-spain',
     excerptKey: 'editorial.culture.guides.1.excerpt',
     readTime: 12,
     featured: true,
   },
   {
     titleKey: 'editorial.culture.guides.2.title',
-    slug: 'interview-club-founders',
+    slug: 'barcelona-vs-amsterdam-cannabis',
     excerptKey: 'editorial.culture.guides.2.excerpt',
     readTime: 15,
   },
   {
     titleKey: 'editorial.culture.guides.3.title',
-    slug: 'stigma-to-acceptance',
+    slug: 'cannabis-social-club-history-spain',
     excerptKey: 'editorial.culture.guides.3.excerpt',
     readTime: 8,
   },
   {
     titleKey: 'editorial.culture.guides.4.title',
-    slug: 'club-as-community-center',
+    slug: 'spannabis-bilbao-2026',
     excerptKey: 'editorial.culture.guides.4.excerpt',
     readTime: 6,
   },
   {
     titleKey: 'editorial.culture.guides.5.title',
-    slug: 'madrid-vs-barcelona-comparison',
+    slug: 'icbc-berlin-2026',
+    excerptKey: 'editorial.culture.guides.5.excerpt',
+    readTime: 7,
+  },
+  {
+    titleKey: 'editorial.culture.guides.5.title',
+    slug: 'cannabis-europa-london-2026',
     excerptKey: 'editorial.culture.guides.5.excerpt',
     readTime: 7,
   },

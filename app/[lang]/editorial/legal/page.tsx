@@ -16,34 +16,22 @@ interface LegalPageProps {
 const legalGuides = [
   {
     titleKey: 'editorial.legal.guides.1.title',
-    slug: 'is-weed-legal-barcelona-2026',
+    slug: 'is-weed-legal',
     excerptKey: 'editorial.legal.guides.1.excerpt',
     readTime: 8,
     featured: true,
   },
   {
     titleKey: 'editorial.legal.guides.2.title',
-    slug: 'public-consumption-laws',
+    slug: 'spain-cannabis-laws-tourists',
     excerptKey: 'editorial.legal.guides.2.excerpt',
     readTime: 6,
   },
   {
     titleKey: 'editorial.legal.guides.3.title',
-    slug: 'your-rights-police-interaction',
+    slug: 'scams-red-flags',
     excerptKey: 'editorial.legal.guides.3.excerpt',
     readTime: 5,
-  },
-  {
-    titleKey: 'editorial.legal.guides.4.title',
-    slug: 'grey-zone-explained',
-    excerptKey: 'editorial.legal.guides.4.excerpt',
-    readTime: 7,
-  },
-  {
-    titleKey: 'editorial.legal.guides.5.title',
-    slug: 'fines-penalties-complete-guide',
-    excerptKey: 'editorial.legal.guides.5.excerpt',
-    readTime: 10,
   },
 ];
 
