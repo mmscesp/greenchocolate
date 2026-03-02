@@ -10,15 +10,13 @@ import { useGSAP } from '@gsap/react';
 import { useLanguage } from '@/hooks/useLanguage';
 
 const HERO_CONFIG = {
-  scrollHeight: '400vh',
+  scrollHeight: '200vh', 
   image: { width: 3937, height: 5906 },
   focal: {
     initialZoom: 1.2,
     initialTravel: 0.16,
-    act2Travel: 0.32,
-    act3Travel: 0.48,
-    act4Travel: 0.65,
-    finalScale: 1.0,
+    finalScale: 1.05,
+    finalTravel: 0.55,
   },
 } as const;
 
@@ -29,7 +27,6 @@ export default function HeroSection() {
   const [animationReady, setAnimationReady] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  // Scoping Root Ref for GSAP matchMedia
   const rootRef = useRef<HTMLElement>(null);
 
   // --- DESKTOP REFS ---
@@ -37,11 +34,10 @@ export default function HeroSection() {
   const imageBaseRef = useRef<HTMLDivElement>(null);
   const imageEdgeRef = useRef<HTMLDivElement>(null);
   const imageTrackRef = useRef<HTMLDivElement>(null);
-  const narrativeWrapRef = useRef<HTMLDivElement>(null);
+  
   const headlineWrapRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
 
   // --- MOBILE REFS ---
@@ -59,23 +55,16 @@ export default function HeroSection() {
 
   useEffect(() => {
     if (!imageLoaded) return;
-
     let frameOne = 0;
     let frameTwo = 0;
-
     frameOne = window.requestAnimationFrame(() => {
       frameTwo = window.requestAnimationFrame(() => {
         setAnimationReady(true);
       });
     });
-
     return () => {
-      if (frameOne) {
-        window.cancelAnimationFrame(frameOne);
-      }
-      if (frameTwo) {
-        window.cancelAnimationFrame(frameTwo);
-      }
+      if (frameOne) window.cancelAnimationFrame(frameOne);
+      if (frameTwo) window.cancelAnimationFrame(frameTwo);
     };
   }, [imageLoaded]);
 
@@ -93,7 +82,7 @@ export default function HeroSection() {
     const mm = gsap.matchMedia();
 
     // ==========================================
-    // DESKTOP: The "Reverse Dolly" Cinematic
+    // DESKTOP: THE PREMIUM "SPREAD" LAYOUT
     // ==========================================
     mm.add("(min-width: 768px)", () => {
       if (!desktopContainerRef.current) return;
@@ -101,121 +90,90 @@ export default function HeroSection() {
       if (prefersReducedMotion) {
         gsap.set([
           imageBaseRef.current, imageEdgeRef.current, imageTrackRef.current, 
-          narrativeWrapRef.current, headlineWrapRef.current, bodyRef.current, 
-          ctaRef.current, statsRef.current, vignetteRef.current
+          headlineWrapRef.current, bodyRef.current, ctaRef.current, vignetteRef.current
         ], { clearProps: 'all', opacity: 1, scale: 1, y: 0 });
         return;
       }
 
-      // --- SETUP: Initial State (The "Close-up") ---
-      // 1. Camera starts zoomed in on the skyline
-      gsap.set([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
-        scale: 1.25, // Start closer for more dramatic pull-back
-        transformOrigin: '50% 60%', // Pivot around Sagrada Familia/City Center
-      });
-      
-      // 2. Depth Layers
-      gsap.set(imageEdgeRef.current, { opacity: 0.4 }); // Subtle blur bloom
-      gsap.set(vignetteRef.current, { opacity: 0 }); // Start bright
-      
-      // 3. Content Stage (The "Clean Slate")
-      gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' });
-      gsap.set(bodyRef.current, { opacity: 0, y: 60, filter: 'blur(10px)' }); // Prepare for "Rack Focus" entry
-      gsap.set(narrativeWrapRef.current, { y: 0 });
-      gsap.set(ctaRef.current, { opacity: 0, y: 40 });
-      gsap.set(statsRef.current, { opacity: 0 });
+      const aspectRatio = HERO_CONFIG.image.height / HERO_CONFIG.image.width;
+      const getViewportHeight = () => window.visualViewport?.height || window.innerHeight;
+      const getBaseImageHeight = () => window.innerWidth * aspectRatio;
+      const getTravel = (scale = 1) => Math.max(0, getBaseImageHeight() * scale - getViewportHeight());
 
-      // --- TIMELINE: The Story ---
+      const getInitialY = () => -getTravel(HERO_CONFIG.focal.initialZoom) * HERO_CONFIG.focal.initialTravel;
+      const getFinalY = () => -getTravel(HERO_CONFIG.focal.finalScale) * HERO_CONFIG.focal.finalTravel;
+
+      // 1. INITIAL STATES (Act 1)
+      gsap.set([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
+        scale: HERO_CONFIG.focal.initialZoom,
+        y: getInitialY,
+        transformOrigin: '50% 62%', 
+      });
+      gsap.set(imageEdgeRef.current, { opacity: 0.36 });
+      gsap.set(vignetteRef.current, { opacity: 0 }); 
+      
+      // H1 starts perfectly centered, dominant.
+      gsap.set(headlineWrapRef.current, { opacity: 1, y: "0vh", scale: 1, transformOrigin: "center center" });
+      
+      // Body & CTAs start completely hidden, deep down off-screen.
+      gsap.set(bodyRef.current, { opacity: 0, y: "20vh", transformOrigin: "center center" }); 
+      gsap.set(ctaRef.current, { opacity: 0, y: "30vh", transformOrigin: "center center" });  
+
+      // 2. TIMELINE
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: desktopContainerRef.current,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 1.5, // Heavier scrub for "expensive" camera feel
-          // SNAP REMOVED: Fluid control is more premium
+          scrub: 1.2,
+          snap: {
+            snapTo: "labels",
+            duration: { min: 0.2, max: 0.6 },
+            delay: 0.1,
+            ease: "power2.inOut"
+          }
         }
       });
 
-      // --- ACT 1: THE HOOK (0% -> 35%) ---
-      // "Spain has cannabis clubs..." fades out as we widen the shot.
-      
-      // Camera: Pull back significantly
-      tl.to([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
-        scale: 1.15,
-        duration: 1,
-        ease: 'power1.inOut'
-      }, 0);
+      const ACT = 1;
 
-      // Headline: Cinematic Exit (Blur + Fly Up + Expand)
-      tl.to(headlineWrapRef.current, {
-        opacity: 0,
-        y: -80,
-        scale: 1.05, // Slight growth implies moving "past" the camera
-        filter: 'blur(12px)', // Cinematic rack focus exit
-        duration: 0.8,
-        ease: 'power2.in'
-      }, 0);
+      // --- ACT 1: THE HOOK (0%) ---
+      tl.addLabel('act1', 0);
 
-      // Vignette: Creep in to prep for readability
-      tl.to(vignetteRef.current, { opacity: 0.4, duration: 1 }, 0);
+      // --- ACT 1 -> ACT 2: THE CURTAIN RISE ---
+      tl.to([imageTrackRef.current, imageBaseRef.current], { scale: HERO_CONFIG.focal.finalScale, y: getFinalY, ease: 'power1.inOut', duration: ACT }, 0)
+        .to(imageEdgeRef.current, { scale: HERO_CONFIG.focal.finalScale, y: getFinalY, opacity: 0.25, ease: 'power1.inOut', duration: ACT }, 0)
+        .to(vignetteRef.current, { opacity: 0.85, ease: 'power2.inOut', duration: ACT }, 0)
+        
+        // HEADLINE: Barely shrinks at all (0.9). Moves UP into the top third of the screen.
+        .to(headlineWrapRef.current, { 
+          scale: 0.9, 
+          y: "-20vh", 
+          ease: 'power2.inOut', 
+          duration: ACT 
+        }, 0)
+        
+        // BODY: Rises up from the depths into the middle slot.
+        .to(bodyRef.current, { 
+          opacity: 1, 
+          y: "8vh", 
+          ease: 'power2.out', 
+          duration: ACT * 0.8 
+        }, 0.2)
 
-      // --- ACT 2: THE CONTEXT (35% -> 70%) ---
-      // "Most people get them wrong..." paragraph enters crisply.
-      
-      // Body: Enter from below (The "Rack Focus" effect)
-      tl.to(bodyRef.current, {
-        opacity: 1,
-        y: 0,
-        filter: 'blur(0px)',
-        duration: 0.8,
-        ease: 'power2.out'
-      }, 0.3); // Overlap slightly with headline exit
+        // CTAs: Follows the body up, landing in the bottom third.
+        .to(ctaRef.current, { 
+          opacity: 1, 
+          y: "22vh", 
+          ease: 'power2.out', 
+          duration: ACT * 0.8 
+        }, 0.25); // Slight stagger behind the body text
 
-      // Camera: Continue steady pull back
-      tl.to([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
-        scale: 1.08,
-        duration: 1,
-        ease: 'none' // Linear middle movement
-      }, 1);
-
-      // Narrative Container: Slide up to make room for footer
-      tl.to(narrativeWrapRef.current, {
-        y: -60, 
-        duration: 1,
-        ease: 'power1.inOut'
-      }, 1);
-
-      // Vignette: Darken fully for contrast
-      tl.to(vignetteRef.current, { opacity: 0.7, duration: 1 }, 1);
-
-      // --- ACT 3: THE ACTION (70% -> 100%) ---
-      // Paragraph dims slightly, Buttons & Stats reveal.
-
-      // Camera: Final lock to 1.0
-      tl.to([imageTrackRef.current, imageBaseRef.current, imageEdgeRef.current], {
-        scale: 1.0,
-        duration: 1,
-        ease: 'power2.out' // Soft landing
-      }, 2);
-
-      // CTAs: Stagger in from below
-      tl.to(ctaRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power2.out'
-      }, 2.2);
-
-      // Stats: Subtle fade in
-      tl.to(statsRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6
-      }, 2.4);
+      tl.addLabel('act2', 1);
     });
 
     // ==========================================
-    // MOBILE: Ambient Motion + Native Scrolling
+    // MOBILE: Native Scroll
     // ==========================================
     mm.add("(max-width: 767px)", () => {
       if (!mobileContainerRef.current || !mobileContentRef.current) return;
@@ -225,24 +183,22 @@ export default function HeroSection() {
         return;
       }
 
-      // 1. Slow cinematic background push (Time-based, infinite)
       gsap.to(mobileBgRef.current, {
-        scale: 1.08,
-        duration: 25,
-        ease: "sine.inOut",
+        scale: 1.15,
+        duration: 30,
+        ease: "power1.inOut",
         yoyo: true,
         repeat: -1,
-        transformOrigin: "center 15%" // Focus push on the skyline
+        transformOrigin: "center 15%"
       });
 
-      // 2. Snappy UI Stagger Entry (Plays once on load)
       gsap.from(mobileContentRef.current.children, {
         y: 40,
         opacity: 0,
-        duration: 1,
+        duration: 1.2,
         stagger: 0.15,
         ease: "power3.out",
-        delay: 0.1,
+        delay: 0.2,
         clearProps: "all"
       });
     });
@@ -260,154 +216,122 @@ export default function HeroSection() {
     <section ref={rootRef} className="relative w-full bg-black">
       
       {/* ========================================================= */}
-      {/* DESKTOP EXPERIENCE (Hidden on mobile)                       */}
+      {/* DESKTOP EXPERIENCE                                          */}
       {/* ========================================================= */}
       <div className="hidden md:block w-full" ref={desktopContainerRef} style={sectionStyle}>
         <div className={stageClasses}>
-          {/* --- DRONE BACKGROUND --- */}
+          
           <div className="absolute inset-0 bg-black">
             <div ref={imageBaseRef} className="absolute inset-[-10%] will-change-transform">
-              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="(min-width: 768px) 120vw, 100vw" quality={78} loading="lazy" decoding="async" fetchPriority="low" className="h-full w-full object-cover brightness-[1.02] saturate-[1.02] select-none" />
+              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="(min-width: 768px) 120vw, 100vw" quality={78} priority className="h-full w-full object-cover brightness-[1.02] saturate-[1.02] select-none" />
             </div>
             <div ref={imageEdgeRef} className="absolute inset-[-14%] will-change-transform" style={{ WebkitMaskImage: 'radial-gradient(ellipse 125% 120% at 50% 45%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 1) 100%)', maskImage: 'radial-gradient(ellipse 125% 120% at 50% 45%, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 1) 100%)' }}>
-              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="(min-width: 768px) 128vw, 100vw" quality={68} loading="lazy" decoding="async" fetchPriority="low" className="h-full w-full object-cover blur-xl brightness-[1.02] saturate-[1.02] select-none" />
+              <Image src="/images/hero/barcelona-skyline.webp" alt="" width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="(min-width: 768px) 128vw, 100vw" quality={68} priority className="h-full w-full object-cover blur-xl brightness-[1.02] saturate-[1.02] select-none" />
             </div>
             <div ref={imageTrackRef} className="absolute inset-x-0 top-0 will-change-transform">
               <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} width={HERO_CONFIG.image.width} height={HERO_CONFIG.image.height} sizes="100vw" priority quality={88} className="h-auto w-full select-none" onLoad={handleHeroImageLoad} />
             </div>
           </div>
 
-          {/* --- LIGHTING / BASE VIGNETTE --- */}
-          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-black/40 via-transparent to-black/40" />
-          <div ref={vignetteRef} className="absolute inset-0 z-10 pointer-events-none bg-black/50 backdrop-blur-[2px] will-change-opacity" />
+          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-black/50 via-transparent to-black/50" />
+          <div ref={vignetteRef} className="absolute inset-0 z-10 pointer-events-none bg-black/70 backdrop-blur-[2px] will-change-opacity" />
 
-          {/* --- CONTENT LAYER --- */}
-          <div className="absolute inset-0 z-20 px-4 md:px-6">
-            <div className="relative mx-auto h-full w-full max-w-6xl">
-              
-              {/* --- TOP HALF: NARRATIVE & MORPHING HEADLINE --- */}
-              <div className="absolute inset-0 flex items-center justify-center text-center">
-                <div ref={narrativeWrapRef} className="w-full max-w-5xl will-change-transform relative">
-                  <div className="absolute inset-0 z-[-1] w-[150%] h-[150%] -left-[25%] -top-[25%] bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.45)_0%,transparent_65%)] pointer-events-none blur-md" />
+          {/* --- FULL CANVAS SPREAD LAYER --- */}
+          <div className="absolute inset-0 z-20 overflow-hidden pointer-events-none">
+            
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 w-[120vw] h-[100vh] bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.5)_0%,transparent_60%)] pointer-events-none blur-xl" />
 
-                  <div ref={headlineWrapRef} className="will-change-transform w-full">
-                      <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] font-black font-serif text-white tracking-tight leading-[1.1] drop-shadow-[0_10px_40px_rgba(0,0,0,0.85)] max-w-4xl mx-auto">
-                        {t('hero.section.headline.line_1')}<br />
-                        <span className="text-white/70">{t('hero.section.headline.line_2')}</span><br />
-                        <span className="text-[#E8A838]">{t('hero.section.headline.line_3')}</span>
-                      </h1>
-                      
-                      <div className="mt-8 text-sm sm:text-base md:text-lg text-white/80 font-medium tracking-wide">
-                        <span>{t('hero.section.covering_label')} </span>
-                        <span className="text-[#E8A838] font-bold">{t('hero.section.covering_cities')}</span>
-                      </div>
-                  </div>
-
-                  <div ref={bodyRef} className="mx-auto mt-6 sm:mt-10 max-w-3xl will-change-transform px-4 relative z-10">
-                    <p className="text-base md:text-lg lg:text-xl text-gray-100 leading-relaxed font-medium [text-shadow:0_2px_8px_rgba(0,0,0,0.9),0_4px_20px_rgba(0,0,0,0.6)]">
-                      {t('hero.section.body')}
-                    </p>
-                  </div>
-                </div>
+            {/* 1. HEADLINE LAYER */}
+            <div ref={headlineWrapRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[90vw] text-center will-change-transform">
+              {/* Added a highly refined text-shadow to make it look 3D and premium */}
+              <h1 className="flex flex-col items-center justify-center font-black font-serif tracking-tight leading-[1.05] drop-shadow-[0_15px_40px_rgba(0,0,0,0.95)] [text-shadow:0_2px_10px_rgba(0,0,0,0.8),0_10px_40px_rgba(0,0,0,0.7)] text-[clamp(2.5rem,4.5vw,4.5rem)]">
+                <span className="text-white whitespace-nowrap">{t('hero.section.headline.line_1')}</span>
+                <span className="text-white/80 whitespace-nowrap">{t('hero.section.headline.line_2')}</span>
+                <span className="text-[#E8A838] whitespace-nowrap">{t('hero.section.headline.line_3')}</span>
+              </h1>
+              <div className="mt-5 text-sm md:text-lg text-white/90 font-medium tracking-wide drop-shadow-md">
+                <span>{t('hero.section.covering_label')} </span>
+                <span className="text-[#E8A838] font-bold">{t('hero.section.covering_cities')}</span>
               </div>
-
-              {/* --- BOTTOM HALF: CTAS & STATS --- */}
-              <div className="absolute inset-x-0 bottom-6 md:bottom-10 pointer-events-none flex flex-col items-center justify-end h-full">
-                <div ref={ctaRef} className="pointer-events-auto w-full max-w-3xl mx-auto will-change-transform mb-6">
-                  <div className="flex flex-col md:flex-row justify-center gap-3 md:gap-5 px-4">
-                    <Link href={`/${language}/safety-kit`} className="w-full md:w-auto">
-                      <Button size="lg" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] hover:scale-105 transition-all duration-300 shadow-[0_10px_40px_rgba(232,168,56,0.3)]">
-                        {t('hero.section.cta_primary')}
-                      </Button>
-                    </Link>
-                    <Link href={`/${language}/editorial/legal`} className="w-full md:w-auto">
-                      <Button size="lg" variant="outline" className="w-full px-6 md:px-10 py-6 md:py-7 text-sm md:text-lg font-bold rounded-full border-2 border-white text-white bg-black/30 backdrop-blur-md hover:bg-white/10 hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-                        {t('hero.section.cta_secondary')}
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-
-                <div ref={statsRef} className="pointer-events-auto w-full will-change-transform px-4 flex justify-center pb-4">
-                   <div className="flex flex-col items-center gap-2 text-white/60 animate-bounce">
-                     <span className="text-sm font-medium tracking-widest uppercase">{t('hero.section.scroll_hint')}</span>
-                   </div>
-                </div>
             </div>
+
+            {/* 2. BODY LAYER (Refined to look like a true sub-element) */}
+            <div ref={bodyRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl px-6 text-center will-change-transform">
+              {/* Changed from text-2xl/bold to text-lg/normal to fix the hierarchy */}
+              <p className="text-base md:text-lg lg:text-xl text-gray-200 leading-relaxed font-normal drop-shadow-lg [text-shadow:0_2px_10px_rgba(0,0,0,0.8)]">
+                {t('hero.section.body')}
+              </p>
+            </div>
+
+            {/* 3. CTAs LAYER */}
+            <div ref={ctaRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full pointer-events-auto will-change-transform">
+              <div className="flex flex-col md:flex-row justify-center items-center gap-4 px-6">
+                <Link href={`/${language}/safety-kit`} className="w-full md:w-auto">
+                  <Button size="lg" className="w-full md:w-auto px-10 py-7 md:py-8 text-sm md:text-lg font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] hover:scale-105 transition-all duration-300 shadow-[0_10px_40px_rgba(232,168,56,0.5)]">
+                    {t('hero.section.cta_primary')}
+                  </Button>
+                </Link>
+                <Link href={`/${language}/editorial/legal`} className="w-full md:w-auto">
+                  <Button size="lg" variant="outline" className="w-full md:w-auto px-10 py-7 md:py-8 text-sm md:text-lg font-bold rounded-full border-2 border-white/60 text-white bg-black/40 backdrop-blur-md hover:bg-white/20 hover:border-white hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+                    {t('hero.section.cta_secondary')}
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
-    </div>
+
       {/* ========================================================= */}
-      {/* MOBILE NATIVE EXPERIENCE (Hidden on desktop)                */}
+      {/* MOBILE NATIVE EXPERIENCE                                    */}
       {/* ========================================================= */}
       <div className="block md:hidden relative w-full min-h-[100dvh] bg-black overflow-hidden flex flex-col" ref={mobileContainerRef}>
         
-        {/* Background Layer with Dark Gradients */}
         <div className="absolute inset-0 z-0">
           <div ref={mobileBgRef} className="relative w-full h-full will-change-transform">
-            {/* object-[center_15%] drops the blue sky nicely for the typography */}
-            <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill quality={80} sizes="100vw" loading="lazy" decoding="async" className="object-cover object-[center_15%]" onLoad={handleHeroImageLoad} />
+            <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill quality={80} sizes="100vw" priority className="object-cover object-[center_15%]" onLoad={handleHeroImageLoad} />
           </div>
-          
-          {/* Global Vignette for Cinematic Mood */}
-          <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-          
-          {/* Gradients for Text Contrast */}
+          <div className="absolute inset-0 bg-black/40 pointer-events-none" />
           <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/90 via-black/40 to-transparent h-[50vh] pointer-events-none" />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-transparent h-[75vh] pointer-events-none" />
         </div>
 
-        {/* Content Layer */}
-        <div ref={mobileContentRef} className="relative z-10 flex flex-col min-h-[100dvh] px-5 pt-12 pb-6">
+        <div ref={mobileContentRef} className="relative z-10 flex flex-col min-h-[100dvh] px-5 pt-[100px] pb-8">
           
-          {/* TOP: Typography Stack */}
-          <div className="flex flex-col items-center text-center w-full mt-8">
-            <h1 className="text-[8vw] leading-[1.15] font-black font-serif text-white tracking-tight drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)] max-w-sm mx-auto">
-              {t('hero.section.headline.line_1')}<br />
-              <span className="text-white/70">{t('hero.section.headline.line_2')}</span><br />
+          <div className="flex flex-col items-center text-center w-full">
+            <h1 className="flex flex-col text-[clamp(2rem,8vw,3.5rem)] leading-[1.05] font-black font-serif text-white tracking-tight drop-shadow-[0_10px_30px_rgba(0,0,0,0.95)] w-full">
+              <span>{t('hero.section.headline.line_1')}</span>
+              <span className="text-white/80">{t('hero.section.headline.line_2')}</span>
               <span className="text-[#E8A838]">{t('hero.section.headline.line_3')}</span>
             </h1>
-            <div className="mt-8 flex flex-col items-center justify-center gap-1 text-[11px] text-white/80 font-medium tracking-wide">
+            <div className="mt-5 flex flex-col items-center justify-center gap-1 text-xs text-white/90 font-medium tracking-wide">
               <span>{t('hero.section.covering_label')} <span className="text-[#E8A838] font-bold">{t('hero.section.covering_cities')}</span></span>
             </div>
 
-            <p className="mt-8 text-[15px] sm:text-base text-gray-100 font-medium leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)] px-2">
+            <p className="mt-8 text-[15px] text-gray-200 font-normal leading-relaxed drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]">
               {t('hero.section.body')}
             </p>
           </div>
           
-          {/* Spacer pushes the CTAs to the bottom visually */}
           <div className="flex-grow min-h-[4vh]" /> 
 
-          {/* BOTTOM: CTAs & Stats */}
-          <div className="w-full flex flex-col gap-6 mt-8">
-            
-            {/* Action Buttons */}
-            <div className="flex flex-col gap-3">
-              <Link href={`/${language}/safety-kit`} className="w-full">
-                <Button size="lg" className="w-full py-7 text-base font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] shadow-[0_4px_20px_rgba(232,168,56,0.3)]">
-                  {t('hero.section.cta_primary')}
-                </Button>
-              </Link>
-              <Link href={`/${language}/editorial/legal`} className="w-full">
-                <Button size="lg" variant="outline" className="w-full py-7 text-base font-bold rounded-full border border-white/40 text-white bg-white/10 backdrop-blur-md">
-                  {t('hero.section.cta_secondary')}
-                </Button>
-              </Link>
-            </div>
-
-            {/* Scroll Indicator */}
-            <div className="flex flex-col items-center justify-center gap-2 text-white/60 animate-bounce mt-4 pb-2">
-              <span className="text-[10px] font-medium tracking-widest uppercase">{t('hero.section.scroll_hint')}</span>
-            </div>
+          <div className="w-full flex flex-col gap-4 mt-8">
+            <Link href={`/${language}/safety-kit`} className="w-full">
+              <Button size="lg" className="w-full py-7 text-base font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] shadow-[0_4px_20px_rgba(232,168,56,0.4)]">
+                {t('hero.section.cta_primary')}
+              </Button>
+            </Link>
+            <Link href={`/${language}/editorial/legal`} className="w-full">
+              <Button size="lg" variant="outline" className="w-full py-7 text-base font-bold rounded-full border-2 border-white/50 text-white bg-black/40 backdrop-blur-md">
+                {t('hero.section.cta_secondary')}
+              </Button>
+            </Link>
           </div>
 
         </div>
       </div>
-      {/* ========================================================= */}
-      {/* GLOBAL LOADING OVERLAY                                    */}
-      {/* ========================================================= */}
+
       <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-900 transition-opacity duration-1000 ${overlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="flex flex-col items-center gap-6">
           <div className="w-20 h-20 md:w-28 md:h-28 border-4 border-[#E8A838] border-t-transparent rounded-full animate-spin" />
