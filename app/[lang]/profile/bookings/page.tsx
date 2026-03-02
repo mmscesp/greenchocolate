@@ -101,6 +101,33 @@ export default function BookingsPage() {
     switch (status) {
       case 'confirmed':
         return (
+          <Badge variant="outline" className="bg-[#E8A838]/10 text-[#E8A838] border-[#E8A838]/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+            <Check className="h-3 w-3 mr-1" />
+            {t('bookings.status.confirmed')}
+          </Badge>
+        );
+      case 'pending':
+        return (
+          <Badge variant="outline" className="bg-white/5 text-zinc-400 border-white/10 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+            <Clock className="h-3 w-3 mr-1" />
+            {t('bookings.status.pending')}
+          </Badge>
+        );
+      case 'cancelled':
+        return (
+          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+            <X className="h-3 w-3 mr-1" />
+            {t('bookings.status.cancelled')}
+          </Badge>
+        );
+      case 'completed':
+        return (
+          <Badge variant="outline" className="bg-white/10 text-white border-white/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+            <Check className="h-3 w-3 mr-1" />
+            {t('bookings.status.completed')}
+          </Badge>
+        );
+        return (
           <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.confirmed')}
@@ -142,17 +169,17 @@ export default function BookingsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 text-white">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('user.bookings')}</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-serif tracking-tight text-white">{t('user.bookings')}</h1>
+          <p className="text-zinc-400 mt-1 font-serif italic">
             {t('bookings.subtitle')}
           </p>
         </div>
         <Link href={`/${language}/clubs`}>
-          <Button className="self-start gap-2">
+          <Button className="self-start gap-2 bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full px-6 py-5 font-black uppercase tracking-widest text-[10px]">
             <CalendarDays className="h-4 w-4" />
             {t('bookings.book_new_visit')}
           </Button>
@@ -161,54 +188,54 @@ export default function BookingsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.total')}</p>
-              <p className="text-2xl font-bold text-foreground">{bookings.length}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.total')}</p>
+              <p className="text-3xl font-serif text-white">{bookings.length}</p>
             </div>
-            <div className="bg-primary/10 p-3 rounded-xl">
-              <Calendar className="h-6 w-6 text-primary" />
+            <div className="bg-[#E8A838]/10 p-3 rounded-full border border-[#E8A838]/20">
+              <Calendar className="h-6 w-6 text-[#E8A838]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.upcoming')}</p>
-              <p className="text-2xl font-bold text-foreground">{upcomingCount}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.upcoming')}</p>
+              <p className="text-3xl font-serif text-white">{upcomingCount}</p>
             </div>
-            <div className="bg-green-500/10 p-3 rounded-xl">
-              <Clock className="h-6 w-6 text-green-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <Clock className="h-6 w-6 text-zinc-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.completed')}</p>
-              <p className="text-2xl font-bold text-foreground">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.completed')}</p>
+              <p className="text-3xl font-serif text-white">
                 {bookings.filter(b => b.status === 'completed').length}
               </p>
             </div>
-            <div className="bg-blue-500/10 p-3 rounded-xl">
-              <Check className="h-6 w-6 text-blue-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <Check className="h-6 w-6 text-zinc-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('bookings.stats.pending')}</p>
-              <p className="text-2xl font-bold text-foreground">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.pending')}</p>
+              <p className="text-3xl font-serif text-white">
                 {bookings.filter(b => b.status === 'pending').length}
               </p>
             </div>
-            <div className="bg-amber-500/10 p-3 rounded-xl">
-              <Clock className="h-6 w-6 text-amber-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <Clock className="h-6 w-6 text-zinc-400" />
             </div>
           </CardContent>
         </Card>
@@ -216,14 +243,14 @@ export default function BookingsPage() {
 
       {/* Filter Tabs */}
       <div className="flex gap-2">
-            {(['all', 'upcoming', 'past'] as const).map((filter) => (
+        {(['all', 'upcoming', 'past'] as const).map((filter) => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
               activeFilter === filter
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                ? 'bg-[#E8A838] text-black shadow-lg shadow-[#E8A838]/20'
+                : 'bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10'
             }`}
           >
             {t(`bookings.filters.${filter}`)}
@@ -235,34 +262,34 @@ export default function BookingsPage() {
       {filteredBookings.length > 0 ? (
         <div className="space-y-4">
           {filteredBookings.map((booking) => (
-            <Card key={booking.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-5">
-                <div className="flex flex-col md:flex-row md:items-center gap-5">
+            <Card key={booking.id} className="hover:shadow-2xl hover:border-[#E8A838]/30 transition-all duration-300 bg-[#0A0A0A] border border-white/5">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row md:items-center gap-6">
                   {/* Club Image */}
-                  <Avatar className="w-full md:w-28 h-24 rounded-xl border">
+                  <Avatar className="w-full md:w-32 h-24 rounded-2xl border-2 border-[#E8A838]/20 shadow-lg">
                     <AvatarImage src={booking.clubImage} alt={booking.clubName} className="object-cover" />
-                    <AvatarFallback className="rounded-xl bg-muted">
-                      <MapPin className="h-8 w-8 text-muted-foreground/50" />
+                    <AvatarFallback className="rounded-2xl bg-[#E8A838] text-black">
+                      <MapPin className="h-8 w-8" />
                     </AvatarFallback>
                   </Avatar>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <h3 className="text-lg font-semibold text-foreground">{booking.clubName}</h3>
+                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                      <h3 className="text-xl font-serif text-white">{booking.clubName}</h3>
                       {getStatusBadge(booking.status)}
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-[9px] font-bold uppercase tracking-widest bg-white/5 text-zinc-400 border border-white/5 px-2 py-0.5 rounded-md">
                         {getTypeLabel(booking.type)}
                       </Badge>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-6 text-xs text-zinc-500 font-bold uppercase tracking-widest">
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="h-4 w-4 text-primary/70" />
+                        <MapPin className="h-3.5 w-3.5 text-[#E8A838]" />
                         <span>{booking.clubNeighborhood}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="h-4 w-4 text-primary/70" />
+                        <Calendar className="h-3.5 w-3.5 text-[#E8A838]" />
                         <span>{new Date(booking.date).toLocaleDateString('es-ES', { 
                           day: 'numeric', 
                           month: 'short', 
@@ -270,26 +297,26 @@ export default function BookingsPage() {
                         })}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="h-4 w-4 text-primary/70" />
+                        <Clock className="h-3.5 w-3.5 text-[#E8A838]" />
                         <span>{booking.time}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Users className="h-4 w-4 text-primary/70" />
+                        <Users className="h-3.5 w-3.5 text-[#E8A838]" />
                         <span>{booking.guests} {t('bookings.guests')}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-3 flex-shrink-0">
                     <Link href={`/${language}/clubs/${booking.clubId}`}>
-                      <Button variant="outline" size="sm" className="gap-2">
-                        <ExternalLink className="h-4 w-4" />
+                      <Button variant="outline" size="sm" className="gap-2 rounded-full border-white/10 hover:bg-white/5 hover:text-white uppercase tracking-widest text-[9px] font-bold h-9">
+                        <ExternalLink className="h-3.5 w-3.5" />
                         {t('bookings.view_club')}
                       </Button>
                     </Link>
                     {booking.status === 'confirmed' && (
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                      <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-full uppercase tracking-widest text-[9px] font-bold h-9">
                         {t('bookings.cancel')}
                       </Button>
                     )}
@@ -300,15 +327,15 @@ export default function BookingsPage() {
           ))}
         </div>
       ) : (
-        <Card className="py-16 text-center shadow-sm">
+        <Card className="py-16 text-center shadow-2xl bg-[#0A0A0A] border border-white/5">
           <CardContent>
-            <div className="bg-muted w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Calendar className="h-10 w-10 text-muted-foreground/50" />
+            <div className="bg-white/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
+              <Calendar className="h-8 w-8 text-zinc-600" />
             </div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">
+            <h3 className="text-xl font-serif text-white mb-2">
               {t('bookings.empty.title')}
             </h3>
-            <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+            <p className="text-zinc-500 mb-8 max-w-sm mx-auto font-serif italic">
               {activeFilter === 'upcoming' 
                 ? t('bookings.empty.upcoming')
                 : activeFilter === 'past'
@@ -317,7 +344,7 @@ export default function BookingsPage() {
               }
             </p>
             <Link href={`/${language}/clubs`}>
-              <Button className="gap-2">
+              <Button className="gap-2 bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                 <Search className="h-4 w-4" />
                 {t('bookings.explore_clubs')}
               </Button>

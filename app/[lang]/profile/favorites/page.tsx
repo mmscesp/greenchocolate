@@ -41,79 +41,79 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 text-white">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('user.favorites')}</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-3xl font-serif tracking-tight text-white">{t('user.favorites')}</h1>
+        <p className="text-zinc-400 mt-1 font-serif italic">
           {t('favorites.subtitle')}
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="shadow-sm">
-          <CardContent className="flex items-center justify-between p-5">
+        <Card className="shadow-xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="flex items-center justify-between p-6">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.total')}</p>
-              <p className="text-2xl font-bold text-foreground">{favoriteClubs.length}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('favorites.stats.total')}</p>
+              <p className="text-3xl font-serif text-white">{favoriteClubs.length}</p>
             </div>
-            <div className="bg-red-500/10 p-3 rounded-xl">
-              <Heart className="h-6 w-6 text-red-500" />
+            <div className="bg-[#E8A838]/10 p-3 rounded-full border border-[#E8A838]/20">
+              <Heart className="h-6 w-6 text-[#E8A838]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="flex items-center justify-between p-5">
+        <Card className="shadow-xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="flex items-center justify-between p-6">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.visited')}</p>
-              <p className="text-2xl font-bold text-foreground">3</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('favorites.stats.visited')}</p>
+              <p className="text-3xl font-serif text-white">3</p>
             </div>
-            <div className="bg-green-500/10 p-3 rounded-xl">
-              <MapPin className="h-6 w-6 text-green-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <MapPin className="h-6 w-6 text-zinc-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="flex items-center justify-between p-5">
+        <Card className="shadow-xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="flex items-center justify-between p-6">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('favorites.stats.upcoming')}</p>
-              <p className="text-2xl font-bold text-foreground">2</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('favorites.stats.upcoming')}</p>
+              <p className="text-3xl font-serif text-white">2</p>
             </div>
-            <div className="bg-blue-500/10 p-3 rounded-xl">
-              <Calendar className="h-6 w-6 text-blue-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <Calendar className="h-6 w-6 text-zinc-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Controls */}
-      <Card className="shadow-sm">
+      <Card className="shadow-xl bg-[#0A0A0A] border border-white/5">
         <CardContent className="p-5">
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
               <Input
                 type="text"
                 placeholder={t('favorites.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-[#E8A838]/50 focus:ring-[#E8A838]/20 h-11 rounded-xl"
               />
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex bg-muted p-1 rounded-lg">
+            <div className="flex bg-white/5 p-1 rounded-xl border border-white/5">
               <button
                 onClick={() => setViewMode('grid')}
                 className={cn(
-                  "px-4 py-2 flex items-center gap-2 text-sm font-medium rounded-md transition-all",
+                  "px-4 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
                   viewMode === 'grid'
-                    ? "bg-background shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-[#E8A838] text-black shadow-lg shadow-[#E8A838]/20"
+                    : "text-zinc-500 hover:text-white"
                 )}
               >
                 <Grid className="h-4 w-4" />
@@ -122,10 +122,10 @@ export default function FavoritesPage() {
               <button
                 onClick={() => setViewMode('list')}
                 className={cn(
-                  "px-4 py-2 flex items-center gap-2 text-sm font-medium rounded-md transition-all",
+                  "px-4 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
                   viewMode === 'list'
-                    ? "bg-background shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-[#E8A838] text-black shadow-lg shadow-[#E8A838]/20"
+                    : "text-zinc-500 hover:text-white"
                 )}
               >
                 <List className="h-4 w-4" />
@@ -146,81 +146,83 @@ export default function FavoritesPage() {
             <Card 
               key={club.id} 
               className={cn(
-                "overflow-hidden hover:shadow-lg transition-all duration-300 group",
+                "overflow-hidden border border-white/5 bg-[#0A0A0A] hover:border-[#E8A838]/50 hover:shadow-2xl transition-all duration-500 group",
                 viewMode === 'list' && "flex flex-col md:flex-row"
               )}
             >
               <div className={cn(
                 "relative overflow-hidden",
-                viewMode === 'list' ? "w-full md:w-64 h-48 md:h-auto" : "h-48"
+                viewMode === 'list' ? "w-full md:w-64 h-48 md:h-auto" : "h-56"
               )}>
                 <Image
                   src={club.images[0]}
                   alt={club.name}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute top-3 right-3">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+                
+                <div className="absolute top-3 right-3 z-10">
                   <Button
                     size="icon"
                     variant="destructive"
-                    className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-9 w-9 rounded-full bg-black/50 backdrop-blur-md border border-white/10 hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
                     onClick={() => removeFavorite(club.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="absolute top-3 left-3">
-                  <div className="bg-background/90 backdrop-blur-sm p-1.5 rounded-full shadow-sm">
-                    <Heart className="h-4 w-4 text-red-500 fill-red-500" />
+                <div className="absolute top-3 left-3 z-10">
+                  <div className="bg-[#E8A838] p-2 rounded-full shadow-lg shadow-[#E8A838]/20">
+                    <Heart className="h-4 w-4 text-black fill-black" />
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col flex-1">
-                <CardHeader className="p-4 pb-2">
-                  <div className="flex items-start justify-between">
+              <div className="flex flex-col flex-1 p-5">
+                <CardHeader className="p-0 pb-4">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="font-semibold text-lg line-clamp-1 group-hover:text-primary transition-colors">
+                      <h3 className="font-serif text-xl text-white group-hover:text-[#E8A838] transition-colors line-clamp-1">
                         {club.name}
                       </h3>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                        <MapPin className="h-3 w-3" />
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-2">
+                        <MapPin className="h-3.5 w-3.5 text-[#E8A838]" />
                         <span>{club.neighborhood}</span>
                       </div>
                     </div>
                     {club.rating && (
-                      <Badge variant="secondary" className="flex items-center gap-1 bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400">
-                        <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
-                        <span>{club.rating}</span>
+                      <Badge variant="secondary" className="flex items-center gap-1 bg-white/5 text-white border-white/10 px-2 py-1 h-7">
+                        <Star className="h-3 w-3 fill-[#E8A838] text-[#E8A838]" />
+                        <span className="text-[10px] font-bold">{club.rating}</span>
                       </Badge>
                     )}
                   </div>
                 </CardHeader>
                 
-                <CardContent className="p-4 pt-0 flex-1">
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                <CardContent className="p-0 flex-1">
+                  <p className="text-sm text-zinc-400 line-clamp-2 mb-4 font-serif italic leading-relaxed">
                     {club.description}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-6">
                     {club.vibeTags.slice(0, 2).map(vibe => (
-                      <Badge key={vibe} variant="outline" className="text-xs">
+                      <span key={vibe} className="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-white/5 text-zinc-400 border border-white/5">
                         {vibe}
-                      </Badge>
+                      </span>
                     ))}
-                    <Badge variant="secondary" className="text-xs">
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-[#E8A838]/10 text-[#E8A838] border border-[#E8A838]/20">
                       {club.priceRange}
-                    </Badge>
+                    </span>
                   </div>
                 </CardContent>
 
-                <CardFooter className="p-4 pt-0 gap-2">
+                <CardFooter className="p-0 gap-3 pt-2 border-t border-white/5 mt-auto">
                   <Link href={`/${language}/clubs/${club.slug}`} className="flex-1">
-                    <Button className="w-full">
+                    <Button className="w-full bg-white text-black hover:bg-zinc-200 rounded-full font-bold uppercase tracking-widest text-[10px] h-10">
                       {t('favorites.view_club')}
                     </Button>
                   </Link>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-white/10 hover:bg-white/5 hover:text-[#E8A838] hover:border-[#E8A838]/30">
                     <Calendar className="h-4 w-4" />
                   </Button>
                 </CardFooter>
@@ -229,15 +231,15 @@ export default function FavoritesPage() {
           ))}
         </div>
       ) : (
-        <Card className="py-16 text-center shadow-sm">
+        <Card className="py-20 text-center shadow-xl bg-[#0A0A0A] border border-white/5">
           <CardContent>
-            <div className="bg-muted w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Heart className="h-10 w-10 text-muted-foreground/50" />
+            <div className="bg-white/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
+              <Heart className="h-8 w-8 text-zinc-600" />
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-foreground">
+            <h3 className="text-xl font-serif text-white mb-2">
               {searchQuery ? t('favorites.no_results_search') : t('favorites.no_results_empty')}
             </h3>
-            <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+            <p className="text-zinc-500 mb-8 max-w-sm mx-auto font-serif italic">
               {searchQuery
                 ? t('favorites.no_results_search_desc')
                 : t('favorites.no_results_empty_desc')
@@ -245,7 +247,7 @@ export default function FavoritesPage() {
             </p>
             {!searchQuery && (
               <Link href={`/${language}/clubs`}>
-                <Button className="gap-2">
+                <Button className="gap-2 bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                   <ExternalLink className="h-4 w-4" />
                   {t('nav.explore')}
                 </Button>

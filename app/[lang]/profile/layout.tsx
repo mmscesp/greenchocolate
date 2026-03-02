@@ -13,23 +13,32 @@ export default function ProfileLayout({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] bg-muted/20 pt-16 md:pt-20">
-      <ProfileSidebar 
-        isCollapsed={isSidebarCollapsed} 
-        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
-      />
+    <div className="flex min-h-[calc(100vh-64px)] bg-black text-white relative overflow-hidden pt-16 md:pt-20">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-[#E8A838]/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-[#E8A838]/5 blur-[120px]" />
+      </div>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile Navigation Toggle - Only visible on small screens */}
-        <div className="lg:hidden sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b px-4 py-3 flex items-center gap-3">
-          <ProfileMobileNav />
-          <span className="font-semibold text-foreground">{t('common.menu')}</span>
+      <div className="relative z-10 flex w-full">
+        <ProfileSidebar 
+          isCollapsed={isSidebarCollapsed} 
+          onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+        />
+
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Mobile Navigation Toggle */}
+          <div className="lg:hidden sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center gap-3">
+            <ProfileMobileNav />
+            <span className="font-bold text-[10px] uppercase tracking-widest text-[#E8A838]">{t('common.menu')}</span>
+          </div>
+
+          {/* Page content */}
+          <main className="flex-1 p-4 lg:p-12 relative">
+            {children}
+          </main>
         </div>
-
-        {/* Page content */}
-        <main className="flex-1 p-4 lg:p-8">
-          {children}
-        </main>
       </div>
     </div>
   );

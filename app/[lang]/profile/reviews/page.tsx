@@ -122,103 +122,105 @@ export default function ReviewsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 text-white">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('user.my_reviews')}</h1>
-        <p className="text-muted-foreground mt-1">
+        <h1 className="text-3xl font-serif tracking-tight text-white">{t('user.my_reviews')}</h1>
+        <p className="text-zinc-400 mt-1 font-serif italic">
           {t('reviews.subtitle')}
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('reviews.stats.total')}</p>
-              <p className="text-2xl font-bold text-foreground">{reviews.length}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.total')}</p>
+              <p className="text-3xl font-serif text-white">{reviews.length}</p>
             </div>
-            <div className="bg-blue-500/10 p-3 rounded-xl">
-              <MessageCircle className="h-6 w-6 text-blue-600" />
+            <div className="bg-[#E8A838]/10 p-3 rounded-full border border-[#E8A838]/20">
+              <MessageCircle className="h-6 w-6 text-[#E8A838]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('reviews.stats.average_rating')}</p>
-              <p className="text-2xl font-bold text-foreground">{averageRating.toFixed(1)}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.average_rating')}</p>
+              <p className="text-3xl font-serif text-white">{averageRating.toFixed(1)}</p>
             </div>
-            <div className="bg-yellow-500/10 p-3 rounded-xl">
-              <Star className="h-6 w-6 text-yellow-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <Star className="h-6 w-6 text-[#E8A838]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('reviews.stats.total_likes')}</p>
-              <p className="text-2xl font-bold text-foreground">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.total_likes')}</p>
+              <p className="text-3xl font-serif text-white">
                 {reviews.reduce((sum, review) => sum + review.likes, 0)}
               </p>
             </div>
-            <div className="bg-green-500/10 p-3 rounded-xl">
-              <ThumbsUp className="h-6 w-6 text-green-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <ThumbsUp className="h-6 w-6 text-zinc-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
-          <CardContent className="p-5 flex items-center justify-between">
+        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+          <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{t('reviews.stats.replies')}</p>
-              <p className="text-2xl font-bold text-foreground">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.replies')}</p>
+              <p className="text-3xl font-serif text-white">
                 {reviews.reduce((sum, review) => sum + review.replies, 0)}
               </p>
             </div>
-            <div className="bg-purple-500/10 p-3 rounded-xl">
-              <MessageCircle className="h-6 w-6 text-purple-600" />
+            <div className="bg-white/5 p-3 rounded-full border border-white/10">
+              <MessageCircle className="h-6 w-6 text-zinc-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card className="shadow-sm">
+      <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
         <CardContent className="p-5">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
               <Input
                 type="text"
                 placeholder={t('reviews.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-[#E8A838]/50 focus:ring-[#E8A838]/20 h-11 rounded-xl"
               />
             </div>
 
             <div className="flex w-full sm:w-auto items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <Select
-                value={ratingFilter.toString()}
-                onValueChange={(value) => setRatingFilter(Number(value))}
-              >
-                <SelectTrigger className="w-full sm:w-40 min-h-11">
-                  <SelectValue placeholder={t('reviews.filter.all')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">{t('reviews.filter.all')}</SelectItem>
-                  <SelectItem value="5">{t('reviews.filter.5_stars')}</SelectItem>
-                  <SelectItem value="4">{t('reviews.filter.4_stars')}</SelectItem>
-                  <SelectItem value="3">{t('reviews.filter.3_stars')}</SelectItem>
-                  <SelectItem value="2">{t('reviews.filter.2_stars')}</SelectItem>
-                  <SelectItem value="1">{t('reviews.filter.1_star')}</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="relative w-full sm:w-40">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 z-10" />
+                <Select
+                  value={ratingFilter.toString()}
+                  onValueChange={(value) => setRatingFilter(Number(value))}
+                >
+                  <SelectTrigger className="w-full sm:w-40 min-h-11 pl-9 bg-white/5 border-white/10 text-white rounded-xl focus:ring-[#E8A838]/20 focus:border-[#E8A838]/50">
+                    <SelectValue placeholder={t('reviews.filter.all')} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0A0A0A] border border-white/10 text-white">
+                    <SelectItem value="0" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.all')}</SelectItem>
+                    <SelectItem value="5" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.5_stars')}</SelectItem>
+                    <SelectItem value="4" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.4_stars')}</SelectItem>
+                    <SelectItem value="3" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.3_stars')}</SelectItem>
+                    <SelectItem value="2" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.2_stars')}</SelectItem>
+                    <SelectItem value="1" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.1_star')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -228,48 +230,48 @@ export default function ReviewsPage() {
       {filteredReviews.length > 0 ? (
         <div className="space-y-4">
           {filteredReviews.map(review => (
-            <Card key={review.id} className="hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-              <CardContent className="p-5">
+            <Card key={review.id} className="hover:shadow-2xl hover:border-[#E8A838]/30 transition-all duration-300 overflow-hidden bg-[#0A0A0A] border border-white/5">
+              <CardContent className="p-6">
                 {/* Review Header */}
-                <div className="flex items-start gap-4 mb-4">
-                  <Avatar className="h-16 w-16 rounded-xl border">
+                <div className="flex items-start gap-5 mb-5">
+                  <Avatar className="h-16 w-16 rounded-2xl border-2 border-[#E8A838]/20 shadow-lg">
                     <AvatarImage src={review.clubImage} alt={review.clubName} className="object-cover" />
-                    <AvatarFallback className="rounded-xl bg-muted">{review.clubName[0]}</AvatarFallback>
+                    <AvatarFallback className="rounded-2xl bg-[#E8A838] text-black font-black uppercase text-xl">{review.clubName[0]}</AvatarFallback>
                   </Avatar>
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 pt-1">
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
                         <Link
                           href={`/${language}/clubs/${review.clubId}`}
-                          className="text-lg font-semibold text-foreground hover:text-primary transition-colors truncate block"
+                          className="text-xl font-serif text-white hover:text-[#E8A838] transition-colors truncate block mb-1"
                         >
                           {review.clubName}
                         </Link>
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mt-1">
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-3.5 w-3.5 text-primary/70" />
+                        <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-[#E8A838]" />
                             <span>{review.clubNeighborhood}</span>
                           </div>
-                          <span className="text-muted-foreground/50">•</span>
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-3.5 w-3.5 text-primary/70" />
+                          <span className="text-zinc-700">•</span>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="h-3.5 w-3.5 text-[#E8A838]" />
                             <span>{new Date(review.date).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1 flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         {review.isEditable && (
                           <>
-                            <Button variant="ghost" size="icon" className="h-11 w-11">
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white">
                               <Edit3 className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() => deleteReview(review.id)}
-                              className="h-11 w-11 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              className="h-9 w-9 rounded-full bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-400"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -281,33 +283,33 @@ export default function ReviewsPage() {
                 </div>
 
                 {/* Rating and Title */}
-                <div className="mb-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex items-center gap-0.5">
+                <div className="mb-4 bg-white/5 p-4 rounded-xl border border-white/5">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-1">
                       {renderStars(review.rating)}
                     </div>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-[9px] font-bold bg-[#E8A838]/10 text-[#E8A838] border border-[#E8A838]/20 px-2 py-0.5 rounded-md">
                       {review.rating}/5
                     </Badge>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground">
+                  <h3 className="text-lg font-bold text-white">
                     {review.title}
                   </h3>
                 </div>
 
                 {/* Review Content */}
-                <p className="text-foreground/80 leading-relaxed mb-4">
-                  {review.content}
+                <p className="text-zinc-400 leading-relaxed mb-6 font-serif italic pl-1 border-l-2 border-[#E8A838]/30">
+                  "{review.content}"
                 </p>
 
                 {/* Review Stats */}
-                <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-4 border-t border-border/50">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <ThumbsUp className="h-4 w-4" />
+                <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+                    <ThumbsUp className="h-4 w-4 text-[#E8A838]" />
                     <span>{review.likes} {t('reviews.likes')}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MessageCircle className="h-4 w-4" />
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
+                    <MessageCircle className="h-4 w-4 text-[#E8A838]" />
                     <span>{review.replies} {t('reviews.replies')}</span>
                   </div>
                 </div>
@@ -316,17 +318,19 @@ export default function ReviewsPage() {
           ))}
         </div>
       ) : (
-        <Card className="max-w-md mx-auto text-center py-8 shadow-sm">
+        <Card className="max-w-md mx-auto text-center py-12 shadow-2xl bg-[#0A0A0A] border border-white/5">
           <CardContent className="p-8">
-            {searchQuery || ratingFilter ? (
-              <Search className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-            ) : (
-              <Star className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-            )}
-            <h3 className="text-lg font-semibold text-foreground mb-2">
+            <div className="bg-white/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
+              {searchQuery || ratingFilter ? (
+                <Search className="h-8 w-8 text-zinc-600" />
+              ) : (
+                <Star className="h-8 w-8 text-zinc-600" />
+              )}
+            </div>
+            <h3 className="text-xl font-serif text-white mb-2">
               {searchQuery || ratingFilter ? t('reviews.no_results_search') : t('reviews.no_results_empty')}
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-zinc-500 mb-8 font-serif italic">
               {searchQuery || ratingFilter
                 ? t('reviews.no_results_search_desc')
                 : t('reviews.no_results_empty_desc')
@@ -334,7 +338,7 @@ export default function ReviewsPage() {
             </p>
             {!searchQuery && !ratingFilter && (
               <Link href={`/${language}/clubs`}>
-                <Button>
+                <Button className="bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                   {t('nav.explore')}
                 </Button>
               </Link>
