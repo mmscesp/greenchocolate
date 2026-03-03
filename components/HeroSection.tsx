@@ -22,9 +22,14 @@ const HERO_CONFIG = {
     initialZoom: 1.2,
     finalScale: 1.0,
   },
+  /* 
+    RECALCULATED: Much wider spread to guarantee breathing room.
+    Headline scales down more and moves higher.
+    Card moves lower. 
+  */
   act2: {
-    headline: { scale: 0.92, y: '-18vh' },
-    contentBlock: { y: '14vh', scale: 1 },
+    headline: { scale: 0.85, y: '-24vh' }, 
+    contentBlock: { y: '16vh', scale: 1 }, 
     vignette: { opacity: 0.85 },
     blur: { opacity: 0.22 },
   },
@@ -128,7 +133,7 @@ export default function HeroSection() {
         if (prefersReducedMotion) {
           gsap.set(headlineWrapRef.current, { opacity: 1, y: act2.headline.y, scale: act2.headline.scale });
           gsap.set('.h1-line', { opacity: 1, y: 0 });
-          gsap.set('.h1-underline-path', { strokeDashoffset: 0 }); // Instantly show underline
+          gsap.set('.h1-underline-path', { strokeDashoffset: 0 }); 
           gsap.set(contentBlockRef.current, { opacity: 1, y: act2.contentBlock.y, scale: act2.contentBlock.scale });
           gsap.set(vignetteRef.current, { opacity: act2.vignette.opacity });
           gsap.set(imageSharpRef.current, { clearProps: 'transform' });
@@ -150,23 +155,23 @@ export default function HeroSection() {
           repeat: -1,
         });
 
-        // Initialize UI Elements
+        // ACT 1 INITIAL STATE: Text center, card hidden way down
         gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1 });
-        gsap.set(contentBlockRef.current, { opacity: 0, y: '22vh', scale: 0.95 });
+        gsap.set(contentBlockRef.current, { opacity: 0, y: '30vh', scale: 0.95 });
 
-        // Stagger Title lines load-in
+        // Stagger Title load-in
         gsap.fromTo(
           gsap.utils.toArray('.h1-line', headlineWrapRef.current),
           { y: 40, opacity: 0 },
           { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: 'expo.out', delay: 0.3 }
         );
 
-        // Native GSAP Underline Draw Animation (Syncs beautifully with the stagger)
+        // Native GSAP Underline Draw Animation
         gsap.to('.h1-underline-path', {
           strokeDashoffset: 0,
           duration: 1.5,
           ease: 'power2.inOut',
-          delay: 0.9, // Waits for line 3 to start appearing
+          delay: 0.9, 
         });
 
         const tl = gsap.timeline({
@@ -183,7 +188,11 @@ export default function HeroSection() {
         tl.to(imageTargets, { scale: HERO_CONFIG.focal.finalScale, ease: 'power1.inOut', duration: 1 }, 0);
         tl.to(imageBlurRef.current, { opacity: act2.blur.opacity, ease: 'power1.inOut', duration: 1 }, 0);
         tl.to(vignetteRef.current, { opacity: act2.vignette.opacity, ease: 'power2.inOut', duration: 1 }, 0);
+        
+        // Pushes headline high up
         tl.to(headlineWrapRef.current, { scale: act2.headline.scale, y: act2.headline.y, ease: 'power2.inOut', duration: 1 }, 0);
+        
+        // Pulls card up into the pocket below
         tl.to(contentBlockRef.current, { opacity: 1, y: act2.contentBlock.y, scale: act2.contentBlock.scale, ease: 'power2.out', duration: 0.8 }, 0.2);
         tl.addLabel('act2', 1);
       });
@@ -282,8 +291,8 @@ export default function HeroSection() {
             <div ref={headlineWrapRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[90vw] text-center will-change-transform">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[150%] bg-black/40 blur-[80px] rounded-[100%] pointer-events-none z-0 [transform:translateZ(0)]" />
               
-              {/* Increased gap from gap-3 to gap-6 for dramatic spacing */}
-              <h1 className="relative z-10 flex flex-col items-center justify-center gap-5 md:gap-7 font-black font-serif tracking-tight text-[clamp(2.2rem,4.5vw,4.5rem)] drop-shadow-2xl">
+              {/* Reduced gap to md:gap-4 to stop vertical overflow, kept tight cinematic feel */}
+              <h1 className="relative z-10 flex flex-col items-center justify-center gap-3 md:gap-4 font-black font-serif tracking-tight text-[clamp(2.2rem,4.5vw,4.5rem)] drop-shadow-2xl">
                 <span className="h1-line text-white text-balance leading-none opacity-0 will-change-[transform,opacity]">
                   {t('hero.section.headline.line_1')}
                 </span>
@@ -291,13 +300,12 @@ export default function HeroSection() {
                   {t('hero.section.headline.line_2')}
                 </span>
                 
-                {/* Line 3 with Native GSAP Animated SVG Underline */}
                 <span className="h1-line text-[#E8A838] text-balance leading-none opacity-0 will-change-[transform,opacity] relative inline-block">
                   <span className="relative z-10">{t('hero.section.headline.line_3')}</span>
                   
-                  {/* Underline SVG */}
+                  {/* Underline pulled slightly tighter to text to avoid bottom clipping */}
                   <svg 
-                    className="absolute -bottom-3 md:-bottom-4 left-0 w-full h-[12px] md:h-[18px] text-[#E8A838] opacity-80 overflow-visible"
+                    className="absolute -bottom-2 md:-bottom-3 left-0 w-full h-[10px] md:h-[16px] text-[#E8A838] opacity-80 overflow-visible"
                     viewBox="0 0 300 20"
                     preserveAspectRatio="none"
                   >
@@ -310,7 +318,7 @@ export default function HeroSection() {
                       vectorEffect="non-scaling-stroke"
                       pathLength="1"
                       className="h1-underline-path"
-                      style={{ strokeDasharray: 1, strokeDashoffset: 1 }} // Pre-hidden, drawn by GSAP
+                      style={{ strokeDasharray: 1, strokeDashoffset: 1 }}
                     />
                   </svg>
                 </span>
@@ -319,13 +327,15 @@ export default function HeroSection() {
 
             {/* — Dark Liquid Glass Content Block — */}
             <div ref={contentBlockRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[42rem] px-4 flex flex-col items-center gap-6 opacity-0 will-change-[transform,opacity,scale]">
-              <div className="relative w-full overflow-hidden rounded-[2.5rem] p-8 md:p-10 flex flex-col items-center gap-8 pointer-events-auto transition-all duration-700 hover:scale-[1.01]" style={{ boxShadow: "0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.2)" }}>
+              
+              {/* Compacted paddings (p-6 md:p-8) & gap to reduce vertical bloat */}
+              <div className="relative w-full overflow-hidden rounded-[2.5rem] p-6 md:p-8 flex flex-col items-center gap-6 pointer-events-auto transition-all duration-700 hover:scale-[1.01]" style={{ boxShadow: "0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.2)" }}>
                 <div className="absolute inset-0 z-0 pointer-events-none md:[filter:url(#glass-distortion)] [transform:translateZ(0)]" style={{ backdropFilter: "blur(12px)", isolation: "isolate" }} />
                 <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "rgba(10, 10, 10, 0.45)" }} />
                 <div className="absolute inset-0 z-20 pointer-events-none rounded-[2.5rem]" style={{ boxShadow: "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.05)" }} />
 
-                <div className="relative z-30 flex flex-col items-center gap-8 w-full">
-                  <p className="text-base md:text-lg lg:text-xl text-white/95 leading-relaxed text-center text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                <div className="relative z-30 flex flex-col items-center gap-6 w-full">
+                  <p className="text-base md:text-lg text-white/95 leading-relaxed text-center text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     {t('hero.section.body')}
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
@@ -372,12 +382,10 @@ export default function HeroSection() {
           <div className="flex flex-col items-center text-center w-full px-2">
             <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[80%] h-[20vh] bg-black/50 blur-[60px] rounded-[100%] pointer-events-none -z-10 [transform:translateZ(0)]" />
             
-            {/* Mobile gap increased */}
             <h1 className="flex flex-col gap-4 text-[clamp(2.5rem,10vw,3.5rem)] font-black font-serif tracking-tight text-white w-full drop-shadow-lg">
               <span className="text-balance leading-[1.1]">{t('hero.section.headline.line_1')}</span>
               <span className="text-white/90 text-balance leading-[1.1]">{t('hero.section.headline.line_2')}</span>
               
-              {/* Mobile Line 3 with Native Underline */}
               <span className="text-[#E8A838] text-balance leading-[1.1] relative inline-block">
                 <span className="relative z-10">{t('hero.section.headline.line_3')}</span>
                 <svg 
