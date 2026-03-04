@@ -50,14 +50,14 @@ export default async function MissionPage({ params }: MissionPageProps) {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 via-black to-black pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 left-[10%] w-[500px] h-[500px] bg-[#E8A838]/5 blur-[130px] rounded-full" />
-        <div className="absolute top-[40%] right-0 w-[450px] h-[450px] bg-[#E8A838]/5 blur-[120px] rounded-full" />
+        <div className="absolute -top-24 left-[10%] w-[500px] h-[500px] bg-gold/5 blur-[130px] rounded-full" />
+        <div className="absolute top-[40%] right-0 w-[450px] h-[450px] bg-gold/5 blur-[120px] rounded-full" />
       </div>
 
       <main className="relative z-10 max-w-5xl mx-auto px-4 pt-32 pb-24 md:pt-40 md:pb-32">
         {/* Hero Section */}
         <div className="text-center mb-16 md:mb-24 max-w-4xl mx-auto">
-          <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-[#E8A838]">
+          <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-gold">
             <Compass className="w-4 h-4" />
             {t('about.lead')}
           </Eyebrow>
@@ -72,11 +72,11 @@ export default async function MissionPage({ params }: MissionPageProps) {
         <div className="grid gap-20">
           {/* Why We Exist Section */}
           <section className="relative group">
-            <div className="absolute -inset-4 bg-gradient-to-br from-[#E8A838]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative bg-zinc-900/40 backdrop-blur-sm p-8 md:p-12 rounded-3xl border border-white/10 hover:border-[#E8A838]/30 transition-all duration-500">
+            <div className="absolute -inset-4 bg-gradient-to-br from-gold/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative bg-zinc-900/40 backdrop-blur-sm p-8 md:p-12 rounded-3xl border border-white/10 hover:border-gold/30 transition-all duration-500">
               <div className="flex flex-col md:flex-row items-start gap-8">
-                <div className="w-16 h-16 bg-[#E8A838]/10 rounded-2xl flex items-center justify-center border border-[#E8A838]/20 shrink-0">
-                  <Target className="h-8 w-8 text-[#E8A838]" />
+                <div className="w-16 h-16 bg-gold/10 rounded-2xl flex items-center justify-center border border-gold/20 shrink-0">
+                  <Target className="h-8 w-8 text-gold" />
                 </div>
                 <div>
                   <H2 size="md" className="mb-4 text-white font-serif tracking-tight">{t('mission.why.title')}</H2>
@@ -95,11 +95,11 @@ export default async function MissionPage({ params }: MissionPageProps) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {missionStandards.map((item) => (
-                <div key={item.titleKey} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 md:p-8 hover:border-[#E8A838]/50 transition-all duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#E8A838]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div key={item.titleKey} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 md:p-8 hover:border-gold/50 transition-all duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="relative">
-                    <item.icon className="h-6 w-6 text-[#E8A838] mb-5 group-hover:scale-110 transition-transform duration-500" />
-                    <H4 size="xs" className="mb-3 text-white font-serif group-hover:text-[#E8A838] transition-colors">{t(item.titleKey)}</H4>
+                    <item.icon className="h-6 w-6 text-gold mb-5 group-hover:scale-110 transition-transform duration-500" />
+                    <H4 size="xs" className="mb-3 text-white font-serif group-hover:text-gold transition-colors">{t(item.titleKey)}</H4>
                     <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
                       {t(item.descriptionKey)}
                     </Text>
@@ -112,7 +112,7 @@ export default async function MissionPage({ params }: MissionPageProps) {
           {/* Core Values / The Standard Section */}
           <section id="verification-standard" className="relative overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/60 p-6 md:p-12 lg:p-16 backdrop-blur-md shadow-2xl">
             <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
-              <Shield className="h-64 w-64 text-[#E8A838]" />
+              <Shield className="h-64 w-64 text-gold" />
             </div>
             
             <div className="max-w-3xl relative z-10">
@@ -127,17 +127,17 @@ export default async function MissionPage({ params }: MissionPageProps) {
                   promoters. We are a community-driven trust layer, dedicated to keeping you safe, informed, and on the right side of the rules.
                 </Text>
                 <div className="flex items-center gap-3 pt-4">
-                  <div className="w-8 h-[1px] bg-[#E8A838]" />
-                  <Text variant="muted" className="italic text-[#E8A838] font-serif uppercase tracking-widest text-[10px] font-bold">The SCM Team, Barcelona</Text>
+                  <div className="w-8 h-[1px] bg-gold" />
+                  <Text variant="muted" className="italic text-gold font-serif uppercase tracking-widest text-[10px] font-bold">The SCM Team, Barcelona</Text>
                 </div>
               </div>
 
               <H3 size="sm" className="mb-8 text-white font-serif tracking-tight pt-8 border-t border-white/10 uppercase tracking-wider">Our Three Pillars</H3>
               <div className="grid gap-4">
-                <div className="group p-6 md:p-8 bg-black/40 border border-white/5 rounded-2xl hover:border-[#E8A838]/30 transition-all duration-500">
+                <div className="group p-6 md:p-8 bg-black/40 border border-white/5 rounded-2xl hover:border-gold/30 transition-all duration-500">
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="text-[10px] font-bold text-[#E8A838] border border-[#E8A838]/30 px-2 py-0.5 rounded uppercase tracking-tighter">01</div>
-                    <H4 size="xs" className="text-white font-serif group-hover:text-[#E8A838] transition-colors">EDUCATE</H4>
+                    <div className="text-[10px] font-bold text-gold border border-gold/30 px-2 py-0.5 rounded uppercase tracking-tighter">01</div>
+                    <H4 size="xs" className="text-white font-serif group-hover:text-gold transition-colors">EDUCATE</H4>
                   </div>
                   <Text size="sm" className="mb-2 text-white font-medium">Before you travel</Text>
                   <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
@@ -145,10 +145,10 @@ export default async function MissionPage({ params }: MissionPageProps) {
                   </Text>
                 </div>
 
-                <div className="group p-6 md:p-8 bg-black/40 border border-white/5 rounded-2xl hover:border-[#E8A838]/30 transition-all duration-500">
+                <div className="group p-6 md:p-8 bg-black/40 border border-white/5 rounded-2xl hover:border-gold/30 transition-all duration-500">
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="text-[10px] font-bold text-[#E8A838] border border-[#E8A838]/30 px-2 py-0.5 rounded uppercase tracking-tighter">02</div>
-                    <H4 size="xs" className="text-white font-serif group-hover:text-[#E8A838] transition-colors">VERIFY</H4>
+                    <div className="text-[10px] font-bold text-gold border border-gold/30 px-2 py-0.5 rounded uppercase tracking-tighter">02</div>
+                    <H4 size="xs" className="text-white font-serif group-hover:text-gold transition-colors">VERIFY</H4>
                   </div>
                   <Text size="sm" className="mb-2 text-white font-medium">Before you visit</Text>
                   <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
@@ -156,10 +156,10 @@ export default async function MissionPage({ params }: MissionPageProps) {
                   </Text>
                 </div>
 
-                <div className="group p-6 md:p-8 bg-black/40 border border-white/5 rounded-2xl hover:border-[#E8A838]/30 transition-all duration-500">
+                <div className="group p-6 md:p-8 bg-black/40 border border-white/5 rounded-2xl hover:border-gold/30 transition-all duration-500">
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="text-[10px] font-bold text-[#E8A838] border border-[#E8A838]/30 px-2 py-0.5 rounded uppercase tracking-tighter">03</div>
-                    <H4 size="xs" className="text-white font-serif group-hover:text-[#E8A838] transition-colors">PROTECT</H4>
+                    <div className="text-[10px] font-bold text-gold border border-gold/30 px-2 py-0.5 rounded uppercase tracking-tighter">03</div>
+                    <H4 size="xs" className="text-white font-serif group-hover:text-gold transition-colors">PROTECT</H4>
                   </div>
                   <Text size="sm" className="mb-2 text-white font-medium">Before anything goes wrong</Text>
                   <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
@@ -171,14 +171,14 @@ export default async function MissionPage({ params }: MissionPageProps) {
           </section>
 
           {/* Final CTA */}
-          <section className="text-center py-20 md:py-24 relative overflow-hidden rounded-3xl border border-[#E8A838]/20 bg-[#E8A838]/5 p-8 md:p-12">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#E8A838]/5 pointer-events-none" />
+          <section className="text-center py-20 md:py-24 relative overflow-hidden rounded-3xl border border-gold/20 bg-gold/5 p-8 md:p-12">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gold/5 pointer-events-none" />
             <div className="relative z-10">
               <H2 size="md" className="mb-6 text-white font-serif tracking-tight">{t('mission.cta.title')}</H2>
               <Text variant="muted" size="sm" className="mb-10 text-zinc-400 max-w-lg mx-auto md:text-lg">
                 {t('mission.cta.subtitle')}
               </Text>
-              <Button asChild className="min-h-14 px-10 bg-[#E8A838] hover:bg-[#d4962e] text-black font-bold rounded-full text-sm uppercase tracking-widest shadow-xl shadow-[#E8A838]/20">
+              <Button asChild className="min-h-14 px-10 bg-gold hover:bg-gold-dark text-black font-bold rounded-full text-sm uppercase tracking-widest shadow-xl shadow-gold/20">
                 <Link href={`/${lang}/clubs`}>
                   {t('mission.cta.button')} <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>

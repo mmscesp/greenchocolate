@@ -55,7 +55,7 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
     { nameKey: 'club_panel.nav.membership_requests', href: '/club-panel/dashboard/requests', icon: Users },
     { nameKey: 'club_panel.nav.events', href: '/club-panel/dashboard/events', icon: Calendar },
     { nameKey: 'club_panel.nav.analytics', href: '/club-panel/dashboard/analytics', icon: BarChart3 },
-    { nameKey: 'club_panel.nav.settings', href: '/club-panel/dashboard/settings', icon: Settings },
+    { nameKey: 'club_panel.nav.settings', href: '/club-panel/dashboard/profile', icon: Settings },
   ];
 
   const showText = !isCollapsed || isMobile;

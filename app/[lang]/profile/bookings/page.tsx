@@ -196,7 +196,7 @@ export default function BookingsPage() {
             </div>
             <div className="bg-gold/10 p-3 rounded-full border border-gold/20">
               <Calendar className="h-6 w-6 text-gold" />
-              <Calendar className="h-6 w-6 text-[#E8A838]" />
+              <Calendar className="h-6 w-6 text-gold" />
             </div>
           </CardContent>
         </Card>

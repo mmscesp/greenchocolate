@@ -17,8 +17,9 @@ export default function ProfileLayout({
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-[#E8A838]/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-[#E8A838]/5 blur-[120px]" />
+        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-gold/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
       </div>
 
       <div className="relative z-10 flex w-full">
@@ -31,7 +32,7 @@ export default function ProfileLayout({
           {/* Mobile Navigation Toggle */}
           <div className="lg:hidden sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center gap-3">
             <ProfileMobileNav />
-            <span className="font-bold text-[10px] uppercase tracking-widest text-[#E8A838]">{t('common.menu')}</span>
+            <span className="font-bold text-[10px] uppercase tracking-widest text-gold">{t('common.menu')}</span>
           </div>
 
           {/* Page content */}

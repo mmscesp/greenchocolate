@@ -59,7 +59,6 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
               >
                 <div className="absolute inset-0 bg-gold/15 rounded-full blur-md animate-pulse" />
                 <TrustBadge type="verified" size="sm" className="relative bg-black/60 backdrop-blur-md border-gold/30 scale-90 sm:scale-100 origin-left" />
-                <TrustBadge type="verified" size="sm" className="relative bg-black/60 backdrop-blur-md border-[#E8A838]/30 scale-90 sm:scale-100 origin-left" />
               </motion.div>
             )}
             <div className="inline-flex items-center px-2.5 py-1 bg-black/60 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.15em] rounded-full border border-white/10 shadow-lg w-fit">

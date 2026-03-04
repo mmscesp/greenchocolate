@@ -47,7 +47,7 @@ export function KnowledgeRouter() {
           </div>
           <Link
             href={`/${language}/events`}
-            className="hidden md:inline-flex items-center gap-2 text-zinc-500 hover:text-[#E8A838] font-bold uppercase tracking-widest text-xs transition-colors"
+            className="hidden md:inline-flex items-center gap-2 text-zinc-500 hover:text-gold font-bold uppercase tracking-widest text-xs transition-colors"
           >
             {t('landing.knowledge_router.full_events')} <ArrowRight className="w-4 h-4" />
           </Link>
@@ -61,14 +61,14 @@ export function KnowledgeRouter() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="group bg-white border border-zinc-200 hover:border-[#E8A838]/50 rounded-xl p-5 md:p-6 transition-colors shadow-sm hover:shadow-md"
+              className="group bg-white border border-zinc-200 hover:border-gold/50 rounded-xl p-5 md:p-6 transition-colors shadow-sm hover:shadow-md"
             >
               <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-black text-[#E8A838] text-[10px] font-bold uppercase tracking-widest rounded-sm">
+                <span className="inline-block px-3 py-1 bg-black text-gold text-[10px] font-bold uppercase tracking-widest rounded-sm">
                   {event.date}
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-zinc-900 mb-2 group-hover:text-[#E8A838] transition-colors">
+              <h3 className="text-xl font-bold text-zinc-900 mb-2 group-hover:text-gold transition-colors">
                 {event.name}
               </h3>
               <div className="flex items-center gap-1.5 text-zinc-500 text-sm font-medium mb-4">
@@ -91,7 +91,7 @@ export function KnowledgeRouter() {
         <div className="mt-8 text-center md:hidden">
           <Link
             href={`/${language}/events`}
-            className="inline-flex items-center gap-2 text-zinc-500 hover:text-[#E8A838] font-bold uppercase tracking-widest text-xs transition-colors"
+            className="inline-flex items-center gap-2 text-zinc-500 hover:text-gold font-bold uppercase tracking-widest text-xs transition-colors"
           >
             {t('landing.knowledge_router.full_events')} <ArrowRight className="w-4 h-4" />
           </Link>

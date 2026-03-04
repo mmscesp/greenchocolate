@@ -76,7 +76,7 @@ export function CommunityRoadmap() {
                 <div className="transform transition-transform duration-500 group-hover:-translate-y-2">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight">{city.name}</h3>
-                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border ${city.active ? 'bg-[#E8A838] text-black border-[#E8A838]' : 'bg-transparent text-zinc-500 border-zinc-700'}`}>
+                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border ${city.active ? 'bg-gold text-black border-gold' : 'bg-transparent text-zinc-500 border-zinc-700'}`}>
                       {city.status}
                     </span>
                   </div>
@@ -90,7 +90,7 @@ export function CommunityRoadmap() {
                   {city.active ? (
                     <Link
                       href={city.href}
-                      className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-[#E8A838] hover:text-white transition-colors"
+                      className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-gold hover:text-white transition-colors"
                     >
                       {t('landing.community_roadmap.explore_prefix')} {city.name}
                       <ArrowRight className="w-4 h-4" />

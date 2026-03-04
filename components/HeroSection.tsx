@@ -300,12 +300,12 @@ export default function HeroSection() {
                   {t('hero.section.headline.line_2')}
                 </span>
                 
-                <span className="h1-line text-[#E8A838] text-balance leading-none opacity-0 will-change-[transform,opacity] relative inline-block">
+                <span className="h1-line text-gold text-balance leading-none opacity-0 will-change-[transform,opacity] relative inline-block">
                   <span className="relative z-10">{t('hero.section.headline.line_3')}</span>
                   
                   {/* Underline pulled slightly tighter to text to avoid bottom clipping */}
                   <svg 
-                    className="absolute -bottom-2 md:-bottom-3 left-0 w-full h-[10px] md:h-[16px] text-[#E8A838] opacity-80 overflow-visible"
+                    className="absolute -bottom-2 md:-bottom-3 left-0 w-full h-[10px] md:h-[16px] text-gold opacity-80 overflow-visible"
                     viewBox="0 0 300 20"
                     preserveAspectRatio="none"
                   >
@@ -332,14 +332,14 @@ export default function HeroSection() {
               <div className="relative w-full overflow-hidden rounded-[2.5rem] p-6 md:p-8 flex flex-col items-center gap-6 pointer-events-auto transition-all duration-700 hover:scale-[1.01]" style={{ boxShadow: "0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.2)" }}>
                 <div className="absolute inset-0 z-0 pointer-events-none md:[filter:url(#glass-distortion)] [transform:translateZ(0)]" style={{ backdropFilter: "blur(12px)", isolation: "isolate" }} />
                 <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "rgba(10, 10, 10, 0.45)" }} />
-                <div className="absolute inset-0 z-20 pointer-events-none rounded-[2.5rem]" style={{ boxShadow: "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.05)" }} />
+                <div className="absolute inset-0 z-20 pointer-events-none rounded-[2.5rem]" style={{ boxShadow: "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px var(--glass-highlight)" }} />
 
                 <div className="relative z-30 flex flex-col items-center gap-6 w-full">
                   <p className="text-base md:text-lg text-white/95 leading-relaxed text-center text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     {t('hero.section.body')}
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                    <Button asChild size="lg" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_rgba(232,168,56,0.3)]">
+                    <Button asChild size="lg" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full bg-gold text-black hover:bg-gold-dark hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_hsl(var(--gold)/0.3)]">
                       <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
                     </Button>
                     <Button asChild size="lg" variant="outline" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full border-white/20 text-white bg-white/5 hover:bg-white/15 hover:border-white/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
@@ -352,11 +352,11 @@ export default function HeroSection() {
               <div className="relative overflow-hidden rounded-full flex items-center shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-all duration-500 hover:scale-[1.02] group">
                 <div className="absolute inset-0 z-0 pointer-events-none md:[filter:url(#glass-distortion)] [transform:translateZ(0)]" style={{ backdropFilter: "blur(8px)", isolation: "isolate" }} />
                 <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "rgba(10, 10, 10, 0.55)" }} />
-                <div className="absolute inset-0 z-20 pointer-events-none rounded-full" style={{ boxShadow: "inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 rgba(255, 255, 255, 0.05)" }} />
+                <div className="absolute inset-0 z-20 pointer-events-none rounded-full" style={{ boxShadow: "inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 var(--glass-highlight)" }} />
                 <div className="relative z-30 flex items-center gap-3 px-6 py-2.5">
                   <span className="text-xs text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                  <span className="text-sm font-bold text-[#FFD57B] tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                  <span className="text-sm font-bold text-gold-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
                 </div>
               </div>
             </div>
@@ -386,10 +386,10 @@ export default function HeroSection() {
               <span className="text-balance leading-[1.1]">{t('hero.section.headline.line_1')}</span>
               <span className="text-white/90 text-balance leading-[1.1]">{t('hero.section.headline.line_2')}</span>
               
-              <span className="text-[#E8A838] text-balance leading-[1.1] relative inline-block">
+              <span className="text-gold text-balance leading-[1.1] relative inline-block">
                 <span className="relative z-10">{t('hero.section.headline.line_3')}</span>
                 <svg 
-                  className="absolute -bottom-2 md:-bottom-4 left-0 w-full h-[12px] text-[#E8A838] opacity-80 overflow-visible"
+                  className="absolute -bottom-2 md:-bottom-4 left-0 w-full h-[12px] text-gold opacity-80 overflow-visible"
                   viewBox="0 0 300 20"
                   preserveAspectRatio="none"
                 >
@@ -415,12 +415,12 @@ export default function HeroSection() {
             <div className="relative w-full overflow-hidden rounded-[2rem] p-6 flex flex-col items-center gap-6" style={{ boxShadow: "0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.2)" }}>
               <div className="absolute inset-0 z-0 pointer-events-none [transform:translateZ(0)]" style={{ backdropFilter: "blur(24px)" }} />
               <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "rgba(10, 10, 10, 0.45)" }} />
-              <div className="absolute inset-0 z-20 pointer-events-none rounded-[2rem]" style={{ boxShadow: "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px rgba(255, 255, 255, 0.05)" }} />
+              <div className="absolute inset-0 z-20 pointer-events-none rounded-[2rem]" style={{ boxShadow: "inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px var(--glass-highlight)" }} />
 
               <div className="relative z-30 w-full flex flex-col items-center gap-6">
                 <p className="text-[15px] text-white/95 font-medium leading-relaxed text-center text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.body')}</p>
                 <div className="w-full flex flex-col gap-3">
-                  <Button asChild size="lg" className="w-full py-6 text-base font-bold rounded-full bg-[#E8A838] text-black hover:bg-[#d4962e] active:scale-[0.98] transition-all shadow-[0_4px_20px_rgba(232,168,56,0.25)]">
+                  <Button asChild size="lg" className="w-full py-6 text-base font-bold rounded-full bg-gold text-black hover:bg-gold-dark active:scale-[0.98] transition-all shadow-[0_4px_20px_hsl(var(--gold)/0.25)]">
                     <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="w-full py-6 text-base font-bold rounded-full border border-white/20 text-white bg-white/5 active:bg-white/10 active:scale-[0.98] transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
@@ -433,11 +433,11 @@ export default function HeroSection() {
             <div className="relative overflow-hidden rounded-full flex items-center shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
               <div className="absolute inset-0 z-0 pointer-events-none [transform:translateZ(0)]" style={{ backdropFilter: "blur(16px)" }} />
               <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: "rgba(10, 10, 10, 0.55)" }} />
-              <div className="absolute inset-0 z-20 pointer-events-none rounded-full" style={{ boxShadow: "inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 rgba(255, 255, 255, 0.05)" }} />
+              <div className="absolute inset-0 z-20 pointer-events-none rounded-full" style={{ boxShadow: "inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 var(--glass-highlight)" }} />
               <div className="relative z-30 flex items-center gap-2.5 px-5 py-2">
                 <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
                 <span className="w-1 h-1 rounded-full bg-white/20" />
-                <span className="text-[13px] font-bold text-[#FFD57B] tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                <span className="text-[13px] font-bold text-gold-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
               </div>
             </div>
           </div>
@@ -447,7 +447,7 @@ export default function HeroSection() {
       {!overlayDismissed && (
         <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 transition-opacity duration-1000 ${overlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} aria-live="polite">
           <div className="flex flex-col items-center gap-5">
-            <div className={`w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#E8A838] border-t-transparent rounded-full ${prefersReducedMotion ? '' : 'animate-spin'}`} />
+            <div className={`w-16 h-16 md:w-20 md:h-20 border-[3px] border-gold border-t-transparent rounded-full ${prefersReducedMotion ? '' : 'animate-spin'}`} />
             <p className="text-white/60 text-sm tracking-widest uppercase">{t('hero.section.loading')}</p>
           </div>
         </div>

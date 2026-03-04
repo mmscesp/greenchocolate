@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export function SafetyKitFunnel() {
-  const { t, lang } = useLanguage();
+  const { t, language } = useLanguage();
   
   // States: 'email' -> 'age_gate' -> 'download' | 'rejected'
   const [step, setStep] = useState<'email' | 'age_gate' | 'download' | 'rejected'>('email');
@@ -57,12 +57,12 @@ export function SafetyKitFunnel() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12 bg-black/50 border-white/10 focus-visible:ring-[#E8A838]/50 text-white placeholder:text-zinc-500 rounded-xl"
+                className="h-12 bg-black/50 border-white/10 focus-visible:ring-gold/50 text-white placeholder:text-zinc-500 rounded-xl"
               />
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="h-12 bg-[#E8A838] hover:bg-[#d4962e] text-black font-bold rounded-xl transition-all duration-200 text-sm uppercase tracking-wide w-full"
+                className="h-12 bg-gold hover:bg-gold-dark text-black font-bold rounded-xl transition-all duration-200 text-sm uppercase tracking-wide w-full"
               >
                 {isSubmitting ? '...' : t('safety_kit.form_button')}
               </Button>
@@ -88,7 +88,7 @@ export function SafetyKitFunnel() {
             <div className="flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={() => handleAgeAnswer(true)}
-                className="flex-1 min-h-[48px] py-3 px-4 bg-[#E8A838] hover:bg-[#d4962e] text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm shadow-lg shadow-[#E8A838]/20 border border-[#E8A838]/30"
+                className="flex-1 min-h-[48px] py-3 px-4 bg-gold hover:bg-gold-dark text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm shadow-lg shadow-gold/20 border border-gold/30"
               >
                 {t('safety_kit.age_yes')}
               </button>
@@ -153,14 +153,14 @@ export function SafetyKitFunnel() {
             </p>
             
             <div className="space-y-3">
-              <Link href={`/${lang}/directory`} className="block w-full p-3 rounded-lg border border-white/5 bg-black/30 hover:bg-black/50 hover:border-[#E8A838]/30 transition-all text-left group">
+              <Link href={`/${language}/clubs`} className="block w-full p-3 rounded-lg border border-white/5 bg-black/30 hover:bg-black/50 hover:border-gold/30 transition-all text-left group">
                 <span className="block text-[10px] uppercase tracking-widest text-zinc-500 font-medium mb-1">{t('safety_kit.dl_cta1')}</span>
-                <span className="flex items-center text-sm text-[#E8A838] group-hover:text-[#f3c162]">
+                <span className="flex items-center text-sm text-gold group-hover:text-gold-light">
                   {t('safety_kit.dl_cta1_btn')}
                 </span>
               </Link>
               
-              <Link href={`/${lang}/editorial/legal`} className="block w-full p-3 rounded-lg border border-white/5 bg-black/30 hover:bg-black/50 hover:border-[#E8A838]/30 transition-all text-left group">
+              <Link href={`/${language}/editorial/legal`} className="block w-full p-3 rounded-lg border border-white/5 bg-black/30 hover:bg-black/50 hover:border-gold/30 transition-all text-left group">
                 <span className="block text-[10px] uppercase tracking-widest text-zinc-500 font-medium mb-1">{t('safety_kit.dl_cta2')}</span>
                 <span className="flex items-center text-sm text-white group-hover:text-zinc-300">
                   {t('safety_kit.dl_cta2_btn')}

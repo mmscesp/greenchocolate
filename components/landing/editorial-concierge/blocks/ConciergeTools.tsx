@@ -89,7 +89,7 @@ export function ConciergeTools() {
                   {[0, 1, 2].map(i => (
                     <div
                       key={i}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${i === step ? 'w-8 bg-[#E8A838]' : i < step ? 'w-2 bg-zinc-800' : 'w-2 bg-zinc-200'}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${i === step ? 'w-8 bg-gold' : i < step ? 'w-2 bg-zinc-800' : 'w-2 bg-zinc-200'}`}
                     />
                   ))}
                 </div>
@@ -102,7 +102,7 @@ export function ConciergeTools() {
                     <button
                       key={opt}
                       onClick={() => handleAnswer(opt)}
-                      className="w-full py-4 px-6 text-left bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-[#E8A838] rounded-xl text-zinc-900 font-bold transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#E8A838]/50"
+                      className="w-full py-4 px-6 text-left bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-gold rounded-xl text-zinc-900 font-bold transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gold/50"
                     >
                       {opt}
                     </button>
@@ -126,28 +126,28 @@ export function ConciergeTools() {
                 </h3>
 
                 <div className="space-y-4 mb-8">
-                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
+                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-gold/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">1</div>
                     <div>
                       <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_1.title')}</h4>
                       <p className="text-sm text-zinc-500 mt-1">{t('landing.concierge_tools.result.steps.step_1.body')}</p>
                     </div>
                   </div>
-                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
+                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-gold/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">2</div>
                     <div>
                       <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_2.title')}</h4>
                       <p className="text-sm text-zinc-500 mt-1">{t('landing.concierge_tools.result.steps.step_2.body')}</p>
                     </div>
                   </div>
-                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
+                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-gold/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">3</div>
                     <div>
                       <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_3.title_prefix')} {getResult().city} {t('landing.concierge_tools.result.steps.step_3.title_suffix')}</h4>
                       <p className="text-sm text-zinc-500 mt-1">{t('landing.concierge_tools.result.steps.step_3.body')}</p>
                     </div>
                   </div>
-                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-[#E8A838]/30 transition-colors cursor-pointer">
+                  <div className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 flex gap-4 items-start group hover:border-gold/30 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-zinc-200 flex items-center justify-center font-bold text-zinc-600 shrink-0">4</div>
                     <div>
                       <h4 className="font-bold text-zinc-900">{t('landing.concierge_tools.result.steps.step_4.title')}</h4>

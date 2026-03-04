@@ -61,7 +61,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-gold/5 blur-[120px]" />
         <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-[#E8A838]/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
       </div>
 
       {/* Hero Section */}
@@ -187,7 +187,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
               <div className="text-center group">
                 <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20 group-hover:scale-110 transition-transform duration-500">
                   <Scale className="w-8 h-8 text-gold" />
-                  <Scale className="w-8 h-8 text-[#E8A838]" />
+                  <Scale className="w-8 h-8 text-gold" />
                 </div>
                 <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.legal.title')}</H4>
                 <Text size="sm" variant="muted" className="text-zinc-500">
@@ -197,7 +197,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
               <div className="text-center group">
                 <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20 group-hover:scale-110 transition-transform duration-500">
                   <Shield className="w-8 h-8 text-gold" />
-                  <Shield className="w-8 h-8 text-[#E8A838]" />
+                  <Shield className="w-8 h-8 text-gold" />
                 </div>
                 <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.harm_reduction.title')}</H4>
                 <Text size="sm" variant="muted" className="text-zinc-500">
@@ -207,7 +207,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
               <div className="text-center group">
                 <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20 group-hover:scale-110 transition-transform duration-500">
                   <BookOpen className="w-8 h-8 text-gold" />
-                  <BookOpen className="w-8 h-8 text-[#E8A838]" />
+                  <BookOpen className="w-8 h-8 text-gold" />
                 </div>
                 <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.updated.title')}</H4>
                 <Text size="sm" variant="muted" className="text-zinc-500">

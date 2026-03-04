@@ -46,7 +46,7 @@ export function RealityCheck() {
   ];
 
   return (
-    <section className="bg-[#0a0a0a] pt-24 pb-32 px-4 md:px-8 border-t border-white/5 relative z-10">
+    <section className="bg-bg-base pt-24 pb-32 px-4 md:px-8 border-t border-white/5 relative z-10">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4 leading-tight">
@@ -68,12 +68,12 @@ export function RealityCheck() {
             <motion.div
               key={idx}
               variants={cardVariants}
-              className="bg-[#111] border border-white/10 p-6 md:p-8 rounded-2xl flex flex-col shadow-xl"
+              className="bg-bg-surface border border-white/10 p-6 md:p-8 rounded-2xl flex flex-col shadow-xl"
             >
               <div className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-4">
                 {card.title}
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-[#E8A838] mb-6 leading-snug">
+              <h3 className="text-xl md:text-2xl font-bold text-gold mb-6 leading-snug">
                 {card.myth}
               </h3>
               <p className="text-base text-white/80 leading-relaxed font-medium">
@@ -92,7 +92,7 @@ export function RealityCheck() {
         >
           <Link
             href={`/${language}/editorial/legal`}
-            className="inline-flex items-center text-[#E8A838] hover:text-[#d4962e] font-bold text-lg transition-colors group"
+            className="inline-flex items-center text-gold hover:text-gold-dark font-bold text-lg transition-colors group"
           >
             {t('landing.reality_check.cta')}
             <span className="ml-2 transform transition-transform group-hover:translate-x-1">→</span>

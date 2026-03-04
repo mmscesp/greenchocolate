@@ -66,7 +66,7 @@ function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAu
               <ConciergeLabel size="xs" className="text-zinc-400">{t('club_profile.trust_strip.last_audit')}: {lastAudit || t('club_profile.trust_strip.last_audit_fallback')}</ConciergeLabel>
               <ConciergeLabel size="xs" className="text-gold/80">• {t('club_profile.trust_strip.education_first')}</ConciergeLabel>
               <ConciergeLabel size="xs" className="text-gold/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
-              <ConciergeLabel size="xs" className="text-[#E8A838]/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
+              <ConciergeLabel size="xs" className="text-gold/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
             </div>
           )}
         </div>
@@ -263,7 +263,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-gold/10 rounded-full flex items-center justify-center border border-gold/20">
                 <Sparkles className="h-5 w-5 text-gold" />
-                <Sparkles className="h-5 w-5 text-[#E8A838]" />
+                <Sparkles className="h-5 w-5 text-gold" />
               </div>
               <EditorialHeading size="md" className="text-white">{t('club_profile.experience')}</EditorialHeading>
             </div>
@@ -344,7 +344,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Stats Card */}
-            <div className="bg-[#111] text-white rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-white/5">
+            <div className="bg-bg-surface text-white rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-white/5">
               <div className="absolute top-0 right-0 p-8 opacity-[0.03]">
                 <Cannabis className="h-32 w-32" />
               </div>
@@ -396,7 +396,6 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   {club.website && (
                     <a href={`https://${club.website}`} className="flex items-center gap-3 text-white hover:text-gold transition-colors group">
                       <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-gold/10 transition-colors border border-white/5 group-hover:border-gold/20">
-                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#E8A838]/10 transition-colors border border-white/5 group-hover:border-[#E8A838]/20">
                         <Globe className="h-5 w-5" />
                       </div>
                       <span className="font-bold underline decoration-gold/30 underline-offset-4 group-hover:decoration-gold uppercase tracking-widest text-[10px]">{club.website}</span>
@@ -411,7 +410,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 </div>
               </div>
               
-              <div className="bg-[#111] rounded-[2rem] p-6 sm:p-8 flex flex-col justify-center items-center text-center border border-white/5 shadow-2xl">
+              <div className="bg-bg-surface rounded-[2rem] p-6 sm:p-8 flex flex-col justify-center items-center text-center border border-white/5 shadow-2xl">
                 <ConciergeLabel className="mb-4 text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('club_profile.ready_to_join')}</ConciergeLabel>
                 <EditorialHeading size="md" className="mb-8 text-white">{t('club_profile.apply_for_membership')}</EditorialHeading>
                 <Button
@@ -444,7 +443,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
             >
               {/* Modal Header */}
-              <div className="relative h-40 bg-[#111] overflow-hidden">
+              <div className="relative h-40 bg-bg-surface overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-base z-10" />
                 <Image src={club.images[0]} alt="Header" fill className="object-cover opacity-40" />
                 <div className="absolute bottom-0 left-0 p-8 z-20">
@@ -485,7 +484,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   <div className="space-y-4">
                     <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
                       {t('club_profile.form.personal_message')} <span className="text-gold">*</span>
-                      {t('club_profile.form.personal_message')} <span className="text-[#E8A838]">*</span>
+                      {t('club_profile.form.personal_message')} <span className="text-gold">*</span>
                     </label>
                     <textarea
                       name="message"

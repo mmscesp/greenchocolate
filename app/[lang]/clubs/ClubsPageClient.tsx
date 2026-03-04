@@ -151,7 +151,6 @@ export default function ClubsPageClient({
                 <div className="flex items-center gap-3 mb-2 sm:mb-4">
                   <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-gold animate-pulse shadow-[0_0_10px_hsl(var(--gold))]" />
                   <ConciergeLabel size="xs" className="text-gold tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
-                  <ConciergeLabel size="xs" className="text-[#E8A838] tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
                 </div>
                 <p className="text-zinc-200 text-base sm:text-xl leading-relaxed font-serif italic max-w-2xl">
                   "{t('clubs.sidebar.concierge_quote')}"

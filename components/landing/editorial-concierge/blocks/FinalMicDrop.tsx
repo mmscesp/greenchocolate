@@ -40,11 +40,11 @@ export function FinalMicDrop() {
                 placeholder={t('landing.final_mic_drop.email_placeholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-xl text-xl text-center text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E8A838] transition-all"
+                className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-xl text-xl text-center text-white placeholder:text-zinc-600 focus:outline-none focus:border-gold transition-all"
               />
               <button
                 type="submit"
-                className="w-full px-8 py-5 bg-[#E8A838] hover:bg-[#d4962e] text-black font-black text-xl rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full px-8 py-5 bg-gold hover:bg-gold-dark text-black font-black text-xl rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 {t('landing.final_mic_drop.cta')}
               </button>

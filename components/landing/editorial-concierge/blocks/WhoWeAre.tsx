@@ -58,7 +58,7 @@ export function WhoWeAre() {
             {t('landing.who_we_are.header.title_line_1')}<br />
             <span className="text-zinc-400">{t('landing.who_we_are.header.title_line_2')}</span>
           </h2>
-          <div className="space-y-6 text-lg md:text-xl font-medium text-zinc-600 leading-relaxed max-w-3xl border-l-4 border-[#E8A838] pl-6 md:pl-8">
+          <div className="space-y-6 text-lg md:text-xl font-medium text-zinc-600 leading-relaxed max-w-3xl border-l-4 border-gold pl-6 md:pl-8">
             <p>
               {t('landing.who_we_are.header.paragraph_1')}
             </p>
@@ -87,11 +87,11 @@ export function WhoWeAre() {
               variants={cardVariants}
               className="flex flex-col h-full group"
             >
-              <div className="mb-6 pb-6 border-b-2 border-zinc-100 group-hover:border-[#E8A838] transition-colors duration-500">
+              <div className="mb-6 pb-6 border-b-2 border-zinc-100 group-hover:border-gold transition-colors duration-500">
                 <h3 className="text-5xl md:text-6xl font-black font-serif text-zinc-900 tracking-tighter mb-2">
                   {pillar.label}
                 </h3>
-                <span className="text-sm font-bold uppercase tracking-widest text-[#E8A838]">
+                <span className="text-sm font-bold uppercase tracking-widest text-gold">
                   {pillar.when}
                 </span>
               </div>

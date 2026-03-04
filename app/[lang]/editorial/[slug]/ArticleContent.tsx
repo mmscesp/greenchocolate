@@ -80,7 +80,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 via-black to-black pointer-events-none" />
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#E8A838]/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px]" />
       </div>
 
       {/* Back to Editorial link */}
@@ -199,7 +199,6 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               <div className="p-8 bg-zinc-900/40 border border-white/10 rounded-3xl shadow-xl relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <h4 className="text-[10px] font-bold uppercase tracking-widest text-gold mb-8 flex items-center gap-2">
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8 flex items-center gap-2">
                   <Shield className="h-4 w-4" /> {t('article.vetting_process')}
                 </h4>
                 <ul className="space-y-5 text-[13px] font-medium text-zinc-400">

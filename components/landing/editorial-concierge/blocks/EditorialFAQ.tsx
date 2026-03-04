@@ -36,7 +36,7 @@ export function EditorialFAQ() {
   ];
 
   return (
-    <section className="bg-[#0a0a0a] py-24 md:py-32 px-4 md:px-8 border-t border-white/5">
+    <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 border-t border-white/5">
       <div className="max-w-3xl mx-auto">
         <div className="mb-16 md:mb-20 text-center">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight">
@@ -65,7 +65,7 @@ export function EditorialFAQ() {
 
         <div className="space-y-4">
           {faqs.map((faq, i) => (
-            <div key={i} className="group bg-[#111] rounded-2xl border border-white/5 overflow-hidden transition-colors hover:border-white/10">
+            <div key={i} className="group bg-bg-surface rounded-2xl border border-white/5 overflow-hidden transition-colors hover:border-white/10">
               <button
                 type="button"
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -75,7 +75,7 @@ export function EditorialFAQ() {
                 <h4 className="text-lg md:text-xl font-bold text-white pr-8">
                   {faq.q}
                 </h4>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all duration-300 ${openIndex === i ? 'bg-[#E8A838] border-[#E8A838] text-black rotate-45' : 'border-white/10 text-zinc-500'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all duration-300 ${openIndex === i ? 'bg-gold border-gold text-black rotate-45' : 'border-white/10 text-zinc-500'}`}>
                   <Plus className="w-4 h-4" />
                 </div>
               </button>

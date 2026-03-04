@@ -60,7 +60,7 @@ export default function FavoritesPage() {
             </div>
             <div className="bg-gold/10 p-3 rounded-full border border-gold/20">
               <Heart className="h-6 w-6 text-gold" />
-              <Heart className="h-6 w-6 text-[#E8A838]" />
+              <Heart className="h-6 w-6 text-gold" />
             </div>
           </CardContent>
         </Card>

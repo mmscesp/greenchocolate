@@ -82,8 +82,8 @@ export default function Navbar() {
           isScrolled
             ? 'glass-liquid rounded-full px-6 py-2'
             : isHomepage
-              ? 'w-full px-4 md:px-8 py-4 bg-transparent border-transparent'
-              : 'w-full px-4 md:px-8 py-4 bg-white/60 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl border-b border-black/10 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]'
+              ? 'w-full px-4 md:px-8 py-3 md:py-4 bg-transparent border-transparent'
+              : 'w-full px-4 md:px-8 py-3 md:py-4 bg-white/60 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl border-b border-black/10 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]'
         )}
       >
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
@@ -93,7 +93,7 @@ export default function Navbar() {
               href={localizedHomePath}
               size={isScrolled ? 'md' : 'lg'}
               showText={false}
-              className="gap-3"
+              className="gap-3 scale-90 md:scale-100 origin-left transition-transform"
               imageClassName="drop-shadow-[0_1px_4px_rgba(0,0,0,0.25)]"
               priority
             />
@@ -116,7 +116,7 @@ export default function Navbar() {
           {/* Desktop Actions Section */}
           <div className={cn('hidden md:flex items-center gap-3')}>
             <Link href={withLocale('/safety-kit')}>
-              <button className="px-5 py-2 text-sm font-bold bg-[#E8A838] text-black rounded-full hover:bg-[#d4962e] transition-colors shadow-sm">
+              <button className="px-5 py-2 text-sm font-bold bg-gold text-black rounded-full hover:bg-gold-dark transition-colors shadow-sm">
                 Get the Safety Kit
               </button>
             </Link>
@@ -147,14 +147,14 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             id="mobile-site-menu"
-            className="fixed inset-0 z-40 md:hidden glass-liquid pt-24 px-6 pb-6 flex flex-col gap-6 overflow-y-auto overscroll-contain"
+            className="fixed inset-x-0 top-0 h-[100dvh] z-40 md:hidden glass-liquid pt-20 px-6 pb-[env(safe-area-inset-bottom,24px)] flex flex-col gap-4 overflow-y-auto overscroll-contain"
           >
             {/* Rich Profile Header inside Mobile Menu */}
-            <div className="pb-4 border-b border-white/10">
+            <div className="pb-4 border-b border-white/10 shrink-0">
               <UserProfileDropdown variant="mobile-menu-row" onMobileClose={closeMobileMenu} />
             </div>
 
-            <div className="flex flex-col gap-6 text-2xl font-semibold text-white/90 pt-2">
+            <div className="flex flex-col gap-4 text-xl font-semibold text-white/90 pt-2 shrink-0">
               <Link href={withLocale('/editorial')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.guides')}
               </Link>
@@ -164,12 +164,12 @@ export default function Navbar() {
               <Link href={withLocale('/events')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.events')}
               </Link>
-              <div className="pt-4 border-t border-white/10 flex flex-col gap-6">
+              <div className="pt-4 border-t border-white/10 flex flex-col gap-4">
                 <span className="block text-sm uppercase tracking-wider text-white/50">{t('nav.cities')}</span>
                 {desktopExploreItems.map(({ href, titleKey, comingSoon }) => {
                   if (comingSoon || !href) {
                     return (
-                      <div key={titleKey} className="flex items-center justify-between gap-3 text-white/60 text-xl font-medium cursor-not-allowed" aria-disabled="true">
+                      <div key={titleKey} className="flex items-center justify-between gap-3 text-white/60 text-lg font-medium cursor-not-allowed" aria-disabled="true">
                         <span>{t(titleKey)}</span>
                         <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/80">
                           {t('nav.coming_soon')}
@@ -179,7 +179,7 @@ export default function Navbar() {
                   }
 
                   return (
-                    <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="block hover:text-white/85 hover:text-white transition-colors text-xl font-medium">
+                    <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="block hover:text-white/85 hover:text-white transition-colors text-lg font-medium">
                       {t(titleKey)}
                     </Link>
                   );
@@ -187,9 +187,9 @@ export default function Navbar() {
               </div>
             </div>
 
-            <div className="mt-auto pb-12 flex flex-col gap-6 border-t border-white/10 pt-8">
+            <div className="mt-auto pb-8 flex flex-col gap-6 border-t border-white/10 pt-6 shrink-0">
               <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="w-full">
-                <button className="w-full py-4 text-lg font-bold bg-[#E8A838] text-black rounded-full hover:bg-[#d4962e] transition-colors shadow-sm">
+                <button className="w-full py-3 text-base font-bold bg-gold text-black rounded-full hover:bg-gold-dark transition-colors shadow-sm">
                   Get the Safety Kit
                 </button>
               </Link>

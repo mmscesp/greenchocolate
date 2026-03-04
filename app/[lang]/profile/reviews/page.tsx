@@ -133,31 +133,32 @@ export default function ReviewsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.total')}</p>
               <p className="text-3xl font-serif text-white">{reviews.length}</p>
             </div>
-            <div className="bg-[#E8A838]/10 p-3 rounded-full border border-[#E8A838]/20">
-              <MessageCircle className="h-6 w-6 text-[#E8A838]" />
+            <div className="bg-gold/10 p-3 rounded-full border border-gold/20">
+              <MessageCircle className="h-6 w-6 text-gold" />
+              <MessageCircle className="h-6 w-6 text-gold" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.average_rating')}</p>
               <p className="text-3xl font-serif text-white">{averageRating.toFixed(1)}</p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
-              <Star className="h-6 w-6 text-[#E8A838]" />
+              <Star className="h-6 w-6 text-gold" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.total_likes')}</p>
@@ -171,7 +172,7 @@ export default function ReviewsPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.replies')}</p>
@@ -187,7 +188,7 @@ export default function ReviewsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+      <Card className="shadow-2xl bg-bg-base border border-white/5">
         <CardContent className="p-5">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
@@ -197,7 +198,7 @@ export default function ReviewsPage() {
                 placeholder={t('reviews.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-[#E8A838]/50 focus:ring-[#E8A838]/20 h-11 rounded-xl"
+                className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-gold/50 focus:ring-gold/20 h-11 rounded-xl"
               />
             </div>
 
@@ -208,10 +209,10 @@ export default function ReviewsPage() {
                   value={ratingFilter.toString()}
                   onValueChange={(value) => setRatingFilter(Number(value))}
                 >
-                  <SelectTrigger className="w-full sm:w-40 min-h-11 pl-9 bg-white/5 border-white/10 text-white rounded-xl focus:ring-[#E8A838]/20 focus:border-[#E8A838]/50">
+                  <SelectTrigger className="w-full sm:w-40 min-h-11 pl-9 bg-white/5 border-white/10 text-white rounded-xl focus:ring-gold/20 focus:border-gold/50">
                     <SelectValue placeholder={t('reviews.filter.all')} />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#0A0A0A] border border-white/10 text-white">
+                  <SelectContent className="bg-bg-base border border-white/10 text-white">
                     <SelectItem value="0" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.all')}</SelectItem>
                     <SelectItem value="5" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.5_stars')}</SelectItem>
                     <SelectItem value="4" className="focus:bg-white/10 focus:text-white">{t('reviews.filter.4_stars')}</SelectItem>
@@ -230,13 +231,13 @@ export default function ReviewsPage() {
       {filteredReviews.length > 0 ? (
         <div className="space-y-4">
           {filteredReviews.map(review => (
-            <Card key={review.id} className="hover:shadow-2xl hover:border-[#E8A838]/30 transition-all duration-300 overflow-hidden bg-[#0A0A0A] border border-white/5">
+            <Card key={review.id} className="hover:shadow-2xl hover:border-gold/30 transition-all duration-300 overflow-hidden bg-bg-base border border-white/5">
               <CardContent className="p-6">
                 {/* Review Header */}
                 <div className="flex items-start gap-5 mb-5">
-                  <Avatar className="h-16 w-16 rounded-2xl border-2 border-[#E8A838]/20 shadow-lg">
+                  <Avatar className="h-16 w-16 rounded-2xl border-2 border-gold/20 shadow-lg">
                     <AvatarImage src={review.clubImage} alt={review.clubName} className="object-cover" />
-                    <AvatarFallback className="rounded-2xl bg-[#E8A838] text-black font-black uppercase text-xl">{review.clubName[0]}</AvatarFallback>
+                    <AvatarFallback className="rounded-2xl bg-gold text-black font-black uppercase text-xl">{review.clubName[0]}</AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0 pt-1">
@@ -244,18 +245,18 @@ export default function ReviewsPage() {
                       <div className="min-w-0">
                         <Link
                           href={`/${language}/clubs/${review.clubId}`}
-                          className="text-xl font-serif text-white hover:text-[#E8A838] transition-colors truncate block mb-1"
+                          className="text-xl font-serif text-white hover:text-gold transition-colors truncate block mb-1"
                         >
                           {review.clubName}
                         </Link>
                         <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
                           <div className="flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 text-[#E8A838]" />
+                            <MapPin className="h-3.5 w-3.5 text-gold" />
                             <span>{review.clubNeighborhood}</span>
                           </div>
                           <span className="text-zinc-700">•</span>
                           <div className="flex items-center gap-1.5">
-                            <Calendar className="h-3.5 w-3.5 text-[#E8A838]" />
+                            <Calendar className="h-3.5 w-3.5 text-gold" />
                             <span>{new Date(review.date).toLocaleDateString()}</span>
                           </div>
                         </div>
@@ -288,7 +289,7 @@ export default function ReviewsPage() {
                     <div className="flex items-center gap-1">
                       {renderStars(review.rating)}
                     </div>
-                    <Badge variant="secondary" className="text-[9px] font-bold bg-[#E8A838]/10 text-[#E8A838] border border-[#E8A838]/20 px-2 py-0.5 rounded-md">
+                    <Badge variant="secondary" className="text-[9px] font-bold bg-gold/10 text-gold border border-gold/20 px-2 py-0.5 rounded-md">
                       {review.rating}/5
                     </Badge>
                   </div>
@@ -298,18 +299,18 @@ export default function ReviewsPage() {
                 </div>
 
                 {/* Review Content */}
-                <p className="text-zinc-400 leading-relaxed mb-6 font-serif italic pl-1 border-l-2 border-[#E8A838]/30">
+                <p className="text-zinc-400 leading-relaxed mb-6 font-serif italic pl-1 border-l-2 border-gold/30">
                   "{review.content}"
                 </p>
 
                 {/* Review Stats */}
                 <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-white/5">
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
-                    <ThumbsUp className="h-4 w-4 text-[#E8A838]" />
+                    <ThumbsUp className="h-4 w-4 text-gold" />
                     <span>{review.likes} {t('reviews.likes')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
-                    <MessageCircle className="h-4 w-4 text-[#E8A838]" />
+                    <MessageCircle className="h-4 w-4 text-gold" />
                     <span>{review.replies} {t('reviews.replies')}</span>
                   </div>
                 </div>
@@ -318,7 +319,7 @@ export default function ReviewsPage() {
           ))}
         </div>
       ) : (
-        <Card className="max-w-md mx-auto text-center py-12 shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="max-w-md mx-auto text-center py-12 shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-8">
             <div className="bg-white/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
               {searchQuery || ratingFilter ? (
@@ -338,7 +339,7 @@ export default function ReviewsPage() {
             </p>
             {!searchQuery && !ratingFilter && (
               <Link href={`/${language}/clubs`}>
-                <Button className="bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
+                <Button className="bg-gold text-black hover:bg-gold-dark rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                   {t('nav.explore')}
                 </Button>
               </Link>

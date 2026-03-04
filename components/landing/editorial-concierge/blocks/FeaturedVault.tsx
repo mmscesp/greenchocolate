@@ -79,7 +79,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
           </div>
           <Link
             href={`/${language}/editorial`}
-            className="hidden md:flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-[#E8A838] transition-colors"
+            className="hidden md:flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-gold transition-colors"
           >
             {t('landing.featured_vault.all_guides')} <ArrowRight className="w-4 h-4" />
           </Link>
@@ -107,7 +107,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
                 </div>
 
                 <div className="flex flex-col h-auto">
-                  <h3 className="text-2xl md:text-3xl font-bold font-serif text-zinc-900 leading-tight mb-3 group-hover:text-[#E8A838] transition-colors duration-300">
+                  <h3 className="text-2xl md:text-3xl font-bold font-serif text-zinc-900 leading-tight mb-3 group-hover:text-gold transition-colors duration-300">
                     {item.title}
                   </h3>
                   <p className="text-zinc-600 font-medium leading-relaxed mb-4 line-clamp-2 text-base md:text-lg">
@@ -131,7 +131,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
         <div className="mt-16 pt-16 border-t border-zinc-200 md:hidden flex justify-center">
           <Link
             href={`/${language}/editorial`}
-            className="flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-[#E8A838] transition-colors"
+            className="flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-500 hover:text-gold transition-colors"
           >
             {t('landing.featured_vault.all_guides')} <ArrowRight className="w-4 h-4" />
           </Link>
@@ -147,7 +147,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
             <input
               type="email"
               placeholder={t('landing.featured_vault.newsletter.email_placeholder')}
-              className="flex-1 md:w-64 px-4 py-3 bg-white border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-[#E8A838] focus:ring-1 focus:ring-[#E8A838]"
+              className="flex-1 md:w-64 px-4 py-3 bg-white border border-zinc-300 rounded-lg text-sm focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold"
             />
             <button
               type="submit"

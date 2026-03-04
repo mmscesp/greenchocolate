@@ -58,17 +58,17 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
     { name: t('user.bookings'), href: '/profile/bookings', icon: Calendar },
     { name: t('user.notifications'), href: '/profile/notifications', icon: Bell },
     { name: t('user.settings'), href: '/profile/settings', icon: Settings },
-    { name: t('user.upgrade_premium'), href: '/profile/premium', icon: CreditCard },
+    { name: t('user.upgrade_premium'), href: '/profile/settings', icon: CreditCard },
   ];
 
   const showText = !isCollapsed || isMobile;
   const withLocale = (path: string) => `/${language}${path}`;
 
   return (
-    <div className={cn('flex flex-col h-full bg-[#0A0A0A] text-white border-r border-white/5', className)}>
+    <div className={cn('flex flex-col h-full bg-bg-base text-white border-r border-white/5', className)}>
       {isMobile && (
         <div className="flex items-center gap-2 h-20 border-b border-white/5 bg-black/80 backdrop-blur-md sticky top-0 z-10 px-8">
-          <div className="bg-[#E8A838]/10 p-2 rounded-xl border border-[#E8A838]/20 shrink-0">
+          <div className="bg-gold/10 p-2 rounded-xl border border-gold/20 shrink-0">
             <LogoIcon size="sm" />
           </div>
           <span className="text-xl font-serif tracking-tight text-white">{t('brand.name')}</span>
@@ -89,12 +89,12 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
         >
           <Avatar
             className={cn(
-              'border-2 border-[#E8A838]/20 shadow-xl transition-all duration-300',
+              'border-2 border-gold/20 shadow-xl transition-all duration-300',
               isCollapsed && !isMobile ? 'h-10 w-10' : 'h-14 w-14'
             )}
           >
             <AvatarImage src={avatarUrl || ''} />
-            <AvatarFallback className="bg-[#E8A838] text-black font-black uppercase">
+            <AvatarFallback className="bg-gold text-black font-black uppercase">
               {displayName.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -130,7 +130,7 @@ function ProfileSidebarContent({ className, isCollapsed = false, onClose, isMobi
                 className={cn(
                   'group relative flex min-h-12 items-center gap-4 px-4 py-3 rounded-2xl text-[11px] font-bold uppercase tracking-widest transition-all duration-300',
                   isActive
-                    ? 'bg-[#E8A838] text-black shadow-lg shadow-[#E8A838]/20'
+                    ? 'bg-gold text-black shadow-lg shadow-gold/20'
                     : 'text-zinc-500 hover:text-white hover:bg-white/5',
                   isCollapsed && !isMobile ? 'justify-center px-0' : ''
                 )}
@@ -215,7 +215,7 @@ export function ProfileSidebar({
   return (
     <aside
       className={cn(
-        'hidden lg:flex flex-col sticky top-16 h-[calc(100vh-64px)] z-30 transition-all duration-300 ease-in-out border-r border-white/5 bg-[#0A0A0A]',
+        'hidden lg:flex flex-col sticky top-16 h-[calc(100vh-64px)] z-30 transition-all duration-300 ease-in-out border-r border-white/5 bg-bg-base',
         isCollapsed ? 'w-24' : 'w-72',
         className
       )}
@@ -248,7 +248,7 @@ export function ProfileMobileNav() {
           <span className="sr-only">{t('common.toggle_menu')}</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-[85vw] max-w-80 border-r-0 shadow-2xl bg-[#0A0A0A]">
+      <SheetContent side="left" className="p-0 w-[85vw] max-w-80 border-r-0 shadow-2xl bg-bg-base">
         <SheetHeader className="sr-only">
           <SheetTitle>{t('profile.nav.title')}</SheetTitle>
         </SheetHeader>

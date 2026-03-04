@@ -31,9 +31,9 @@ export function VerificationStandard() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
           {/* Club Card 1 */}
-          <div className="bg-black border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-[#E8A838]/50 transition-colors duration-300">
+          <div className="bg-black border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-gold/50 transition-colors duration-300">
             <div className="flex justify-between items-start mb-6">
-              <span className="px-3 py-1 bg-[#E8A838] text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
+              <span className="px-3 py-1 bg-gold text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
                 Barcelona
               </span>
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
@@ -44,18 +44,18 @@ export function VerificationStandard() {
               <p><span className="text-zinc-300">{t('landing.verification_standard.labels.visitor_policy')}</span> {t('landing.verification_standard.cards.barcelona.visitor_policy')}</p>
               <p><span className="text-zinc-300">{t('landing.verification_standard.labels.response_time')}</span> {t('landing.verification_standard.cards.barcelona.response_time')}</p>
             </div>
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gold mb-8">
               <CheckCircle2 className="w-4 h-4" /> {t('landing.verification_standard.verified_badge')}
             </div>
-            <Link href={`/${language}/clubs`} className="text-white hover:text-[#E8A838] text-sm font-bold flex items-center gap-2 transition-colors">
+            <Link href={`/${language}/clubs`} className="text-white hover:text-gold text-sm font-bold flex items-center gap-2 transition-colors">
               {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
           {/* Club Card 2 */}
-          <div className="bg-black border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-[#E8A838]/50 transition-colors duration-300">
+          <div className="bg-black border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-gold/50 transition-colors duration-300">
             <div className="flex justify-between items-start mb-6">
-              <span className="px-3 py-1 bg-[#E8A838] text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
+              <span className="px-3 py-1 bg-gold text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
                 Madrid
               </span>
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
@@ -66,19 +66,19 @@ export function VerificationStandard() {
               <p><span className="text-zinc-300">{t('landing.verification_standard.labels.visitor_policy')}</span> {t('landing.verification_standard.cards.madrid.visitor_policy')}</p>
               <p><span className="text-zinc-300">{t('landing.verification_standard.labels.response_time')}</span> {t('landing.verification_standard.cards.madrid.response_time')}</p>
             </div>
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-8">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gold mb-8">
               <CheckCircle2 className="w-4 h-4" /> {t('landing.verification_standard.verified_badge')}
             </div>
-            <Link href={`/${language}/clubs`} className="text-white hover:text-[#E8A838] text-sm font-bold flex items-center gap-2 transition-colors">
+            <Link href={`/${language}/clubs`} className="text-white hover:text-gold text-sm font-bold flex items-center gap-2 transition-colors">
               {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
           {/* Coming Next Card */}
           <div className="bg-black/50 border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(232,168,56,0.05),transparent)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--gold)/0.05),transparent)] pointer-events-none" />
             <div className="relative z-10 w-full">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-2">{t('landing.verification_standard.next_verified')}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-2">{t('landing.verification_standard.next_verified')}</p>
               <p className="text-xl font-bold text-white mb-8">{t('landing.verification_standard.next_week')}</p>
               
               {isSubmitted ? (
@@ -93,7 +93,7 @@ export function VerificationStandard() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-[#E8A838] focus:ring-1 focus:ring-[#E8A838] transition-all"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all"
                   />
                   <button
                     type="submit"

@@ -16,12 +16,12 @@ export function TrustStrip() {
   ];
 
   return (
-    <div className="w-full h-12 md:h-14 bg-[#141414] overflow-hidden flex items-center border-y border-white/5 relative z-40 select-none">
+    <div className="w-full h-12 md:h-14 bg-bg-surface overflow-hidden flex items-center border-y border-white/5 relative z-40 select-none">
       {/* Desktop View */}
       <div className="hidden lg:flex items-center justify-center w-full max-w-7xl mx-auto gap-4 xl:gap-6 px-4">
         {phrases.map((phrase, i) => (
           <React.Fragment key={i}>
-            <span className="text-[10px] xl:text-[11px] font-semibold uppercase tracking-wider text-[#E8A838]/80 whitespace-nowrap">
+            <span className="text-[10px] xl:text-[11px] font-semibold uppercase tracking-wider text-gold/80 whitespace-nowrap">
               {phrase}
             </span>
             {i < phrases.length - 1 && (
@@ -37,7 +37,7 @@ export function TrustStrip() {
           {/* We duplicate the array multiple times to ensure seamless infinite scrolling */}
           {[...phrases, ...phrases, ...phrases, ...phrases].map((phrase, i) => (
             <React.Fragment key={i}>
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[#E8A838]/80 mx-3 sm:mx-4">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-gold/80 mx-3 sm:mx-4">
                 {phrase}
               </span>
               <span className="text-white/30 text-xs mx-1">&middot;</span>
