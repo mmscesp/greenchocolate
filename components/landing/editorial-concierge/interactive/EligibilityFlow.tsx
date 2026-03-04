@@ -66,7 +66,7 @@ export function EligibilityFlow() {
                   key={i}
                   className={`
                     h-1 rounded-full transition-all duration-500
-                    ${i === step ? 'w-8 bg-emerald-500' : i < step ? 'w-2 bg-emerald-500/60' : 'w-2 bg-zinc-700'}
+                    ${i === step ? 'w-8 bg-[#E8A838]' : i < step ? 'w-2 bg-[#E8A838]/60' : 'w-2 bg-zinc-700'}
                   `}
                 />
               ))}
@@ -74,7 +74,7 @@ export function EligibilityFlow() {
 
             {/* Step number */}
             <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mx-auto mb-6">
-              <span className="font-serif text-emerald-400 text-lg font-bold">{step + 1}</span>
+              <span className="font-serif text-[#E8A838] text-lg font-bold">{step + 1}</span>
             </div>
             
             {/* Question - HIGHER CONTRAST */}
@@ -93,13 +93,13 @@ export function EligibilityFlow() {
                 onClick={() => handleAnswer(true)}
                 className="
                   flex-1 min-h-11 py-4 sm:py-5 px-4 
-                  bg-emerald-600 hover:bg-emerald-500 
-                  text-white font-bold rounded-2xl 
+                  bg-[#E8A838] hover:bg-[#d4962e] 
+                  text-black font-bold rounded-2xl 
                   transition-all duration-200
                   flex items-center justify-center gap-2 
                   uppercase tracking-wide text-sm
-                  shadow-lg shadow-emerald-900/20
-                  border border-emerald-500/30
+                  shadow-lg shadow-[#E8A838]/20
+                  border border-[#E8A838]/30
                 "
               >
                 <Check className="w-4 h-4" /> {t('landing.eligibility.yes')}
@@ -128,8 +128,8 @@ export function EligibilityFlow() {
             transition={{ ...PREMIUM_SPRING, delay: 0.1 }}
             className="text-center w-full max-w-xs mx-auto"
           >
-            <div className="w-20 h-20 bg-emerald-500/15 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/30">
-              <ShieldCheck className="w-10 h-10 text-emerald-400" />
+            <div className="w-20 h-20 bg-[#E8A838]/15 rounded-full flex items-center justify-center mx-auto mb-6 border border-[#E8A838]/30">
+              <ShieldCheck className="w-10 h-10 text-[#E8A838]" />
             </div>
             
             <EditorialHeading size="md" className="text-white mb-3">

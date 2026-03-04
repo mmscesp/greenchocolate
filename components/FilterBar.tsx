@@ -1,28 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { Switch } from './ui/switch';
+import { ScrollArea } from './ui/scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerFooter, DrawerClose } from './ui/drawer';
 import { FilterOptions } from '@/lib/types';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Filter,
-X,
-MapPin,
-Star,
-DollarSign,
-CheckCircle,
-Sparkles,
-Search,
-SlidersHorizontal,
-Cannabis,
-Shield,
-Zap,
-Clock,
-LayoutGrid } from '@/lib/icons';
+import { 
+  X, 
+  MapPin, 
+  Star, 
+  DollarSign, 
+  Shield, 
+  Search, 
+  SlidersHorizontal, 
+  Sparkles, 
+  LayoutGrid,
+  ChevronDown,
+  Check,
+  ArrowRight
+} from '@/lib/icons';
 import { EditorialHeading } from './landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
 import { trackEvent } from '@/lib/analytics';
+import { cn } from '@/lib/utils';
 
 interface FilterBarProps {
   filters: FilterOptions;
@@ -33,7 +38,79 @@ interface FilterBarProps {
   vibes: string[];
 }
 
-export default function FilterBar({ 
+// Reusable Filter Chip Component
+const FilterChip = ({ 
+  active, 
+  onClick, 
+  children, 
+  className 
+}: { 
+  active: boolean; 
+  onClick: () => void; 
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={cn(
+      "px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] transition-all border whitespace-nowrap",
+      active
+        ? "bg-[#E8A838] border-[#E8A838] text-black shadow-[0_4px_20px_rgba(232,168,56,0.3)]"
+        : "bg-white/5 border-white/10 text-zinc-300 hover:border-[#E8A838]/40 hover:text-white hover:bg-white/10"
+    )}
+  >
+    {children}
+  </button>
+);
+
+// Desktop Popover Filter Section
+const DesktopFilterPopover = ({ 
+  label, 
+  icon: Icon, 
+  count, 
+  children 
+}: { 
+  label: string; 
+  icon: any; 
+  count: number; 
+  children: React.ReactNode 
+}) => (
+  <Popover>
+    <PopoverTrigger asChild>
+      <button 
+        className={cn(
+          "h-11 px-5 flex items-center gap-3 transition-all hover:bg-white/5 rounded-full group whitespace-nowrap border border-transparent",
+          count > 0 ? "text-[#E8A838] bg-[#E8A838]/5 border-[#E8A838]/20" : "text-zinc-300 hover:text-white"
+        )}
+      >
+        <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", count > 0 && "fill-current")} />
+        <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{label}</span>
+        {count > 0 && (
+          <Badge className="bg-[#E8A838] text-black border-none text-[9px] font-bold h-5 min-w-[20px] px-1">
+            {count}
+          </Badge>
+        )}
+        <ChevronDown className={cn("h-3 w-3 opacity-50 transition-transform group-data-[state=open]:rotate-180")} />
+      </button>
+    </PopoverTrigger>
+    <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80 p-5 sm:p-6 bg-[#0A0A0A]/95 backdrop-blur-2xl border-white/10 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[1.5rem] sm:rounded-[2rem] z-50" align="start">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-400">{label}</span>
+          {count > 0 && (
+            <span className="text-[9px] font-bold text-[#E8A838] uppercase tracking-widest">{count} ACTIVE</span>
+          )}
+        </div>
+        <div className="max-h-[350px] overflow-y-auto pr-2 no-scrollbar">
+          {children}
+        </div>
+      </div>
+    </PopoverContent>
+  </Popover>
+);
+
+export default function FilterBar({
   filters, 
   onFiltersChange, 
   totalResults,
@@ -42,7 +119,7 @@ export default function FilterBar({
   vibes = []
 }: FilterBarProps) {
   const { t } = useLanguage();
-  const [showFilters, setShowFilters] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const updateFilter = (key: keyof FilterOptions, value: FilterOptions[keyof FilterOptions]) => {
     onFiltersChange({ ...filters, [key]: value });
@@ -58,11 +135,6 @@ export default function FilterBar({
       ? currentArray.filter(item => item !== value)
       : [...currentArray, value];
     updateFilter(key, newArray);
-    trackEvent('clubs_filter_toggle', {
-      key,
-      option: value,
-      active: !currentArray.includes(value),
-    });
   };
 
   const clearAllFilters = () => {
@@ -77,13 +149,6 @@ export default function FilterBar({
     trackEvent('clubs_filter_clear_all');
   };
 
-  const hasActiveFilters = filters.neighborhood || 
-    filters.amenities.length > 0 || 
-    filters.vibes.length > 0 || 
-    filters.isVerified || 
-    filters.priceRange.length > 0 || 
-    filters.rating > 0;
-
   const activeFilterCount = [
     filters.neighborhood ? 1 : 0,
     filters.amenities.length,
@@ -93,189 +158,271 @@ export default function FilterBar({
     filters.rating > 0 ? 1 : 0
   ].reduce((a, b) => a + b, 0);
 
+
   return (
-    <div className="space-y-8">
-      {/* Search Result Summary */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center border border-white/5">
-            <Search className="h-4 w-4 text-[#E8A838]" />
-          </div>
-          <div>
-            <EditorialHeading size="sm" className="text-white">
-              {totalResults} {t('filters.results_found')}
-            </EditorialHeading>
-            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.precision_screening')}</ConciergeLabel>
-          </div>
-        </div>
-        
-        {hasActiveFilters && (
-          <button 
-            type="button"
-            onClick={clearAllFilters}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-red-400 transition-colors bg-white/5 border border-white/5"
-          >
-            <X className="h-3 w-3" /> {t('filters.clear_all')}
-          </button>
-        )}
-      </div>
-
-      {/* Advanced Filters Sections */}
-      <div className="space-y-10">
-        
-        {/* Neighborhood Filter */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-3.5 w-3.5 text-[#E8A838]/60" />
-            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.neighborhood')}</ConciergeLabel>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {neighborhoods.map((neighborhood) => (
-              <button
-                type="button"
-                key={neighborhood}
-                onClick={() => updateFilter('neighborhood',
-                  filters.neighborhood === neighborhood ? '' : neighborhood
+    <>
+      {/* Mobile Sticky Floating Filter Button */}
+      <div className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 lg:hidden w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] max-w-sm">
+        <Drawer open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+          <DrawerTrigger asChild>
+            <button className="w-full h-14 sm:h-16 bg-[#E8A838] text-black rounded-full shadow-[0_20px_40px_rgba(232,168,56,0.4)] flex items-center justify-between px-6 sm:px-8 transition-all active:scale-95 border border-white/20">
+              <div className="flex items-center gap-3">
+                <SlidersHorizontal className="h-5 w-5" />
+                <span className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] sm:tracking-[0.25em]">{t('filters.advanced')}</span>
+                {activeFilterCount > 0 && (
+                  <div className="w-6 h-6 bg-black text-[#E8A838] rounded-full flex items-center justify-center text-[11px] font-bold">
+                    {activeFilterCount}
+                  </div>
                 )}
-                className={`min-h-11 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all border ${
-                  filters.neighborhood === neighborhood
-                    ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-[0_4px_15px_rgba(232,168,56,0.3)]'
-                    : 'bg-white/5 border-white/10 text-zinc-400 hover:border-[#E8A838]/30'
-                }`}
-              >
-                {neighborhood}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Amenities Filter */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <LayoutGrid className="h-3.5 w-3.5 text-[#E8A838]/60" />
-            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.amenities')}</ConciergeLabel>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {amenities.map((amenity) => (
-              <button
-                type="button"
-                key={amenity}
-                onClick={() => toggleArrayFilter('amenities', amenity)}
-                className={`min-h-11 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all border ${
-                  filters.amenities.includes(amenity)
-                    ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-[0_4px_15px_rgba(232,168,56,0.3)]'
-                    : 'bg-white/5 border-white/10 text-zinc-400 hover:border-[#E8A838]/30'
-                }`}
-              >
-                {amenity}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Vibes Filter */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-[#E8A838]/60" />
-            <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.vibes')}</ConciergeLabel>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {vibes.map((vibe) => (
-              <button
-                type="button"
-                key={vibe}
-                onClick={() => toggleArrayFilter('vibes', vibe)}
-                className={`min-h-11 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition-all border ${
-                  filters.vibes.includes(vibe)
-                    ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-[0_4px_15px_rgba(232,168,56,0.3)]'
-                    : 'bg-white/5 border-white/10 text-zinc-400 hover:border-[#E8A838]/30'
-                }`}
-              >
-                {vibe}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Boolean & Range Filters */}
-        <div className="grid grid-cols-1 gap-8 pt-10 border-t border-white/5">
-          
-          {/* Verified Only */}
-          <button
-            type="button"
-            onClick={() => updateFilter('isVerified', !filters.isVerified)}
-            className="flex items-center justify-between gap-4 group"
-          >
-            <div className="flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all border ${
-                filters.isVerified ? 'bg-[#E8A838] border-[#E8A838]' : 'bg-white/5 border-white/10 group-hover:border-[#E8A838]/30'
-              }`}>
-                <Shield className={`h-4 w-4 ${filters.isVerified ? 'text-black' : 'text-zinc-500'}`} />
               </div>
-              <div className="text-left">
-                <span className="block text-[11px] font-bold uppercase tracking-widest text-white">{t('filters.verified_only')}</span>
-                <span className="text-[10px] text-zinc-500 uppercase tracking-wider">{t('filters.verified_only_desc')}</span>
+              <div className="flex items-center gap-2 text-xs font-bold opacity-80 uppercase tracking-widest">
+                {totalResults} {t('filters.results')}
               </div>
-            </div>
-            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${filters.isVerified ? 'bg-[#E8A838]' : 'bg-zinc-800'}`}>
-              <motion.div 
-                className={`w-4 h-4 rounded-full shadow-sm ${filters.isVerified ? 'bg-black' : 'bg-zinc-500'}`}
-                animate={{ x: filters.isVerified ? 16 : 0 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              />
-            </div>
-          </button>
+            </button>
+          </DrawerTrigger>
+          <DrawerContent className="bg-[#050505] border-white/10 h-[92vh] rounded-t-[3rem]">
+            <div className="mx-auto w-12 h-1.5 rounded-full bg-zinc-800 mt-3 mb-1" />
+            <DrawerHeader className="border-b border-white/5 px-8 py-6">
+              <div className="flex items-center justify-between">
+                <DrawerTitle>
+                  <EditorialHeading size="sm" className="text-white">{t('filters.advanced')}</EditorialHeading>
+                </DrawerTitle>
+                {activeFilterCount > 0 && (
+                  <button onClick={clearAllFilters} className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 hover:text-red-400">
+                    {t('filters.clear_all')}
+                  </button>
+                )}
+              </div>
+            </DrawerHeader>
+            <ScrollArea className="flex-1 px-8 py-8 no-scrollbar">
+              <div className="space-y-12 pb-32">
+                {/* Neighborhoods */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="h-4 w-4 text-[#E8A838]" />
+                    <ConciergeLabel size="sm" emphasis="high" className="text-white">{t('filters.neighborhood')}</ConciergeLabel>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {neighborhoods.map((n) => (
+                      <FilterChip
+                        key={n}
+                        active={filters.neighborhood === n}
+                        onClick={() => updateFilter('neighborhood', filters.neighborhood === n ? '' : n)}
+                      >
+                        {n}
+                      </FilterChip>
+                    ))}
+                  </div>
+                </div>
 
-          {/* Price Range */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-3.5 w-3.5 text-[#E8A838]/60" />
-              <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.price_range')}</ConciergeLabel>
-            </div>
-            <div className="flex gap-2">
-              {['$', '$$', '$$$'].map(price => (
-                <button
-                  type="button"
-                  key={price}
-                  onClick={() => toggleArrayFilter('priceRange', price)}
-                  className={`flex-1 py-3 rounded-xl text-xs font-bold border transition-all ${
-                    filters.priceRange.includes(price)
-                      ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-lg'
-                      : 'bg-white/5 border-white/10 text-zinc-500 hover:border-[#E8A838]/30'
-                  }`}
-                >
-                  {price}
-                </button>
-              ))}
-            </div>
-          </div>
+                {/* Amenities */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <LayoutGrid className="h-4 w-4 text-[#E8A838]" />
+                    <ConciergeLabel size="sm" emphasis="high" className="text-white">{t('filters.amenities')}</ConciergeLabel>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {amenities.map((a) => (
+                      <FilterChip
+                        key={a}
+                        active={filters.amenities.includes(a)}
+                        onClick={() => toggleArrayFilter('amenities', a)}
+                      >
+                        {a}
+                      </FilterChip>
+                    ))}
+                  </div>
+                </div>
 
-          {/* Minimum Rating */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Star className="h-3.5 w-3.5 text-[#E8A838]/60" />
-              <ConciergeLabel size="xs" emphasis="low" className="text-zinc-500">{t('filters.minimum_rating')}</ConciergeLabel>
-            </div>
-            <div className="flex gap-2">
-              {[4, 4.5, 5].map(rating => (
-                <button
-                  type="button"
-                  key={rating}
-                  onClick={() => updateFilter('rating', filters.rating === rating ? 0 : rating)}
-                  className={`flex-1 py-3 rounded-xl text-xs font-bold border transition-all ${
-                    filters.rating === rating
-                      ? 'bg-[#E8A838] border-[#E8A838] text-black shadow-lg'
-                      : 'bg-white/5 border-white/10 text-zinc-500 hover:border-[#E8A838]/30'
-                  }`}
-                >
-                  {rating}
-                </button>
-              ))}
-            </div>
-          </div>
+                {/* Vibes */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="h-4 w-4 text-[#E8A838]" />
+                    <ConciergeLabel size="sm" emphasis="high" className="text-white">{t('filters.vibes')}</ConciergeLabel>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {vibes.map((v) => (
+                      <FilterChip
+                        key={v}
+                        active={filters.vibes.includes(v)}
+                        onClick={() => toggleArrayFilter('vibes', v)}
+                      >
+                        {v}
+                      </FilterChip>
+                    ))}
+                  </div>
+                </div>
 
-        </div>
+                {/* Boolean Toggles */}
+                <div className="pt-8 border-t border-white/5 space-y-4">
+                  <button
+                    onClick={() => updateFilter('isVerified', !filters.isVerified)}
+                    className="w-full flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/10 hover:border-[#E8A838]/30 transition-all group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={cn(
+                        "w-12 h-12 rounded-2xl flex items-center justify-center transition-all border",
+                        filters.isVerified ? "bg-[#E8A838] border-[#E8A838]" : "bg-zinc-900 border-white/10 group-hover:border-[#E8A838]/30"
+                      )}>
+                        <Shield className={cn("h-6 w-6", filters.isVerified ? "text-black" : "text-zinc-500")} />
+                      </div>
+                      <div className="text-left">
+                        <span className="block text-xs font-black uppercase tracking-[0.2em] text-white">{t('filters.verified_only')}</span>
+                        <span className="text-[11px] text-zinc-400 uppercase tracking-tight">{t('filters.verified_only_desc')}</span>
+                      </div>
+                    </div>
+                    <Switch checked={filters.isVerified} onCheckedChange={(v) => updateFilter('isVerified', v)} />
+                  </button>
+                </div>
+              </div>
+            </ScrollArea>
+            <DrawerFooter className="border-t border-white/5 p-6 sm:p-8 bg-[#050505]/80 backdrop-blur-xl">
+              <DrawerClose asChild>
+                <Button className="w-full bg-[#E8A838] text-black hover:bg-[#D69628] rounded-full h-14 sm:h-16 font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-xs shadow-2xl">
+                  {t('filters.show_results')} ({totalResults})
+                </Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </div>
-    </div>
+
+      {/* Desktop Horizontal Premium Bar */}
+      <div className="hidden lg:block w-full">
+        <div className="flex items-center justify-between glass-liquid rounded-full p-2 pl-10 shadow-2xl overflow-hidden min-h-[64px]">
+          {/* Results Summary */}
+          <div className="flex items-center gap-4 border-r border-white/10 pr-8 mr-4">
+            <Search className="h-4 w-4 text-[#E8A838]" />
+            <div className="flex flex-col">
+              <span className="text-white text-sm font-black leading-none">{totalResults}</span>
+              <span className="text-zinc-400 text-[9px] font-bold uppercase tracking-[0.2em] mt-1">{t('filters.results_found')}</span>
+            </div>
+          </div>
+
+          {/* Filter Popovers */}
+          <div className="flex items-center gap-1 flex-1 no-scrollbar overflow-x-auto">
+            <DesktopFilterPopover 
+              label={t('filters.neighborhood')} 
+              icon={MapPin} 
+              count={filters.neighborhood ? 1 : 0}
+            >
+              <div className="flex flex-wrap gap-2">
+                {neighborhoods.map(n => (
+                  <FilterChip
+                    key={n}
+                    active={filters.neighborhood === n}
+                    onClick={() => updateFilter('neighborhood', filters.neighborhood === n ? '' : n)}
+                  >
+                    {n}
+                  </FilterChip>
+                ))}
+              </div>
+            </DesktopFilterPopover>
+
+            <DesktopFilterPopover 
+              label={t('filters.amenities')} 
+              icon={LayoutGrid} 
+              count={filters.amenities.length}
+            >
+              <div className="flex flex-wrap gap-2">
+                {amenities.map(a => (
+                  <FilterChip
+                    key={a}
+                    active={filters.amenities.includes(a)}
+                    onClick={() => toggleArrayFilter('amenities', a)}
+                  >
+                    {a}
+                  </FilterChip>
+                ))}
+              </div>
+            </DesktopFilterPopover>
+
+            <DesktopFilterPopover 
+              label={t('filters.vibes')} 
+              icon={Sparkles} 
+              count={filters.vibes.length}
+            >
+              <div className="flex flex-wrap gap-2">
+                {vibes.map(v => (
+                  <FilterChip
+                    key={v}
+                    active={filters.vibes.includes(v)}
+                    onClick={() => toggleArrayFilter('vibes', v)}
+                  >
+                    {v}
+                  </FilterChip>
+                ))}
+              </div>
+            </DesktopFilterPopover>
+
+            {/* Quick Toggle: Verified */}
+            <button
+              onClick={() => updateFilter('isVerified', !filters.isVerified)}
+              className={cn(
+                "h-11 px-6 rounded-full flex items-center gap-3 transition-all hover:bg-white/5 group border border-transparent",
+                filters.isVerified 
+                  ? "text-[#E8A838] bg-[#E8A838]/5 border-[#E8A838]/20" 
+                  : "text-zinc-300 hover:text-white"
+              )}
+            >
+              <Shield className={cn("h-4 w-4 transition-transform group-hover:scale-110", filters.isVerified && "fill-current")} />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{t('filters.verified_only')}</span>
+            </button>
+          </div>
+
+          {/* Actions: Clear All */}
+          <div className="pl-6 border-l border-white/10 ml-4 pr-6 flex items-center">
+            {activeFilterCount > 0 ? (
+              <button 
+                onClick={clearAllFilters}
+                className="text-zinc-400 hover:text-red-400 transition-all flex items-center gap-2 group"
+              >
+                <X className="h-4 w-4 transition-transform group-hover:rotate-90" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em]">{t('filters.clear_all')}</span>
+              </button>
+            ) : (
+              <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.3em]">{t('filters.advanced')}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Active Filters Bar */}
+        <AnimatePresence>
+          {activeFilterCount > 0 && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex flex-wrap gap-2 px-6 mt-4"
+            >
+              {filters.neighborhood && (
+                <Badge variant="outline" className="bg-[#E8A838]/10 text-[#E8A838] border-[#E8A838]/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
+                  {filters.neighborhood}
+                <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('neighborhood', ''); }} />
+                </Badge>
+              )}
+              {filters.isVerified && (
+                <Badge variant="outline" className="bg-[#E8A838]/10 text-[#E8A838] border-[#E8A838]/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
+                  Verified
+                  <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('isVerified', false); }} />
+                </Badge>
+              )}
+              {filters.amenities.map(a => (
+                <Badge key={a} variant="outline" className="bg-white/5 text-zinc-200 border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase hover:bg-white/10 transition-colors">
+                  {a}
+                  <X className="h-3 w-3 cursor-pointer hover:text-red-400 transition-colors" onClick={(e) => { e.stopPropagation(); toggleArrayFilter('amenities', a); }} />
+                </Badge>
+              ))}
+              {filters.vibes.map(v => (
+                <Badge key={v} variant="outline" className="bg-white/5 text-zinc-200 border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase hover:bg-white/10 transition-colors">
+                  {v}
+                  <X className="h-3 w-3 cursor-pointer hover:text-red-400 transition-colors" onClick={(e) => { e.stopPropagation(); toggleArrayFilter('vibes', v); }} />
+                </Badge>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }

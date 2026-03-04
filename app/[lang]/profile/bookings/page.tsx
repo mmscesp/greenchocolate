@@ -101,7 +101,7 @@ export default function BookingsPage() {
     switch (status) {
       case 'confirmed':
         return (
-          <Badge variant="outline" className="bg-[#E8A838]/10 text-[#E8A838] border-[#E8A838]/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+          <Badge variant="outline" className="bg-gold/10 text-gold border-gold/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.confirmed')}
           </Badge>
@@ -179,7 +179,7 @@ export default function BookingsPage() {
           </p>
         </div>
         <Link href={`/${language}/clubs`}>
-          <Button className="self-start gap-2 bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full px-6 py-5 font-black uppercase tracking-widest text-[10px]">
+          <Button className="self-start gap-2 bg-gold text-black hover:bg-gold-dark rounded-full px-6 py-5 font-black uppercase tracking-widest text-[10px]">
             <CalendarDays className="h-4 w-4" />
             {t('bookings.book_new_visit')}
           </Button>
@@ -188,19 +188,20 @@ export default function BookingsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.total')}</p>
               <p className="text-3xl font-serif text-white">{bookings.length}</p>
             </div>
-            <div className="bg-[#E8A838]/10 p-3 rounded-full border border-[#E8A838]/20">
+            <div className="bg-gold/10 p-3 rounded-full border border-gold/20">
+              <Calendar className="h-6 w-6 text-gold" />
               <Calendar className="h-6 w-6 text-[#E8A838]" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.upcoming')}</p>
@@ -212,7 +213,7 @@ export default function BookingsPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.completed')}</p>
@@ -226,7 +227,7 @@ export default function BookingsPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.pending')}</p>
@@ -249,7 +250,7 @@ export default function BookingsPage() {
             onClick={() => setActiveFilter(filter)}
             className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
               activeFilter === filter
-                ? 'bg-[#E8A838] text-black shadow-lg shadow-[#E8A838]/20'
+                ? 'bg-gold text-black shadow-lg shadow-gold/20'
                 : 'bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10'
             }`}
           >
@@ -262,13 +263,13 @@ export default function BookingsPage() {
       {filteredBookings.length > 0 ? (
         <div className="space-y-4">
           {filteredBookings.map((booking) => (
-            <Card key={booking.id} className="hover:shadow-2xl hover:border-[#E8A838]/30 transition-all duration-300 bg-[#0A0A0A] border border-white/5">
+            <Card key={booking.id} className="hover:shadow-2xl hover:border-gold/30 transition-all duration-300 bg-bg-base border border-white/5">
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center gap-6">
                   {/* Club Image */}
-                  <Avatar className="w-full md:w-32 h-24 rounded-2xl border-2 border-[#E8A838]/20 shadow-lg">
+                  <Avatar className="w-full md:w-32 h-24 rounded-2xl border-2 border-gold/20 shadow-lg">
                     <AvatarImage src={booking.clubImage} alt={booking.clubName} className="object-cover" />
-                    <AvatarFallback className="rounded-2xl bg-[#E8A838] text-black">
+                    <AvatarFallback className="rounded-2xl bg-gold text-black">
                       <MapPin className="h-8 w-8" />
                     </AvatarFallback>
                   </Avatar>
@@ -285,11 +286,11 @@ export default function BookingsPage() {
 
                     <div className="flex flex-wrap items-center gap-6 text-xs text-zinc-500 font-bold uppercase tracking-widest">
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-[#E8A838]" />
+                        <MapPin className="h-3.5 w-3.5 text-gold" />
                         <span>{booking.clubNeighborhood}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-[#E8A838]" />
+                        <Calendar className="h-3.5 w-3.5 text-gold" />
                         <span>{new Date(booking.date).toLocaleDateString('es-ES', { 
                           day: 'numeric', 
                           month: 'short', 
@@ -297,11 +298,11 @@ export default function BookingsPage() {
                         })}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5 text-[#E8A838]" />
+                        <Clock className="h-3.5 w-3.5 text-gold" />
                         <span>{booking.time}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5 text-[#E8A838]" />
+                        <Users className="h-3.5 w-3.5 text-gold" />
                         <span>{booking.guests} {t('bookings.guests')}</span>
                       </div>
                     </div>
@@ -327,7 +328,7 @@ export default function BookingsPage() {
           ))}
         </div>
       ) : (
-        <Card className="py-16 text-center shadow-2xl bg-[#0A0A0A] border border-white/5">
+        <Card className="py-16 text-center shadow-2xl bg-bg-base border border-white/5">
           <CardContent>
             <div className="bg-white/5 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/5">
               <Calendar className="h-8 w-8 text-zinc-600" />
@@ -344,7 +345,7 @@ export default function BookingsPage() {
               }
             </p>
             <Link href={`/${language}/clubs`}>
-              <Button className="gap-2 bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
+              <Button className="gap-2 bg-gold text-black hover:bg-gold-dark rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                 <Search className="h-4 w-4" />
                 {t('bookings.explore_clubs')}
               </Button>

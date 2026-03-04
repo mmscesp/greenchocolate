@@ -181,7 +181,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link 
-                  href={withLocale('/clubs')} 
+                  href={withLocale('/mission#verification-standard')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.verification_standard')}

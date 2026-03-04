@@ -27,16 +27,22 @@ const config: Config = {
       },
       colors: {
         brand: {
-          DEFAULT: '#0D7377',
-          light: '#14A098',
-          dark: '#0A5A5D',
-          muted: 'rgba(13, 115, 119, 0.1)',
+          DEFAULT: 'hsl(var(--brand))',
+          light: 'hsl(var(--brand-light))',
+          dark: 'hsl(var(--brand-dark))',
+          muted: 'hsl(var(--brand) / 0.1)',
         },
         gold: {
-          DEFAULT: '#D4A853',
-          light: '#E0BC6E',
-          dark: '#B8933F',
-          muted: 'rgba(212, 168, 83, 0.1)',
+          DEFAULT: 'hsl(var(--gold))',
+          light: 'hsl(var(--gold-light))',
+          dark: 'hsl(var(--gold-dark))',
+          muted: 'hsl(var(--gold) / 0.1)',
+        },
+        bg: {
+          base: 'hsl(var(--bg-base))',
+          surface: 'hsl(var(--bg-surface))',
+          card: 'hsl(var(--bg-card))',
+          elevated: 'hsl(var(--bg-elevated))',
         },
         neutral: {
           50: '#FAFAFA',

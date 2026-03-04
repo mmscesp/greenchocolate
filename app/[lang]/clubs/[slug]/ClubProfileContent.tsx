@@ -53,7 +53,7 @@ function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAu
         <div className="flex items-center gap-3 sm:gap-6 min-w-0">
           <div className="flex items-center gap-2">
             {isVerified ? (
-              <PulsingStatusDot color="#E8A838" />
+              <PulsingStatusDot color="hsl(var(--gold))" />
             ) : (
               <div className="w-2 h-2 rounded-full bg-zinc-600" />
             )}
@@ -64,7 +64,8 @@ function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAu
           {isVerified && (
             <div className="hidden md:flex items-center gap-4 border-l border-white/5 pl-6">
               <ConciergeLabel size="xs" className="text-zinc-400">{t('club_profile.trust_strip.last_audit')}: {lastAudit || t('club_profile.trust_strip.last_audit_fallback')}</ConciergeLabel>
-              <ConciergeLabel size="xs" className="text-[#E8A838]/80">• {t('club_profile.trust_strip.education_first')}</ConciergeLabel>
+              <ConciergeLabel size="xs" className="text-gold/80">• {t('club_profile.trust_strip.education_first')}</ConciergeLabel>
+              <ConciergeLabel size="xs" className="text-gold/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
               <ConciergeLabel size="xs" className="text-[#E8A838]/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
             </div>
           )}
@@ -147,7 +148,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black relative font-sans selection:bg-[#E8A838]/30 selection:text-white">
+    <div className="min-h-screen bg-black relative font-sans selection:bg-gold/30 selection:text-white">
       <ClubTrustStrip isVerified={club.isVerified} />
       
       {/* Navigation */}
@@ -201,12 +202,12 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           >
             <motion.div variants={FADE_UP} className="flex flex-wrap items-center gap-3 mb-6">
               <VerificationBadge isVerified={club.isVerified} size="lg" />
-              <ConciergeLabel className="text-[#E8A838] border border-[#E8A838]/30 px-3 py-1 rounded-full bg-[#E8A838]/10 text-[10px] font-bold uppercase tracking-widest">
+              <ConciergeLabel className="text-gold border border-gold/30 px-3 py-1 rounded-full bg-gold/10 text-[10px] font-bold uppercase tracking-widest">
                 {club.neighborhood}
               </ConciergeLabel>
               {club.rating && (
                 <ConciergeLabel className="text-white border border-white/10 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                  <Star className="h-3 w-3 fill-[#E8A838] text-[#E8A838]" /> {club.rating} ({club.reviewCount})
+                  <Star className="h-3 w-3 fill-gold text-gold" /> {club.rating} ({club.reviewCount})
                 </ConciergeLabel>
               )}
             </motion.div>
@@ -228,7 +229,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     }
                     setShowPreRegistrationModal(true);
                   }}
-                  className="bg-[#E8A838] hover:bg-[#d4962e] text-black font-black min-h-11 h-auto py-3 sm:py-5 px-8 sm:px-10 rounded-full text-sm sm:text-base shadow-[0_10px_30px_-10px_rgba(232,168,56,0.4)] transition-all hover:scale-105 uppercase tracking-[0.2em]"
+                  className="bg-gold hover:bg-gold-dark text-black font-black min-h-11 h-auto py-3 sm:py-5 px-8 sm:px-10 rounded-full text-sm sm:text-base shadow-[0_10px_30px_-10px_hsl(var(--gold)/0.4)] transition-all hover:scale-105 uppercase tracking-[0.2em]"
                 >
                   {t('club.pre_register')}
                 </Button>
@@ -237,13 +238,13 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               {/* Image Navigation Dots */}
               {club.images.length > 1 && (
                 <div className="flex items-center gap-2 sm:ml-4 bg-black/60 backdrop-blur-md px-3 sm:px-4 rounded-full border border-white/10">
-                  <button onClick={prevImage} className="min-h-11 min-w-11 p-2 hover:text-[#E8A838] transition-colors text-white">
+                  <button onClick={prevImage} className="min-h-11 min-w-11 p-2 hover:text-gold transition-colors text-white">
                     <ChevronLeft className="h-5 w-5" />
                   </button>
                   <span className="text-[10px] font-bold tracking-widest text-white/80">
                     {currentImageIndex + 1} / {club.images.length}
                   </span>
-                  <button onClick={nextImage} className="min-h-11 min-w-11 p-2 hover:text-[#E8A838] transition-colors text-white">
+                  <button onClick={nextImage} className="min-h-11 min-w-11 p-2 hover:text-gold transition-colors text-white">
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </div>
@@ -258,9 +259,10 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
           
           {/* About Card - Large */}
-          <div className="md:col-span-2 bg-[#0A0A0A] rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl">
+          <div className="md:col-span-2 bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-[#E8A838]/10 rounded-full flex items-center justify-center border border-[#E8A838]/20">
+              <div className="w-10 h-10 bg-gold/10 rounded-full flex items-center justify-center border border-gold/20">
+                <Sparkles className="h-5 w-5 text-gold" />
                 <Sparkles className="h-5 w-5 text-[#E8A838]" />
               </div>
               <EditorialHeading size="md" className="text-white">{t('club_profile.experience')}</EditorialHeading>
@@ -281,9 +283,9 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           {/* Info Column */}
           <div className="space-y-6">
             {/* Location Card (Blurred) */}
-            <div className="relative bg-[#0A0A0A] rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl overflow-hidden group">
+            <div className="relative bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl overflow-hidden group">
               <div className="flex items-center gap-3 mb-6 relative z-10">
-                <MapPin className="h-5 w-5 text-[#E8A838]" />
+                <MapPin className="h-5 w-5 text-gold" />
                 <h3 className="font-bold text-white uppercase tracking-widest text-xs">{t('club_profile.location')}</h3>
               </div>
               
@@ -300,7 +302,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               {/* Overlay */}
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md p-6 text-center">
                 <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mb-4 shadow-2xl border border-white/10">
-                  <Lock className="h-5 w-5 text-[#E8A838]" />
+                  <Lock className="h-5 w-5 text-gold" />
                 </div>
                 <h4 className="font-bold text-white mb-2 uppercase tracking-widest text-[10px]">{t('club_profile.private_location')}</h4>
                 <p className="text-zinc-500 text-xs mb-6 max-w-[200px] leading-relaxed font-serif italic">
@@ -311,7 +313,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   {club.allowsPreRegistration && (
                     <Button 
                       onClick={() => setShowPreRegistrationModal(true)}
-                      className="w-full bg-[#E8A838] hover:bg-[#d4962e] text-black rounded-full shadow-lg shadow-[#E8A838]/20 font-black uppercase tracking-widest text-[10px] py-6"
+                      className="w-full bg-gold hover:bg-gold-dark text-black rounded-full shadow-lg shadow-gold/20 font-black uppercase tracking-widest text-[10px] py-6"
                     >
                       {t('club_profile.pre_register_with_club')}
                     </Button>
@@ -326,9 +328,9 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             </div>
 
             {/* Hours Card */}
-            <div className="bg-[#0A0A0A] rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl">
+            <div className="bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl">
               <div className="flex items-center gap-3 mb-6">
-                <Clock className="h-5 w-5 text-[#E8A838]" />
+                <Clock className="h-5 w-5 text-gold" />
                 <h3 className="font-bold text-white uppercase tracking-widest text-xs">{t('club_profile.opening_hours')}</h3>
               </div>
               <div className="space-y-3">
@@ -350,15 +352,15 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <h3 className="font-bold text-zinc-500 mb-6 uppercase tracking-widest text-xs">{t('club_profile.club_details')}</h3>
                 <div className="space-y-6">
                   <div>
-                    <div className="text-[#E8A838] text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.capacity')}</div>
+                    <div className="text-gold text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.capacity')}</div>
                     <div className="text-2xl font-serif">{club.capacity} <span className="text-xs text-zinc-500 font-sans">{t('club_profile.members')}</span></div>
                   </div>
                   <div>
-                    <div className="text-[#E8A838] text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.founded')}</div>
+                    <div className="text-gold text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.founded')}</div>
                     <div className="text-2xl font-serif">{club.foundedYear}</div>
                   </div>
                   <div>
-                    <div className="text-[#E8A838] text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.price_range')}</div>
+                    <div className="text-gold text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.price_range')}</div>
                     <div className="text-2xl font-mono text-white tracking-widest">{club.priceRange}</div>
                   </div>
                 </div>
@@ -367,15 +369,15 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
           </div>
 
           {/* Amenities - Full Width */}
-          <div className="md:col-span-3 bg-[#0A0A0A] rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl mt-6">
+          <div className="md:col-span-3 bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl mt-6">
             <div className="flex items-center gap-3 mb-6">
-              <Shield className="h-5 w-5 text-[#E8A838]" />
+              <Shield className="h-5 w-5 text-gold" />
               <EditorialHeading size="md" className="text-white">{t('club_profile.services')}</EditorialHeading>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {club.amenities.map((amenity, i) => (
                 <div key={i} className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
-                  <Check className="h-4 w-4 text-[#E8A838]" />
+                  <Check className="h-4 w-4 text-gold" />
                   <span className="text-zinc-300 text-sm sm:text-base font-medium">{amenity}</span>
                 </div>
               ))}
@@ -392,11 +394,12 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 </p>
                 <div className="space-y-4">
                   {club.website && (
-                    <a href={`https://${club.website}`} className="flex items-center gap-3 text-white hover:text-[#E8A838] transition-colors group">
+                    <a href={`https://${club.website}`} className="flex items-center gap-3 text-white hover:text-gold transition-colors group">
+                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-gold/10 transition-colors border border-white/5 group-hover:border-gold/20">
                       <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#E8A838]/10 transition-colors border border-white/5 group-hover:border-[#E8A838]/20">
                         <Globe className="h-5 w-5" />
                       </div>
-                      <span className="font-bold underline decoration-[#E8A838]/30 underline-offset-4 group-hover:decoration-[#E8A838] uppercase tracking-widest text-[10px]">{club.website}</span>
+                      <span className="font-bold underline decoration-gold/30 underline-offset-4 group-hover:decoration-gold uppercase tracking-widest text-[10px]">{club.website}</span>
                     </a>
                   )}
                   <div className="flex items-center gap-3 text-zinc-500">
@@ -414,7 +417,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <Button
                   size="lg"
                   onClick={() => setShowPreRegistrationModal(true)}
-                  className="bg-[#E8A838] text-black hover:bg-[#d4962e] rounded-full min-h-11 px-10 font-black uppercase tracking-widest text-[11px] py-6 shadow-lg shadow-[#E8A838]/20"
+                  className="bg-gold text-black hover:bg-gold-dark rounded-full min-h-11 px-10 font-black uppercase tracking-widest text-[11px] py-6 shadow-lg shadow-gold/20"
                 >
                   {t('club_profile.start_application')}
                 </Button>
@@ -435,17 +438,17 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             exit={{ opacity: 0 }}
           >
             <motion.div 
-              className="bg-[#0A0A0A] border border-white/10 rounded-[2rem] max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative overflow-hidden"
+              className="bg-bg-base border border-white/10 rounded-[2rem] max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative overflow-hidden"
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
             >
               {/* Modal Header */}
               <div className="relative h-40 bg-[#111] overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0A0A0A] z-10" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-base z-10" />
                 <Image src={club.images[0]} alt="Header" fill className="object-cover opacity-40" />
                 <div className="absolute bottom-0 left-0 p-8 z-20">
-                  <ConciergeLabel className="text-[#E8A838] mb-2 uppercase tracking-[0.2em] text-[9px] font-bold">{t('club_profile.membership_application')}</ConciergeLabel>
+                  <ConciergeLabel className="text-gold mb-2 uppercase tracking-[0.2em] text-[9px] font-bold">{t('club_profile.membership_application')}</ConciergeLabel>
                   <h3 className="text-3xl font-serif text-white">{club.name}</h3>
                 </div>
                 <button
@@ -467,7 +470,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     animate={{ opacity: 1, y: 0 }}
                     className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
                       formState.success
-                        ? 'bg-[#E8A838]/10 text-[#E8A838] border border-[#E8A838]/20'
+                        ? 'bg-gold/10 text-gold border border-gold/20'
                         : 'bg-red-500/10 text-red-400 border border-red-500/20'
                     }`}
                   >
@@ -480,7 +483,8 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   <input type="hidden" name="clubId" value={club.id} />
 
                   <div className="space-y-4">
-                    <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-[#E8A838]">
+                    <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gold">
+                      {t('club_profile.form.personal_message')} <span className="text-gold">*</span>
                       {t('club_profile.form.personal_message')} <span className="text-[#E8A838]">*</span>
                     </label>
                     <textarea
@@ -488,7 +492,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                       required
                       rows={4}
                       placeholder={t('form.message_placeholder')}
-                      className="w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-zinc-700 focus:ring-2 focus:ring-[#E8A838]/50 focus:border-[#E8A838] transition-all outline-none resize-none font-serif italic"
+                      className="w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-zinc-700 focus:ring-2 focus:ring-gold/50 focus:border-gold transition-all outline-none resize-none font-serif italic"
                     />
                     <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
                       {t('club_profile.form.personal_message_help')}
@@ -511,7 +515,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 bg-[#E8A838] hover:bg-[#d4962e] text-black font-black rounded-full py-7 shadow-lg shadow-[#E8A838]/20 uppercase tracking-widest text-[10px]"
+                      className="flex-1 bg-gold hover:bg-gold-dark text-black font-black rounded-full py-7 shadow-lg shadow-gold/20 uppercase tracking-widest text-[10px]"
                     >
                       {isSubmitting ? (
                         <>

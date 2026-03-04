@@ -7,11 +7,10 @@ import { Button } from '@/components/ui/button';
 import ClubCard from '@/components/ClubCard';
 import FilterBar from '@/components/FilterBar';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Map, List, Grid, Sparkles, Cannabis, Search, SlidersHorizontal, ArrowRight, ShieldCheck, Zap } from '@/lib/icons';
+import { Map, Grid, Search, Zap, ShieldCheck, ArrowRight } from '@/lib/icons';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
-import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
 
 // Editorial Concierge Components
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
@@ -19,6 +18,7 @@ import { ConciergeLabel } from '@/components/landing/editorial-concierge/typogra
 import { SectionWrapper } from '@/components/landing/editorial-concierge/layout/SectionWrapper';
 import { PulsingStatusDot } from '@/components/landing/editorial-concierge/interactive/PulsingStatusDot';
 import { FADE_UP, STAGGER_CONTAINER, PREMIUM_SPRING } from '@/components/landing/editorial-concierge/motion/config';
+import { cn } from '@/lib/utils';
 
 interface ClubsPageClientProps {
   initialClubs: ClubCardType[];
@@ -67,7 +67,7 @@ export default function ClubsPageClient({
   }, []);
 
   return (
-    <div className="min-h-screen bg-black font-sans selection:bg-[#E8A838]/30 selection:text-white">
+    <div className="min-h-screen bg-black font-sans selection:bg-gold/30 selection:text-white">
       {/* JSON-LD Structured Data */}
       <CollectionPageStructuredData
         schema={{
@@ -79,11 +79,11 @@ export default function ClubsPageClient({
       />
 
       {/* Hero Header */}
-      <SectionWrapper dark className="pt-32 pb-24 relative overflow-hidden bg-black backdrop-blur-none">
+      <SectionWrapper dark className="pt-24 pb-16 sm:pt-32 sm:pb-20 relative overflow-hidden bg-black backdrop-blur-none">
         {/* Background Gradients */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#E8A838]/5 rounded-full blur-[120px] -translate-y-1/2" />
-          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px] translate-y-1/2" />
+          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-gold/5 rounded-full blur-[100px] sm:blur-[140px] -translate-y-1/2 animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-white/[0.02] rounded-full blur-[80px] sm:blur-[120px] translate-y-1/2" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
@@ -94,10 +94,10 @@ export default function ClubsPageClient({
             className="text-center"
           >
             {/* Eyebrow */}
-            <motion.div variants={FADE_UP} className="flex justify-center mb-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#E8A838]/10 border border-[#E8A838]/20 rounded-full">
+            <motion.div variants={FADE_UP} className="flex justify-center mb-6 sm:mb-10">
+              <div className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-6 sm:py-2.5 bg-gold/10 border border-gold/20 rounded-full backdrop-blur-md">
                 <PulsingStatusDot />
-                <ConciergeLabel size="xs" className="text-[#E8A838]">
+                <ConciergeLabel size="xs" className="text-gold tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">
                   {t('clubs.verified_directory')}
                 </ConciergeLabel>
               </div>
@@ -105,156 +105,163 @@ export default function ClubsPageClient({
 
             {/* Main Title */}
             <motion.div variants={FADE_UP}>
-              <EditorialHeading as="h1" size="hero" className="text-white mb-8">
-                {t('clubs.hero.title_prefix')} <span className="text-[#E8A838] italic">{t('clubs.hero.title_highlight')}</span> {t('clubs.hero.title_suffix')}
+              <EditorialHeading as="h1" size="hero" className="text-white mb-6 sm:mb-10">
+                {t('clubs.hero.title_prefix')} <span className="text-gold italic font-serif">{t('clubs.hero.title_highlight')}</span> {t('clubs.hero.title_suffix')}
               </EditorialHeading>
             </motion.div>
 
             {/* Subtitle */}
             <motion.div variants={FADE_UP}>
-              <p className="text-zinc-400 text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-serif">
-                {t('clubs.subtitle')}
+              <p className="text-zinc-400 text-lg md:text-2xl max-w-3xl mx-auto leading-relaxed font-serif italic px-2 sm:px-0">
+                "{t('clubs.subtitle')}"
               </p>
             </motion.div>
-
           </motion.div>
         </div>
       </SectionWrapper>
 
-      <section className="relative bg-black py-12 sm:py-16">
+      <section className="relative bg-black pb-32 sm:pb-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-            {/* Left Column: Filter Sidebar */}
-            <div className="lg:w-80 flex-shrink-0">
-              <div className="sticky top-24 space-y-8">
-                <div className="bg-[#0A0A0A] rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl">
-                  <div className="mb-8">
-                    <EditorialHeading size="sm" className="text-white uppercase tracking-widest border-b border-white/5 pb-4 mb-8">{t('filters.advanced')}</EditorialHeading>
-                  </div>
-                  
-                  <FilterBar 
-                    filters={filters} 
-                    onFiltersChange={handleFiltersChange}
-                    totalResults={clubs.length}
-                    neighborhoods={neighborhoods}
-                    amenities={amenities}
-                    vibes={vibes}
-                  />
-                </div>
+          
+          {/* Filter Bar - Sticky on Desktop */}
+          <div className="sticky top-20 sm:top-28 z-40 mb-10 sm:mb-16">
+            <FilterBar 
+              filters={filters} 
+              onFiltersChange={handleFiltersChange}
+              totalResults={clubs.length}
+              neighborhoods={neighborhoods}
+              amenities={amenities}
+              vibes={vibes}
+            />
+          </div>
 
-                <div className="bg-[#111] rounded-[2rem] p-6 sm:p-8 text-white relative overflow-hidden border border-white/5">
-                  <div className="relative z-10">
-                    <ConciergeLabel size="xs" className="text-[#E8A838] mb-4 block">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
-                    <p className="text-zinc-400 text-sm leading-relaxed mb-6 font-serif italic">
-                      {t('clubs.sidebar.concierge_quote')}
-                    </p>
-                    <Link href={`/${language}/guide/verification`} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white hover:text-[#E8A838] transition-colors">
-                      {t('clubs.sidebar.learn_standard')} <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                  <ShieldCheck className="absolute -bottom-4 -right-4 h-32 w-32 text-white/5" />
+          {/* Concierge Tip Banner */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-12 sm:mb-20 glass-liquid rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+            <div className="flex items-center gap-6 sm:gap-10 relative z-10">
+              <div className="hidden md:flex w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] bg-gold/10 items-center justify-center border border-gold/20 text-gold transform rotate-6 group-hover:rotate-0 transition-all duration-700 shadow-2xl shadow-gold/10">
+                <ShieldCheck className="h-8 w-8 sm:h-10 sm:w-10" />
+              </div>
+              <div>
+                <div className="flex items-center gap-3 mb-2 sm:mb-4">
+                  <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-gold animate-pulse shadow-[0_0_10px_hsl(var(--gold))]" />
+                  <ConciergeLabel size="xs" className="text-gold tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
+                  <ConciergeLabel size="xs" className="text-[#E8A838] tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
                 </div>
+                <p className="text-zinc-200 text-base sm:text-xl leading-relaxed font-serif italic max-w-2xl">
+                  "{t('clubs.sidebar.concierge_quote')}"
+                </p>
               </div>
             </div>
+            <Link 
+              href={`/${language}/mission#verification-standard`} 
+              className="relative z-10 w-full lg:w-auto flex items-center justify-center gap-3 sm:gap-4 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white hover:text-black transition-all whitespace-nowrap bg-white/5 px-6 py-4 sm:px-10 sm:py-5 rounded-full border border-white/10 hover:bg-gold hover:border-gold shadow-2xl"
+            >
+              {t('clubs.sidebar.learn_standard')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-2" />
+            </Link>
+          </motion.div>
 
-            {/* Right Column: Grid and Results */}
-            <div className="flex-1">
-              {/* View Toggle */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
-                <div className="flex flex-wrap items-center gap-3">
+          {/* View Toggle & Status */}
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-10 sm:mb-16 px-2">
+            <div className="flex items-center p-1.5 glass-liquid rounded-full w-full sm:w-fit border-white/5 overflow-hidden">
+              <button 
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={cn(
+                  "flex-1 sm:flex-none inline-flex h-10 sm:h-12 items-center justify-center gap-2 sm:gap-3 px-6 sm:px-10 rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] transition-all",
+                  viewMode === 'grid' 
+                    ? "bg-gold text-black shadow-2xl shadow-gold/20"
+                    : "text-zinc-400 hover:text-white"
+                )}
+              >
+                <Grid className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('clubs.view_mode.grid')}
+              </button>
+              <button
+                type="button"
+                disabled
+                className="flex-1 sm:flex-none inline-flex h-10 sm:h-12 items-center justify-center gap-2 sm:gap-3 px-6 sm:px-10 rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-zinc-600 cursor-not-allowed opacity-40"
+              >
+                <Map className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('clubs.view_mode.map_soon')}
+              </button>
+            </div>
+            
+            <AnimatePresence>
+              {loading && (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex items-center justify-center gap-3 sm:gap-4 text-gold bg-gold/10 px-6 py-3 sm:px-8 sm:py-4 rounded-full border border-gold/20 shadow-2xl shadow-gold/5 w-full sm:w-auto"
+                >
+                  <Zap className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse fill-current" />
+                  <span className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em]">{t('clubs.status.updating_directory')}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Clubs Content */}
+          {viewMode === 'grid' ? (
+            <div>
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {[1, 2, 3, 4, 5, 6].map(i => (
+                    <div key={i} className="bg-bg-base rounded-[2rem] border border-white/5 min-h-[350px] sm:min-h-[400px] animate-pulse overflow-hidden">
+                      <div className="h-56 sm:h-64 bg-zinc-900/50" />
+                      <div className="p-6 sm:p-8 space-y-4">
+                        <div className="h-6 sm:h-8 bg-zinc-900/50 rounded-lg w-3/4" />
+                        <div className="h-3 sm:h-4 bg-zinc-900/50 rounded-lg w-1/2" />
+                        <div className="h-10 sm:h-12 bg-zinc-900/50 rounded-lg" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : clubs.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {clubs.map((club, index) => (
+                    <motion.div
+                      key={club.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: (index % 3) * 0.05, duration: 0.5, ease: PREMIUM_SPRING.ease }}
+                    >
+                      <ClubCard club={club} />
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-bg-base rounded-[2rem] sm:rounded-[3rem] border border-white/5 p-8 sm:p-20 text-center max-w-4xl mx-auto">
+                  <div className="w-16 h-16 sm:w-24 sm:h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 border border-white/5">
+                    <Search className="h-8 w-8 sm:h-10 sm:w-10 text-zinc-700" />
+                  </div>
+                  <EditorialHeading size="md" className="mb-4 text-white text-xl sm:text-2xl">{t('clubs.no_results.title')}</EditorialHeading>
+                  <p className="text-zinc-500 mb-8 sm:mb-10 max-w-sm mx-auto font-serif italic text-base sm:text-lg">
+                    {t('clubs.no_results.subtitle')}
+                  </p>
                   <button 
                     type="button"
-                    onClick={() => setViewMode('grid')}
-                    className={`inline-flex min-h-11 items-center gap-2 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
-                      viewMode === 'grid' ? 'bg-[#E8A838] text-black shadow-lg shadow-[#E8A838]/20' : 'text-zinc-500 hover:bg-white/5'
-                    }`}
+                    onClick={() => handleFiltersChange({
+                      neighborhood: '',
+                      amenities: [],
+                      vibes: [],
+                      isVerified: false,
+                      priceRange: [],
+                      rating: 0
+                    })}
+                    className="rounded-full min-h-12 sm:min-h-14 px-8 sm:px-12 py-3 sm:py-4 font-bold uppercase tracking-[0.2em] text-[10px] border border-gold/30 text-gold hover:bg-gold hover:text-black transition-all"
                   >
-                    <Grid className="h-4 w-4" /> {t('clubs.view_mode.grid')}
-                  </button>
-                  <button
-                    type="button"
-                    disabled
-                    aria-disabled="true"
-                    title={t('clubs.view_mode.map_dev_title')}
-                    className="inline-flex min-h-11 items-center gap-2 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest text-zinc-600 bg-white/5 cursor-not-allowed border border-white/5"
-                  >
-                    <Map className="h-4 w-4" /> {t('clubs.view_mode.map_soon')}
+                    {t('clubs.clear_filters')}
                   </button>
                 </div>
-                
-                <AnimatePresence>
-                  {loading && (
-                    <motion.div 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center gap-2 text-[#E8A838] text-[10px] font-bold uppercase tracking-widest"
-                    >
-                      <Zap className="h-3 w-3 animate-pulse" /> {t('clubs.status.updating_directory')}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Clubs Content */}
-              {viewMode === 'grid' ? (
-                <div>
-                  {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="bg-[#0A0A0A] rounded-[2rem] border border-white/5 min-h-[320px] sm:min-h-[400px] lg:min-h-[450px] animate-pulse overflow-hidden">
-                          <div className="h-64 bg-[#111]" />
-                          <div className="p-8 space-y-4">
-                            <div className="h-8 bg-[#111] rounded-lg w-3/4" />
-                            <div className="h-4 bg-[#111] rounded-lg w-1/2" />
-                            <div className="h-12 bg-[#111] rounded-lg" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : clubs.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {clubs.map((club, index) => (
-                        <motion.div
-                          key={club.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: (index % 2) * 0.1, duration: 0.5, ease: PREMIUM_SPRING.ease }}
-                        >
-                          <ClubCard club={club} />
-                        </motion.div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="bg-[#0A0A0A] rounded-[2rem] border border-white/5 p-8 sm:p-12 lg:p-20 text-center">
-                      <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-white/5">
-                        <Search className="h-8 w-8 text-zinc-700" />
-                      </div>
-                      <EditorialHeading size="sm" className="mb-4 text-white">{t('clubs.no_results.title')}</EditorialHeading>
-                      <p className="text-zinc-500 mb-8 max-w-sm mx-auto font-serif italic">
-                        {t('clubs.no_results.subtitle')}
-                      </p>
-                      <button 
-                        type="button"
-                        onClick={() => handleFiltersChange({
-                          neighborhood: '',
-                          amenities: [],
-                          vibes: [],
-                          isVerified: false,
-                          priceRange: [],
-                          rating: 0
-                        })}
-                        className="rounded-full min-h-11 px-8 sm:px-12 py-3 sm:py-6 font-bold uppercase tracking-[0.2em] text-[10px] border-[#E8A838]/30 text-[#E8A838] hover:bg-[#E8A838] hover:text-black transition-all"
-                      >
-                        {t('clubs.clear_filters')}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : null}
+              )}
             </div>
-          </div>
+          ) : null}
         </div>
       </section>
     </div>
