@@ -79,7 +79,7 @@ const getStatusIcon = (status: string) => {
     case 'REJECTED':
       return <XCircle className="h-4 w-4 text-red-500" />;
     default:
-      return <Clock className="h-4 w-4 text-yellow-500" />;
+      return <Clock className="h-4 w-4 text-brand" />;
   }
 };
 
@@ -161,13 +161,13 @@ export function AdminDashboardClient({ lang, data }: AdminDashboardClientProps) 
 
       {/* Alert Banner for Pending Items */}
       {(data.pendingVerifications > 0 || data.pendingRequests > 10) && (
-        <Card className="border-yellow-200 bg-yellow-50 dark:bg-yellow-900/10 dark:border-yellow-900/30">
+        <Card className="border-brand/30 bg-brand/10 dark:bg-brand/15 dark:border-brand/40">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-brand dark:text-brand-light mt-0.5" />
               <div>
-                <h3 className="font-medium text-yellow-800 dark:text-yellow-300">{t('admin.dashboard.alert.title')}</h3>
-                <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
+                <h3 className="font-medium text-brand dark:text-brand-light">{t('admin.dashboard.alert.title')}</h3>
+                <p className="text-sm text-brand/90 dark:text-brand/90 mt-1">
                   {data.pendingVerifications > 0 && formatText('admin.dashboard.alert.pending_verifications', {
                     count: data.pendingVerifications,
                   })}

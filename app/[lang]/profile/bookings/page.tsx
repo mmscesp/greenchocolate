@@ -135,7 +135,7 @@ export default function BookingsPage() {
         );
       case 'pending':
         return (
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20">
+          <Badge variant="outline" className="bg-brand/10 text-brand border-brand/20">
             <Clock className="h-3 w-3 mr-1" />
             {t('bookings.status.pending')}
           </Badge>

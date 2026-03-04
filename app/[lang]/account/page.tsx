@@ -60,7 +60,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
       description: t('account.menu.reviews_desc'),
       href: `/${lang}/profile/reviews`,
       icon: Star,
-      color: 'bg-yellow-100 text-yellow-600',
+      color: 'bg-brand/10 text-brand',
     },
     {
       title: t('account.menu.membership_requests'),

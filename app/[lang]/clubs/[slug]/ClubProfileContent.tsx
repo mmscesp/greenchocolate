@@ -48,7 +48,7 @@ function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAu
   const { t } = useLanguage();
 
   return (
-    <div className="sticky top-16 md:top-20 z-50 w-full min-h-12 bg-black/90 backdrop-blur-md border-b border-white/5 flex items-center py-1">
+    <div className="sticky top-16 md:top-20 z-50 w-full min-h-12 bg-bg-base/90 backdrop-blur-md border-b border-white/5 flex items-center py-1">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 sm:gap-6 min-w-0">
           <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black relative font-sans selection:bg-gold/30 selection:text-white">
+    <div className="min-h-screen bg-bg-base relative font-sans selection:bg-brand/30 selection:text-white">
       <ClubTrustStrip isVerified={club.isVerified} />
       
       {/* Navigation */}
@@ -237,7 +237,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               
               {/* Image Navigation Dots */}
               {club.images.length > 1 && (
-                <div className="flex items-center gap-2 sm:ml-4 bg-black/60 backdrop-blur-md px-3 sm:px-4 rounded-full border border-white/10">
+                <div className="flex items-center gap-2 sm:ml-4 bg-bg-base/70 backdrop-blur-md px-3 sm:px-4 rounded-full border border-white/10">
                   <button onClick={prevImage} className="min-h-11 min-w-11 p-2 hover:text-gold transition-colors text-white">
                     <ChevronLeft className="h-5 w-5" />
                   </button>
@@ -300,9 +300,9 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               </div>
 
               {/* Overlay */}
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md p-6 text-center">
-                <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center mb-4 shadow-2xl border border-white/10">
-                  <Lock className="h-5 w-5 text-gold" />
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-bg-base/70 backdrop-blur-md p-6 text-center">
+                <div className="w-12 h-12 bg-bg-base rounded-full flex items-center justify-center mb-4 shadow-2xl border border-white/10">
+                  <Lock className="h-5 w-5 text-brand" />
                 </div>
                 <h4 className="font-bold text-white mb-2 uppercase tracking-widest text-[10px]">{t('club_profile.private_location')}</h4>
                 <p className="text-zinc-500 text-xs mb-6 max-w-[200px] leading-relaxed font-serif italic">

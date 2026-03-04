@@ -34,11 +34,11 @@ export default function MemberPassport({
     },
     premium: {
       label: t('member_passport.tier.premium'),
-      gradient: 'from-amber-500/20 via-orange-500/10 to-yellow-500/20',
-      border: 'border-amber-500/30',
-      accent: 'text-amber-600',
-      accentBg: 'bg-amber-500/10',
-      bar: 'bg-amber-500'
+      gradient: 'from-brand/20 via-brand-dark/10 to-brand-light/20',
+      border: 'border-brand/30',
+      accent: 'text-brand',
+      accentBg: 'bg-brand/10',
+      bar: 'bg-brand'
     },
     elite: {
       label: t('member_passport.tier.elite'),

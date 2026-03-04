@@ -169,7 +169,7 @@ export default function AnalyticsPage() {
                           "h-2 rounded-full transition-all duration-500",
                           source.percentage > 40 ? "bg-green-500" :
                           source.percentage > 25 ? "bg-blue-500" :
-                          source.percentage > 15 ? "bg-orange-500" : "bg-muted-foreground"
+                          source.percentage > 15 ? "bg-brand" : "bg-muted-foreground"
                         )}
                         style={{ width: `${source.percentage}%` }}
                       />
@@ -261,14 +261,14 @@ export default function AnalyticsPage() {
                 </div>
               </div>
 
-              <div className="p-4 bg-orange-50 dark:bg-orange-900/10 rounded-lg border border-orange-200 dark:border-orange-900/20">
+              <div className="p-4 bg-brand/10 dark:bg-brand/15 rounded-lg border border-brand/20 dark:border-brand/30">
                 <div className="flex items-start gap-3">
-                  <div className="bg-orange-100 dark:bg-orange-900/20 p-2 rounded-full shrink-0">
-                    <Star className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                  <div className="bg-brand/15 dark:bg-brand/20 p-2 rounded-full shrink-0">
+                    <Star className="h-4 w-4 text-brand dark:text-brand-light" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-orange-800 dark:text-orange-400 mb-1">{t('club_panel.analytics.insights.excellent_rating.title')}</h4>
-                    <p className="text-sm text-orange-700 dark:text-orange-500">
+                    <h4 className="font-medium text-brand dark:text-brand-light mb-1">{t('club_panel.analytics.insights.excellent_rating.title')}</h4>
+                    <p className="text-sm text-brand/90 dark:text-brand/90">
                       {t('club_panel.analytics.insights.excellent_rating.body')}
                     </p>
                   </div>

@@ -251,10 +251,10 @@ export default function ClubRequestsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="bg-yellow-100 dark:bg-yellow-900/20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+            <div className="bg-brand/10 dark:bg-brand/15 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Clock className="h-6 w-6 text-brand dark:text-brand-light" />
             </div>
-            <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{pendingRequests.length}</p>
+            <p className="text-3xl font-bold text-brand dark:text-brand-light">{pendingRequests.length}</p>
             <p className="text-sm text-muted-foreground">{t('club_panel.requests.stats.pending')}</p>
           </CardContent>
         </Card>

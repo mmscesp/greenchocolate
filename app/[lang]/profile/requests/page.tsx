@@ -177,8 +177,8 @@ export default function UserRequestsPage() {
               <p className="text-sm font-medium text-muted-foreground">{t('requests.pending')}</p>
               <p className="text-2xl font-bold text-foreground">{pendingCount}</p>
             </div>
-            <div className="bg-amber-500/10 p-3 rounded-xl">
-              <Clock className="h-6 w-6 text-amber-600" />
+            <div className="bg-brand/10 p-3 rounded-xl">
+              <Clock className="h-6 w-6 text-brand" />
             </div>
           </CardContent>
         </Card>

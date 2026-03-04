@@ -37,13 +37,12 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
   };
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       {/* Background Gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 via-black to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/40 via-bg-base to-bg-base pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 right-0 w-[520px] h-[520px] bg-gold/5 blur-[130px] rounded-full" />
-        <div className="absolute bottom-0 left-0 w-[460px] h-[460px] bg-gold/5 blur-[120px] rounded-full" />
-          <div className="absolute bottom-0 left-0 w-[460px] h-[460px] bg-gold/5 blur-[120px] rounded-full" />
+        <div className="absolute -top-24 right-0 w-[520px] h-[520px] bg-brand/5 blur-[130px] rounded-full" />
+        <div className="absolute bottom-0 left-0 w-[460px] h-[460px] bg-brand/5 blur-[120px] rounded-full" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-14 md:pt-32 md:pb-24">
@@ -51,7 +50,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
         {/* HERO SECTION */}
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <Eyebrow variant="muted" className="mb-6 flex items-center gap-2 text-gold">
+            <Eyebrow variant="muted" className="mb-6 flex items-center gap-2 text-brand">
               <ShieldCheck className="h-4 w-4" />
               {t('safety_kit.eyebrow')}
             </Eyebrow>
@@ -60,7 +59,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
               {t('safety_kit.title')}
             </H1>
 
-            <Lead className="mb-6 text-gold font-medium">
+            <Lead className="mb-6 text-brand font-medium">
               {t('safety_kit.subtitle')}
             </Lead>
 
@@ -71,7 +70,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
             <div className="flex items-center gap-3">
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-black bg-zinc-800" />
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-bg-base bg-bg-surface" />
                 ))}
               </div>
               <Text size="sm" className="text-zinc-300 font-medium">
@@ -95,7 +94,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
                 <Text size="sm" className="uppercase tracking-widest text-xs font-bold text-zinc-300 whitespace-nowrap">
                   {item.trim()}
                 </Text>
-                {idx < 4 && <div className="w-1 h-1 rounded-full bg-zinc-700" />}
+                {idx < 4 && <div className="w-1 h-1 rounded-full bg-muted" />}
               </React.Fragment>
             ))}
           </div>
@@ -113,14 +112,14 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
 
           <div className="space-y-6">
             {[1, 2, 3, 4, 5].map((num) => (
-              <div key={num} className="relative p-8 sm:p-10 rounded-3xl border border-white/10 bg-gradient-to-br from-zinc-900/80 to-black backdrop-blur-md hover:border-gold/50 transition-all duration-300 group overflow-hidden">
+              <div key={num} className="relative p-8 sm:p-10 rounded-3xl border border-white/10 bg-gradient-to-br from-bg-card/90 to-bg-base backdrop-blur-md hover:border-gold/50 transition-all duration-300 group overflow-hidden">
                 {/* Large Background Number for premium feel */}
-                <div className="absolute -top-6 -right-6 text-[120px] font-serif font-bold text-white/[0.03] group-hover:text-gold/[0.05] transition-colors pointer-events-none select-none leading-none">
+                <div className="absolute -top-6 -right-6 text-[120px] font-serif font-bold text-white/[0.03] group-hover:text-brand/[0.05] transition-colors pointer-events-none select-none leading-none">
                   0{num}
                 </div>
                 
                 <div className="relative z-10">
-                  <H3 size="md" className="text-gold font-serif mb-3 group-hover:text-gold-light transition-colors">
+                  <H3 size="md" className="text-brand font-serif mb-3 group-hover:text-brand-light transition-colors">
                     {t(`safety_kit.modules.${num}.title`)}
                   </H3>
                   <Text className="text-zinc-200 text-base sm:text-lg leading-relaxed">
@@ -139,7 +138,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
           <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-red-500/10 blur-[120px] rounded-full pointer-events-none -translate-y-1/2" />
 
           {/* Built For You */}
-          <div className="relative p-8 sm:p-10 lg:p-12 rounded-3xl border border-white/5 bg-gradient-to-b from-zinc-900/80 to-black/80 backdrop-blur-xl shadow-2xl flex flex-col h-full overflow-hidden">
+          <div className="relative p-8 sm:p-10 lg:p-12 rounded-3xl border border-white/5 bg-gradient-to-b from-bg-card/90 to-bg-surface/80 backdrop-blur-xl shadow-2xl flex flex-col h-full overflow-hidden">
             {/* Top Green Accent Line */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-green-500/50 to-transparent opacity-50" />
             
@@ -163,7 +162,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
           </div>
 
           {/* What It Won't Do */}
-          <div className="relative p-8 sm:p-10 lg:p-12 rounded-3xl border border-white/5 bg-gradient-to-b from-zinc-900/80 to-black/80 backdrop-blur-xl shadow-2xl flex flex-col h-full overflow-hidden">
+          <div className="relative p-8 sm:p-10 lg:p-12 rounded-3xl border border-white/5 bg-gradient-to-b from-bg-card/90 to-bg-surface/80 backdrop-blur-xl shadow-2xl flex flex-col h-full overflow-hidden">
             {/* Top Red Accent Line */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500/50 to-transparent opacity-50" />
 
@@ -186,7 +185,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
             </ul>
 
             <div className="p-5 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-r from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <Text className="text-zinc-200 text-sm sm:text-base leading-relaxed relative z-10">
                 {t('safety_kit.not_closing')}
               </Text>
@@ -196,14 +195,13 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
 
         {/* FROM THE TEAM */}
         <section className="text-center max-w-2xl mx-auto">
-          <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
-            <Shield className="w-6 h-6 text-gold" />
-                    <Shield className="w-6 h-6 text-gold" />
+          <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center mx-auto mb-6">
+            <Shield className="w-6 h-6 text-brand" />
           </div>
           <Text className="text-xl md:text-2xl font-serif text-white italic leading-relaxed mb-6">
             {t('safety_kit.quote')}
           </Text>
-          <Text size="sm" className="text-gold uppercase tracking-widest font-bold">
+          <Text size="sm" className="text-brand uppercase tracking-widest font-bold">
             {t('safety_kit.quote_author')}
           </Text>
         </section>
@@ -211,10 +209,10 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
       </div>
 
       {/* FINAL CTA SECTION */}
-      <div className="relative z-10 border-t border-white/10 bg-black py-20 md:py-32">
+      <div className="relative z-10 border-t border-white/10 bg-bg-surface py-20 md:py-32">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <H2 size="xl" className="font-serif mb-4">{t('safety_kit.final_headline')}</H2>
-          <Lead className="text-gold mb-10">{t('safety_kit.final_body')}</Lead>
+          <Lead className="text-brand mb-10">{t('safety_kit.final_body')}</Lead>
           
           <div className="max-w-md mx-auto">
             <SafetyKitFunnel />

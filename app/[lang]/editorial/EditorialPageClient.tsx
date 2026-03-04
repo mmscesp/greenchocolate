@@ -84,10 +84,10 @@ const buildCategories = (t: (key: string) => string) => [
     title: t('editorial.categories.safety.title'),
     description: t('editorial.categories.safety.description'),
     icon: Shield,
-    gradient: 'from-amber-500 to-orange-500',
-    bgColor: 'bg-amber-500/10',
-    textColor: 'text-amber-400',
-    borderColor: 'border-amber-500/20',
+    gradient: 'from-brand to-brand-dark',
+    bgColor: 'bg-brand/10',
+    textColor: 'text-brand',
+    borderColor: 'border-brand/20',
     articleCount: 3,
   },
   {
@@ -109,7 +109,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
   const CATEGORIES = buildCategories(t);
 
   return (
-    <div className="min-h-screen bg-zinc-900 relative overflow-hidden">
+    <div className="min-h-screen bg-bg-base relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl" />
@@ -239,7 +239,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                     href={`/${lang}/editorial/${article.slug}`}
                 className="group block rounded-2xl border border-emerald-500/15 bg-emerald-500/5 backdrop-blur-sm overflow-hidden hover:border-emerald-500/30 transition-all duration-500 h-full"
                   >
-                    <div className="aspect-video bg-zinc-800/50 relative overflow-hidden">
+                    <div className="aspect-video bg-bg-surface/50 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
                   <Badge className="absolute top-3 left-3 bg-emerald-500/10 text-zinc-300 border-emerald-500/20" variant="secondary">
                         {article.category}

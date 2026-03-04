@@ -36,7 +36,7 @@ export function NewsletterDrop() {
         <h2 className="text-4xl md:text-6xl font-black font-serif text-white tracking-tight mb-8 leading-[1.1] drop-shadow-2xl">
           {t('landing.newsletter_drop.title_line_1')}<br />
           {t('landing.newsletter_drop.title_line_2')}<br />
-          <span className="text-gold">{t('landing.newsletter_drop.title_line_3')}</span>
+          <span className="text-brand">{t('landing.newsletter_drop.title_line_3')}</span>
         </h2>
 
         <p className="text-lg md:text-2xl text-zinc-400 mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
@@ -46,20 +46,20 @@ export function NewsletterDrop() {
         <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-left max-w-3xl mx-auto mb-10">
           {benefits.map((benefit, i) => (
             <div key={i} className="flex items-center gap-2 text-zinc-400 text-sm font-medium">
-              <Check className="w-4 h-4 text-gold flex-shrink-0" />
+              <Check className="w-4 h-4 text-brand flex-shrink-0" />
               <span>{benefit}</span>
             </div>
           ))}
         </div>
 
         {status === 'success' ? (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-8 max-w-lg mx-auto mb-12">
+          <div className="bg-brand/10 border border-brand/30 rounded-2xl p-8 max-w-lg mx-auto mb-12">
             <div className="flex flex-col items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-black">
+              <div className="w-12 h-12 bg-brand rounded-full flex items-center justify-center text-bg-base">
                 <Check className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-white">{t('landing.newsletter_drop.success_title')}</h3>
-              <p className="text-emerald-400 font-medium">{t('landing.newsletter_drop.success_body')}</p>
+              <p className="text-brand font-medium">{t('landing.newsletter_drop.success_body')}</p>
             </div>
           </div>
         ) : (
@@ -72,12 +72,12 @@ export function NewsletterDrop() {
                 disabled={status === 'loading'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-lg text-white placeholder:text-zinc-600 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all"
+                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-lg text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
               />
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="w-full px-8 py-4 bg-gold hover:bg-gold-dark disabled:opacity-50 disabled:cursor-not-allowed text-black font-black text-lg rounded-xl shadow-[0_10px_40px_hsl(var(--gold)/0.2)] hover:shadow-[0_10px_40px_hsl(var(--gold)/0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full px-8 py-4 bg-brand hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed text-bg-base font-black text-lg rounded-xl shadow-[0_10px_40px_hsl(var(--brand)/0.2)] hover:shadow-[0_10px_40px_hsl(var(--brand)/0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 {status === 'loading' ? t('landing.newsletter_drop.loading') : t('landing.newsletter_drop.subscribe')}
                 {status !== 'loading' && <ArrowRight className="w-5 h-5" />}
@@ -89,7 +89,7 @@ export function NewsletterDrop() {
           </form>
         )}
 
-        <p className="mt-12 text-zinc-700 text-xs">
+        <p className="mt-12 text-zinc-500 text-xs">
           {t('landing.newsletter_drop.disclaimer')}
         </p>
       </div>

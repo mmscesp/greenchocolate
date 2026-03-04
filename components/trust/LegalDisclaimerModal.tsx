@@ -59,7 +59,7 @@ export default function LegalDisclaimerModal() {
             className="w-full max-w-md bg-card border border-border/50 shadow-2xl rounded-2xl overflow-hidden relative"
           >
             {/* Warning Stripe */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-red-500 to-amber-500" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-brand via-red-500 to-brand" />
             
             <div className="p-6 sm:p-8">
               <div className="flex flex-col items-center text-center mb-8">
@@ -78,7 +78,7 @@ export default function LegalDisclaimerModal() {
 
               <div className="space-y-4 mb-8">
                 <div className="flex items-start gap-3 p-4 rounded-lg bg-muted/50 border border-border/50">
-                  <AlertOctagon className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                  <AlertOctagon className="h-5 w-5 text-brand shrink-0 mt-0.5" />
                   <div className="text-xs text-left text-muted-foreground">
                     <span className="font-semibold text-foreground block mb-1">{t('trust.legal_modal.warning_title')}</span>
                     {t('trust.legal_modal.warning_body')}

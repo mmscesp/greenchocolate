@@ -168,7 +168,7 @@ export default function EditorialConciergeFlow() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative font-sans antialiased bg-black text-zinc-900 selection:bg-gold selection:text-black">
+    <div ref={containerRef} className="relative font-sans antialiased bg-bg-base text-zinc-900 selection:bg-brand selection:text-black">
       {/* Section 2: Trust Strip (The Marquee) */}
       <section data-landing-section={SECTION_KEYS[0]}><TrustStrip /></section>
       

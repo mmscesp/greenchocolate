@@ -11,9 +11,9 @@ export default function Footer() {
   const withLocale = (path: string) => `/${language}${path}`;
 
   return (
-    <footer className="bg-black text-white relative overflow-hidden border-t border-white/10">
+    <footer className="bg-bg-base text-white relative overflow-hidden border-t border-white/10">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/20 via-bg-base to-bg-base pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -bottom-24 right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
       </div>
@@ -33,7 +33,7 @@ export default function Footer() {
                 href="https://www.instagram.com/socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-gold hover:border-gold/30 hover:bg-gold/5 transition-all duration-300"
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
@@ -42,7 +42,7 @@ export default function Footer() {
                 href="https://x.com/socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-gold hover:border-gold/30 hover:bg-gold/5 transition-all duration-300"
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
                 aria-label="X (Twitter)"
               >
                 <Twitter className="h-4 w-4" />
@@ -51,7 +51,7 @@ export default function Footer() {
                 href="https://www.tiktok.com/@socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-gold hover:border-gold/30 hover:bg-gold/5 transition-all duration-300"
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
                 aria-label="TikTok"
               >
                 <TikTok className="h-4 w-4" />
@@ -61,7 +61,7 @@ export default function Footer() {
 
           {/* Column 2: Learn */}
           <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-8">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand mb-8">
               {t('footer.new.columns.learn')}
             </h3>
             <ul className="space-y-4">
@@ -110,7 +110,7 @@ export default function Footer() {
 
           {/* Column 3: Explore */}
           <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-8">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand mb-8">
               {t('footer.new.columns.explore')}
             </h3>
             <ul className="space-y-4">
@@ -143,7 +143,7 @@ export default function Footer() {
                   className="group flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500"
                   aria-disabled="true"
                 >
-                  {t('footer.new.explore.valencia')} <span className="ml-0 rounded border border-gold/10 bg-gold/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold/50 sm:ml-2">{t('common.coming_soon')}</span>
+                  {t('footer.new.explore.valencia')} <span className="ml-0 rounded border border-brand/10 bg-brand/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-brand/50 sm:ml-2">{t('common.coming_soon')}</span>
                 </span>
               </li>
               <li>
@@ -151,7 +151,7 @@ export default function Footer() {
                   className="group flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500"
                   aria-disabled="true"
                 >
-                  {t('footer.new.explore.tenerife')} <span className="ml-0 rounded border border-gold/10 bg-gold/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gold/50 sm:ml-2">{t('common.coming_soon')}</span>
+                  {t('footer.new.explore.tenerife')} <span className="ml-0 rounded border border-brand/10 bg-brand/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-brand/50 sm:ml-2">{t('common.coming_soon')}</span>
                 </span>
               </li>
               <li>
@@ -167,7 +167,7 @@ export default function Footer() {
 
           {/* Column 4: About */}
           <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-8">
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand mb-8">
               {t('footer.new.columns.about')}
             </h3>
             <ul className="space-y-4">
@@ -236,8 +236,8 @@ export default function Footer() {
                     onClick={() => setLanguage(loc as Locale)}
                     className={`px-2 py-1 rounded transition-colors ${
                       language === loc 
-                        ? "text-black bg-gold" 
-                        : "text-zinc-500 hover:text-gold"
+                        ? "text-black bg-brand" 
+                        : "text-zinc-500 hover:text-brand"
                     }`}
                   >
                     {loc.toUpperCase()}

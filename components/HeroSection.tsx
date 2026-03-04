@@ -238,11 +238,11 @@ export default function HeroSection() {
 
   const sectionStyle = prefersReducedMotion ? undefined : { height: HERO_CONFIG.scrollHeight };
   const stageClasses = prefersReducedMotion
-    ? 'relative min-h-[100dvh] w-full overflow-hidden bg-black'
-    : 'sticky top-0 left-0 h-[100dvh] w-full overflow-hidden bg-black';
+    ? 'relative min-h-[100dvh] w-full overflow-hidden bg-bg-base'
+    : 'sticky top-0 left-0 h-[100dvh] w-full overflow-hidden bg-bg-base';
 
   return (
-    <section ref={rootRef} className="relative w-full bg-black" style={{ contain: 'layout style' }}>
+    <section ref={rootRef} className="relative w-full bg-bg-base" style={{ contain: 'layout style' }}>
       
       {/* =========================================================== */}
       {/*  LIQUID GLASS SVG FILTER                                      */}
@@ -270,7 +270,7 @@ export default function HeroSection() {
       <div className="hidden md:block w-full" ref={desktopContainerRef} style={sectionStyle}>
         <div className={stageClasses}>
           {/* ---- IMAGE STAGE ---- */}
-          <div className="absolute inset-0 bg-black">
+          <div className="absolute inset-0 bg-bg-base">
             <div ref={droneWrapRef} className="absolute inset-0 scale-[1.06] origin-center will-change-transform">
               <div ref={imageSharpRef} className="absolute inset-0 will-change-transform">
                 <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill sizes="(min-width: 768px) 130vw, 100vw" quality={90} priority className="object-cover object-[center_35%] select-none" onLoad={handleImageLoad} onError={handleImageError} />
@@ -367,7 +367,7 @@ export default function HeroSection() {
       {/* =========================================================== */}
       {/*  MOBILE                                                       */}
       {/* =========================================================== */}
-      <div className="md:hidden relative w-full min-h-[100dvh] flex flex-col bg-black overflow-hidden" ref={mobileContainerRef}>
+      <div className="md:hidden relative w-full min-h-[100dvh] flex flex-col bg-bg-base overflow-hidden" ref={mobileContainerRef}>
         <div className="absolute inset-0 z-0">
           <div ref={mobileBgRef} className="relative w-full h-full will-change-transform">
             <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill quality={80} sizes="100vw" priority className="object-cover object-[center_35%]" onLoad={handleImageLoad} onError={handleImageError} />
@@ -445,7 +445,7 @@ export default function HeroSection() {
       </div>
 
       {!overlayDismissed && (
-        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950 transition-opacity duration-1000 ${overlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} aria-live="polite">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-bg-base transition-opacity duration-1000 ${overlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} aria-live="polite">
           <div className="flex flex-col items-center gap-5">
             <div className={`w-16 h-16 md:w-20 md:h-20 border-[3px] border-gold border-t-transparent rounded-full ${prefersReducedMotion ? '' : 'animate-spin'}`} />
             <p className="text-white/60 text-sm tracking-widest uppercase">{t('hero.section.loading')}</p>

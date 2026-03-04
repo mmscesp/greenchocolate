@@ -73,7 +73,7 @@ export function RealityCheck() {
               <div className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-4">
                 {card.title}
               </div>
-              <h3 className="text-xl md:text-2xl font-bold text-gold mb-6 leading-snug">
+              <h3 className="text-xl md:text-2xl font-bold text-brand mb-6 leading-snug">
                 {card.myth}
               </h3>
               <p className="text-base text-white/80 leading-relaxed font-medium">
@@ -92,7 +92,7 @@ export function RealityCheck() {
         >
           <Link
             href={`/${language}/editorial/legal`}
-            className="inline-flex items-center text-gold hover:text-gold-dark font-bold text-lg transition-colors group"
+            className="inline-flex items-center text-brand hover:text-brand-light font-bold text-lg transition-colors group"
           >
             {t('landing.reality_check.cta')}
             <span className="ml-2 transform transition-transform group-hover:translate-x-1">→</span>

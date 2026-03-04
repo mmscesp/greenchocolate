@@ -25,8 +25,8 @@ const colorStyles = {
     text: 'text-purple-600 dark:text-purple-400',
   },
   orange: {
-    bg: 'bg-orange-100 dark:bg-orange-900/20',
-    text: 'text-orange-600 dark:text-orange-400',
+    bg: 'bg-brand/10 dark:bg-brand/20',
+    text: 'text-brand dark:text-brand-light',
   },
   default: {
     bg: 'bg-muted',

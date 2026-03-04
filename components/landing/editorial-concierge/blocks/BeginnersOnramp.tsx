@@ -8,7 +8,7 @@ export function BeginnersOnramp() {
   const { t } = useLanguage();
 
   return (
-    <section className="bg-[#0a0a0a] py-32 md:py-48 px-4 md:px-8 border-t border-white/5 relative z-10">
+    <section className="bg-bg-base py-32 md:py-48 px-4 md:px-8 border-t border-white/5 relative z-10">
       <div className="max-w-3xl mx-auto text-center md:text-left">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

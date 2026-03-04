@@ -14,25 +14,25 @@ export default function TrustBadge({ type, size = 'md', className }: TrustBadgeP
     encrypted: {
       icon: Lock,
       text: 'AES-256 ENCRYPTED',
-      bg: 'bg-gold/10',
-      border: 'border-gold/20',
-      text_color: 'text-gold',
+      bg: 'bg-brand/10',
+      border: 'border-brand/20',
+      text_color: 'text-brand',
       pulse: true
     },
     verified: {
       icon: CheckCircle2,
       text: 'VERIFIED CLUB',
-      bg: 'bg-gold/10',
-      border: 'border-gold/20',
-      text_color: 'text-gold',
+      bg: 'bg-brand/10',
+      border: 'border-brand/20',
+      text_color: 'text-brand',
       pulse: false
     },
     legal: {
       icon: Shield,
       text: 'LEGAL COMPLIANCE',
-      bg: 'bg-gold/10',
-      border: 'border-gold/20',
-      text_color: 'text-gold',
+      bg: 'bg-brand/10',
+      border: 'border-brand/20',
+      text_color: 'text-brand',
       pulse: false
     },
     warning: {

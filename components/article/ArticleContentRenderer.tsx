@@ -153,11 +153,11 @@ function CalloutBox({ type, title, children }: CalloutBoxProps) {
       titleColor: 'text-blue-400',
     },
     warning: {
-      bg: 'bg-amber-500/10',
-      border: 'border-amber-500/30',
+      bg: 'bg-brand/10',
+      border: 'border-brand/30',
       icon: AlertTriangle,
-      iconColor: 'text-amber-400',
-      titleColor: 'text-amber-400',
+      iconColor: 'text-brand',
+      titleColor: 'text-brand',
     },
     tip: {
       bg: 'bg-green-500/10',

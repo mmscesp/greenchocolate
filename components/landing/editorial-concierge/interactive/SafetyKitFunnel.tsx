@@ -38,7 +38,7 @@ export function SafetyKitFunnel() {
   };
 
   return (
-    <div className="w-full relative min-h-[280px] flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl border border-white/10 bg-zinc-900/60 backdrop-blur-md shadow-2xl overflow-hidden">
+    <div className="w-full relative min-h-[280px] flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl border border-white/10 bg-bg-card/70 backdrop-blur-md shadow-2xl overflow-hidden">
       <AnimatePresence mode="wait">
         
         {step === 'email' && (
@@ -57,12 +57,12 @@ export function SafetyKitFunnel() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12 bg-black/50 border-white/10 focus-visible:ring-gold/50 text-white placeholder:text-zinc-500 rounded-xl"
+                className="h-12 bg-bg-base/70 border-white/10 focus-visible:ring-brand/50 text-white placeholder:text-zinc-500 rounded-xl"
               />
               <Button 
                 type="submit" 
                 disabled={isSubmitting}
-                className="h-12 bg-gold hover:bg-gold-dark text-black font-bold rounded-xl transition-all duration-200 text-sm uppercase tracking-wide w-full"
+                className="h-12 bg-brand hover:bg-brand-dark text-black font-bold rounded-xl transition-all duration-200 text-sm uppercase tracking-wide w-full"
               >
                 {isSubmitting ? '...' : t('safety_kit.form_button')}
               </Button>
@@ -88,13 +88,13 @@ export function SafetyKitFunnel() {
             <div className="flex flex-col sm:flex-row gap-3">
               <button 
                 onClick={() => handleAgeAnswer(true)}
-                className="flex-1 min-h-[48px] py-3 px-4 bg-gold hover:bg-gold-dark text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm shadow-lg shadow-gold/20 border border-gold/30"
+                className="flex-1 min-h-[48px] py-3 px-4 bg-brand hover:bg-brand-dark text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm shadow-lg shadow-brand/20 border border-brand/30"
               >
                 {t('safety_kit.age_yes')}
               </button>
               <button 
                 onClick={() => handleAgeAnswer(false)}
-                className="flex-none min-h-[48px] py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm border border-zinc-700"
+                className="flex-none min-h-[48px] py-3 px-6 bg-bg-elevated hover:bg-secondary text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm border border-border"
               >
                 {t('safety_kit.age_no')}
               </button>
@@ -142,7 +142,7 @@ export function SafetyKitFunnel() {
             </h3>
             
             <Button 
-              className="w-full h-12 bg-white hover:bg-zinc-200 text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm mb-4"
+              className="w-full h-12 bg-brand hover:bg-brand-dark text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm mb-4"
             >
               <Download className="w-4 h-4" />
               {t('safety_kit.dl_button')}
@@ -153,14 +153,14 @@ export function SafetyKitFunnel() {
             </p>
             
             <div className="space-y-3">
-              <Link href={`/${language}/clubs`} className="block w-full p-3 rounded-lg border border-white/5 bg-black/30 hover:bg-black/50 hover:border-gold/30 transition-all text-left group">
+              <Link href={`/${language}/clubs`} className="block w-full p-3 rounded-lg border border-white/5 bg-bg-base/40 hover:bg-bg-surface/60 hover:border-brand/30 transition-all text-left group">
                 <span className="block text-[10px] uppercase tracking-widest text-zinc-500 font-medium mb-1">{t('safety_kit.dl_cta1')}</span>
-                <span className="flex items-center text-sm text-gold group-hover:text-gold-light">
+                <span className="flex items-center text-sm text-brand group-hover:text-brand-light">
                   {t('safety_kit.dl_cta1_btn')}
                 </span>
               </Link>
               
-              <Link href={`/${language}/editorial/legal`} className="block w-full p-3 rounded-lg border border-white/5 bg-black/30 hover:bg-black/50 hover:border-gold/30 transition-all text-left group">
+              <Link href={`/${language}/editorial/legal`} className="block w-full p-3 rounded-lg border border-white/5 bg-bg-base/40 hover:bg-bg-surface/60 hover:border-brand/30 transition-all text-left group">
                 <span className="block text-[10px] uppercase tracking-widest text-zinc-500 font-medium mb-1">{t('safety_kit.dl_cta2')}</span>
                 <span className="flex items-center text-sm text-white group-hover:text-zinc-300">
                   {t('safety_kit.dl_cta2_btn')}

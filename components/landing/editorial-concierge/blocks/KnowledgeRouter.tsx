@@ -34,20 +34,20 @@ export function KnowledgeRouter() {
   ];
 
   return (
-    <section className="bg-zinc-50 py-16 md:py-20 px-4 md:px-8 border-t border-zinc-200">
+    <section className="bg-bg-surface py-16 md:py-20 px-4 md:px-8 border-t border-white/10">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <h2 className="text-2xl md:text-3xl font-black font-serif text-black tracking-tight mb-2">
+            <h2 className="text-2xl md:text-3xl font-black font-serif text-white tracking-tight mb-2">
               {t('landing.knowledge_router.title')}
             </h2>
-            <p className="text-zinc-600 font-medium">
+            <p className="text-zinc-300 font-medium">
               {t('landing.knowledge_router.subtitle')}
             </p>
           </div>
           <Link
             href={`/${language}/events`}
-            className="hidden md:inline-flex items-center gap-2 text-zinc-500 hover:text-gold font-bold uppercase tracking-widest text-xs transition-colors"
+            className="hidden md:inline-flex items-center gap-2 text-zinc-400 hover:text-brand font-bold uppercase tracking-widest text-xs transition-colors"
           >
             {t('landing.knowledge_router.full_events')} <ArrowRight className="w-4 h-4" />
           </Link>
@@ -61,26 +61,26 @@ export function KnowledgeRouter() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="group bg-white border border-zinc-200 hover:border-gold/50 rounded-xl p-5 md:p-6 transition-colors shadow-sm hover:shadow-md"
+              className="group bg-bg-card border border-white/10 hover:border-brand/50 rounded-xl p-5 md:p-6 transition-colors shadow-sm hover:shadow-md"
             >
               <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-black text-gold text-[10px] font-bold uppercase tracking-widest rounded-sm">
+                <span className="inline-block px-3 py-1 bg-brand/15 border border-brand/30 text-brand text-[10px] font-bold uppercase tracking-widest rounded-sm">
                   {event.date}
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-zinc-900 mb-2 group-hover:text-gold transition-colors">
+              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-brand transition-colors">
                 {event.name}
               </h3>
-              <div className="flex items-center gap-1.5 text-zinc-500 text-sm font-medium mb-4">
+              <div className="flex items-center gap-1.5 text-zinc-400 text-sm font-medium mb-4">
                 <MapPin className="w-3.5 h-3.5" />
                 {event.location}
               </div>
-              <p className="text-zinc-600 text-sm mb-6">
+              <p className="text-zinc-300 text-sm mb-6">
                 {event.desc}
               </p>
               <Link
                 href={event.href}
-                className="inline-flex items-center gap-2 text-black font-bold text-sm hover:translate-x-1 transition-transform"
+                className="inline-flex items-center gap-2 text-zinc-100 font-bold text-sm hover:text-brand hover:translate-x-1 transition-transform transition-colors"
               >
                 {t('landing.knowledge_router.read_guide')} <ArrowRight className="w-4 h-4" />
               </Link>
@@ -91,7 +91,7 @@ export function KnowledgeRouter() {
         <div className="mt-8 text-center md:hidden">
           <Link
             href={`/${language}/events`}
-            className="inline-flex items-center gap-2 text-zinc-500 hover:text-gold font-bold uppercase tracking-widest text-xs transition-colors"
+            className="inline-flex items-center gap-2 text-zinc-400 hover:text-brand font-bold uppercase tracking-widest text-xs transition-colors"
           >
             {t('landing.knowledge_router.full_events')} <ArrowRight className="w-4 h-4" />
           </Link>

@@ -39,7 +39,7 @@ export default function CategoryArticlePage({
   articles,
 }: CategoryArticlePageProps) {
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 via-black to-zinc-900/50 pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-gold/5 to-transparent" />
@@ -81,7 +81,7 @@ export default function CategoryArticlePage({
                 <Link
                   key={article.id}
                   href={`/${lang}/editorial/${article.slug}`}
-                  className="group block rounded-2xl border border-white/10 bg-zinc-900/40 p-6 hover:border-gold/50 hover:shadow-2xl hover:shadow-gold/5 transition-all duration-500"
+                  className="group block rounded-2xl border border-white/10 bg-bg-card/70 p-6 hover:border-brand/50 hover:shadow-2xl hover:shadow-brand/5 transition-all duration-500"
                 >
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="flex-1">

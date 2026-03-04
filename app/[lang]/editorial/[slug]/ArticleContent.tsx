@@ -49,7 +49,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       {/* Reading Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-gold z-[60] origin-left"
@@ -60,14 +60,14 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: showStickyCTA ? 0 : 100 }}
-        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-black/90 backdrop-blur-md border-t border-white/10"
+        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-bg-base/90 backdrop-blur-md border-t border-white/10"
       >
         <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-white font-bold hidden sm:block">{t('article.sticky_cta.desktop')}</p>
           <p className="text-white font-bold sm:hidden">{t('article.sticky_cta.mobile')}</p>
           <div className="flex items-center gap-3">
             <Link href={`/${language}/clubs`}>
-              <Button className="bg-gold hover:bg-gold-dark text-black font-bold rounded-full">
+              <Button className="bg-brand hover:bg-brand-dark text-black font-bold rounded-full">
                 {t('article.sticky_cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -77,10 +77,9 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
 
       {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 via-black to-black pointer-events-none" />
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/40 via-bg-base to-bg-base pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-brand/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand/5 rounded-full blur-[120px]" />
       </div>
 
       {/* Back to Editorial link */}
@@ -94,7 +93,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
       </div>
 
       {/* Hero Section */}
-      <div className="relative h-[450px] lg:h-[650px] overflow-hidden bg-zinc-900 relative z-10">
+      <div className="relative h-[450px] lg:h-[650px] overflow-hidden bg-bg-surface relative z-10">
         {article.heroImage && (
           <Image
             src={article.heroImage}
@@ -136,7 +135,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
           
           {/* Article Main Body */}
           <article>
-            <div className="bg-zinc-900/40 backdrop-blur-sm rounded-3xl border border-white/10 shadow-2xl p-8 lg:p-12">
+            <div className="bg-bg-card/70 backdrop-blur-sm rounded-3xl border border-white/10 shadow-2xl p-8 lg:p-12">
               {/* Expert Byline */}
               <ExpertByline 
                 name={article.authorName} 
@@ -184,11 +183,11 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
           <aside className="space-y-12">
             {/* Safety Kit Widget */}
             <div className="sticky top-24 space-y-12">
-              <div className="rounded-3xl border border-white/10 bg-zinc-900/60 p-4 backdrop-blur-sm shadow-xl">
+              <div className="rounded-3xl border border-white/10 bg-bg-card/80 p-4 backdrop-blur-sm shadow-xl">
                 <EligibilityFlow />
                 <div className="mt-6 flex justify-center">
                   <Link href={`/${language}/safety`}>
-                    <Button className="rounded-full bg-gold hover:bg-gold-dark text-black font-bold uppercase tracking-widest text-[10px] px-8 py-6">
+                    <Button className="rounded-full bg-brand hover:bg-brand-dark text-black font-bold uppercase tracking-widest text-[10px] px-8 py-6">
                       {t('article.open_safety_guide')} <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -196,9 +195,9 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               </div>
 
               {/* Verification Details */}
-              <div className="p-8 bg-zinc-900/40 border border-white/10 rounded-3xl shadow-xl relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gold mb-8 flex items-center gap-2">
+              <div className="p-8 bg-bg-card/70 border border-white/10 rounded-3xl shadow-xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-brand/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-brand mb-8 flex items-center gap-2">
                   <Shield className="h-4 w-4" /> {t('article.vetting_process')}
                 </h4>
                 <ul className="space-y-5 text-[13px] font-medium text-zinc-400">
@@ -233,7 +232,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               {relatedArticles.map((related) => (
                 <Link key={related.id} href={`/${language}/editorial/${related.slug}`}>
                   <article className="group cursor-pointer relative">
-                    <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 group-hover:border-gold/50 transition-all duration-500">
+                    <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-bg-surface border border-white/10 group-hover:border-brand/50 transition-all duration-500">
                       {related.heroImage && (
                         <Image
                           src={related.heroImage}

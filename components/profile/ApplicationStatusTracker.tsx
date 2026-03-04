@@ -132,14 +132,14 @@ export default function ApplicationStatusTracker({
               className={cn(
                 "flex items-start gap-4 p-4 rounded-xl border transition-all duration-300",
                 isCompleted && "bg-primary/5 border-primary/20",
-                isCurrent && "bg-amber-500/5 border-amber-500/30",
+                isCurrent && "bg-brand/5 border-brand/30",
                 isPending && "bg-muted/30 border-border/50 opacity-60"
               )}
             >
               <div className={cn(
                 "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
                 isCompleted && "bg-primary text-primary-foreground",
-                isCurrent && "bg-amber-500 text-white",
+                isCurrent && "bg-brand text-white",
                 isPending && "bg-muted text-muted-foreground"
               )}>
                 {isCompleted ? (
@@ -154,13 +154,13 @@ export default function ApplicationStatusTracker({
                   <h4 className={cn(
                     "font-bold text-sm",
                     isCompleted && "text-foreground",
-                    isCurrent && "text-amber-600",
+                    isCurrent && "text-brand",
                     isPending && "text-muted-foreground"
                   )}>
                     {t(stage.labelKey)}
                   </h4>
                   {isCurrent && (
-                    <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 text-[10px] uppercase tracking-wider rounded-full font-bold">
+                    <span className="px-2 py-0.5 bg-brand/10 text-brand text-[10px] uppercase tracking-wider rounded-full font-bold">
                       {t('application_status.current')}
                     </span>
                   )}
@@ -172,7 +172,7 @@ export default function ApplicationStatusTracker({
                 <motion.div
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="w-2 h-2 bg-amber-500 rounded-full shrink-0 mt-2"
+                  className="w-2 h-2 bg-brand rounded-full shrink-0 mt-2"
                 />
               )}
             </motion.div>

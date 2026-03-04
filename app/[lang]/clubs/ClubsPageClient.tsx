@@ -67,7 +67,7 @@ export default function ClubsPageClient({
   }, []);
 
   return (
-    <div className="min-h-screen bg-black font-sans selection:bg-gold/30 selection:text-white">
+    <div className="min-h-screen bg-bg-base font-sans selection:bg-gold/30 selection:text-white">
       {/* JSON-LD Structured Data */}
       <CollectionPageStructuredData
         schema={{
@@ -79,7 +79,7 @@ export default function ClubsPageClient({
       />
 
       {/* Hero Header */}
-      <SectionWrapper dark className="pt-24 pb-16 sm:pt-32 sm:pb-20 relative overflow-hidden bg-black backdrop-blur-none">
+      <SectionWrapper dark className="pt-24 pb-16 sm:pt-32 sm:pb-20 relative overflow-hidden bg-bg-base backdrop-blur-none">
         {/* Background Gradients */}
         <div className="absolute inset-0 z-0">
           <div className="absolute top-0 left-1/4 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-gold/5 rounded-full blur-[100px] sm:blur-[140px] -translate-y-1/2 animate-pulse" />
@@ -120,7 +120,7 @@ export default function ClubsPageClient({
         </div>
       </SectionWrapper>
 
-      <section className="relative bg-black pb-32 sm:pb-40">
+      <section className="relative bg-bg-base pb-32 sm:pb-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           
           {/* Filter Bar - Sticky on Desktop */}
@@ -159,7 +159,7 @@ export default function ClubsPageClient({
             </div>
             <Link 
               href={`/${language}/mission#verification-standard`} 
-              className="relative z-10 w-full lg:w-auto flex items-center justify-center gap-3 sm:gap-4 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white hover:text-black transition-all whitespace-nowrap bg-white/5 px-6 py-4 sm:px-10 sm:py-5 rounded-full border border-white/10 hover:bg-gold hover:border-gold shadow-2xl"
+              className="relative z-10 w-full lg:w-auto flex items-center justify-center gap-3 sm:gap-4 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white hover:text-black transition-all whitespace-nowrap bg-white/5 px-6 py-4 sm:px-10 sm:py-5 rounded-full border border-white/10 hover:bg-brand hover:border-brand shadow-2xl"
             >
               {t('clubs.sidebar.learn_standard')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-2" />
             </Link>
@@ -174,7 +174,7 @@ export default function ClubsPageClient({
                 className={cn(
                   "flex-1 sm:flex-none inline-flex h-10 sm:h-12 items-center justify-center gap-2 sm:gap-3 px-6 sm:px-10 rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] transition-all",
                   viewMode === 'grid' 
-                    ? "bg-gold text-black shadow-2xl shadow-gold/20"
+                    ? "bg-brand text-black shadow-2xl shadow-brand/20"
                     : "text-zinc-400 hover:text-white"
                 )}
               >
@@ -195,7 +195,7 @@ export default function ClubsPageClient({
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="flex items-center justify-center gap-3 sm:gap-4 text-gold bg-gold/10 px-6 py-3 sm:px-8 sm:py-4 rounded-full border border-gold/20 shadow-2xl shadow-gold/5 w-full sm:w-auto"
+                  className="flex items-center justify-center gap-3 sm:gap-4 text-brand bg-brand/10 px-6 py-3 sm:px-8 sm:py-4 rounded-full border border-brand/20 shadow-2xl shadow-brand/5 w-full sm:w-auto"
                 >
                   <Zap className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse fill-current" />
                   <span className="text-[10px] sm:text-[12px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em]">{t('clubs.status.updating_directory')}</span>
@@ -211,11 +211,11 @@ export default function ClubsPageClient({
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {[1, 2, 3, 4, 5, 6].map(i => (
                     <div key={i} className="bg-bg-base rounded-[2rem] border border-white/5 min-h-[350px] sm:min-h-[400px] animate-pulse overflow-hidden">
-                      <div className="h-56 sm:h-64 bg-zinc-900/50" />
+                      <div className="h-56 sm:h-64 bg-bg-surface/60" />
                       <div className="p-6 sm:p-8 space-y-4">
-                        <div className="h-6 sm:h-8 bg-zinc-900/50 rounded-lg w-3/4" />
-                        <div className="h-3 sm:h-4 bg-zinc-900/50 rounded-lg w-1/2" />
-                        <div className="h-10 sm:h-12 bg-zinc-900/50 rounded-lg" />
+                        <div className="h-6 sm:h-8 bg-bg-surface/60 rounded-lg w-3/4" />
+                        <div className="h-3 sm:h-4 bg-bg-surface/60 rounded-lg w-1/2" />
+                        <div className="h-10 sm:h-12 bg-bg-surface/60 rounded-lg" />
                       </div>
                     </div>
                   ))}
@@ -253,7 +253,7 @@ export default function ClubsPageClient({
                       priceRange: [],
                       rating: 0
                     })}
-                    className="rounded-full min-h-12 sm:min-h-14 px-8 sm:px-12 py-3 sm:py-4 font-bold uppercase tracking-[0.2em] text-[10px] border border-gold/30 text-gold hover:bg-gold hover:text-black transition-all"
+                    className="rounded-full min-h-12 sm:min-h-14 px-8 sm:px-12 py-3 sm:py-4 font-bold uppercase tracking-[0.2em] text-[10px] border border-brand/30 text-brand hover:bg-brand hover:text-black transition-all"
                   >
                     {t('clubs.clear_filters')}
                   </button>

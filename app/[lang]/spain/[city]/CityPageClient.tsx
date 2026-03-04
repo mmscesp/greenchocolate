@@ -206,8 +206,8 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
         >
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
-                <Star className="h-5 w-5 text-amber-500" />
+              <div className="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center">
+                <Star className="h-5 w-5 text-brand" />
               </div>
               <H2>{t('city.featured.title')}</H2>
             </div>

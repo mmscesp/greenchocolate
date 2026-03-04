@@ -347,8 +347,8 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
 
                 <div className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/30 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                      <Star className="h-5 w-5 text-amber-600" />
+                    <div className="h-10 w-10 rounded-full bg-brand/10 flex items-center justify-center">
+                      <Star className="h-5 w-5 text-brand" />
                     </div>
                     <div>
                       <div className="font-medium">{t('profile.membership_tier')}</div>

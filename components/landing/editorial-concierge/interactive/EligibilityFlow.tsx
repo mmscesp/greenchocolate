@@ -66,14 +66,14 @@ export function EligibilityFlow() {
                   key={i}
                   className={`
                     h-1 rounded-full transition-all duration-500
-                    ${i === step ? 'w-8 bg-gold' : i < step ? 'w-2 bg-gold/60' : 'w-2 bg-zinc-700'}
+                    ${i === step ? 'w-8 bg-gold' : i < step ? 'w-2 bg-gold/60' : 'w-2 bg-muted'}
                   `}
                 />
               ))}
             </div>
 
             {/* Step number */}
-            <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mx-auto mb-6">
+            <div className="w-14 h-14 rounded-2xl bg-bg-surface border border-border flex items-center justify-center mx-auto mb-6">
               <span className="font-serif text-gold text-lg font-bold">{step + 1}</span>
             </div>
             
@@ -108,12 +108,12 @@ export function EligibilityFlow() {
                 onClick={() => handleAnswer(false)}
                 className="
                   flex-1 min-h-11 py-4 sm:py-5 px-4 
-                  bg-zinc-700 hover:bg-zinc-600 
+                  bg-bg-elevated hover:bg-secondary 
                   text-white font-bold rounded-2xl 
                   transition-all duration-200
                   flex items-center justify-center gap-2 
                   uppercase tracking-wide text-sm
-                  border border-zinc-600
+                  border border-border
                 "
               >
                 <X className="w-4 h-4" /> {t('landing.eligibility.no')}
@@ -140,9 +140,9 @@ export function EligibilityFlow() {
               {t('landing.eligibility.complete_description')}
             </p>
             
-            <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-6">
+            <div className="p-4 bg-gold/10 border border-gold/30 rounded-xl mb-6">
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                <AlertCircle className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
                 <p className="text-zinc-300 text-xs text-left">
                   {t('landing.eligibility.warning')}
                 </p>

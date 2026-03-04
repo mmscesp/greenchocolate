@@ -20,7 +20,7 @@ const buildSafetyCategories = (t: (key: string) => string) => [
     title: t('safety.categories.edibles.title'),
     description: t('safety.categories.edibles.description'),
     icon: Clock,
-    color: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+    color: 'bg-brand/10 text-brand border-brand/20',
     tips: [
       t('safety.categories.edibles.tips.1'),
       t('safety.categories.edibles.tips.2'),
@@ -84,13 +84,13 @@ export default function SafetyPage({ params }: SafetyPageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black">
+      <div className="min-h-screen bg-bg-base">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="animate-pulse space-y-8">
-            <div className="h-64 bg-zinc-900 rounded-3xl" />
+            <div className="h-64 bg-bg-surface rounded-3xl" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-48 bg-zinc-900 rounded-2xl" />
+                <div key={i} className="h-48 bg-bg-surface rounded-2xl" />
               ))}
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 via-black to-zinc-900/50 pointer-events-none" />
       {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
@@ -113,7 +113,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 relative z-10">
         {/* Hero with Quiz */}
         <motion.section 
-          className="rounded-3xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm shadow-2xl p-6 sm:p-8 md:p-12 mb-12 relative overflow-hidden"
+          className="rounded-3xl border border-white/10 bg-bg-card/70 backdrop-blur-sm shadow-2xl p-6 sm:p-8 md:p-12 mb-12 relative overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -181,7 +181,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                className="rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 sm:p-8 hover:border-gold/50 transition-all duration-500"
+                className="rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 sm:p-8 hover:border-brand/50 transition-all duration-500"
               >
                 <div className="flex items-start gap-4 mb-6">
                   <div className={`w-14 h-14 rounded-xl flex items-center justify-center bg-gold/10 text-gold border border-gold/20`}>
@@ -232,7 +232,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-            <div className="bg-zinc-900/60 rounded-2xl p-6 sm:p-8 border border-white/5">
+            <div className="bg-bg-card/80 rounded-2xl p-6 sm:p-8 border border-white/5">
               <div className="flex items-center gap-3 mb-6">
                 <Phone className="h-5 w-5 text-red-500" />
                 <H3 className="font-bold text-white text-sm uppercase tracking-widest">{t('safety.emergency.eu.title')}</H3>
@@ -241,7 +241,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               <Text size="sm" variant="muted" className="text-zinc-500">{t('safety.emergency.eu.description')}</Text>
             </div>
 
-            <div className="bg-zinc-900/60 rounded-2xl p-6 sm:p-8 border border-white/5">
+            <div className="bg-bg-card/80 rounded-2xl p-6 sm:p-8 border border-white/5">
               <div className="flex items-center gap-3 mb-6">
                 <MapPin className="h-5 w-5 text-red-500" />
                 <H3 className="font-bold text-white text-sm uppercase tracking-widest">{t('safety.emergency.hospitals.title')}</H3>
@@ -252,7 +252,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               </ul>
             </div>
 
-            <div className="bg-zinc-900/60 rounded-2xl p-6 sm:p-8 border border-white/5">
+            <div className="bg-bg-card/80 rounded-2xl p-6 sm:p-8 border border-white/5">
               <div className="flex items-center gap-3 mb-6">
                 <Users className="h-5 w-5 text-red-500" />
                 <H3 className="font-bold text-white text-sm uppercase tracking-widest">{t('safety.emergency.police.title')}</H3>

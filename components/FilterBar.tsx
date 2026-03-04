@@ -56,8 +56,8 @@ const FilterChip = ({
     className={cn(
       "px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] transition-all border whitespace-nowrap",
       active
-        ? "bg-gold border-gold text-black shadow-[0_4px_20px_hsl(var(--gold)/0.3)]"
-        : "bg-white/5 border-white/10 text-zinc-300 hover:border-gold/40 hover:text-white hover:bg-white/10"
+        ? "bg-brand border-brand text-black shadow-[0_4px_20px_hsl(var(--brand)/0.3)]"
+        : "bg-white/5 border-white/10 text-zinc-300 hover:border-brand/40 hover:text-white hover:bg-white/10"
     )}
   >
     {children}
@@ -81,13 +81,13 @@ const DesktopFilterPopover = ({
       <button 
         className={cn(
           "h-11 px-5 flex items-center gap-3 transition-all hover:bg-white/5 rounded-full group whitespace-nowrap border border-transparent",
-          count > 0 ? "text-gold bg-gold/5 border-gold/20" : "text-zinc-300 hover:text-white"
+          count > 0 ? "text-brand bg-brand/5 border-brand/20" : "text-zinc-300 hover:text-white"
         )}
       >
         <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", count > 0 && "fill-current")} />
         <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{label}</span>
         {count > 0 && (
-          <Badge className="bg-gold text-black border-none text-[9px] font-bold h-5 min-w-[20px] px-1">
+          <Badge className="bg-brand text-black border-none text-[9px] font-bold h-5 min-w-[20px] px-1">
             {count}
           </Badge>
         )}
@@ -99,7 +99,7 @@ const DesktopFilterPopover = ({
         <div className="flex items-center justify-between border-b border-white/5 pb-4">
           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-zinc-400">{label}</span>
           {count > 0 && (
-            <span className="text-[9px] font-bold text-gold uppercase tracking-widest">{count} ACTIVE</span>
+            <span className="text-[9px] font-bold text-brand uppercase tracking-widest">{count} ACTIVE</span>
           )}
         </div>
         <div className="max-h-[350px] overflow-y-auto pr-2 no-scrollbar">
@@ -165,12 +165,12 @@ export default function FilterBar({
       <div className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 lg:hidden w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] max-w-sm">
         <Drawer open={isMobileOpen} onOpenChange={setIsMobileOpen}>
           <DrawerTrigger asChild>
-            <button className="w-full h-14 sm:h-16 bg-gold text-black rounded-full shadow-[0_20px_40px_hsl(var(--gold)/0.4)] flex items-center justify-between px-6 sm:px-8 transition-all active:scale-95 border border-white/20">
+            <button className="w-full h-14 sm:h-16 bg-brand text-black rounded-full shadow-[0_20px_40px_hsl(var(--brand)/0.4)] flex items-center justify-between px-6 sm:px-8 transition-all active:scale-95 border border-white/20">
               <div className="flex items-center gap-3">
                 <SlidersHorizontal className="h-5 w-5" />
                 <span className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] sm:tracking-[0.25em]">{t('filters.advanced')}</span>
                 {activeFilterCount > 0 && (
-                  <div className="w-6 h-6 bg-black text-gold rounded-full flex items-center justify-center text-[11px] font-bold">
+                  <div className="w-6 h-6 bg-bg-base text-brand rounded-full flex items-center justify-center text-[11px] font-bold">
                     {activeFilterCount}
                   </div>
                 )}
@@ -181,7 +181,7 @@ export default function FilterBar({
             </button>
           </DrawerTrigger>
           <DrawerContent className="bg-bg-base border-white/10 h-[92vh] rounded-t-[3rem]">
-            <div className="mx-auto w-12 h-1.5 rounded-full bg-zinc-800 mt-3 mb-1" />
+            <div className="mx-auto w-12 h-1.5 rounded-full bg-muted mt-3 mb-1" />
             <DrawerHeader className="border-b border-white/5 px-8 py-6">
               <div className="flex items-center justify-between">
                 <DrawerTitle>
@@ -199,7 +199,7 @@ export default function FilterBar({
                 {/* Neighborhoods */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <MapPin className="h-4 w-4 text-gold" />
+                    <MapPin className="h-4 w-4 text-brand" />
                     <ConciergeLabel size="sm" emphasis="high" className="text-white">{t('filters.neighborhood')}</ConciergeLabel>
                   </div>
                   <div className="flex flex-wrap gap-3">
@@ -218,7 +218,7 @@ export default function FilterBar({
                 {/* Amenities */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <LayoutGrid className="h-4 w-4 text-gold" />
+                    <LayoutGrid className="h-4 w-4 text-brand" />
                     <ConciergeLabel size="sm" emphasis="high" className="text-white">{t('filters.amenities')}</ConciergeLabel>
                   </div>
                   <div className="flex flex-wrap gap-3">
@@ -237,7 +237,7 @@ export default function FilterBar({
                 {/* Vibes */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <Sparkles className="h-4 w-4 text-gold" />
+                    <Sparkles className="h-4 w-4 text-brand" />
                     <ConciergeLabel size="sm" emphasis="high" className="text-white">{t('filters.vibes')}</ConciergeLabel>
                   </div>
                   <div className="flex flex-wrap gap-3">
@@ -262,7 +262,7 @@ export default function FilterBar({
                     <div className="flex items-center gap-4">
                       <div className={cn(
                         "w-12 h-12 rounded-2xl flex items-center justify-center transition-all border",
-                        filters.isVerified ? "bg-gold border-gold" : "bg-zinc-900 border-white/10 group-hover:border-gold/30"
+                        filters.isVerified ? "bg-brand border-brand" : "bg-bg-surface border-border group-hover:border-brand/30"
                       )}>
                         <Shield className={cn("h-6 w-6", filters.isVerified ? "text-black" : "text-zinc-500")} />
                       </div>
@@ -278,7 +278,7 @@ export default function FilterBar({
             </ScrollArea>
             <DrawerFooter className="border-t border-white/5 p-6 sm:p-8 bg-bg-base/80 backdrop-blur-xl">
               <DrawerClose asChild>
-                <Button className="w-full bg-gold text-black hover:bg-gold-dark rounded-full h-14 sm:h-16 font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-xs shadow-2xl">
+                <Button className="w-full bg-brand text-black hover:bg-brand-dark rounded-full h-14 sm:h-16 font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-xs shadow-2xl">
                   {t('filters.show_results')} ({totalResults})
                 </Button>
               </DrawerClose>
@@ -292,7 +292,7 @@ export default function FilterBar({
         <div className="flex items-center justify-between glass-liquid rounded-full p-2 pl-10 shadow-2xl overflow-hidden min-h-[64px]">
           {/* Results Summary */}
           <div className="flex items-center gap-4 border-r border-white/10 pr-8 mr-4">
-            <Search className="h-4 w-4 text-gold" />
+            <Search className="h-4 w-4 text-brand" />
             <div className="flex flex-col">
               <span className="text-white text-sm font-black leading-none">{totalResults}</span>
               <span className="text-zinc-400 text-[9px] font-bold uppercase tracking-[0.2em] mt-1">{t('filters.results_found')}</span>
@@ -361,7 +361,7 @@ export default function FilterBar({
               className={cn(
                 "h-11 px-6 rounded-full flex items-center gap-3 transition-all hover:bg-white/5 group border border-transparent",
                 filters.isVerified
-                  ? "text-gold bg-gold/5 border-gold/20"
+                  ? "text-brand bg-brand/5 border-brand/20"
                   : "text-zinc-300 hover:text-white"
               )}
             >
@@ -396,13 +396,13 @@ export default function FilterBar({
               className="flex flex-wrap gap-2 px-6 mt-4"
             >
               {filters.neighborhood && (
-                <Badge variant="outline" className="bg-gold/10 text-gold border-gold/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
+                <Badge variant="outline" className="bg-brand/10 text-brand border-brand/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
                   {filters.neighborhood}
                 <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('neighborhood', ''); }} />
                 </Badge>
               )}
               {filters.isVerified && (
-                <Badge variant="outline" className="bg-gold/10 text-gold border-gold/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
+                <Badge variant="outline" className="bg-brand/10 text-brand border-brand/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
                   Verified
                   <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('isVerified', false); }} />
                 </Badge>

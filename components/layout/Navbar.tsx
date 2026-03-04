@@ -108,7 +108,7 @@ export default function Navbar() {
           <div className={cn(
             'hidden md:flex items-center rounded-full px-2 py-1 mx-4 transition-all duration-300',
             useLightNavForeground ? 'text-white' : 'text-slate-900',
-            isScrolled ? 'bg-white/5' : isHomepage ? 'bg-transparent' : 'bg-black/5 border border-black/10'
+            isScrolled ? 'bg-white/5' : isHomepage ? 'bg-transparent' : 'bg-bg-surface/40 border border-black/10'
           )}>
             <MainNavigation tone={useLightNavForeground ? 'light' : 'dark'} />
           </div>
@@ -116,7 +116,7 @@ export default function Navbar() {
           {/* Desktop Actions Section */}
           <div className={cn('hidden md:flex items-center gap-3')}>
             <Link href={withLocale('/safety-kit')}>
-              <button className="px-5 py-2 text-sm font-bold bg-gold text-black rounded-full hover:bg-gold-dark transition-colors shadow-sm">
+              <button className="px-5 py-2 text-sm font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm">
                 Get the Safety Kit
               </button>
             </Link>
@@ -131,7 +131,7 @@ export default function Navbar() {
               aria-controls="mobile-site-menu"
               className={cn(
                 'relative flex h-10 w-10 items-center justify-center rounded-full transition-colors',
-                useLightNavForeground ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-slate-900'
+                useLightNavForeground ? 'hover:bg-white/10 text-white' : 'hover:bg-bg-surface/40 text-slate-900'
               )}
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -189,7 +189,7 @@ export default function Navbar() {
 
             <div className="mt-auto pb-8 flex flex-col gap-6 border-t border-white/10 pt-6 shrink-0">
               <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="w-full">
-                <button className="w-full py-3 text-base font-bold bg-gold text-black rounded-full hover:bg-gold-dark transition-colors shadow-sm">
+                <button className="w-full py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm">
                   Get the Safety Kit
                 </button>
               </Link>

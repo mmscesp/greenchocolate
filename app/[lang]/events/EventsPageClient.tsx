@@ -109,14 +109,14 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 pt-24 md:pt-32">
           <div className="animate-pulse">
-            <div className="h-64 bg-zinc-900/40 rounded-3xl mb-12 border border-white/5" />
+            <div className="h-64 bg-bg-card/70 rounded-3xl mb-12 border border-white/5" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-80 bg-zinc-900/40 rounded-2xl border border-white/5" />
+                <div key={i} className="h-80 bg-bg-card/70 rounded-2xl border border-white/5" />
               ))}
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
@@ -179,7 +179,7 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                 >
                   <Link
                     href={`/${lang}/events/${event.slug}`}
-                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 md:p-8 hover:border-gold/50 transition-all duration-500 h-full flex flex-col"
+                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 md:p-8 hover:border-brand/50 transition-all duration-500 h-full flex flex-col"
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="relative flex flex-col h-full">
@@ -233,7 +233,7 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                   </Link>
                 </motion.div>
               )) : (
-                <div className="col-span-full rounded-2xl border border-dashed border-white/10 p-12 text-center bg-zinc-900/20">
+                <div className="col-span-full rounded-2xl border border-dashed border-white/10 p-12 text-center bg-bg-card/30">
                   <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20">
                     <Calendar className="h-8 w-8 text-gold" />
                     <Calendar className="h-8 w-8 text-gold" />

@@ -40,9 +40,9 @@ export function RotaryFineEstimator() {
       amount: '€10,400',
       label: t('landing.fine.levels.serious'),
       risk: 'Medium',
-      color: 'text-amber-400',
-      bgColor: 'bg-amber-500/10',
-      borderColor: 'border-amber-500/30',
+      color: 'text-brand',
+      bgColor: 'bg-brand/10',
+      borderColor: 'border-brand/30',
       icon: MapPin,
       scenarios: [
         t('landing.fine.scenarios.serious.1'),

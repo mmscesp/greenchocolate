@@ -42,7 +42,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.safety.title'),
       description: t('editorial.categories.safety.description'),
       icon: Shield,
-      color: 'bg-amber-50 text-amber-600 border-amber-200',
+      color: 'bg-brand/10 text-brand border-brand/20',
       articleCount: categories.find(c => c.name === 'Harm Reduction')?.count || 0,
     },
     {
@@ -56,7 +56,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 via-black to-black pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-gold/5 blur-[120px]" />
@@ -91,7 +91,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
               <Link
                 key={category.slug}
                 href={`/${lang}/editorial/${category.slug}`}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 md:p-8 hover:border-gold/50 transition-all duration-500"
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 md:p-8 hover:border-brand/50 transition-all duration-500"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
@@ -137,17 +137,17 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                 <Link
                   key={article.id}
                   href={`/${lang}/editorial/${article.slug}`}
-                  className="group block bg-zinc-900/60 rounded-2xl border border-white/10 overflow-hidden hover:border-gold/50 transition-all duration-500 h-full"
+                  className="group block bg-bg-card/80 rounded-2xl border border-white/10 overflow-hidden hover:border-brand/50 transition-all duration-500 h-full"
                 >
                   {article.heroImage ? (
-                    <div className="aspect-video bg-zinc-800 relative overflow-hidden">
+                    <div className="aspect-video bg-bg-surface relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
                       <Badge className="absolute top-4 left-4 bg-gold text-black border-none font-bold uppercase tracking-widest text-[10px] z-20" variant="secondary">
                         {article.category}
                       </Badge>
                     </div>
                   ) : (
-                    <div className="aspect-video bg-zinc-800 relative overflow-hidden flex items-center justify-center">
+                    <div className="aspect-video bg-bg-surface relative overflow-hidden flex items-center justify-center">
                        <BookOpen className="w-12 h-12 text-zinc-700" />
                     </div>
                   )}

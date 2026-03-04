@@ -58,9 +58,8 @@ export default function FavoritesPage() {
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('favorites.stats.total')}</p>
               <p className="text-3xl font-serif text-white">{favoriteClubs.length}</p>
             </div>
-            <div className="bg-gold/10 p-3 rounded-full border border-gold/20">
-              <Heart className="h-6 w-6 text-gold" />
-              <Heart className="h-6 w-6 text-gold" />
+            <div className="bg-brand/10 p-3 rounded-full border border-brand/20">
+              <Heart className="h-6 w-6 text-brand" />
             </div>
           </CardContent>
         </Card>
@@ -102,7 +101,7 @@ export default function FavoritesPage() {
                 placeholder={t('favorites.search_placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-gold/50 focus:ring-gold/20 h-11 rounded-xl"
+                className="pl-11 bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-brand/50 focus:ring-brand/20 h-11 rounded-xl"
               />
             </div>
 
@@ -113,7 +112,7 @@ export default function FavoritesPage() {
                 className={cn(
                   "px-4 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
                   viewMode === 'grid'
-                    ? "bg-gold text-black shadow-lg shadow-gold/20"
+                    ? "bg-brand text-black shadow-lg shadow-brand/20"
                     : "text-zinc-500 hover:text-white"
                 )}
               >
@@ -125,7 +124,7 @@ export default function FavoritesPage() {
                 className={cn(
                   "px-4 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
                   viewMode === 'list'
-                    ? "bg-gold text-black shadow-lg shadow-gold/20"
+                    ? "bg-brand text-black shadow-lg shadow-brand/20"
                     : "text-zinc-500 hover:text-white"
                 )}
               >
@@ -147,7 +146,7 @@ export default function FavoritesPage() {
             <Card 
               key={club.id} 
               className={cn(
-                "overflow-hidden border border-white/5 bg-bg-base hover:border-gold/50 hover:shadow-2xl transition-all duration-500 group",
+                "overflow-hidden border border-white/5 bg-bg-base hover:border-brand/50 hover:shadow-2xl transition-all duration-500 group",
                 viewMode === 'list' && "flex flex-col md:flex-row"
               )}
             >
@@ -174,7 +173,7 @@ export default function FavoritesPage() {
                   </Button>
                 </div>
                 <div className="absolute top-3 left-3 z-10">
-                  <div className="bg-gold p-2 rounded-full shadow-lg shadow-gold/20">
+                  <div className="bg-brand p-2 rounded-full shadow-lg shadow-brand/20">
                     <Heart className="h-4 w-4 text-black fill-black" />
                   </div>
                 </div>
@@ -184,17 +183,17 @@ export default function FavoritesPage() {
                 <CardHeader className="p-0 pb-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="font-serif text-xl text-white group-hover:text-gold transition-colors line-clamp-1">
+                      <h3 className="font-serif text-xl text-white group-hover:text-brand transition-colors line-clamp-1">
                         {club.name}
                       </h3>
                       <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-2">
-                        <MapPin className="h-3.5 w-3.5 text-gold" />
+                        <MapPin className="h-3.5 w-3.5 text-brand" />
                         <span>{club.neighborhood}</span>
                       </div>
                     </div>
                     {club.rating && (
                       <Badge variant="secondary" className="flex items-center gap-1 bg-white/5 text-white border-white/10 px-2 py-1 h-7">
-                        <Star className="h-3 w-3 fill-gold text-gold" />
+                        <Star className="h-3 w-3 fill-brand text-brand" />
                         <span className="text-[10px] font-bold">{club.rating}</span>
                       </Badge>
                     )}
@@ -211,7 +210,7 @@ export default function FavoritesPage() {
                         {vibe}
                       </span>
                     ))}
-                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-gold/10 text-gold border border-gold/20">
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-brand/10 text-brand border border-brand/20">
                       {club.priceRange}
                     </span>
                   </div>
@@ -223,7 +222,7 @@ export default function FavoritesPage() {
                       {t('favorites.view_club')}
                     </Button>
                   </Link>
-                  <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-white/10 hover:bg-white/5 hover:text-gold hover:border-gold/30">
+                  <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-white/10 hover:bg-white/5 hover:text-brand hover:border-brand/30">
                     <Calendar className="h-4 w-4" />
                   </Button>
                 </CardFooter>
@@ -248,7 +247,7 @@ export default function FavoritesPage() {
             </p>
             {!searchQuery && (
               <Link href={`/${language}/clubs`}>
-                <Button className="gap-2 bg-gold text-black hover:bg-gold-dark rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
+                <Button className="gap-2 bg-brand text-black hover:bg-brand-dark rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                   <ExternalLink className="h-4 w-4" />
                   {t('nav.explore')}
                 </Button>

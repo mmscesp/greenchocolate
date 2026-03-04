@@ -45,7 +45,7 @@ export function CommunityRoadmap() {
   ];
 
   return (
-    <section className="bg-black py-24 md:py-32 px-4 md:px-8 border-t border-white/5 overflow-hidden">
+    <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 border-t border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16 md:mb-24 max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4">
@@ -64,19 +64,19 @@ export function CommunityRoadmap() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: idx * 0.1 }}
-              className="group relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-2xl bg-zinc-900 border border-white/10"
+              className="group relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-2xl bg-bg-surface border border-white/10"
             >
               {/* Image Layer */}
-              <div className="absolute inset-0 bg-zinc-800 transition-transform duration-700 group-hover:scale-105">
+              <div className="absolute inset-0 bg-bg-card transition-transform duration-700 group-hover:scale-105">
                 {/* In real implementation: <Image src={city.image} fill className="object-cover opacity-60 group-hover:opacity-40 transition-opacity" /> */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/60 to-transparent opacity-90" />
               </div>
 
               <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
                 <div className="transform transition-transform duration-500 group-hover:-translate-y-2">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight">{city.name}</h3>
-                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border ${city.active ? 'bg-gold text-black border-gold' : 'bg-transparent text-zinc-500 border-zinc-700'}`}>
+                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border ${city.active ? 'bg-brand text-bg-base border-brand' : 'bg-transparent text-zinc-500 border-zinc-700'}`}>
                       {city.status}
                     </span>
                   </div>
@@ -90,7 +90,7 @@ export function CommunityRoadmap() {
                   {city.active ? (
                     <Link
                       href={city.href}
-                      className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-gold hover:text-white transition-colors"
+                      className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-brand hover:text-zinc-100 transition-colors"
                     >
                       {t('landing.community_roadmap.explore_prefix')} {city.name}
                       <ArrowRight className="w-4 h-4" />

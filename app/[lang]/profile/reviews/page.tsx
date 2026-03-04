@@ -115,7 +115,7 @@ export default function ReviewsPage() {
       <Star
         key={i}
         className={`h-4 w-4 ${
-          i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+          i < rating ? 'fill-brand text-brand' : 'text-gray-300'
         }`}
       />
     ));
