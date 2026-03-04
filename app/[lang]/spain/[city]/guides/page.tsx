@@ -94,7 +94,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
                 href={`/${lang}/spain/${city}/guides/${guide.slug}`}
                 className="group block rounded-2xl border bg-card p-6 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 h-full"
               >
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <BookOpen className="h-3 w-3 text-primary" />
                     <span className="bg-muted px-2 py-1 rounded-full">{guide.category}</span>

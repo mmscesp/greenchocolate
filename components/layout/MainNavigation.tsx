@@ -110,7 +110,7 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
             {t('nav.cities')}
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid gap-3 p-4 w-[min(92vw,20rem)] sm:w-[24rem] md:w-[26rem] lg:w-[31rem] glass-dropdown mt-2 animate-in fade-in zoom-in-95 duration-200">
+            <ul className="mt-2 grid w-[min(92vw,20rem)] gap-3 p-4 sm:w-[24rem] md:w-[min(26rem,calc(100vw-2rem))] lg:w-[31rem] glass-dropdown animate-in fade-in zoom-in-95 duration-200">
               {desktopExploreItems.map(({ href, titleKey, descriptionKey, comingSoon, Icon }) => {
                 const itemTitle = t(titleKey);
 

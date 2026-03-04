@@ -78,7 +78,7 @@ export default async function CityClubDetailPage({ params }: PageProps) {
           <h3 className="font-semibold">{t('city_club_detail.continue_title')}</h3>
           <p className="text-sm text-muted-foreground">{t('city_club_detail.continue_description')}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" asChild>
             <Link href={`/${lang}/spain/${city}/clubs`}>{t('city_club_detail.back_to_city_clubs')}</Link>
           </Button>

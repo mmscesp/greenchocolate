@@ -29,9 +29,9 @@ export function VerificationStandard() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
           {/* Club Card 1 */}
-          <div className="min-w-[300px] md:min-w-[340px] bg-black border border-white/10 rounded-2xl p-6 md:p-8 flex-shrink-0 snap-center group hover:border-[#E8A838]/50 transition-colors duration-300">
+          <div className="bg-black border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-[#E8A838]/50 transition-colors duration-300">
             <div className="flex justify-between items-start mb-6">
               <span className="px-3 py-1 bg-[#E8A838] text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
                 Barcelona
@@ -53,7 +53,7 @@ export function VerificationStandard() {
           </div>
 
           {/* Club Card 2 */}
-          <div className="min-w-[300px] md:min-w-[340px] bg-black border border-white/10 rounded-2xl p-6 md:p-8 flex-shrink-0 snap-center group hover:border-[#E8A838]/50 transition-colors duration-300">
+          <div className="bg-black border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-[#E8A838]/50 transition-colors duration-300">
             <div className="flex justify-between items-start mb-6">
               <span className="px-3 py-1 bg-[#E8A838] text-black text-[10px] font-bold uppercase tracking-widest rounded-sm">
                 Madrid
@@ -75,7 +75,7 @@ export function VerificationStandard() {
           </div>
 
           {/* Coming Next Card */}
-          <div className="min-w-[300px] md:min-w-[340px] bg-black/50 border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex-shrink-0 snap-center flex flex-col justify-center items-center text-center relative overflow-hidden">
+          <div className="bg-black/50 border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(232,168,56,0.05),transparent)] pointer-events-none" />
             <div className="relative z-10 w-full">
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#E8A838] mb-2">{t('landing.verification_standard.next_verified')}</p>

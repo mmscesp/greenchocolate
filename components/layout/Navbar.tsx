@@ -147,7 +147,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             id="mobile-site-menu"
-            className="fixed inset-0 z-40 md:hidden glass-liquid pt-24 px-6 flex flex-col gap-6"
+            className="fixed inset-0 z-40 md:hidden glass-liquid pt-24 px-6 pb-6 flex flex-col gap-6 overflow-y-auto overscroll-contain"
           >
             {/* Rich Profile Header inside Mobile Menu */}
             <div className="pb-4 border-b border-white/10">

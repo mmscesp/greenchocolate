@@ -42,7 +42,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
           </section>
         </div>
 
-        <div className="mt-12 flex gap-4">
+        <div className="mt-12 flex flex-wrap gap-4">
           <Link href={`/${lang}/terms`} className="text-primary hover:underline font-medium">
             {t('legal.terms.title')}
           </Link>

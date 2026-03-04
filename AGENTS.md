@@ -1,88 +1,79 @@
-# Agentic Guidelines - Cannabis Social Club Platform
+# PROJECT KNOWLEDGE BASE
 
-This document provides essential information for AI agents working on this repository. It serves as the primary source of truth for coding standards, architectural patterns, and development workflows.
+**Generated:** 2026-03-03
+**Commit:** d1c2ace
+**Branch:** ProdPrep
 
-## 🛠 Build & Development
+## OVERVIEW
+Cannabis Social Club Platform built on Next.js App Router + TypeScript.
+Primary domains: localized editorial UX, club discovery, membership actions, admin actions, and security/audit logging.
 
-### Core Commands
-- **Dev Server**: `npm run dev` - Starts the Next.js development server on `localhost:3000`.
-- **Build**: `npm run build` - Creates an optimized production build.
-- **Lint**: `npm run lint` - Runs ESLint to check for code quality and style issues.
-- **Start**: `npm run start` - Starts the production server after building.
+## STRUCTURE
+```text
+./
+|- app/                          # App Router pages, layouts, API routes, server actions
+|- components/                   # Shared UI primitives + feature sections
+|- hooks/                        # Client hooks (language, toasts, clubs)
+|- lib/                          # Core utilities, env, Prisma/Supabase adapters, domain helpers
+|- data/                         # Content and mock/domain JSON
+|- dictionaries/                 # Translation dictionaries
+|- docs/                         # Product, architecture, security, dev docs
+|- prisma/                       # Schema and migrations
+|- e2e/                          # Playwright specs
+`- test/                         # Vitest setup
+```
 
-### Testing
-- **Current Status**: No automated testing framework is currently configured.
-- **Implementation Strategy**: 
-  - **Unit Testing**: Vitest is recommended for its speed and compatibility with Vite-based tooling.
-  - **E2E Testing**: Playwright is preferred for testing critical user flows (e.g., pre-registration, filtering).
-- **Execution**: Once configured, use `npm test` or `npx playwright test`.
+## WHERE TO LOOK
+| Task | Location | Notes |
+|---|---|---|
+| Localized routing and layout | `app/[lang]/layout.tsx` | Locale dict loading + providers |
+| App entry and metadata | `app/layout.tsx` | Global shell, fonts, listeners |
+| Route interception | `proxy.ts` | Locale/auth gating via matcher |
+| Server-side business actions | `app/actions/` | All major mutations and reads |
+| UI primitive contracts | `components/ui/` | Radix/shadcn-style components |
+| Shared helpers and env | `lib/` | `utils.ts`, `env.ts`, adapters |
+| Unit test setup | `vitest.config.ts`, `test/setup.ts` | jsdom + Next mocks |
+| E2E configuration | `playwright.config.ts` | baseURL, retries, workers |
 
----
+## CODE MAP
+| Symbol/Pattern | Type | Location | Role |
+|---|---|---|---|
+| `'use server'` | module directive | `app/actions/*.ts` (16 files) | server action boundary |
+| `getAdminSessionProfile` | access gate helper | `app/actions/admin-*.ts` | admin-only enforcement |
+| `verifyClubAdminAccess` | authz helper | `app/actions/clubs.ts` | club-admin authorization |
+| `cn()` | utility function | `lib/utils.ts` | class merge hotspot used across UI |
+| `useLanguage` | client i18n hook | `hooks/useLanguage.tsx` | translation access in client components |
 
-## 🎨 Code Style & Standards
+## CONVENTIONS
+- Imports use `@/` aliases; avoid deep relative imports.
+- Strict TypeScript style; keep explicit return shapes for actions.
+- App uses locale-first routing under `app/[lang]/` instead of root `app/page.tsx`.
+- `components/ui` depends on `lib/utils.ts` (`cn`) but `lib/*` does not depend on UI components.
+- Server actions generally validate input early and return structured status payloads.
 
-### Naming Conventions
-- **Components**: `PascalCase` (e.g., `ClubCard.tsx`). Every component should be in its own file unless it is a small, local sub-component.
-- **Hooks**: `camelCase` with `use` prefix (e.g., `useClubs.ts`).
-- **Directories**: Next.js App Router uses `kebab-case` for folder names (e.g., `/app/club-panel/dashboard`).
-- **Variables/Functions**: `camelCase`.
-- **Interfaces/Types**: `PascalCase`. Prefer `interface` for object shapes and `type` for unions/aliases.
+## ANTI-PATTERNS (THIS PROJECT)
+- Do not move business logic into UI primitives or page-only components.
+- Do not bypass role/ownership checks in admin/club action flows.
+- Do not add domain-specific logic to `lib/utils.ts`; keep it generic and side-effect free.
+- Do not rely on deploy-only checks; lint/test/build should pass locally and in CI.
+- Do not reintroduce non-localized root routing patterns for user-facing pages.
 
-### Imports
-- **Absolute Paths**: Always use `@/` alias for root-level directories.
-  - Good: `import { cn } from '@/lib/utils'`
-  - Bad: `import { cn } from '../../lib/utils'`
-- **Organization Order**:
-  1. React/Next.js built-ins
-  2. External libraries (Radix UI, Lucide, etc.)
-  3. Shared internal utilities/hooks (`@/lib`, `@/hooks`)
-  4. Feature-specific components/types
+## UNIQUE STYLES
+- Editorial concierge section uses modular sub-areas: `blocks/`, `interactive/`, `layout/`, `motion/`, `typography/`.
+- Security/audit behavior is first-class in auth/admin paths (explicit audit logging in actions).
+- Tests are split by role: `*.test.ts(x)` for Vitest and `e2e/*.spec.ts` for Playwright.
 
-### TypeScript Usage
-- **Strict Mode**: Enabled and non-negotiable.
-- **Avoid `any`**: Use unknown or define specific interfaces.
-- **Data Models**: Domain models must be defined in `@/lib/types.ts`.
-- **Props**: Use `interface` for component props for better extensibility.
+## COMMANDS
+```bash
+npm run dev
+npm run lint
+npm run test:run
+npm run test:e2e
+npm run build
+npm run verify:chunks
+```
 
-### Formatting & UI
-- **Tailwind CSS**: Use the `cn()` utility from `@/lib/utils.ts` for conditional classes.
-- **shadcn/ui**: Follow the pattern of keeping primitives in `@/components/ui`.
-- **Quotes**: Single quotes (`'`) for JS/TS code; double quotes (`"`) for JSX attributes.
-- **Semicolons**: Always use semicolons.
-- **Indentation**: 2 spaces.
-
-### Error Handling
-- **Route Level**: Use Next.js `error.tsx` and `not-found.tsx` for graceful failure.
-- **Form Validation**: Use **Zod** schema validation combined with `react-hook-form`.
-- **API Responses**: Wrap mock API calls in try-catch blocks and use the `use-toast` hook for user notifications.
-
----
-
-## 🏗 Architecture & State
-
-### App Router Structure
-- `app/`: Contains layouts, pages, and global CSS. Follows Next.js 13+ conventions.
-- `components/`: 
-  - `ui/`: Shared primitive components (shadcn).
-  - `admin/`: Dashboard-specific layouts and components.
-- `hooks/`: Custom hooks for logic. Business logic should NOT live in components.
-- `lib/`: Centralized utilities, constants, and types.
-
-### Data Management
-- **Mock Data**: Currently uses static JSON files in `data/`.
-- **API Simulation**: Hooks in `hooks/` simulate network latency using `Promise` and `setTimeout`.
-- **Standard**: When implementing real API calls, replace the content of these hooks without changing their external interface.
-
-### Internationalization (I18n)
-- **Provider**: `LanguageProvider` wraps the application in `layout.tsx`.
-- **Usage**: Use the `useLanguage` hook to access the `t(key)` translation function.
-- **Keys**: Translation keys follow a nested dot notation (e.g., `home.hero.title`).
-
----
-
-## 🚫 Constraints & Safety
-- **No Direct State Mutation**: Always use functional state updates.
-- **No Suppressing Errors**: Do NOT use `@ts-ignore` or `as any`.
-- **Persistence**: User preferences (language) must be persisted in `localStorage`.
-- **Security**: Be mindful of displaying user data; use proper sanitization.
-- **Environment**: All environment variables must be prefixed with `NEXT_PUBLIC_` if needed on the client.
+## NOTES
+- `postinstall` runs `prisma generate`; environment must provide compatible Prisma setup.
+- `netlify.toml` exists; treat deployment build as downstream of local quality gates.
+- LSP index via Biome is unavailable in this environment; codemap above is derived from direct search.

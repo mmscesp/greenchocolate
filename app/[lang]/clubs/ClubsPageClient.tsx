@@ -202,7 +202,7 @@ export default function ClubsPageClient({
                   {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="bg-[#0A0A0A] rounded-[2rem] border border-white/5 h-[450px] animate-pulse overflow-hidden">
+                        <div key={i} className="bg-[#0A0A0A] rounded-[2rem] border border-white/5 min-h-[320px] sm:min-h-[400px] lg:min-h-[450px] animate-pulse overflow-hidden">
                           <div className="h-64 bg-[#111]" />
                           <div className="p-8 space-y-4">
                             <div className="h-8 bg-[#111] rounded-lg w-3/4" />

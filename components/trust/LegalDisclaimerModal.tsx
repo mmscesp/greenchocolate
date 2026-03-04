@@ -56,12 +56,12 @@ export default function LegalDisclaimerModal() {
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="max-w-md w-full bg-card border border-border/50 shadow-2xl rounded-2xl overflow-hidden relative"
+            className="w-full max-w-md bg-card border border-border/50 shadow-2xl rounded-2xl overflow-hidden relative"
           >
             {/* Warning Stripe */}
             <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-red-500 to-amber-500" />
             
-            <div className="p-8">
+            <div className="p-6 sm:p-8">
               <div className="flex flex-col items-center text-center mb-8">
                 <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mb-6">
                   <Shield className="h-8 w-8 text-foreground" />
@@ -86,7 +86,7 @@ export default function LegalDisclaimerModal() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                 <Button 
                   variant="outline" 
                   onClick={handleDecline}
@@ -117,7 +117,7 @@ export default function LegalDisclaimerModal() {
                 </Button>
               </div>
               
-              <p className="text-[10px] text-center text-muted-foreground/50 mt-6 font-mono">
+              <p className="mt-6 break-all text-center font-mono text-[10px] text-muted-foreground/50 sm:break-normal">
                 {t('trust.legal_modal.session_prefix')} {sessionId} • {t('trust.legal_modal.secure_connection')}
               </p>
             </div>

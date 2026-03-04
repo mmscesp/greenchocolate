@@ -495,7 +495,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     </p>
                   </div>
 
-                  <div className="flex gap-4 pt-4">
+                  <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:gap-4">
                     <Button
                       type="button"
                       variant="ghost"

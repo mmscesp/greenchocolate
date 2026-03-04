@@ -204,7 +204,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <div className="flex items-center justify-between mb-8">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center">
                 <Star className="h-5 w-5 text-amber-500" />
@@ -241,8 +241,8 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
                     )}
                   </div>
                   <Text variant="muted" size="sm" className="mb-4 line-clamp-2">{club.shortDescription || club.description}</Text>
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-4">
+                  <div className="flex flex-col items-start gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                       <span className="text-muted-foreground bg-muted px-3 py-1.5 rounded-full">
                         <MapPin className="h-3 w-3 inline mr-1 text-primary" />
                         {club.neighborhood}

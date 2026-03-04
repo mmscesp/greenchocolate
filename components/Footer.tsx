@@ -141,17 +141,17 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/spain/valencia')} 
-                  className="text-sm text-zinc-500 hover:text-zinc-400 transition-colors group flex items-center"
+                  className="group flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500 transition-colors hover:text-zinc-400"
                 >
-                  {t('footer.new.explore.valencia')} <span className="text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 ml-2 py-0.5 px-1.5 rounded bg-[#E8A838]/5 border border-[#E8A838]/10">{t('common.coming_soon')}</span>
+                  {t('footer.new.explore.valencia')} <span className="ml-0 rounded border border-[#E8A838]/10 bg-[#E8A838]/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 sm:ml-2">{t('common.coming_soon')}</span>
                 </Link>
               </li>
               <li>
                 <Link 
                   href={withLocale('/spain/tenerife')} 
-                  className="text-sm text-zinc-500 hover:text-zinc-400 transition-colors group flex items-center"
+                  className="group flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500 transition-colors hover:text-zinc-400"
                 >
-                  {t('footer.new.explore.tenerife')} <span className="text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 ml-2 py-0.5 px-1.5 rounded bg-[#E8A838]/5 border border-[#E8A838]/10">{t('common.coming_soon')}</span>
+                  {t('footer.new.explore.tenerife')} <span className="ml-0 rounded border border-[#E8A838]/10 bg-[#E8A838]/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-[#E8A838]/50 sm:ml-2">{t('common.coming_soon')}</span>
                 </Link>
               </li>
               <li>
