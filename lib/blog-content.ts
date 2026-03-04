@@ -183,6 +183,19 @@ function asBoolean(value: string | number | boolean | string[] | undefined, fall
   return fallback;
 }
 
+function asIsoDateOrNull(value: string | null): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toISOString();
+}
+
 async function loadArticleFromFile(filePath: string): Promise<BlogArticleRecord> {
   const source = await fs.readFile(filePath, 'utf8');
   const { frontmatter, body } = parseFrontmatter(source);
@@ -190,7 +203,7 @@ async function loadArticleFromFile(filePath: string): Promise<BlogArticleRecord>
   const categoryDir = path.basename(path.dirname(filePath));
   const normalizedBody = normalizeMdxToMarkdown(body);
   const publishedAtRaw = asString(frontmatter.publishedAt) ?? asString(frontmatter.date);
-  const publishedAt = publishedAtRaw ? new Date(publishedAtRaw).toISOString() : null;
+  const publishedAt = asIsoDateOrNull(publishedAtRaw);
   const mappedCategory = CATEGORY_MAP[categoryDir] ?? categoryDir;
 
   return {

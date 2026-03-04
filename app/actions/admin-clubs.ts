@@ -34,7 +34,10 @@ export async function getAdminClubs(rawInput: AdminClubsFilterInput = {}) {
     };
   }
 
-  const input = clubsFilterSchema.parse(rawInput);
+  const parsedInput = clubsFilterSchema.safeParse(rawInput);
+  const input = parsedInput.success
+    ? parsedInput.data
+    : clubsFilterSchema.parse({});
   const skip = (input.page - 1) * input.pageSize;
 
   const whereClause = {

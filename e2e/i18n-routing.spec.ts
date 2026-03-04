@@ -42,14 +42,14 @@ test.describe('i18n Routing', () => {
       await page.goto('/es/clubs');
       
       await expect(page.locator('html')).toHaveAttribute('lang', 'es');
-      await expect(page.locator('h1:visible').first()).toHaveCount(1);
+      await expect(page.locator('h1:visible').first()).toContainText(/.+/);
     });
     
     test('clubs page renders in English', async ({ page }) => {
       await page.goto('/en/clubs');
       
       await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-      await expect(page.locator('h1:visible').first()).toHaveCount(1);
+      await expect(page.locator('h1:visible').first()).toContainText(/.+/);
     });
     
     test('editorial page renders in Spanish', async ({ page }) => {
@@ -115,7 +115,7 @@ test.describe('i18n Routing', () => {
       // Navigate to clubs
       await page.goto('/es/clubs');
       await expect(page.locator('html')).toHaveAttribute('lang', 'es');
-      await expect(page.locator('h1:visible').first()).toHaveCount(1);
+      await expect(page.locator('h1:visible').first()).toContainText(/.+/);
       
       // Navigate to editorial
       await page.goto('/es/editorial');
@@ -128,7 +128,7 @@ test.describe('i18n Routing', () => {
       
       await page.goto('/en/clubs');
       await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-      await expect(page.locator('h1:visible').first()).toHaveCount(1);
+      await expect(page.locator('h1:visible').first()).toContainText(/.+/);
     });
   });
   
@@ -145,15 +145,14 @@ test.describe('i18n Routing', () => {
       await page.goto('/en');
       
       const ogLocale = page.locator('meta[property="og:locale"]');
-      // Note: May need adjustment based on actual implementation
-      await expect(ogLocale).toHaveCount(1);
+      await expect(ogLocale).toHaveAttribute('content', /[a-z]{2}_[A-Z]{2}/);
     });
     
     test('has canonical link', async ({ page }) => {
       await page.goto('/es');
       
       const canonical = page.locator('link[rel="canonical"]');
-      await expect(canonical).toHaveCount(1);
+      await expect(canonical).toHaveAttribute('href', /\/es(?:\/|$)/);
     });
   });
   
@@ -217,15 +216,25 @@ test.describe('i18n Routing', () => {
     test('language switcher changes URL when clicked', async ({ page }) => {
       await page.goto('/es');
       
-      // Find and click language switcher (assuming it has a data-testid or specific structure)
-      // This test assumes there's a language selector component
       const langSwitcher = page.locator('[data-testid="language-selector"]').or(page.locator('select')).first();
-      
-      if (await langSwitcher.isVisible().catch(() => false)) {
-        await langSwitcher.selectOption('en');
-        await expect(page).toHaveURL(/\/en/);
-        await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+      const hasSwitcher = (await langSwitcher.count()) > 0;
+
+      if (hasSwitcher) {
+        await expect(langSwitcher).toBeVisible();
+        const tagName = await langSwitcher.evaluate((element) => element.tagName.toLowerCase());
+
+        if (tagName === 'select') {
+          await langSwitcher.selectOption('en');
+        } else {
+          await langSwitcher.click();
+          await page.getByRole('option', { name: /english|en/i }).first().click();
+        }
+      } else {
+        await page.goto('/en');
       }
+
+      await expect(page).toHaveURL(/\/en/);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     });
   });
 });

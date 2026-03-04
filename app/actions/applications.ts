@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 export type ApplicationStage = 'INTAKE' | 'DOCUMENT_VERIFICATION' | 'BACKGROUND_CHECK' | 'FINAL_APPROVAL';
@@ -27,6 +27,8 @@ type AppNotificationType =
   | 'APPLICATION_STAGE_CHANGED'
   | 'APPLICATION_APPROVED'
   | 'APPLICATION_REJECTED';
+
+const TRANSACTION_MAX_RETRIES = 3;
 
 const submitSchema = z.object({
   targetClubId: z.string().uuid(),
@@ -129,6 +131,38 @@ async function createApplicationNotification(input: {
   });
 }
 
+function isPrismaKnownError(error: unknown, code: string): boolean {
+  if (!error || typeof error !== 'object' || !('code' in error)) {
+    return false;
+  }
+
+  const prismaCode = (error as { code?: unknown }).code;
+  return typeof prismaCode === 'string' && prismaCode === code;
+}
+
+async function runSerializableTransactionWithRetry<T>(
+  callback: (tx: Prisma.TransactionClient) => Promise<T>
+): Promise<T> {
+  let retries = 0;
+
+  while (retries < TRANSACTION_MAX_RETRIES) {
+    try {
+      return await prisma.$transaction(callback, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      });
+    } catch (error) {
+      if (isPrismaKnownError(error, 'P2034')) {
+        retries += 1;
+        continue;
+      }
+
+      throw error;
+    }
+  }
+
+  throw new Error('Transaction failed after retries');
+}
+
 /**
  * Transitional pipeline submit action implemented on top of MembershipRequest.
  */
@@ -161,48 +195,61 @@ export async function submitMembershipApplication(data: {
     return { success: false, error: 'Application already exists for this club' };
   }
 
-  const created = await prisma.membershipRequest.create({
-    // Prisma JSON input requires plain JSON-safe values.
-    // We intentionally persist this as a transitional snapshot structure.
-    data: {
-      userId: profile.id,
-      clubId: validated.data.targetClubId,
-      message: validated.data.message,
-      encryptedSnapshot: {
-        eligibilityAnswers: validated.data.eligibilityAnswers,
-        stage: 'INTAKE',
-        stageHistory: [
-          {
+  try {
+    const created = await runSerializableTransactionWithRetry(async (tx) => {
+      const request = await tx.membershipRequest.create({
+        data: {
+          userId: profile.id,
+          clubId: validated.data.targetClubId,
+          message: validated.data.message,
+          encryptedSnapshot: {
+            eligibilityAnswers: validated.data.eligibilityAnswers,
             stage: 'INTAKE',
-            changedAt: new Date().toISOString(),
-            changedBy: profile.authId,
-          },
-        ],
-      } as Prisma.InputJsonValue,
-      status: 'PENDING',
-    },
-  });
+            stageHistory: [
+              {
+                stage: 'INTAKE',
+                changedAt: new Date().toISOString(),
+                changedBy: profile.authId,
+              },
+            ],
+          } as Prisma.InputJsonValue,
+          status: 'PENDING',
+        },
+      });
 
-  const completion = new Date(created.createdAt);
-  completion.setDate(completion.getDate() + 10);
+      await tx.notification.create({
+        data: {
+          userId: profile.id,
+          type: 'APPLICATION_SUBMITTED',
+          title: 'Application submitted',
+          message: 'Your membership application has been received and is now under review.',
+          data: {
+            applicationId: request.id,
+            clubId: request.clubId,
+            stage: 'INTAKE',
+          } as Prisma.InputJsonValue,
+        },
+      });
 
-  await createApplicationNotification({
-    userId: profile.id,
-    type: 'APPLICATION_SUBMITTED',
-    title: 'Application submitted',
-    message: 'Your membership application has been received and is now under review.',
-    data: {
+      return request;
+    });
+
+    const completion = new Date(created.createdAt);
+    completion.setDate(completion.getDate() + 10);
+
+    return {
+      success: true,
       applicationId: created.id,
-      clubId: created.clubId,
-      stage: 'INTAKE',
-    },
-  });
+      estimatedCompletion: completion,
+    };
+  } catch (error) {
+    if (isPrismaKnownError(error, 'P2002')) {
+      return { success: false, error: 'Application already exists for this club' };
+    }
 
-  return {
-    success: true,
-    applicationId: created.id,
-    estimatedCompletion: completion,
-  };
+    console.error('submitMembershipApplication error:', error);
+    return { success: false, error: 'Failed to submit application. Please try again.' };
+  }
 }
 
 export async function getApplicationStatus(userId: string): Promise<{

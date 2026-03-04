@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { EncryptionService } from '@/lib/encryption';
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 // ==========================================
@@ -224,6 +225,13 @@ export async function submitMembershipRequest(
       message: 'Request submitted successfully',
     };
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return {
+        success: false,
+        message: 'You have already submitted a request to this club',
+      };
+    }
+
     console.error('Submit request error:', error);
     return {
       success: false,
@@ -493,10 +501,6 @@ export async function approveClubMembershipRequest(
     };
   }
 }
-
-// Aliases for backward compatibility or cleaner imports
-export const approveMembershipRequest = approveClubMembershipRequest;
-export const rejectMembershipRequest = rejectClubMembershipRequest;
 
 /**
  * Reject Membership Request

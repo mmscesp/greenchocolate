@@ -1,14 +1,12 @@
 'use server';
 
-// Club Authentication Server Actions
-// Handles club signup with Club entity creation
-
+import { randomBytes } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { EncryptionService } from '@/lib/encryption';
-import { z } from 'zod';
 import type { ActionState } from './auth';
 
 const passwordSchema = z
@@ -18,10 +16,6 @@ const passwordSchema = z
   .regex(/[0-9]/, 'Password must contain at least one number')
   .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character');
 
-// ==========================================
-// ZOD SCHEMAS
-// ==========================================
-
 const clubSignUpSchema = z.object({
   clubName: z.string().min(2, 'Club name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
@@ -29,16 +23,8 @@ const clubSignUpSchema = z.object({
   address: z.string().min(5, 'Address is required'),
   phone: z.string().min(5, 'Phone number is required'),
   description: z.string().min(20, 'Description must be at least 20 characters'),
-  cityId: z.string().optional(), // Will be assigned during verification
 });
 
-// ==========================================
-// HELPER FUNCTIONS
-// ==========================================
-
-/**
- * Generate a URL-friendly slug from club name
- */
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
@@ -46,28 +32,48 @@ function generateSlug(name: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-// ==========================================
-// ACTIONS
-// ==========================================
+function suffixToken(length: number): string {
+  return randomBytes(length).toString('hex').slice(0, length).toLowerCase();
+}
 
-/**
- * Club Signup Action
- * Creates auth user, Club entity, and assigns CLUB_ADMIN role
- */
-export async function clubSignUp(prevState: ActionState, formData: FormData): Promise<ActionState> {
+async function ensureUniqueClubSlug(baseSlug: string): Promise<string> {
+  const maxAttempts = 5;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const candidate = attempt === 0 ? baseSlug : `${baseSlug}-${suffixToken(6)}`;
+    const existing = await prisma.club.findUnique({
+      where: { slug: candidate },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return candidate;
+    }
+  }
+
+  throw new Error('Unable to allocate unique slug for club');
+}
+
+function shortDescription(description: string): string {
+  if (description.length <= 150) {
+    return description;
+  }
+
+  return `${description.slice(0, 147)}...`;
+}
+
+export async function clubSignUp(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
 
-  // Extract form data
   const data = {
-    clubName: formData.get('clubName') as string,
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
-    address: formData.get('address') as string,
-    phone: formData.get('phone') as string,
-    description: formData.get('description') as string,
+    clubName: String(formData.get('clubName') ?? ''),
+    email: String(formData.get('email') ?? ''),
+    password: String(formData.get('password') ?? ''),
+    address: String(formData.get('address') ?? ''),
+    phone: String(formData.get('phone') ?? ''),
+    description: String(formData.get('description') ?? ''),
   };
 
-  // Validate
   const validated = clubSignUpSchema.safeParse(data);
 
   if (!validated.success) {
@@ -79,7 +85,6 @@ export async function clubSignUp(prevState: ActionState, formData: FormData): Pr
   }
 
   try {
-    // Step 1: Create auth user in Supabase
     const signUpResult = await supabase.auth.signUp({
       email: validated.data.email,
       password: validated.data.password,
@@ -93,73 +98,14 @@ export async function clubSignUp(prevState: ActionState, formData: FormData): Pr
     });
 
     const user = signUpResult.data.user;
-    const error = signUpResult.error;
+    const signUpError = signUpResult.error;
 
-    if (error || !user) {
+    if (signUpError || !user) {
       return {
         success: false,
-        message: error?.message || 'Signup failed. Please try again.',
+        message: signUpError?.message || 'Signup failed. Please try again.',
       };
     }
-
-    // Step 2: Generate slug for club
-    const slug = generateSlug(validated.data.clubName);
-    
-    // Check if slug already exists
-    const existingClub = await prisma.club.findUnique({
-      where: { slug },
-    });
-
-    let uniqueSlug = slug;
-    if (existingClub) {
-      // Append random suffix to make it unique
-      uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
-    }
-
-    // Step 3: Create Club entity
-    // Note: Using Madrid as default city for now - admin will verify and assign proper city
-    const defaultCity = await prisma.city.findFirst({
-      where: { slug: 'madrid' },
-    });
-
-    const club = await prisma.club.create({
-      data: {
-        slug: uniqueSlug,
-        name: validated.data.clubName,
-        description: validated.data.description,
-        shortDescription: validated.data.description.substring(0, 150) + '...',
-        cityId: defaultCity?.id || '', // Admin will verify and update
-        neighborhood: 'Pending Assignment',
-        addressDisplay: validated.data.address,
-        coordinates: {}, // Will be set during verification
-        contactEmail: validated.data.email,
-        phoneNumber: validated.data.phone,
-        isVerified: false, // Requires admin verification
-        isActive: false, // Inactive until verified
-        allowsPreRegistration: false,
-        openingHours: {},
-        amenities: [],
-        vibeTags: [],
-        priceRange: '€€',
-        capacity: 0, // Will be set during verification
-        foundedYear: new Date().getFullYear(),
-        images: [],
-        socialMedia: {},
-      },
-    });
-
-    // Step 4: Update profile to CLUB_ADMIN role and link to club
-    await prisma.profile.update({
-      where: { authId: user.id },
-      data: {
-        role: 'CLUB_ADMIN',
-        displayName: validated.data.clubName,
-        hasCompletedOnboarding: true,
-        managedClub: {
-          connect: { id: club.id },
-        },
-      },
-    });
 
     const encryptedRegistrationSnapshot = EncryptionService.encryptPayload({
       type: 'club_registration',
@@ -173,24 +119,105 @@ export async function clubSignUp(prevState: ActionState, formData: FormData): Pr
       submittedAt: new Date().toISOString(),
     });
 
-    // Step 5: Create verification request for admin review
-    // This creates a record that admin will review manually
-    await prisma.membershipRequest.create({
-      data: {
-        userId: (await prisma.profile.findUnique({ where: { authId: user.id } }))?.id || '',
-        clubId: club.id,
-        status: 'PENDING',
-        message: `New club registration request: ${validated.data.clubName}`,
-        encryptedSnapshot: {
-          encryptedData: encryptedRegistrationSnapshot,
+    const defaultCity = await prisma.city.findFirst({
+      where: { slug: 'madrid' },
+      select: { id: true },
+    });
+
+    if (!defaultCity) {
+      return {
+        success: false,
+        message: 'Club signup is temporarily unavailable. Please try again later.',
+      };
+    }
+
+    const slug = await ensureUniqueClubSlug(generateSlug(validated.data.clubName));
+
+    await prisma.$transaction(async (tx) => {
+      const profileRecord = await tx.profile.findUnique({
+        where: { authId: user.id },
+        select: { id: true },
+      });
+
+      const profile =
+        profileRecord ??
+        (await tx.profile.create({
+          data: {
+            authId: user.id,
+            email: validated.data.email,
+            role: 'CLUB_ADMIN',
+            displayName: validated.data.clubName,
+            hasCompletedOnboarding: true,
+          },
+          select: { id: true },
+        }));
+
+      await tx.$executeRaw`SELECT set_config('app.allow_role_change', 'on', true)`;
+
+      await tx.profile.update({
+        where: { id: profile.id },
+        data: {
+          role: 'CLUB_ADMIN',
+          displayName: validated.data.clubName,
+          hasCompletedOnboarding: true,
         },
-      },
+      });
+
+      const club = await tx.club.create({
+        data: {
+          slug,
+          name: validated.data.clubName,
+          description: validated.data.description,
+          shortDescription: shortDescription(validated.data.description),
+          cityId: defaultCity.id,
+          neighborhood: 'Pending Assignment',
+          addressDisplay: validated.data.address,
+          coordinates: {},
+          contactEmail: validated.data.email,
+          phoneNumber: validated.data.phone,
+          isVerified: false,
+          isActive: false,
+          allowsPreRegistration: false,
+          openingHours: {},
+          amenities: [],
+          vibeTags: [],
+          priceRange: '€€',
+          capacity: 0,
+          foundedYear: new Date().getFullYear(),
+          images: [],
+          socialMedia: {},
+        },
+        select: { id: true },
+      });
+
+      await tx.profile.update({
+        where: { id: profile.id },
+        data: {
+          managedClub: {
+            connect: { id: club.id },
+          },
+        },
+      });
+
+      await tx.membershipRequest.create({
+        data: {
+          userId: profile.id,
+          clubId: club.id,
+          status: 'PENDING',
+          message: `New club registration request: ${validated.data.clubName}`,
+          encryptedSnapshot: {
+            encryptedData: encryptedRegistrationSnapshot,
+          },
+        },
+      });
     });
 
     revalidatePath('/', 'layout');
-    
-    // Check if email confirmation is required
-    const { data: { session } } = await supabase.auth.getSession();
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
     if (!session) {
       return {
         success: true,
@@ -198,9 +225,7 @@ export async function clubSignUp(prevState: ActionState, formData: FormData): Pr
       };
     }
 
-    // If no email confirmation needed, redirect to club dashboard
     redirect('/club-panel/dashboard');
-
   } catch (error) {
     console.error('Club signup error:', error);
     return {

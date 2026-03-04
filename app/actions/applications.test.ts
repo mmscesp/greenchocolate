@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock prisma and supabase
 vi.mock('@/lib/prisma', () => ({
   prisma: {
+    $transaction: vi.fn(),
     membershipRequest: {
       findUnique: vi.fn(),
       findFirst: vi.fn(),
@@ -55,6 +56,17 @@ describe('Application Actions', () => {
       auth: {
         getUser: vi.fn().mockResolvedValue({ data: { user: mockUser }, error: null }),
       },
+    });
+
+    vi.mocked(prisma.$transaction).mockImplementation(async (arg) => {
+      if (typeof arg === 'function') {
+        return arg({
+          membershipRequest: prisma.membershipRequest,
+          notification: prisma.notification,
+        } as never);
+      }
+
+      return Promise.resolve(arg as never);
     });
   });
 
@@ -151,6 +163,64 @@ describe('Application Actions', () => {
         ]),
       });
       expect(prisma.notification.create).toHaveBeenCalled();
+    });
+
+    it('should map P2002 unique conflicts to deterministic duplicate error', async () => {
+      (prisma.profile.findUnique as any).mockResolvedValue(mockProfile);
+      (prisma.membershipRequest.findUnique as any).mockResolvedValue(null);
+
+      (prisma.$transaction as unknown as { mockImplementation: (fn: (arg: unknown) => Promise<unknown>) => void }).mockImplementation(
+        async () => {
+          throw { code: 'P2002' };
+        }
+      );
+
+      const result = await submitMembershipApplication({
+        targetClubId: mockClubId,
+        eligibilityAnswers: { over18: true },
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Application already exists for this club');
+    });
+
+    it('should retry transaction once on P2034 then succeed', async () => {
+      (prisma.profile.findUnique as any).mockResolvedValue(mockProfile);
+      (prisma.membershipRequest.findUnique as any).mockResolvedValue(null);
+      (prisma.membershipRequest.create as any).mockResolvedValue({
+        id: mockRequestId,
+        clubId: mockClubId,
+        createdAt: new Date(),
+      });
+      (prisma.notification.create as any).mockResolvedValue({ id: 'notification-1' });
+
+      let attempts = 0;
+      (prisma.$transaction as unknown as { mockImplementation: (fn: (arg: unknown) => Promise<unknown>) => void }).mockImplementation(
+        async (arg) => {
+          attempts += 1;
+
+          if (attempts === 1) {
+            throw { code: 'P2034' };
+          }
+
+          if (typeof arg === 'function') {
+            return arg({
+              membershipRequest: prisma.membershipRequest,
+              notification: prisma.notification,
+            });
+          }
+
+          return null;
+        }
+      );
+
+      const result = await submitMembershipApplication({
+        targetClubId: mockClubId,
+        eligibilityAnswers: { over18: true },
+      });
+
+      expect(result.success).toBe(true);
+      expect(attempts).toBe(2);
     });
   });
 

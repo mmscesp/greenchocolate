@@ -3,7 +3,14 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 
 export default defineConfig([
   {
-    ignores: ['.tmp-librarian/**', '**/.tmp-librarian/**', 'lib/generated/**', '**/lib/generated/**'],
+    ignores: [
+      '.tmp-librarian/**',
+      '**/.tmp-librarian/**',
+      'tmp-*/**',
+      '**/tmp-*/**',
+      'lib/generated/**',
+      '**/lib/generated/**',
+    ],
   },
   ...nextVitals,
   {

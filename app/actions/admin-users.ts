@@ -37,7 +37,10 @@ export async function getAdminUsers(rawInput: AdminUsersFilterInput = {}) {
     };
   }
 
-  const input = usersFilterSchema.parse(rawInput);
+  const parsedInput = usersFilterSchema.safeParse(rawInput);
+  const input = parsedInput.success
+    ? parsedInput.data
+    : usersFilterSchema.parse({});
 
   const whereClause = {
     ...(input.role !== 'ALL' ? { role: input.role } : {}),

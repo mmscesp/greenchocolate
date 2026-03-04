@@ -1,8 +1,9 @@
 'use server';
 
+import { randomBytes } from 'crypto';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
-import { EncryptionService } from '@/lib/encryption';
 
 export type PassTier = 'STANDARD' | 'PREMIUM' | 'ELITE';
 export type PassStatus = 'ACTIVE' | 'EXPIRED' | 'SUSPENDED';
@@ -16,11 +17,31 @@ export interface SafetyPassView {
   expiresAt: Date;
 }
 
-async function getCurrentProfile() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+type CurrentProfile = {
+  id: string;
+  email: string;
+  tier: string;
+  isVerified: boolean;
+};
 
-  if (!user) return null;
+type SafetyPassRecord = {
+  id: string;
+  passNumber: string;
+  tier: PassTier;
+  status: PassStatus;
+  issuedAt: Date;
+  expiresAt: Date;
+};
+
+async function getCurrentProfile(): Promise<CurrentProfile | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null;
+  }
 
   return prisma.profile.findUnique({
     where: { authId: user.id },
@@ -29,20 +50,68 @@ async function getCurrentProfile() {
       email: true,
       tier: true,
       isVerified: true,
-      createdAt: true,
-      updatedAt: true,
     },
   });
 }
 
-function buildPassNumber(userId: string): string {
-  return `SMC-2026-${userId.slice(0, 8).toUpperCase()}`;
+function createPassNumber(): string {
+  return `SMC-2026-${randomBytes(6).toString('hex').toUpperCase()}`;
 }
 
-function mapTier(tier: string): PassTier {
-  if (tier === 'elite') return 'ELITE';
-  if (tier === 'premium') return 'PREMIUM';
+function mapProfileTier(tier: string): PassTier {
+  if (tier === 'elite') {
+    return 'ELITE';
+  }
+
+  if (tier === 'premium') {
+    return 'PREMIUM';
+  }
+
   return 'STANDARD';
+}
+
+function toSafetyPassView(pass: SafetyPassRecord): SafetyPassView {
+  return {
+    id: pass.id,
+    passNumber: pass.passNumber,
+    tier: pass.tier,
+    status: pass.status,
+    issuedAt: pass.issuedAt,
+    expiresAt: pass.expiresAt,
+  };
+}
+
+async function generateUniquePassNumber(tx: Prisma.TransactionClient): Promise<string> {
+  const maxAttempts = 5;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const candidate = createPassNumber();
+    const existing = await tx.safetyPass.findUnique({
+      where: { passNumber: candidate },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      return candidate;
+    }
+  }
+
+  throw new Error('Unable to generate a unique safety pass number');
+}
+
+function computePassStatus(pass: {
+  status: PassStatus;
+  expiresAt: Date;
+}): PassStatus {
+  if (pass.status === 'SUSPENDED') {
+    return 'SUSPENDED';
+  }
+
+  if (pass.expiresAt <= new Date()) {
+    return 'EXPIRED';
+  }
+
+  return 'ACTIVE';
 }
 
 export async function generateSafetyPass(data: {
@@ -63,22 +132,54 @@ export async function generateSafetyPass(data: {
   const issuedAt = new Date();
   const expiresAt = new Date(issuedAt);
   expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+  const tier = data.tier ?? mapProfileTier(profile.tier);
 
-  const passNumber = buildPassNumber(profile.id);
-  const tier = data.tier || mapTier(profile.tier);
+  const pass = await prisma.$transaction(async (tx) => {
+    const existingPass = await tx.safetyPass.findUnique({
+      where: { userId: profile.id },
+      select: { passNumber: true },
+    });
 
-  await prisma.profile.update({
-    where: { id: profile.id },
-    data: {
-      isVerified: true,
-      encryptedData: EncryptionService.encryptPayload({
+    const passNumber = existingPass?.passNumber ?? (await generateUniquePassNumber(tx));
+
+    await tx.profile.update({
+      where: { id: profile.id },
+      data: { isVerified: true },
+    });
+
+    return tx.safetyPass.upsert({
+      where: { userId: profile.id },
+      update: {
+        tier,
+        status: 'ACTIVE',
+        issuedAt,
+        expiresAt,
+        metadata: {
+          eligibilityAnswers: data.eligibilityAnswers,
+          lastGeneratedAt: new Date().toISOString(),
+        },
+      },
+      create: {
+        userId: profile.id,
         passNumber,
-        passTier: tier,
-        eligibility: data.eligibilityAnswers,
-        issuedAt: issuedAt.toISOString(),
-        expiresAt: expiresAt.toISOString(),
-      }),
-    },
+        tier,
+        status: 'ACTIVE',
+        issuedAt,
+        expiresAt,
+        metadata: {
+          eligibilityAnswers: data.eligibilityAnswers,
+          lastGeneratedAt: new Date().toISOString(),
+        },
+      },
+      select: {
+        id: true,
+        passNumber: true,
+        tier: true,
+        status: true,
+        issuedAt: true,
+        expiresAt: true,
+      },
+    });
   });
 
   await prisma.notification.create({
@@ -86,25 +187,18 @@ export async function generateSafetyPass(data: {
       userId: profile.id,
       type: 'SYSTEM_ALERT',
       title: 'Safety pass generated',
-      message: `Your safety pass ${passNumber} is active until ${expiresAt.toISOString().slice(0, 10)}.`,
+      message: `Your safety pass ${pass.passNumber} is active until ${pass.expiresAt.toISOString().slice(0, 10)}.`,
       data: {
-        passNumber,
-        tier,
-        expiresAt: expiresAt.toISOString(),
+        passNumber: pass.passNumber,
+        tier: pass.tier,
+        expiresAt: pass.expiresAt.toISOString(),
       },
     },
   });
 
   return {
     success: true,
-    pass: {
-      id: profile.id,
-      passNumber,
-      tier,
-      status: 'ACTIVE',
-      issuedAt,
-      expiresAt,
-    },
+    pass: toSafetyPassView(pass),
   };
 }
 
@@ -114,57 +208,52 @@ export async function validateSafetyPass(passNumber: string): Promise<{
   message: string;
 }> {
   const normalizedPass = passNumber.trim().toUpperCase();
-  const userIdPrefix = normalizedPass.replace('SMC-2026-', '').toLowerCase();
 
-  const profile = await prisma.profile.findFirst({
-    where: {
-      id: {
-        startsWith: userIdPrefix,
-      },
-      isVerified: true,
-    },
+  const pass = await prisma.safetyPass.findUnique({
+    where: { passNumber: normalizedPass },
     select: {
       id: true,
+      passNumber: true,
       tier: true,
-      createdAt: true,
-      updatedAt: true,
+      status: true,
+      issuedAt: true,
+      expiresAt: true,
     },
   });
 
-  if (!profile) {
+  if (!pass) {
     return { valid: false, message: 'Safety pass not found' };
   }
 
-  const issuedAt = profile.createdAt;
-  const expiresAt = new Date(issuedAt);
-  expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-  const now = new Date();
+  const computedStatus = computePassStatus({
+    status: pass.status,
+    expiresAt: pass.expiresAt,
+  });
 
-  if (expiresAt <= now) {
+  const passView = toSafetyPassView({
+    ...pass,
+    status: computedStatus,
+  });
+
+  if (computedStatus === 'EXPIRED') {
     return {
       valid: false,
-      pass: {
-        id: profile.id,
-        passNumber: buildPassNumber(profile.id),
-        tier: mapTier(profile.tier),
-        status: 'EXPIRED',
-        issuedAt,
-        expiresAt,
-      },
+      pass: passView,
       message: 'Safety pass expired',
+    };
+  }
+
+  if (computedStatus === 'SUSPENDED') {
+    return {
+      valid: false,
+      pass: passView,
+      message: 'Safety pass suspended',
     };
   }
 
   return {
     valid: true,
-    pass: {
-      id: profile.id,
-      passNumber: buildPassNumber(profile.id),
-      tier: mapTier(profile.tier),
-      status: 'ACTIVE',
-      issuedAt,
-      expiresAt,
-    },
+    pass: passView,
     message: 'Safety pass is valid',
   };
 }
@@ -180,12 +269,34 @@ export async function renewSafetyPass(): Promise<{
     return { success: false, error: 'Unauthorized' };
   }
 
-  if (!profile.isVerified) {
+  const existingPass = await prisma.safetyPass.findUnique({
+    where: { userId: profile.id },
+    select: {
+      id: true,
+      passNumber: true,
+      status: true,
+      expiresAt: true,
+    },
+  });
+
+  if (!existingPass || existingPass.status === 'SUSPENDED') {
     return { success: false, error: 'Cannot renew an inactive pass' };
   }
 
-  const newExpiryDate = new Date();
+  const now = new Date();
+  const renewalBase = existingPass.expiresAt > now ? existingPass.expiresAt : now;
+  const newExpiryDate = new Date(renewalBase);
   newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+
+  const renewedPass = await prisma.safetyPass.update({
+    where: { id: existingPass.id },
+    data: {
+      status: 'ACTIVE',
+      renewedAt: now,
+      expiresAt: newExpiryDate,
+    },
+    select: { passNumber: true },
+  });
 
   await prisma.notification.create({
     data: {
@@ -194,7 +305,7 @@ export async function renewSafetyPass(): Promise<{
       title: 'Safety Pass Renewed',
       message: `Your safety pass is now valid until ${newExpiryDate.toISOString().slice(0, 10)}`,
       data: {
-        passNumber: buildPassNumber(profile.id),
+        passNumber: renewedPass.passNumber,
         expiresAt: newExpiryDate.toISOString(),
       },
     },
