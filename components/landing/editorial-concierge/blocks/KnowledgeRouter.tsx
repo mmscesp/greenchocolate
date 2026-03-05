@@ -12,23 +12,23 @@ export function KnowledgeRouter() {
 
   const events = [
     {
-      date: 'APR 17–19',
-      name: 'Spannabis Bilbao 2026',
-      location: 'Bilbao, Spain',
+      date: t('landing.knowledge_router.events.spannabis.date'),
+      name: t('landing.knowledge_router.events.spannabis.name'),
+      location: t('landing.knowledge_router.events.spannabis.location'),
       desc: t('landing.knowledge_router.events.spannabis.description'),
       href: `/${language}/editorial/spannabis-bilbao-2026`
     },
     {
-      date: 'APR 13–15',
-      name: 'ICBC Berlin 2026',
-      location: 'Berlin, Germany',
+      date: t('landing.knowledge_router.events.icbc.date'),
+      name: t('landing.knowledge_router.events.icbc.name'),
+      location: t('landing.knowledge_router.events.icbc.location'),
       desc: t('landing.knowledge_router.events.icbc.description'),
       href: `/${language}/editorial/icbc-berlin-2026`
     },
     {
-      date: 'MAY 26–27',
-      name: 'Cannabis Europa London 2026',
-      location: 'London, UK',
+      date: t('landing.knowledge_router.events.europa.date'),
+      name: t('landing.knowledge_router.events.europa.name'),
+      location: t('landing.knowledge_router.events.europa.location'),
       desc: t('landing.knowledge_router.events.europa.description'),
       href: `/${language}/editorial/cannabis-europa-london-2026`
     }

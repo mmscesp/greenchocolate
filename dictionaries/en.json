@@ -1872,5 +1872,21 @@
     "final_body": "The Safety Kit is free. The fines are not.",
     "final_form_btn": "Get the Kit →",
     "final_microcopy": "Free forever. Instant download. One email per week."
-  }
+  },
+  "landing.community_roadmap.cities.barcelona.name": "Barcelona",
+  "landing.community_roadmap.cities.madrid.name": "Madrid",
+  "landing.community_roadmap.cities.valencia.name": "Valencia",
+  "landing.community_roadmap.cities.tenerife.name": "Tenerife",
+  "landing.knowledge_router.events.spannabis.date": "APR 17-19",
+  "landing.knowledge_router.events.spannabis.name": "Spannabis Bilbao 2026",
+  "landing.knowledge_router.events.spannabis.location": "Bilbao, Spain",
+  "landing.knowledge_router.events.icbc.date": "APR 13-15",
+  "landing.knowledge_router.events.icbc.name": "ICBC Berlin 2026",
+  "landing.knowledge_router.events.icbc.location": "Berlin, Germany",
+  "landing.knowledge_router.events.europa.date": "MAY 26-27",
+  "landing.knowledge_router.events.europa.name": "Cannabis Europa London 2026",
+  "landing.knowledge_router.events.europa.location": "London, UK",
+  "landing.verification_standard.cards.barcelona.city_badge": "Barcelona",
+  "landing.verification_standard.cards.madrid.city_badge": "Madrid",
+  "landing.featured_vault.read_time_suffix": "min read"
 }

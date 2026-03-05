@@ -12,7 +12,7 @@ export function CommunityRoadmap() {
 
   const cities = [
     {
-      name: 'Barcelona',
+      name: t('landing.community_roadmap.cities.barcelona.name'),
       status: t('landing.community_roadmap.cities.barcelona.status'),
       tagline: t('landing.community_roadmap.cities.barcelona.tagline'),
       image: '/images/cities/barcelona-dusk.webp', // Placeholder path
@@ -20,7 +20,7 @@ export function CommunityRoadmap() {
       active: true
     },
     {
-      name: 'Madrid',
+      name: t('landing.community_roadmap.cities.madrid.name'),
       status: t('landing.community_roadmap.cities.madrid.status'),
       tagline: t('landing.community_roadmap.cities.madrid.tagline'),
       image: '/images/cities/madrid-night.webp',
@@ -28,7 +28,7 @@ export function CommunityRoadmap() {
       active: true
     },
     {
-      name: 'Valencia',
+      name: t('landing.community_roadmap.cities.valencia.name'),
       status: t('landing.community_roadmap.cities.valencia.status'),
       tagline: t('landing.community_roadmap.cities.valencia.tagline'),
       image: '/images/cities/valencia-arts.webp',
@@ -36,7 +36,7 @@ export function CommunityRoadmap() {
       active: false
     },
     {
-      name: 'Tenerife',
+      name: t('landing.community_roadmap.cities.tenerife.name'),
       status: t('landing.community_roadmap.cities.tenerife.status'),
       tagline: t('landing.community_roadmap.cities.tenerife.tagline'),
       image: '/images/cities/tenerife-coast.webp',

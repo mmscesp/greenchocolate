@@ -53,7 +53,7 @@ export function VerificationStandard() {
           >
             <div className="flex justify-between items-start mb-6">
               <span className="px-3 py-1 bg-brand text-bg-base text-[10px] font-bold uppercase tracking-widest rounded-sm">
-                Barcelona
+                {t('landing.verification_standard.cards.barcelona.city_badge')}
               </span>
               <div className="w-2 h-2 rounded-full bg-brand shadow-[0_0_10px_hsl(var(--brand)/0.5)]" />
             </div>
@@ -83,7 +83,7 @@ export function VerificationStandard() {
           >
             <div className="flex justify-between items-start mb-6">
               <span className="px-3 py-1 bg-brand text-bg-base text-[10px] font-bold uppercase tracking-widest rounded-sm">
-                Madrid
+                {t('landing.verification_standard.cards.madrid.city_badge')}
               </span>
               <div className="w-2 h-2 rounded-full bg-brand shadow-[0_0_10px_hsl(var(--brand)/0.5)]" />
             </div>

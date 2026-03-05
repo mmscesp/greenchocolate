@@ -60,7 +60,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
         tag: article.category,
         title: article.title,
         description: article.excerpt,
-        readTime: `${article.readTime} min read`,
+        readTime: `${article.readTime} ${t('landing.featured_vault.read_time_suffix')}`,
         slug: article.slug,
         image: article.heroImage || '/images/editorial/club-interior-warm.webp',
       }))
