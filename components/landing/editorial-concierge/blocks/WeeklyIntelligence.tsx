@@ -4,12 +4,13 @@ import { SectionWrapper } from '../layout/SectionWrapper';
 import { EditorialHeading } from '../typography/EditorialHeading';
 import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { ArrowRight, AlertCircle, Info, ShieldCheck, Newspaper } from '@/lib/icons';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function WeeklyIntelligence() {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   const intelligenceCards = [
     {
@@ -38,7 +39,14 @@ export function WeeklyIntelligence() {
   return (
     <SectionWrapper>
       <div className="max-w-5xl mx-auto">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-16">
+        {/* [motion] */}
+        <motion.div
+          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-16"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <div>
             <ConciergeLabel className="text-brand mb-4 block">{t('landing.weekly.label')}</ConciergeLabel>
             <EditorialHeading size="xl">{t('landing.weekly.title')}</EditorialHeading>
@@ -47,15 +55,27 @@ export function WeeklyIntelligence() {
             <Newspaper className="w-4 h-4 text-brand" />
             <ConciergeLabel size="xs" emphasis="high" className="text-brand">{t('landing.weekly.updated')}</ConciergeLabel>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        {/* [motion] */}
+        <motion.div
+          className="grid md:grid-cols-3 gap-8"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {intelligenceCards.map((item, i) => (
             <motion.div 
               key={i} 
+              variants={{
+                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
               className="group relative p-8 rounded-[2rem] bg-bg-card border border-white/10 hover:border-brand/40 transition-all duration-500 overflow-hidden cursor-pointer"
-              whileHover={{ y: -6 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              whileHover={shouldReduceMotion ? undefined : { y: -3 }}
+              transition={shouldReduceMotion ? { duration: 0.2 } : { duration: 0.2 }}
+              style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
             >
               {/* Ambient Glow */}
               <div className="absolute -inset-1 bg-gradient-to-r from-brand/0 to-brand/0 rounded-[2.5rem] blur-xl opacity-0 group-hover:from-brand/10 group-hover:to-brand-light/10 group-hover:opacity-100 transition-all duration-500 -z-10" />
@@ -79,7 +99,7 @@ export function WeeklyIntelligence() {
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-brand to-brand-light rounded-full group-hover:w-1/3 transition-all duration-500 z-20" />
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </SectionWrapper>
   );

@@ -2,12 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight } from '@/lib/icons';
 
 export function CommunityRoadmap() {
   const { language, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   const cities = [
     {
@@ -47,23 +48,37 @@ export function CommunityRoadmap() {
   return (
     <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 border-t border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 md:mb-24 max-w-3xl mx-auto">
+        {/* [motion] */}
+        <motion.div
+          className="text-center mb-16 md:mb-24 max-w-3xl mx-auto"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4">
             {t('landing.community_roadmap.title')}
           </h2>
           <p className="text-lg md:text-xl text-zinc-400 font-medium">
             {t('landing.community_roadmap.subtitle')}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {cities.map((city, idx) => (
+        {/* [motion] */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {cities.map((city) => (
             <motion.div
               key={city.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: idx * 0.1 }}
+              variants={{
+                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
               className="group relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-2xl bg-bg-surface border border-white/10"
             >
               {/* Image Layer */}
@@ -104,7 +119,7 @@ export function CommunityRoadmap() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

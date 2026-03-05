@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Check } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function NewsletterDrop() {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
@@ -32,7 +34,14 @@ export function NewsletterDrop() {
     <section className="bg-gradient-to-br from-bg-base to-bg-surface py-24 md:py-40 px-4 md:px-8 relative overflow-hidden text-center border-t border-white/5">
       {/* Subtle Texture/Grain Overlay could go here */}
       
-      <div className="max-w-4xl mx-auto relative z-10">
+      {/* [motion] */}
+      <motion.div
+        className="max-w-4xl mx-auto relative z-10"
+        initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+        whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+      >
         <h2 className="text-4xl md:text-6xl font-black font-serif text-white tracking-tight mb-8 leading-[1.1] drop-shadow-2xl">
           {t('landing.newsletter_drop.title_line_1')}<br />
           {t('landing.newsletter_drop.title_line_2')}<br />
@@ -43,14 +52,28 @@ export function NewsletterDrop() {
           {t('landing.newsletter_drop.subtitle')}
         </p>
 
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-left max-w-3xl mx-auto mb-10">
+        {/* [motion] */}
+        <motion.div
+          className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-left max-w-3xl mx-auto mb-10"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
           {benefits.map((benefit, i) => (
-            <div key={i} className="flex items-center gap-2 text-zinc-400 text-sm font-medium">
+            <motion.div
+              key={i}
+              variants={{
+                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              className="flex items-center gap-2 text-zinc-400 text-sm font-medium"
+            >
               <Check className="w-4 h-4 text-brand flex-shrink-0" />
               <span>{benefit}</span>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {status === 'success' ? (
           <div className="bg-brand/10 border border-brand/30 rounded-2xl p-8 max-w-lg mx-auto mb-12">
@@ -92,7 +115,7 @@ export function NewsletterDrop() {
         <p className="mt-12 text-zinc-500 text-xs">
           {t('landing.newsletter_drop.disclaimer')}
         </p>
-      </div>
+      </motion.div>
     </section>
   );
 }

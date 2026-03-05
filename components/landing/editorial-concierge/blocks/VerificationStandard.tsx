@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
 import { CheckCircle2, ArrowRight } from '@/lib/icons';
 
 export function VerificationStandard() {
   const { language, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -20,18 +21,41 @@ export function VerificationStandard() {
   return (
     <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 overflow-hidden relative">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 max-w-3xl mx-auto">
+        {/* [motion] */}
+        <motion.div
+          className="text-center mb-16 max-w-3xl mx-auto"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4">
             {t('landing.verification_standard.title')}
           </h2>
           <p className="text-lg md:text-xl text-zinc-300 font-medium mb-6">
             {t('landing.verification_standard.subtitle')}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+        {/* [motion] */}
+        <motion.div
+          className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {/* Club Card 1 */}
-          <div className="bg-bg-card border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-brand/50 transition-colors duration-300">
+          <motion.div
+            variants={{
+              hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+            }}
+            whileHover={shouldReduceMotion ? undefined : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}
+            transition={{ duration: 0.2 }}
+            style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
+            className="bg-bg-card border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-brand/50 transition-colors duration-300"
+          >
             <div className="flex justify-between items-start mb-6">
               <span className="px-3 py-1 bg-brand text-bg-base text-[10px] font-bold uppercase tracking-widest rounded-sm">
                 Barcelona
@@ -50,10 +74,19 @@ export function VerificationStandard() {
             <Link href={`/${language}/clubs`} className="text-white hover:text-brand text-sm font-bold flex items-center gap-2 transition-colors">
               {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
+          </motion.div>
 
           {/* Club Card 2 */}
-          <div className="bg-bg-card border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-brand/50 transition-colors duration-300">
+          <motion.div
+            variants={{
+              hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+            }}
+            whileHover={shouldReduceMotion ? undefined : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}
+            transition={{ duration: 0.2 }}
+            style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
+            className="bg-bg-card border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-brand/50 transition-colors duration-300"
+          >
             <div className="flex justify-between items-start mb-6">
               <span className="px-3 py-1 bg-brand text-bg-base text-[10px] font-bold uppercase tracking-widest rounded-sm">
                 Madrid
@@ -72,10 +105,19 @@ export function VerificationStandard() {
             <Link href={`/${language}/clubs`} className="text-white hover:text-brand text-sm font-bold flex items-center gap-2 transition-colors">
               {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
             </Link>
-          </div>
+          </motion.div>
 
           {/* Coming Next Card */}
-          <div className="bg-bg-surface border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
+          <motion.div
+            variants={{
+              hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+              visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+            }}
+            whileHover={shouldReduceMotion ? undefined : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}
+            transition={{ duration: 0.2 }}
+            style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
+            className="bg-bg-surface border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden"
+          >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--brand)/0.08),transparent)] pointer-events-none" />
             <div className="relative z-10 w-full">
               <p className="text-[10px] font-bold uppercase tracking-widest text-brand mb-2">{t('landing.verification_standard.next_verified')}</p>
@@ -104,8 +146,8 @@ export function VerificationStandard() {
                 </form>
               )}
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         <div className="mt-12 text-center">
           <Link href={`/${language}/clubs`} className="inline-flex items-center gap-2 text-zinc-400 hover:text-brand font-bold uppercase tracking-widest text-xs transition-colors">

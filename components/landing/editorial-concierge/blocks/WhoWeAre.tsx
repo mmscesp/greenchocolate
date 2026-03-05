@@ -2,28 +2,29 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15 }
+    transition: { staggerChildren: 0.08 }
   }
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring' as const, stiffness: 300, damping: 24 }
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const }
   }
 };
 
 export function WhoWeAre() {
   const { language, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   const pillars = [
     {
@@ -53,7 +54,14 @@ export function WhoWeAre() {
     <section className="bg-bg-surface py-24 md:py-32 px-4 md:px-8 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="mb-20 md:mb-28 max-w-4xl">
+        {/* [motion] */}
+        <motion.div
+          className="mb-20 md:mb-28 max-w-4xl"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <h2 className="text-4xl md:text-6xl font-black font-serif text-white tracking-tight mb-8 leading-[1.1]">
             {t('landing.who_we_are.header.title_line_1')}<br />
             <span className="text-zinc-300">{t('landing.who_we_are.header.title_line_2')}</span>
@@ -67,14 +75,15 @@ export function WhoWeAre() {
             </p>
             <p className="text-white font-bold pt-2">{t('landing.who_we_are.header.signature')}</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* The Three Pillars */}
+        {/* [motion] */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
         >
           <div className="md:col-span-3 mb-8">
@@ -84,7 +93,14 @@ export function WhoWeAre() {
           {pillars.map((pillar, idx) => (
             <motion.div
               key={idx}
-              variants={cardVariants}
+              variants={
+                shouldReduceMotion
+                  ? {
+                      hidden: { opacity: 0 },
+                      visible: { opacity: 1, transition: { duration: 0.2 } },
+                    }
+                  : cardVariants
+              }
               className="flex flex-col h-full group"
             >
               <div className="mb-6 pb-6 border-b-2 border-white/10 group-hover:border-brand transition-colors duration-500">

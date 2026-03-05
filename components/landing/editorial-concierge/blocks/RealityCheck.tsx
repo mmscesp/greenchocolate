@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -10,22 +10,23 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
+      staggerChildren: 0.08,
     }
   }
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: 'spring' as const, stiffness: 300, damping: 24 }
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const }
   }
 };
 
 export function RealityCheck() {
   const { language, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   const cards = [
     {
@@ -57,17 +58,25 @@ export function RealityCheck() {
           </p>
         </div>
 
+        {/* [motion] */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
         >
           {cards.map((card, idx) => (
             <motion.div
               key={idx}
-              variants={cardVariants}
+              variants={
+                shouldReduceMotion
+                  ? {
+                      hidden: { opacity: 0 },
+                      visible: { opacity: 1, transition: { duration: 0.2 } },
+                    }
+                  : cardVariants
+              }
               className="bg-bg-surface border border-white/10 p-6 md:p-8 rounded-2xl flex flex-col shadow-xl"
             >
               <div className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-4">
@@ -83,11 +92,12 @@ export function RealityCheck() {
           ))}
         </motion.div>
 
+        {/* [motion] */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
           className="mt-16 text-center"
         >
           <Link

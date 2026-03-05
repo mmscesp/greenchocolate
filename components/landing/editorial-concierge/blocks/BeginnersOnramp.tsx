@@ -1,20 +1,22 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function BeginnersOnramp() {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <section className="bg-bg-base py-32 md:py-48 px-4 md:px-8 border-t border-white/5 relative z-10">
       <div className="max-w-3xl mx-auto text-center md:text-left">
+        {/* [motion] */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-black font-serif text-white tracking-tight mb-12 leading-tight">
             {t('landing.beginners_onramp.title')}

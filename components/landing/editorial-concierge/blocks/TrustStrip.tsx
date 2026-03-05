@@ -1,10 +1,14 @@
 'use client';
 
 import React from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function TrustStrip() {
   const { t } = useLanguage();
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const isInView = useInView(rootRef, { amount: 0.2 });
   const phrases = [
     t('landing.trust_strip.items.independent_unsponsored'),
     t('landing.trust_strip.items.verified_only'),
@@ -16,7 +20,15 @@ export function TrustStrip() {
   ];
 
   return (
-    <div className="w-full h-12 md:h-14 bg-bg-surface overflow-hidden flex items-center border-y border-white/5 relative z-40 select-none">
+    // [motion]
+    <motion.div
+      ref={rootRef}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.3 }}
+      className="w-full h-12 md:h-14 bg-bg-surface overflow-hidden flex items-center border-y border-white/5 relative z-40 select-none"
+    >
       {/* Desktop View */}
       <div className="hidden lg:flex items-center justify-center w-full max-w-7xl mx-auto gap-4 xl:gap-6 px-4">
         {phrases.map((phrase, i) => (
@@ -33,7 +45,7 @@ export function TrustStrip() {
 
       {/* Mobile/Tablet Marquee */}
       <div className="lg:hidden flex items-center w-full relative">
-        <div className="flex animate-marquee whitespace-nowrap">
+        <div className={`flex whitespace-nowrap ${!shouldReduceMotion && isInView ? 'animate-marquee' : ''}`}>
           {/* We duplicate the array multiple times to ensure seamless infinite scrolling */}
           {[...phrases, ...phrases, ...phrases, ...phrases].map((phrase, i) => (
             <React.Fragment key={i}>
@@ -55,6 +67,6 @@ export function TrustStrip() {
           animation: marquee 30s linear infinite;
         }
       `}</style>
-    </div>
+    </motion.div>
   );
 }

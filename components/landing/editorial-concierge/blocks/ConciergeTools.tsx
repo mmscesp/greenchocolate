@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { CheckCircle2 } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function ConciergeTools() {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
@@ -65,23 +66,37 @@ export function ConciergeTools() {
   return (
     <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 overflow-hidden relative border-t border-white/5">
       <div className="max-w-2xl mx-auto w-full relative z-10">
-        <div className="text-center mb-12">
+        {/* [motion] */}
+        <motion.div
+          className="text-center mb-12"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight mb-4">
             {t('landing.concierge_tools.title')}
           </h2>
           <p className="text-lg md:text-xl text-zinc-300 font-medium">
             {t('landing.concierge_tools.subtitle')}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-bg-card rounded-3xl shadow-xl border border-white/10 p-6 md:p-10 min-h-[400px] flex flex-col justify-center relative overflow-hidden">
-          <AnimatePresence mode="wait">
+        {/* [motion] */}
+        <motion.div
+          className="bg-bg-card rounded-3xl shadow-xl border border-white/10 p-6 md:p-10 min-h-[400px] flex flex-col justify-center relative overflow-hidden"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          <AnimatePresence mode="wait" initial={false}>
             {step < 3 ? (
               <motion.div
                 key={step}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: 20 }}
+                animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
                 className="w-full"
               >
@@ -112,8 +127,8 @@ export function ConciergeTools() {
             ) : (
               <motion.div
                 key="result"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.97 }}
+                animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
                 className="w-full text-left"
               >
                 <div className="flex items-center gap-3 mb-6 text-brand bg-brand/10 border border-brand/30 w-fit px-4 py-2 rounded-full">
@@ -162,7 +177,7 @@ export function ConciergeTools() {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

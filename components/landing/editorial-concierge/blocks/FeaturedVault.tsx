@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Clock } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { type ArticleCard } from '@/app/actions/articles';
@@ -13,6 +13,7 @@ interface FeaturedVaultProps {
 
 export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
   const { language, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   const fallbackArticles = [
     {
@@ -68,7 +69,14 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
   return (
     <section className="bg-bg-surface py-24 md:py-32 px-4 md:px-8 border-t border-white/10">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+        {/* [motion] */}
+        <motion.div
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <div className="max-w-3xl">
             <h2 className="text-4xl md:text-5xl font-black font-serif text-white tracking-tight mb-4 leading-[1.1]">
               {t('landing.featured_vault.title')}
@@ -83,16 +91,30 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
           >
             {t('landing.featured_vault.all_guides')} <ArrowRight className="w-4 h-4" />
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
-          {displayItems.map((item, idx) => (
+        {/* [motion] */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {displayItems.map((item) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: idx * 0.1 }}
+              variants={{
+                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              whileHover={
+                shouldReduceMotion
+                  ? undefined
+                  : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+              }
+              transition={{ duration: 0.2 }}
+              style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
             >
               <Link href={`/${language}/editorial/${item.slug}`} className="group block h-full">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-bg-elevated mb-6 shadow-sm group-hover:shadow-md transition-all duration-500">
@@ -126,7 +148,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="mt-16 pt-16 border-t border-white/10 md:hidden flex justify-center">
           <Link

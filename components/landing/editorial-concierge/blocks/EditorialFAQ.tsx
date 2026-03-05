@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Plus } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export function EditorialFAQ() {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const faqs = [
@@ -38,11 +40,18 @@ export function EditorialFAQ() {
   return (
     <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 border-t border-white/5">
       <div className="max-w-3xl mx-auto">
-        <div className="mb-16 md:mb-20 text-center">
+        {/* [motion] */}
+        <motion.div
+          className="mb-16 md:mb-20 text-center"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight">
             {t('landing.editorial_faq.title')}
           </h2>
-        </div>
+        </motion.div>
 
         {/* Schema markup for SEO */}
         <script
@@ -63,9 +72,23 @@ export function EditorialFAQ() {
           }}
         />
 
-        <div className="space-y-4">
+        {/* [motion] */}
+        <motion.div
+          className="space-y-4"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {faqs.map((faq, i) => (
-            <div key={i} className="group bg-bg-surface rounded-2xl border border-white/5 overflow-hidden transition-colors hover:border-white/10">
+            <motion.div
+              key={i}
+              variants={{
+                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              className="group bg-bg-surface rounded-2xl border border-white/5 overflow-hidden transition-colors hover:border-white/10"
+            >
               <button
                 type="button"
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -89,9 +112,9 @@ export function EditorialFAQ() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

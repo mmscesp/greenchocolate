@@ -2,12 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight, MapPin } from '@/lib/icons';
 
 export function KnowledgeRouter() {
   const { language, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   const events = [
     {
@@ -36,7 +37,14 @@ export function KnowledgeRouter() {
   return (
     <section className="bg-bg-surface py-16 md:py-20 px-4 md:px-8 border-t border-white/10">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        {/* [motion] */}
+        <motion.div
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12"
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <div>
             <h2 className="text-2xl md:text-3xl font-black font-serif text-white tracking-tight mb-2">
               {t('landing.knowledge_router.title')}
@@ -51,16 +59,30 @@ export function KnowledgeRouter() {
           >
             {t('landing.knowledge_router.full_events')} <ArrowRight className="w-4 h-4" />
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* [motion] */}
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {events.map((event, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
+              variants={{
+                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+              whileHover={
+                shouldReduceMotion
+                  ? undefined
+                  : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+              }
+              transition={{ duration: 0.2 }}
+              style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
               className="group bg-bg-card border border-white/10 hover:border-brand/50 rounded-xl p-5 md:p-6 transition-colors shadow-sm hover:shadow-md"
             >
               <div className="mb-4">
@@ -86,7 +108,7 @@ export function KnowledgeRouter() {
               </Link>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="mt-8 text-center md:hidden">
           <Link
