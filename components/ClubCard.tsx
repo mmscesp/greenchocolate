@@ -43,7 +43,7 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
       <div className="relative bg-bg-base/80 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden h-full flex flex-col transition-all duration-500 group-hover:border-brand/20 group-hover:bg-bg-surface">
         {/* Image Section */}
         <div className="relative h-56 sm:h-64 overflow-hidden flex-shrink-0">
-          <Link href={`/${language}/clubs/${club.slug}`} aria-label={`${t('common.view')} ${club.name}`}>
+          <Link href={`/${language}/clubs/${club.slug}`} aria-label={`${t('common.view')} ${club.name}`} className="relative block h-full w-full">
             <Image
               src={club.images[0]}
               alt={club.name}

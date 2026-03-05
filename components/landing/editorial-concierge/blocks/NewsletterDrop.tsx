@@ -90,6 +90,8 @@ export function NewsletterDrop() {
             <div className="flex flex-col w-full gap-4">
               <input
                 type="email"
+                name="email"
+                autoComplete="email"
                 placeholder={t('landing.newsletter_drop.email_placeholder')}
                 required
                 disabled={status === 'loading'}

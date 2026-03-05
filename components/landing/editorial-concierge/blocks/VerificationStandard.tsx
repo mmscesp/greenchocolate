@@ -124,6 +124,8 @@ export function VerificationStandard() {
                 <form onSubmit={handleSubscribe} className="flex flex-col gap-3 w-full">
                   <input
                     type="email"
+                    name="email"
+                    autoComplete="email"
                     placeholder={t('landing.verification_standard.email_placeholder')}
                     required
                     value={email}

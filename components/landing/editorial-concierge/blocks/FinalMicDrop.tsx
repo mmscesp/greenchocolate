@@ -50,6 +50,8 @@ export function FinalMicDrop() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <input
                 type="email"
+                name="email"
+                autoComplete="email"
                 required
                 placeholder={t('landing.final_mic_drop.email_placeholder')}
                 value={email}

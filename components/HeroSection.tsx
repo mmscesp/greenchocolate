@@ -370,7 +370,7 @@ export default function HeroSection() {
       <div className="md:hidden relative w-full min-h-[100dvh] flex flex-col bg-bg-base overflow-hidden" ref={mobileContainerRef}>
         <div className="absolute inset-0 z-0">
           <div ref={mobileBgRef} className="relative w-full h-full will-change-transform">
-            <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill quality={80} sizes="100vw" priority className="object-cover object-[center_35%]" onLoad={handleImageLoad} onError={handleImageError} />
+            <Image src="/images/hero/barcelona-skyline.webp" alt={t('hero.section.image_alt')} fill quality={80} sizes="(max-width: 767px) 100vw, 0px" priority className="object-cover object-[center_35%]" onLoad={handleImageLoad} onError={handleImageError} />
           </div>
           <div className="absolute inset-0 bg-black/40 pointer-events-none" />
           <div className="absolute top-0 inset-x-0 h-[45vh] bg-gradient-to-b from-black/90 via-black/40 to-transparent pointer-events-none" />

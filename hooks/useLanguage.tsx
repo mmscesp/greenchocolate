@@ -8,7 +8,26 @@ import { i18n, type Locale } from '@/lib/i18n-config';
 export type TranslationKey = string;
 
 // Type for dictionary
-export type Dictionary = Record<string, string>;
+export type Dictionary = Record<string, unknown>;
+
+const getNestedTranslation = (dictionary: Dictionary, key: TranslationKey): string | undefined => {
+  const directValue = dictionary[key];
+  if (typeof directValue === 'string') {
+    return directValue;
+  }
+
+  const resolvedValue = key
+    .split('.')
+    .reduce<unknown>((current, segment) => {
+      if (!current || typeof current !== 'object' || !(segment in current)) {
+        return undefined;
+      }
+
+      return (current as Record<string, unknown>)[segment];
+    }, dictionary);
+
+  return typeof resolvedValue === 'string' ? resolvedValue : undefined;
+};
 
 interface LanguageContextType {
   language: Locale;
@@ -60,7 +79,7 @@ export function LanguageProvider({ children, locale, dictionary }: LanguageProvi
   };
 
   const t = (key: TranslationKey): string => {
-    return dictionary[key] || key;
+    return getNestedTranslation(dictionary, key) ?? key;
   };
 
   return (

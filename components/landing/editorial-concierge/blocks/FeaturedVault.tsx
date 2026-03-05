@@ -163,6 +163,8 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
           <form className="flex w-full md:w-auto gap-2" onSubmit={(e) => e.preventDefault()}>
             <input
               type="email"
+              name="email"
+              autoComplete="email"
               placeholder={t('landing.featured_vault.newsletter.email_placeholder')}
               className="flex-1 md:w-64 px-4 py-3 bg-bg-card border border-white/15 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
             />

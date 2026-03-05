@@ -53,6 +53,8 @@ export function SafetyKitFunnel() {
             <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3">
               <Input
                 type="email"
+                name="email"
+                autoComplete="email"
                 placeholder={t('safety_kit.form_placeholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
