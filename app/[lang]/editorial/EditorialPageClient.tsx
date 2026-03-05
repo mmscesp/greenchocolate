@@ -108,6 +108,32 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
   const shouldReduceMotion = useReducedMotion();
   const featuredArticles = buildMockFeaturedArticles(t);
   const CATEGORIES = buildCategories(t);
+  const standardsItems = [
+    {
+      key: 'legal',
+      icon: Scale,
+      iconBg: 'bg-brand/10 border-brand/20',
+      iconColor: 'text-brand',
+      title: t('editorial.standards.items.legal.title'),
+      description: t('editorial.standards.items.legal.description'),
+    },
+    {
+      key: 'harm_reduction',
+      icon: Shield,
+      iconBg: 'bg-brand/15 border-brand/25',
+      iconColor: 'text-brand-light',
+      title: t('editorial.standards.items.harm_reduction.title'),
+      description: t('editorial.standards.items.harm_reduction.description'),
+    },
+    {
+      key: 'updated',
+      icon: Clock,
+      iconBg: 'bg-brand/20 border-brand/30',
+      iconColor: 'text-brand-dark',
+      title: t('editorial.standards.items.updated.title'),
+      description: t('editorial.standards.items.updated.description'),
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-bg-base relative overflow-hidden">
@@ -163,66 +189,63 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
             className="text-2xl md:text-3xl font-bold mb-8 text-white"
             initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -8 }}
             whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
           >
             {t('editorial.browse_by_topic')}
           </motion.h2>
           
           {/* [motion] */}
-          <motion.div
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {CATEGORIES.map((category) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {CATEGORIES.map((category, idx) => (
               <motion.div
                 key={category.slug}
-                variants={{
-                  hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
-                  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-                }}
-                whileHover={
-                  shouldReduceMotion
-                    ? undefined
-                    : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
-                }
-                transition={{ duration: 0.2 }}
-                style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+                whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{ duration: 0.4, delay: idx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
               >
-                <Link
-                  href={`/${lang}/editorial/${category.slug}`}
-                className="group relative overflow-hidden rounded-2xl border border-brand/15 bg-brand/5 backdrop-blur-sm p-6 md:p-8 hover:border-brand/30 transition-all duration-500 block h-full"
+                <motion.div
+                  whileHover={
+                    shouldReduceMotion
+                      ? undefined
+                      : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+                  }
+                  transition={{ duration: 0.2 }}
+                  style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
                 >
-                  {/* Glow effect */}
-                  <div className={`absolute -inset-1 bg-gradient-to-r ${category.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 -z-10`} />
-                  
-                  <div className="relative">
-                    <div className={`inline-flex p-3 rounded-xl ${category.bgColor} ${category.textColor} mb-4 border ${category.borderColor}`}>
-                      <category.icon className="w-6 h-6" />
+                  <Link
+                    href={`/${lang}/editorial/${category.slug}`}
+                    className="group relative overflow-hidden rounded-2xl border border-brand/15 bg-brand/5 backdrop-blur-sm p-6 md:p-8 hover:border-brand/30 transition-all duration-500 block h-full"
+                  >
+                    {/* Glow effect */}
+                    <div className={`absolute -inset-1 bg-gradient-to-r ${category.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 -z-10`} />
+                    
+                    <div className="relative">
+                      <div className={`inline-flex p-3 rounded-xl ${category.bgColor} ${category.textColor} mb-4 border ${category.borderColor}`}>
+                        <category.icon className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-bold mb-2 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400 transition-all">
+                        {category.title}
+                      </h3>
+                      <p className="text-zinc-400 mb-4">
+                        {category.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-zinc-500">
+                          {category.articleCount} {category.articleCount === 1 ? t('editorial.article') : t('editorial.articles')}
+                        </span>
+                        <ArrowRight className="w-5 h-5 text-zinc-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
+                      </div>
                     </div>
-                    <h3 className="text-xl md:text-2xl font-bold mb-2 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400 transition-all">
-                      {category.title}
-                    </h3>
-                    <p className="text-zinc-400 mb-4">
-                      {category.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-zinc-500">
-                        {category.articleCount} {category.articleCount === 1 ? t('editorial.article') : t('editorial.articles')}
-                      </span>
-                      <ArrowRight className="w-5 h-5 text-zinc-500 group-hover:text-white group-hover:translate-x-1 transition-all" />
-                    </div>
-                  </div>
-                  
-                  {/* Bottom accent line */}
-                  <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r ${category.gradient} rounded-full group-hover:w-1/4 transition-all duration-500`} />
-                </Link>
+
+                    {/* Bottom accent line */}
+                    <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-1 bg-gradient-to-r ${category.gradient} rounded-full group-hover:w-1/4 transition-all duration-500`} />
+                  </Link>
+                </motion.div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -246,59 +269,56 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
             </motion.div>
             
             {/* [motion] */}
-            <motion.div
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6"
-            >
-              {featuredArticles.map((article) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {featuredArticles.map((article, idx) => (
                 <motion.div
                   key={article.id}
-                  variants={{
-                    hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-                  }}
-                  whileHover={
-                    shouldReduceMotion
-                      ? undefined
-                      : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
-                  }
-                  transition={{ duration: 0.2 }}
-                  style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
+                  initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+                  whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={{ duration: 0.4, delay: idx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
                 >
-                  <Link
-                    href={`/${lang}/editorial/${article.slug}`}
-                className="group block rounded-2xl border border-brand/15 bg-brand/5 backdrop-blur-sm overflow-hidden hover:border-brand/30 transition-all duration-500 h-full"
+                  <motion.div
+                    whileHover={
+                      shouldReduceMotion
+                        ? undefined
+                        : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+                    }
+                    transition={{ duration: 0.2 }}
+                    style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
                   >
-                    <div className="aspect-video bg-bg-surface/50 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
-                  <Badge className="absolute top-3 left-3 bg-brand/10 text-zinc-200 border-brand/20" variant="secondary">
-                        {article.category}
-                      </Badge>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-bold text-lg mb-2 text-white group-hover:text-brand transition-colors line-clamp-2">
-                        {article.title}
-                      </h3>
-                      <p className="text-zinc-400 text-sm line-clamp-2 mb-4">
-                        {article.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between text-xs text-zinc-500">
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          {article.readTime} {t('editorial.min_read')}
-                        </div>
-                        {article.cityName && (
-                          <span>{article.cityName}</span>
-                        )}
+                    <Link
+                      href={`/${lang}/editorial/${article.slug}`}
+                      className="group block rounded-2xl border border-brand/15 bg-brand/5 backdrop-blur-sm overflow-hidden hover:border-brand/30 transition-all duration-500 h-full"
+                    >
+                      <div className="aspect-video bg-bg-surface/50 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
+                        <Badge className="absolute top-3 left-3 bg-brand/10 text-zinc-200 border-brand/20" variant="secondary">
+                          {article.category}
+                        </Badge>
                       </div>
-                    </div>
-                  </Link>
+                      <div className="p-5">
+                        <h3 className="font-bold text-lg mb-2 text-white group-hover:text-brand transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-zinc-400 text-sm line-clamp-2 mb-4">
+                          {article.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-zinc-500">
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            {article.readTime} {t('editorial.min_read')}
+                          </div>
+                          {article.cityName && (
+                            <span>{article.cityName}</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
       )}
@@ -306,6 +326,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
       {/* Trust Signals */}
       <section className="py-16 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* [motion] */}
           <motion.div 
             className="max-w-3xl mx-auto text-center"
             initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
@@ -317,36 +338,31 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
             <p className="text-zinc-400 mb-10">
               {t('editorial.standards.subtitle')}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-14 h-14 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand/20">
-                  <Scale className="w-7 h-7 text-brand" />
-                </div>
-                <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.legal.title')}</h3>
-                <p className="text-sm text-zinc-400">
-                  {t('editorial.standards.items.legal.description')}
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-14 h-14 bg-brand/15 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand/25">
-                  <Shield className="w-7 h-7 text-brand-light" />
-                </div>
-                <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.harm_reduction.title')}</h3>
-                <p className="text-sm text-zinc-400">
-                  {t('editorial.standards.items.harm_reduction.description')}
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="w-14 h-14 bg-brand/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand/30">
-                  <BookOpen className="w-7 h-7 text-brand-dark" />
-                </div>
-                <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.updated.title')}</h3>
-                <p className="text-sm text-zinc-400">
-                  {t('editorial.standards.items.updated.description')}
-                </p>
-              </div>
-            </div>
           </motion.div>
+
+          <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:gap-10">
+            {standardsItems.map((item, idx) => (
+              // [motion]
+              <motion.div
+                key={item.key}
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+                whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.35, delay: idx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
+                className="h-full rounded-2xl border border-brand/15 bg-brand/5 p-6 text-center md:p-7"
+              >
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border ${item.iconBg}`}>
+                  <item.icon className={`w-7 h-7 ${item.iconColor}`} />
+                </div>
+                <h3 className="min-h-[3.5rem] line-clamp-2 text-xl font-bold text-white leading-tight mb-3">
+                  {item.title}
+                </h3>
+                <p className="min-h-[3rem] line-clamp-2 text-sm text-zinc-400 leading-relaxed">
+                  {item.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
     </div>

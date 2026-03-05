@@ -55,6 +55,33 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
     },
   ];
 
+  const standardsItems = [
+    {
+      key: 'legal',
+      icon: Scale,
+      iconBg: 'bg-brand/10 border-brand/20',
+      iconColor: 'text-brand',
+      title: t('editorial.standards.items.legal.title'),
+      description: t('editorial.standards.items.legal.description'),
+    },
+    {
+      key: 'harm_reduction',
+      icon: Shield,
+      iconBg: 'bg-brand/10 border-brand/20',
+      iconColor: 'text-brand',
+      title: t('editorial.standards.items.harm_reduction.title'),
+      description: t('editorial.standards.items.harm_reduction.description'),
+    },
+    {
+      key: 'updated',
+      icon: Clock,
+      iconBg: 'bg-brand/10 border-brand/20',
+      iconColor: 'text-brand',
+      title: t('editorial.standards.items.updated.title'),
+      description: t('editorial.standards.items.updated.description'),
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/40 via-bg-base to-bg-base pointer-events-none" />
@@ -180,41 +207,25 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
             <H2 className="mb-6 text-white font-serif tracking-tight">{t('editorial.standards.title')}</H2>
-            <Text variant="muted" className="mb-16 text-zinc-400">
+            <Text variant="muted" className="mb-10 text-zinc-400">
               {t('editorial.standards.subtitle')}
             </Text>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20 group-hover:scale-110 transition-transform duration-500">
-                  <Scale className="w-8 h-8 text-brand" />
-                  <Scale className="w-8 h-8 text-brand" />
+          </div>
+
+          <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:gap-10">
+            {standardsItems.map((item) => (
+              <div key={item.key} className="h-full rounded-2xl border border-brand/15 bg-brand/5 p-6 text-center md:p-7">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border ${item.iconBg}`}>
+                  <item.icon className={`w-7 h-7 ${item.iconColor}`} />
                 </div>
-                <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.legal.title')}</H4>
-                <Text size="sm" variant="muted" className="text-zinc-500">
-                  {t('editorial.standards.items.legal.description')}
+                <H4 className="mb-3 min-h-[3.5rem] line-clamp-2 text-white font-serif leading-tight">
+                  {item.title}
+                </H4>
+                <Text size="sm" variant="muted" className="min-h-[3rem] line-clamp-2 text-zinc-500 leading-relaxed">
+                  {item.description}
                 </Text>
               </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20 group-hover:scale-110 transition-transform duration-500">
-                  <Shield className="w-8 h-8 text-brand" />
-                  <Shield className="w-8 h-8 text-brand" />
-                </div>
-                <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.harm_reduction.title')}</H4>
-                <Text size="sm" variant="muted" className="text-zinc-500">
-                  {t('editorial.standards.items.harm_reduction.description')}
-                </Text>
-              </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20 group-hover:scale-110 transition-transform duration-500">
-                  <BookOpen className="w-8 h-8 text-brand" />
-                  <BookOpen className="w-8 h-8 text-brand" />
-                </div>
-                <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.updated.title')}</H4>
-                <Text size="sm" variant="muted" className="text-zinc-500">
-                  {t('editorial.standards.items.updated.description')}
-                </Text>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
