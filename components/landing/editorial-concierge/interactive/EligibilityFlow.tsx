@@ -7,6 +7,7 @@ import { ConciergeLabel } from '../typography/ConciergeLabel';
 import { PREMIUM_SPRING } from '../motion/config';
 import { Check, X, ShieldCheck, AlertCircle } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Button } from '@/components/ui/button';
 
 export function EligibilityFlow() {
   const { t } = useLanguage();
@@ -89,35 +90,24 @@ export function EligibilityFlow() {
             
             {/* Buttons - BETTER CONTRAST */}
             <div className="flex gap-3">
-              <button 
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
                 onClick={() => handleAnswer(true)}
-                className="
-                  flex-1 min-h-11 py-4 sm:py-5 px-4 
-                  bg-brand hover:bg-brand-dark 
-                  shadow-lg shadow-brand/20
-                  border border-brand/30
-                  text-bg-base font-bold rounded-2xl 
-                  transition-all duration-200
-                  flex items-center justify-center gap-2 
-                  uppercase tracking-wide text-sm
-                "
+                className="flex-1"
               >
                 <Check className="w-4 h-4" /> {t('landing.eligibility.yes')}
-              </button>
-              <button 
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
                 onClick={() => handleAnswer(false)}
-                className="
-                  flex-1 min-h-11 py-4 sm:py-5 px-4 
-                  bg-bg-elevated hover:bg-secondary 
-                  text-white font-bold rounded-2xl 
-                  transition-all duration-200
-                  flex items-center justify-center gap-2 
-                  uppercase tracking-wide text-sm
-                  border border-border
-                "
+                className="flex-1"
               >
                 <X className="w-4 h-4" /> {t('landing.eligibility.no')}
-              </button>
+              </Button>
             </div>
           </motion.div>
         ) : (
@@ -149,17 +139,15 @@ export function EligibilityFlow() {
               </div>
             </div>
             
-            <button 
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={reset}
-              className="
-                text-zinc-400 hover:text-white 
-                transition-colors 
-                font-mono text-[10px] uppercase tracking-widest
-                hover:underline underline-offset-4
-              "
+              className="text-zinc-400 hover:text-white"
             >
               {t('landing.eligibility.restart')}
-            </button>
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>

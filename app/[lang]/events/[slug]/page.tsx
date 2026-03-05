@@ -30,7 +30,7 @@ export default async function EventPage({ params }: EventPageProps) {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 relative z-10">
         <div className="mb-8">
-          <Button variant="outline" asChild className="border-border text-muted-foreground hover:bg-muted hover:text-foreground">
+          <Button variant="secondary" asChild className="border-border text-muted-foreground hover:bg-muted hover:text-foreground">
             <Link href={`/${lang}/events`}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               {t('event_detail.back_to_events')}
@@ -41,7 +41,7 @@ export default async function EventPage({ params }: EventPageProps) {
         <section className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-8 md:p-12 mb-8">
           <div className="flex flex-wrap gap-2 mb-6">
             {event.cityName && (
-              <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
+              <Badge variant="secondary" className="border-primary/20 text-primary bg-primary/5">
                 <MapPin className="h-3 w-3 mr-1" />
                 {event.cityName}
               </Badge>

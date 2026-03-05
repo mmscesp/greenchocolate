@@ -93,7 +93,7 @@ export default async function AdminUsersPage({ params, searchParams }: UsersPage
                         <div className="font-medium truncate">{user.displayName || t('admin.users.unnamed_user')}</div>
                         <div className="text-sm text-muted-foreground truncate">{user.email}</div>
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
-                          <Badge variant="outline">{user.role.replace('_', ' ')}</Badge>
+                          <Badge variant="secondary">{user.role.replace('_', ' ')}</Badge>
                           <Badge variant={user.isVerified ? 'default' : 'secondary'}>
                             {user.isVerified ? t('admin.common.verified') : t('admin.common.unverified')}
                           </Badge>
@@ -106,13 +106,13 @@ export default async function AdminUsersPage({ params, searchParams }: UsersPage
 
                     <div className="flex flex-wrap gap-2 items-center">
                       <Link href={`/${lang}/admin/users/${user.id}`}>
-                        <Button variant="outline" size="sm">{t('admin.common.details')}</Button>
+                        <Button variant="secondary" size="sm">{t('admin.common.details')}</Button>
                       </Link>
 
                       <form action={updateUserVerification}>
                         <input type="hidden" name="userId" value={user.id} />
                         <input type="hidden" name="isVerified" value={String(!user.isVerified)} />
-                        <Button type="submit" size="sm" variant="outline">
+                        <Button type="submit" size="sm" variant="secondary">
                           {user.isVerified ? t('admin.users.mark_unverified') : t('admin.users.mark_verified')}
                         </Button>
                       </form>
@@ -138,14 +138,14 @@ export default async function AdminUsersPage({ params, searchParams }: UsersPage
           )}
 
           <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <Button asChild variant="outline" size="sm" disabled={data.page <= 1}>
+            <Button asChild variant="secondary" size="sm" disabled={data.page <= 1}>
               <Link href={buildUrl(Math.max(1, data.page - 1))}>
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 {t('admin.common.previous')}
               </Link>
             </Button>
             <span className="text-sm text-muted-foreground">{t('admin.common.page')} {data.page} {t('admin.common.of')} {Math.max(1, data.totalPages)}</span>
-            <Button asChild variant="outline" size="sm" disabled={data.page >= data.totalPages}>
+            <Button asChild variant="secondary" size="sm" disabled={data.page >= data.totalPages}>
               <Link href={buildUrl(Math.min(data.totalPages || 1, data.page + 1))}>
                 {t('admin.common.next')}
                 <ChevronRight className="h-4 w-4 ml-1" />

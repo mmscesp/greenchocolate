@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Plus } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Button } from '@/components/ui/button';
 
 export function EditorialFAQ() {
   const { t } = useLanguage();
@@ -89,10 +90,12 @@ export function EditorialFAQ() {
               }}
               className="group bg-bg-surface rounded-2xl border border-white/5 overflow-hidden transition-colors hover:border-white/10"
             >
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="lg"
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex items-center justify-between gap-4 p-6 md:p-8 text-left focus:outline-none"
+                className="h-auto w-full justify-between gap-4 p-6 text-left md:p-8"
                 aria-expanded={openIndex === i}
               >
                 <h4 className="text-lg md:text-xl font-bold text-white pr-8">
@@ -101,7 +104,7 @@ export function EditorialFAQ() {
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all duration-300 ${openIndex === i ? 'bg-brand border-brand text-bg-base rotate-45' : 'border-white/10 text-zinc-500'}`}>
                   <Plus className="w-4 h-4" />
                 </div>
-              </button>
+              </Button>
               
               <div
                 className={`grid transition-all duration-300 ease-in-out ${openIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}

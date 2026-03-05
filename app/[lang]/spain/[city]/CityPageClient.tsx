@@ -129,7 +129,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
               <MapPin className="h-5 w-5 text-primary" />
             </div>
-            <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
+            <Badge variant="secondary" className="border-primary/20 text-primary bg-primary/5">
               {cityDetail.country}
             </Badge>
           </div>
@@ -212,7 +212,7 @@ export default function CityPageClient({ lang, city }: CityPageClientProps) {
               <H2>{t('city.featured.title')}</H2>
             </div>
             <Button 
-              variant="outline" 
+              variant="secondary" 
               asChild
               className="border-border text-foreground hover:bg-muted hover:text-foreground rounded-xl"
             >

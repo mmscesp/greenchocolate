@@ -226,6 +226,7 @@ export function ProfileSidebar({
         <Button
           variant="ghost"
           size="icon"
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           onClick={onToggle}
           className="absolute -right-4 top-8 h-8 w-8 rounded-full border border-white/10 bg-black shadow-xl hover:bg-white hover:text-black z-40 text-zinc-500 transition-all"
         >
@@ -243,7 +244,7 @@ export function ProfileMobileNav() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden h-11 w-11 hover:bg-white/5 rounded-full transition-colors">
+        <Button variant="ghost" size="icon" aria-label={t('common.toggle_menu')} className="lg:hidden h-11 w-11 hover:bg-white/5 rounded-full transition-colors">
           <Menu className="h-6 w-6 text-zinc-400" />
           <span className="sr-only">{t('common.toggle_menu')}</span>
         </Button>

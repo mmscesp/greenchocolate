@@ -55,7 +55,7 @@ function ClubLoginForm() {
       <div className="space-y-3 mb-6">
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           className="w-full flex items-center justify-center gap-3 h-11"
           onClick={() => handleOAuthSignIn('google')}
           disabled={isGoogleLoading || isAppleLoading}
@@ -70,7 +70,7 @@ function ClubLoginForm() {
         
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           className="w-full flex items-center justify-center gap-3 h-11"
           onClick={() => handleOAuthSignIn('apple')}
           disabled={isGoogleLoading || isAppleLoading}
@@ -145,6 +145,7 @@ function ClubLoginForm() {
             />
             <button
               type="button"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >

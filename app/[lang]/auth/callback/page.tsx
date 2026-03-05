@@ -193,7 +193,7 @@ export default function AuthCallbackPage() {
                 </Button>
               </Link>
               <Link href={withLocale('/resend-confirmation')}>
-                <Button variant="outline" className="w-full">
+                <Button variant="secondary" className="w-full">
                   Resend Verification Email
                 </Button>
               </Link>

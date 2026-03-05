@@ -251,6 +251,7 @@ export default function Footer() {
               {(['en', 'es', 'fr', 'de'] as const).map((loc, index) => (
                 <div key={loc} className="flex items-center">
                   <button
+                    type="button"
                     onClick={() => setLanguage(loc as Locale)}
                     className={`px-2 py-1 rounded transition-colors ${
                       language === loc 

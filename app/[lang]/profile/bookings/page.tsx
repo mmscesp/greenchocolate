@@ -101,61 +101,61 @@ export default function BookingsPage() {
     switch (status) {
       case 'confirmed':
         return (
-          <Badge variant="outline" className="bg-gold/10 text-gold border-gold/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+          <Badge variant="secondary" className="bg-gold/10 text-gold border-gold/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.confirmed')}
           </Badge>
         );
       case 'pending':
         return (
-          <Badge variant="outline" className="bg-white/5 text-zinc-400 border-white/10 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+          <Badge variant="secondary" className="bg-white/5 text-zinc-400 border-white/10 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <Clock className="h-3 w-3 mr-1" />
             {t('bookings.status.pending')}
           </Badge>
         );
       case 'cancelled':
         return (
-          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+          <Badge variant="secondary" className="bg-red-500/10 text-red-500 border-red-500/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <X className="h-3 w-3 mr-1" />
             {t('bookings.status.cancelled')}
           </Badge>
         );
       case 'completed':
         return (
-          <Badge variant="outline" className="bg-white/10 text-white border-white/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
+          <Badge variant="secondary" className="bg-white/10 text-white border-white/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.completed')}
           </Badge>
         );
         return (
-          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
+          <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.confirmed')}
           </Badge>
         );
       case 'pending':
         return (
-          <Badge variant="outline" className="bg-brand/10 text-brand border-brand/20">
+          <Badge variant="secondary" className="bg-brand/10 text-brand border-brand/20">
             <Clock className="h-3 w-3 mr-1" />
             {t('bookings.status.pending')}
           </Badge>
         );
       case 'cancelled':
         return (
-          <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20">
+          <Badge variant="secondary" className="bg-red-500/10 text-red-600 border-red-500/20">
             <X className="h-3 w-3 mr-1" />
             {t('bookings.status.cancelled')}
           </Badge>
         );
       case 'completed':
         return (
-          <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
+          <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.completed')}
           </Badge>
         );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
@@ -247,6 +247,7 @@ export default function BookingsPage() {
         {(['all', 'upcoming', 'past'] as const).map((filter) => (
           <button
             key={filter}
+            type="button"
             onClick={() => setActiveFilter(filter)}
             className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
               activeFilter === filter
@@ -311,7 +312,7 @@ export default function BookingsPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <Link href={`/${language}/clubs/${booking.clubId}`}>
-                      <Button variant="outline" size="sm" className="gap-2 rounded-full border-white/10 hover:bg-white/5 hover:text-white uppercase tracking-widest text-[9px] font-bold h-9">
+                      <Button variant="secondary" size="sm" className="gap-2 rounded-full border-white/10 hover:bg-white/5 hover:text-white uppercase tracking-widest text-[9px] font-bold h-9">
                         <ExternalLink className="h-3.5 w-3.5" />
                         {t('bookings.view_club')}
                       </Button>

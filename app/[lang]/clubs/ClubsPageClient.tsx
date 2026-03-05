@@ -170,25 +170,24 @@ export default function ClubsPageClient({
           {/* View Toggle & Status */}
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-10 sm:mb-16 px-2">
             <div className="flex items-center p-1.5 glass-liquid rounded-full w-full sm:w-fit border-white/5 overflow-hidden">
-              <button 
+              <Button
                 type="button"
+                variant={viewMode === 'grid' ? 'primary' : 'secondary'}
+                size="sm"
                 onClick={() => setViewMode('grid')}
-                className={cn(
-                  "flex-1 sm:flex-none inline-flex h-10 sm:h-12 items-center justify-center gap-2 sm:gap-3 px-6 sm:px-10 rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] transition-all",
-                  viewMode === 'grid' 
-                    ? "bg-brand text-black shadow-2xl shadow-brand/20"
-                    : "text-zinc-400 hover:text-white"
-                )}
+                className="h-10 flex-1 rounded-full px-6 sm:h-12 sm:flex-none sm:px-10"
               >
                 <Grid className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('clubs.view_mode.grid')}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="secondary"
+                size="sm"
                 disabled
-                className="flex-1 sm:flex-none inline-flex h-10 sm:h-12 items-center justify-center gap-2 sm:gap-3 px-6 sm:px-10 rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-zinc-600 cursor-not-allowed opacity-40"
+                className="h-10 flex-1 rounded-full px-6 sm:h-12 sm:flex-none sm:px-10"
               >
                 <Map className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('clubs.view_mode.map_soon')}
-              </button>
+              </Button>
             </div>
             
             <AnimatePresence>
@@ -259,8 +258,10 @@ export default function ClubsPageClient({
                   <p className="text-zinc-500 mb-8 sm:mb-10 max-w-sm mx-auto font-serif italic text-base sm:text-lg">
                     {t('clubs.no_results.subtitle')}
                   </p>
-                  <button 
+                  <Button
                     type="button"
+                    variant="secondary"
+                    size="lg"
                     onClick={() => handleFiltersChange({
                       neighborhood: '',
                       amenities: [],
@@ -269,10 +270,10 @@ export default function ClubsPageClient({
                       priceRange: [],
                       rating: 0
                     })}
-                    className="rounded-full min-h-12 sm:min-h-14 px-8 sm:px-12 py-3 sm:py-4 font-bold uppercase tracking-[0.2em] text-[10px] border border-brand/30 text-brand hover:bg-brand hover:text-black transition-all"
+                    className="min-h-12 rounded-full px-8 text-[10px] sm:min-h-14 sm:px-12"
                   >
                     {t('clubs.clear_filters')}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

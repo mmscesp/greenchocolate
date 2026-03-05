@@ -49,7 +49,7 @@ export default function CategoryArticlePage({
 
       <section className="relative pt-24 md:pt-32 pb-16 lg:pb-24 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Button variant="outline" asChild className="mb-6 border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white rounded-full">
+          <Button variant="secondary" asChild className="mb-6 border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white rounded-full">
             <Link href={`/${lang}/editorial`}>
               <ArrowLeft className="mr-2 w-4 h-4" />
               {t(backToVaultKey)}

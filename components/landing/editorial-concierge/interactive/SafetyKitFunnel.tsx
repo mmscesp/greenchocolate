@@ -61,8 +61,10 @@ export function SafetyKitFunnel() {
               />
               <Button 
                 type="submit" 
+                variant="primary"
+                size="lg"
                 disabled={isSubmitting}
-                className="h-12 bg-brand hover:bg-brand-dark text-black font-bold rounded-xl transition-all duration-200 text-sm uppercase tracking-wide w-full"
+                className="w-full"
               >
                 {isSubmitting ? '...' : t('safety_kit.form_button')}
               </Button>
@@ -86,18 +88,24 @@ export function SafetyKitFunnel() {
             <p className="text-zinc-400 text-sm mb-6">{t('safety_kit.age_q')}</p>
             
             <div className="flex flex-col sm:flex-row gap-3">
-              <button 
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
                 onClick={() => handleAgeAnswer(true)}
-                className="flex-1 min-h-[48px] py-3 px-4 bg-brand hover:bg-brand-dark text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm shadow-lg shadow-brand/20 border border-brand/30"
+                className="flex-1"
               >
                 {t('safety_kit.age_yes')}
-              </button>
-              <button 
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="lg"
                 onClick={() => handleAgeAnswer(false)}
-                className="flex-none min-h-[48px] py-3 px-6 bg-bg-elevated hover:bg-secondary text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm border border-border"
+                className="flex-none"
               >
                 {t('safety_kit.age_no')}
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}
@@ -116,12 +124,15 @@ export function SafetyKitFunnel() {
             <p className="text-zinc-300 text-sm leading-relaxed">
               {t('safety_kit.age_reject')}
             </p>
-            <button 
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setStep('email')}
-              className="mt-6 text-zinc-500 hover:text-white transition-colors font-mono text-xs uppercase tracking-widest underline underline-offset-4"
+              className="mt-6 text-zinc-500 hover:text-white"
             >
               Start Over
-            </button>
+            </Button>
           </motion.div>
         )}
 
@@ -142,7 +153,9 @@ export function SafetyKitFunnel() {
             </h3>
             
             <Button 
-              className="w-full h-12 bg-brand hover:bg-brand-dark text-black font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 text-sm mb-4"
+              variant="primary"
+              size="lg"
+              className="mb-4 w-full"
             >
               <Download className="w-4 h-4" />
               {t('safety_kit.dl_button')}

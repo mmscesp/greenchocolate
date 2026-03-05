@@ -7,7 +7,11 @@ import useEmblaCarousel, {
 import { ArrowLeft, ArrowRight } from '@/lib/icons';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonProps } from '@/components/ui/button';
+
+type CarouselButtonProps = Omit<ButtonProps, 'aria-label'> & {
+  'aria-label'?: string;
+};
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -204,14 +208,15 @@ CarouselItem.displayName = 'CarouselItem';
 
 const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentProps<typeof Button>
->(({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
+  CarouselButtonProps
+>(({ className, variant = 'secondary', size = 'icon', 'aria-label': ariaLabel, ...props }, ref) => {
   const { orientation, scrollPrev, canScrollPrev, labels } = useCarousel();
+  const appliedVariant: NonNullable<ButtonProps['variant']> = variant ?? 'secondary';
 
   return (
     <Button
       ref={ref}
-      variant={variant}
+      variant={appliedVariant}
       size={size}
       className={cn(
         'absolute h-11 w-11 sm:h-8 sm:w-8 rounded-full',
@@ -220,12 +225,12 @@ const CarouselPrevious = React.forwardRef<
           : 'top-2 sm:-top-12 left-1/2 -translate-x-1/2 rotate-90',
         className
       )}
+      aria-label={ariaLabel || labels?.previousSlideSr || 'Previous slide'}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
     >
       <ArrowLeft className="h-4 w-4" />
-      <span className="sr-only">{labels?.previousSlideSr || 'Previous slide'}</span>
     </Button>
   );
 });
@@ -233,14 +238,15 @@ CarouselPrevious.displayName = 'CarouselPrevious';
 
 const CarouselNext = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentProps<typeof Button>
->(({ className, variant = 'outline', size = 'icon', ...props }, ref) => {
+  CarouselButtonProps
+>(({ className, variant = 'secondary', size = 'icon', 'aria-label': ariaLabel, ...props }, ref) => {
   const { orientation, scrollNext, canScrollNext, labels } = useCarousel();
+  const appliedVariant: NonNullable<ButtonProps['variant']> = variant ?? 'secondary';
 
   return (
     <Button
       ref={ref}
-      variant={variant}
+      variant={appliedVariant}
       size={size}
       className={cn(
         'absolute h-11 w-11 sm:h-8 sm:w-8 rounded-full',
@@ -249,12 +255,12 @@ const CarouselNext = React.forwardRef<
           : 'bottom-2 sm:-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
         className
       )}
+      aria-label={ariaLabel || labels?.nextSlideSr || 'Next slide'}
       disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
     >
       <ArrowRight className="h-4 w-4" />
-      <span className="sr-only">{labels?.nextSlideSr || 'Next slide'}</span>
     </Button>
   );
 });

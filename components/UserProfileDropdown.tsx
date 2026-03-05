@@ -180,7 +180,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
             <h3 className="font-semibold text-lg md:text-base truncate text-white">{displayName}</h3>
             <p className="text-sm md:text-xs text-white/50 truncate">{userEmail}</p>
             <div className="flex flex-wrap gap-1.5 mt-2">
-              <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-white/10 text-white/60">
+              <Badge variant="secondary" className="text-[10px] py-0 px-1.5 border-white/10 text-white/60">
                 {t('user.member_since')} {memberSince}
               </Badge>
               {isAdmin && (
@@ -249,6 +249,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
         {/* Logout */}
         <div className="px-3 md:px-2 pt-3 md:pt-2 pb-2 md:pb-0 border-t border-white/5">
           <button
+            type="button"
             onClick={handleLogout}
             disabled={loading}
             className="flex w-full items-center gap-4 md:gap-3 px-4 md:px-3 py-3 md:py-2 rounded-xl md:rounded-lg text-white/70 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
@@ -299,6 +300,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
 
   const renderMobileMenuRowTrigger = () => (
     <button
+      type="button"
       onClick={() => setIsOpen(true)}
       className="flex items-center gap-4 w-full px-2 py-3 rounded-2xl hover:bg-white/5 transition-colors group text-left"
     >

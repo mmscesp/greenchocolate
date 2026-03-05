@@ -110,7 +110,7 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
             {club.vibeTags.slice(0, 3).map((vibe, index) => (
               <Badge 
                 key={index} 
-                variant="outline" 
+                variant="secondary" 
                 className="text-[8px] sm:text-[9px] uppercase tracking-widest border-white/5 text-zinc-400 bg-white/5 px-2.5 sm:px-3 py-0.5 rounded-full"
               >
                 {vibe}

@@ -46,7 +46,7 @@ export default async function ToolsPage({ params }: ToolsPageProps) {
         <div className="mt-20 bg-green-900 text-white p-12 rounded-3xl text-center">
           <h2 className="text-3xl font-bold mb-4">{t('tools.cta.title')}</h2>
           <p className="text-green-100 mb-8 max-w-2xl mx-auto">{t('tools.cta.description')}</p>
-          <button className="bg-card text-green-900 px-8 py-3 rounded-full font-bold hover:bg-green-50 transition-colors">
+          <button type="button" className="bg-card text-green-900 px-8 py-3 rounded-full font-bold hover:bg-green-50 transition-colors">
             {t('tools.cta.button')}
           </button>
         </div>

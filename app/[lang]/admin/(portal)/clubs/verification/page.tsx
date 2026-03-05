@@ -46,8 +46,8 @@ export default async function ClubVerificationPage({ params }: VerificationPageP
                   <Badge variant={club.isActive ? 'default' : 'destructive'}>
                     {club.isActive ? t('admin.common.active') : t('admin.common.inactive')}
                   </Badge>
-                  <Badge variant="outline">{club.admins.length} {t('admin.common.admins')}</Badge>
-                  <Badge variant="outline">{club._count.membershipRequests} {t('admin.common.requests')}</Badge>
+                  <Badge variant="secondary">{club.admins.length} {t('admin.common.admins')}</Badge>
+                  <Badge variant="secondary">{club._count.membershipRequests} {t('admin.common.requests')}</Badge>
                 </div>
 
                 <div className="text-sm text-muted-foreground">
@@ -56,7 +56,7 @@ export default async function ClubVerificationPage({ params }: VerificationPageP
 
                 <div className="flex gap-2">
                   <Link href={`/${lang}/admin/clubs/${club.id}`}>
-                    <Button variant="outline" size="sm">{t('admin.common.review_details')}</Button>
+                    <Button variant="secondary" size="sm">{t('admin.common.review_details')}</Button>
                   </Link>
                   <form action={updateClubFlags}>
                     <input type="hidden" name="clubId" value={club.id} />

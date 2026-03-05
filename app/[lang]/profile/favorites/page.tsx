@@ -107,30 +107,28 @@ export default function FavoritesPage() {
 
             {/* View Mode Toggle */}
             <div className="flex bg-white/5 p-1 rounded-xl border border-white/5">
-              <button
+              <Button
+                type="button"
+                variant={viewMode === 'grid' ? 'primary' : 'secondary'}
+                size="sm"
+                aria-pressed={viewMode === 'grid'}
                 onClick={() => setViewMode('grid')}
-                className={cn(
-                  "px-4 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
-                  viewMode === 'grid'
-                    ? "bg-brand text-black shadow-lg shadow-brand/20"
-                    : "text-zinc-500 hover:text-white"
-                )}
+                className="rounded-lg"
               >
                 <Grid className="h-4 w-4" />
                 <span className="sr-only sm:not-sr-only">{t('common.grid')}</span>
-              </button>
-              <button
+              </Button>
+              <Button
+                type="button"
+                variant={viewMode === 'list' ? 'primary' : 'secondary'}
+                size="sm"
+                aria-pressed={viewMode === 'list'}
                 onClick={() => setViewMode('list')}
-                className={cn(
-                  "px-4 py-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
-                  viewMode === 'list'
-                    ? "bg-brand text-black shadow-lg shadow-brand/20"
-                    : "text-zinc-500 hover:text-white"
-                )}
+                className="rounded-lg"
               >
                 <List className="h-4 w-4" />
                 <span className="sr-only sm:not-sr-only">{t('common.list')}</span>
-              </button>
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -165,8 +163,9 @@ export default function FavoritesPage() {
                 <div className="absolute top-3 right-3 z-10">
                   <Button
                     size="icon"
-                    variant="destructive"
-                    className="h-9 w-9 rounded-full bg-black/50 backdrop-blur-md border border-white/10 hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0"
+                    variant="ghost"
+                    aria-label={t('favorites.remove')}
+                    className="h-9 w-9 rounded-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
                     onClick={() => removeFavorite(club.id)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -218,11 +217,11 @@ export default function FavoritesPage() {
 
                 <CardFooter className="p-0 gap-3 pt-2 border-t border-white/5 mt-auto">
                   <Link href={`/${language}/clubs/${club.slug}`} className="flex-1">
-                    <Button className="w-full bg-white text-black hover:bg-zinc-200 rounded-full font-bold uppercase tracking-widest text-[10px] h-10">
+                    <Button variant="primary" className="h-10 w-full rounded-full text-[10px]">
                       {t('favorites.view_club')}
                     </Button>
                   </Link>
-                  <Button variant="outline" size="icon" className="rounded-full h-10 w-10 border-white/10 hover:bg-white/5 hover:text-brand hover:border-brand/30">
+                  <Button variant="ghost" size="icon" aria-label={t('bookings.book_new_visit')} className="h-10 w-10 rounded-full">
                     <Calendar className="h-4 w-4" />
                   </Button>
                 </CardFooter>
@@ -247,7 +246,7 @@ export default function FavoritesPage() {
             </p>
             {!searchQuery && (
               <Link href={`/${language}/clubs`}>
-                <Button className="gap-2 bg-brand text-black hover:bg-brand-dark rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
+                <Button variant="primary" className="gap-2 rounded-full px-8 py-6 text-[10px]">
                   <ExternalLink className="h-4 w-4" />
                   {t('nav.explore')}
                 </Button>

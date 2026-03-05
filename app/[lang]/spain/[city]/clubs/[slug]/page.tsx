@@ -39,7 +39,7 @@ export default async function CityClubDetailPage({ params }: PageProps) {
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <h1 className="text-3xl md:text-4xl font-bold">{club.name}</h1>
           {club.isVerified && <Badge>{t('city_club_detail.verified')}</Badge>}
-          <Badge variant="outline">{club.priceRange}</Badge>
+          <Badge variant="secondary">{club.priceRange}</Badge>
         </div>
         <p className="text-muted-foreground mb-4">{club.shortDescription || club.description}</p>
         <div className="flex flex-wrap gap-2">
@@ -79,7 +79,7 @@ export default async function CityClubDetailPage({ params }: PageProps) {
           <p className="text-sm text-muted-foreground">{t('city_club_detail.continue_description')}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" asChild>
+          <Button variant="secondary" asChild>
             <Link href={`/${lang}/spain/${city}/clubs`}>{t('city_club_detail.back_to_city_clubs')}</Link>
           </Button>
           <Button asChild>

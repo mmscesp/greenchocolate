@@ -181,12 +181,12 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               <div className="mt-20 pt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-6">
                 <div className="flex flex-wrap gap-2">
                   {article.tags.map(tag => (
-                    <Badge key={tag} variant="outline" className="text-[10px] font-bold uppercase tracking-widest bg-white/5 text-zinc-400 border-white/10">
+                    <Badge key={tag} variant="secondary" className="text-[10px] font-bold uppercase tracking-widest bg-white/5 text-zinc-400 border-white/10">
                       {tag}
                     </Badge>
                   ))}
                 </div>
-                <Button variant="outline" size="sm" className="rounded-full font-bold text-[10px] uppercase tracking-widest px-6 group border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white transition-all">
+                <Button variant="secondary" size="sm" className="rounded-full font-bold text-[10px] uppercase tracking-widest px-6 group border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white transition-all">
                   <Share2 className="h-3 w-3 mr-2 group-hover:rotate-12 transition-transform" />
                   {t('blog.share')}
                 </Button>
@@ -288,7 +288,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/20 to-transparent" />
                     </div>
-                    <Badge variant="outline" className="mb-4 bg-white/5 text-zinc-400 text-[10px] font-bold uppercase border-white/10">
+                    <Badge variant="secondary" className="mb-4 bg-white/5 text-zinc-400 text-[10px] font-bold uppercase border-white/10">
                       {related.category}
                     </Badge>
                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-brand transition-colors font-serif">

@@ -150,7 +150,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
 
             <div className="pt-4">
               <Link href="/club-panel/dashboard/profile">
-                <Button className="w-full" variant="outline">{t('club_dashboard.actions.edit_profile')}</Button>
+                <Button className="w-full" variant="secondary">{t('club_dashboard.actions.edit_profile')}</Button>
               </Link>
             </div>
           </CardContent>

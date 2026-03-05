@@ -159,7 +159,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
         ) : (
           <div className="flex gap-2 self-start">
             <Button
-              variant="outline"
+              variant="secondary"
               onClick={handleCancel}
               className="flex items-center gap-2"
               disabled={isSaving}
@@ -194,6 +194,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
                 <Button
                   size="icon"
                   variant="secondary"
+                  aria-label={t('profile.avatar.upload')}
                 className="absolute top-4 right-4 rounded-full bg-card/30 backdrop-blur-md hover:bg-card/45 text-white border-0 shadow-lg"
                   type="button"
                 >
@@ -342,7 +343,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
                       <div className="text-xs text-muted-foreground">{t('profile.account_verified_desc')}</div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-green-600 border-green-500/30 bg-green-500/10">{t('profile.verified')}</Badge>
+                  <Badge variant="secondary" className="text-green-600 border-green-500/30 bg-green-500/10">{t('profile.verified')}</Badge>
                 </div>
 
                 <div className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/30 transition-colors">
@@ -378,6 +379,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
             {(['overview', 'passport', 'status'] as const).map((tab) => (
               <button
                 key={tab}
+                type="button"
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   activeTab === tab

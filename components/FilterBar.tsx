@@ -50,22 +50,19 @@ const FilterChip = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <button
+  <Button
     type="button"
+    variant={active ? 'primary' : 'secondary'}
+    size="sm"
     onClick={onClick}
-    className={cn(
-      "px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] transition-all border whitespace-nowrap",
-      active
-        ? "bg-brand border-brand text-black shadow-[0_4px_20px_hsl(var(--brand)/0.3)]"
-        : "bg-white/5 border-white/10 text-zinc-300 hover:border-brand/40 hover:text-white hover:bg-white/10"
-    )}
+    className={cn('rounded-full whitespace-nowrap', className)}
   >
     {children}
-  </button>
+  </Button>
 );
 
 // Desktop Popover Filter Section
-const DesktopFilterPopover = ({ 
+const DesktopFilterPopover = ({
   label, 
   icon: Icon, 
   count, 
@@ -78,21 +75,21 @@ const DesktopFilterPopover = ({
 }) => (
   <Popover>
     <PopoverTrigger asChild>
-      <button 
-        className={cn(
-          "h-11 px-5 flex items-center gap-3 transition-all hover:bg-white/5 rounded-full group whitespace-nowrap border border-transparent",
-          count > 0 ? "text-brand bg-brand/5 border-brand/20" : "text-zinc-300 hover:text-white"
-        )}
+      <Button
+        type="button"
+        variant={count > 0 ? 'primary' : 'secondary'}
+        size="sm"
+        className="h-11 px-5 rounded-full group whitespace-nowrap"
       >
         <Icon className={cn("h-4 w-4 transition-transform group-hover:scale-110", count > 0 && "fill-current")} />
-        <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{label}</span>
+        <span>{label}</span>
         {count > 0 && (
           <Badge className="bg-brand text-black border-none text-[9px] font-bold h-5 min-w-[20px] px-1">
             {count}
           </Badge>
         )}
         <ChevronDown className={cn("h-3 w-3 opacity-50 transition-transform group-data-[state=open]:rotate-180")} />
-      </button>
+      </Button>
     </PopoverTrigger>
     <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80 p-5 sm:p-6 bg-bg-base/95 backdrop-blur-2xl border-white/10 text-white shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-[1.5rem] sm:rounded-[2rem] z-50" align="start">
       <div className="space-y-6">
@@ -165,20 +162,25 @@ export default function FilterBar({
       <div className="fixed bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-50 lg:hidden w-[calc(100%-2rem)] sm:w-[calc(100%-4rem)] max-w-sm">
         <Drawer open={isMobileOpen} onOpenChange={setIsMobileOpen}>
           <DrawerTrigger asChild>
-            <button className="w-full h-14 sm:h-16 bg-brand text-black rounded-full shadow-[0_20px_40px_hsl(var(--brand)/0.4)] flex items-center justify-between px-6 sm:px-8 transition-all active:scale-95 border border-white/20">
+            <Button
+              type="button"
+              variant={activeFilterCount > 0 ? 'primary' : 'secondary'}
+              size="lg"
+              className="w-full h-14 sm:h-16 rounded-full justify-between px-6 sm:px-8"
+            >
               <div className="flex items-center gap-3">
                 <SlidersHorizontal className="h-5 w-5" />
-                <span className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] sm:tracking-[0.25em]">{t('filters.advanced')}</span>
+                <span className="text-xs sm:text-sm">{t('filters.advanced')}</span>
                 {activeFilterCount > 0 && (
                   <div className="w-6 h-6 bg-bg-base text-brand rounded-full flex items-center justify-center text-[11px] font-bold">
                     {activeFilterCount}
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-xs font-bold opacity-80 uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-xs opacity-80">
                 {totalResults} {t('filters.results')}
               </div>
-            </button>
+            </Button>
           </DrawerTrigger>
           <DrawerContent className="bg-bg-base border-white/10 h-[92vh] rounded-t-[3rem]">
             <div className="mx-auto w-12 h-1.5 rounded-full bg-muted mt-3 mb-1" />
@@ -188,9 +190,9 @@ export default function FilterBar({
                   <EditorialHeading size="sm" className="text-white">{t('filters.advanced')}</EditorialHeading>
                 </DrawerTitle>
                 {activeFilterCount > 0 && (
-                  <button onClick={clearAllFilters} className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 hover:text-red-400">
+                  <Button type="button" variant="ghost" size="sm" onClick={clearAllFilters} className="text-zinc-400 hover:text-red-400">
                     {t('filters.clear_all')}
-                  </button>
+                  </Button>
                 )}
               </div>
             </DrawerHeader>
@@ -255,9 +257,12 @@ export default function FilterBar({
 
                 {/* Boolean Toggles */}
                 <div className="pt-8 border-t border-white/5 space-y-4">
-                  <button
+                  <Button
+                    type="button"
+                    variant={filters.isVerified ? 'primary' : 'secondary'}
+                    size="lg"
                     onClick={() => updateFilter('isVerified', !filters.isVerified)}
-                    className="w-full flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/10 hover:border-brand/30 transition-all group"
+                    className="h-auto w-full justify-between rounded-3xl p-6 group"
                   >
                     <div className="flex items-center gap-4">
                       <div className={cn(
@@ -272,13 +277,13 @@ export default function FilterBar({
                       </div>
                     </div>
                     <Switch checked={filters.isVerified} onCheckedChange={(v) => updateFilter('isVerified', v)} />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </ScrollArea>
             <DrawerFooter className="border-t border-white/5 p-6 sm:p-8 bg-bg-base/80 backdrop-blur-xl">
               <DrawerClose asChild>
-                <Button className="w-full bg-brand text-black hover:bg-brand-dark rounded-full h-14 sm:h-16 font-black uppercase tracking-[0.2em] sm:tracking-[0.25em] text-xs shadow-2xl">
+                <Button variant="primary" size="lg" className="w-full rounded-full h-14 sm:h-16 text-xs">
                   {t('filters.show_results')} ({totalResults})
                 </Button>
               </DrawerClose>
@@ -356,30 +361,31 @@ export default function FilterBar({
             </DesktopFilterPopover>
 
             {/* Quick Toggle: Verified */}
-            <button
+            <Button
+              type="button"
+              variant={filters.isVerified ? 'primary' : 'secondary'}
+              size="sm"
               onClick={() => updateFilter('isVerified', !filters.isVerified)}
-              className={cn(
-                "h-11 px-6 rounded-full flex items-center gap-3 transition-all hover:bg-white/5 group border border-transparent",
-                filters.isVerified
-                  ? "text-brand bg-brand/5 border-brand/20"
-                  : "text-zinc-300 hover:text-white"
-              )}
+              className="h-11 px-6 rounded-full group"
             >
               <Shield className={cn("h-4 w-4 transition-transform group-hover:scale-110", filters.isVerified && "fill-current")} />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em]">{t('filters.verified_only')}</span>
-            </button>
+              <span>{t('filters.verified_only')}</span>
+            </Button>
           </div>
 
           {/* Actions: Clear All */}
           <div className="pl-6 border-l border-white/10 ml-4 pr-6 flex items-center">
             {activeFilterCount > 0 ? (
-              <button 
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={clearAllFilters}
-                className="text-zinc-400 hover:text-red-400 transition-all flex items-center gap-2 group"
+                className="text-zinc-400 hover:text-red-400 group"
               >
                 <X className="h-4 w-4 transition-transform group-hover:rotate-90" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em]">{t('filters.clear_all')}</span>
-              </button>
+                <span>{t('filters.clear_all')}</span>
+              </Button>
             ) : (
               <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-[0.3em]">{t('filters.advanced')}</span>
             )}
@@ -396,25 +402,25 @@ export default function FilterBar({
               className="flex flex-wrap gap-2 px-6 mt-4"
             >
               {filters.neighborhood && (
-                <Badge variant="outline" className="bg-brand/10 text-brand border-brand/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
+                <Badge variant="secondary" className="bg-brand/10 text-brand border-brand/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
                   {filters.neighborhood}
-                <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('neighborhood', ''); }} />
+                  <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('neighborhood', ''); }} />
                 </Badge>
               )}
               {filters.isVerified && (
-                <Badge variant="outline" className="bg-brand/10 text-brand border-brand/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
+                <Badge variant="secondary" className="bg-brand/10 text-brand border-brand/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
                   Verified
                   <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('isVerified', false); }} />
                 </Badge>
               )}
               {filters.amenities.map(a => (
-                <Badge key={a} variant="outline" className="bg-white/5 text-zinc-200 border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase hover:bg-white/10 transition-colors">
+                <Badge key={a} variant="secondary" className="bg-white/5 text-zinc-200 border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase hover:bg-white/10 transition-colors">
                   {a}
                   <X className="h-3 w-3 cursor-pointer hover:text-red-400 transition-colors" onClick={(e) => { e.stopPropagation(); toggleArrayFilter('amenities', a); }} />
                 </Badge>
               ))}
               {filters.vibes.map(v => (
-                <Badge key={v} variant="outline" className="bg-white/5 text-zinc-200 border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase hover:bg-white/10 transition-colors">
+                <Badge key={v} variant="secondary" className="bg-white/5 text-zinc-200 border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase hover:bg-white/10 transition-colors">
                   {v}
                   <X className="h-3 w-3 cursor-pointer hover:text-red-400 transition-colors" onClick={(e) => { e.stopPropagation(); toggleArrayFilter('vibes', v); }} />
                 </Badge>

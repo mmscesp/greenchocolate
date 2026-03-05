@@ -48,7 +48,7 @@ export default async function CityClubsPage({ params }: PageProps) {
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <H3>{club.name}</H3>
               {club.isVerified && <Badge>{t('city_clubs.verified')}</Badge>}
-              <Badge variant="outline">{club.priceRange}</Badge>
+              <Badge variant="secondary">{club.priceRange}</Badge>
             </div>
 
             <Text variant="muted" size="sm" className="mb-3 line-clamp-2">{club.shortDescription || club.description}</Text>

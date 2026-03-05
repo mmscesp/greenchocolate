@@ -43,7 +43,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
               <MapPin className="h-5 w-5 text-primary" />
             </div>
-            <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
+            <Badge variant="secondary" className="border-primary/20 text-primary bg-primary/5">
               {cityDetail.name}
             </Badge>
           </div>

@@ -78,7 +78,7 @@ export default function ProfileNotificationsPage() {
           <p className="text-muted-foreground mt-1">{t('notifications.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2 self-start">
-          <Button variant="outline" onClick={loadNotifications} disabled={loading}>
+          <Button variant="secondary" onClick={loadNotifications} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             {t('notifications.refresh')}
           </Button>
@@ -142,7 +142,7 @@ export default function ProfileNotificationsPage() {
                     <Badge variant={item.isRead ? 'outline' : 'secondary'}>
                       {item.isRead ? t('notifications.stats.read') : t('notifications.stats.unread')}
                     </Badge>
-                    <Badge variant="outline">{notificationTypeLabel(item.type)}</Badge>
+                    <Badge variant="secondary">{notificationTypeLabel(item.type)}</Badge>
                   </div>
                   <p className="text-gray-600 text-sm">{item.message}</p>
                   <p className="text-xs text-gray-500 mt-2">
@@ -152,7 +152,7 @@ export default function ProfileNotificationsPage() {
 
                 <div className="flex items-center gap-2">
                   <Link href={`/${language}/profile/requests`}>
-                    <Button variant="outline" size="sm">
+                    <Button variant="secondary" size="sm">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       {t('notifications.open_requests')}
                     </Button>

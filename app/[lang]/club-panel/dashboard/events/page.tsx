@@ -65,7 +65,7 @@ export default function EventsPage() {
     if (isUpcoming) {
       return <Badge variant="secondary">{t('club_panel.events.status.upcoming')}</Badge>;
     }
-    return <Badge variant="outline" className="text-muted-foreground">{t('club_panel.events.status.past')}</Badge>;
+    return <Badge variant="secondary" className="text-muted-foreground">{t('club_panel.events.status.past')}</Badge>;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -252,7 +252,7 @@ export default function EventsPage() {
                   
                   <div className="flex gap-2">
                     <Button
-                      variant="outline"
+                      variant="secondary"
                       size="sm"
                       onClick={() => handleEdit(event)}
                       className="flex-1 gap-2"
@@ -335,6 +335,7 @@ export default function EventsPage() {
                      />
                     <button
                       type="button"
+                      aria-label="Remove image"
                       onClick={() => setFormData({ ...formData, image: '' })}
                       className="absolute top-2 right-2 p-1 bg-background/80 rounded-full hover:bg-background"
                     >

@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
                       <span className="text-xs text-muted-foreground w-12 text-right">{data.views}</span>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-xs whitespace-nowrap">
+                  <Badge variant="secondary" className="text-xs whitespace-nowrap">
                     {data.requests} {t('club_panel.analytics.monthly_trends.requests_suffix')}
                   </Badge>
                 </div>

@@ -34,7 +34,7 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
           <p className="text-muted-foreground mt-1">{t('admin.users.details.subtitle')}</p>
         </div>
         <Link href={`/${lang}/admin/users`}>
-          <Button variant="outline">
+          <Button variant="secondary">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('admin.users.details.back_to_users')}
           </Button>
@@ -51,7 +51,7 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2 flex-wrap">
-            <Badge variant="outline">{user.role.replace('_', ' ')}</Badge>
+            <Badge variant="secondary">{user.role.replace('_', ' ')}</Badge>
             <Badge variant={user.isVerified ? 'default' : 'secondary'}>
               {user.isVerified ? t('admin.common.verified') : t('admin.common.unverified')}
             </Badge>
@@ -62,7 +62,7 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
             <form action={updateUserVerification}>
               <input type="hidden" name="userId" value={user.id} />
               <input type="hidden" name="isVerified" value={String(!user.isVerified)} />
-              <Button type="submit" variant="outline">
+              <Button type="submit" variant="secondary">
                 {user.isVerified ? t('admin.users.set_unverified') : t('admin.users.set_verified')}
               </Button>
             </form>

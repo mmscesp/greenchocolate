@@ -34,7 +34,7 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
           <p className="text-muted-foreground mt-1">{t('admin.clubs.details.subtitle')}</p>
         </div>
         <Link href={`/${lang}/admin/clubs`}>
-          <Button variant="outline">
+          <Button variant="secondary">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('admin.clubs.details.back_to_clubs')}
           </Button>
@@ -54,8 +54,8 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
             <Badge variant={club.isActive ? 'default' : 'destructive'}>
               {club.isActive ? t('admin.common.active') : t('admin.common.inactive')}
             </Badge>
-            <Badge variant="outline">{t('admin.clubs.founded')} {club.foundedYear}</Badge>
-            <Badge variant="outline">{t('admin.clubs.capacity')} {club.capacity}</Badge>
+            <Badge variant="secondary">{t('admin.clubs.founded')} {club.foundedYear}</Badge>
+            <Badge variant="secondary">{t('admin.clubs.capacity')} {club.capacity}</Badge>
           </div>
 
           <p className="text-sm text-muted-foreground">{club.description}</p>
@@ -64,7 +64,7 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
             <form action={updateClubFlags}>
               <input type="hidden" name="clubId" value={club.id} />
               <input type="hidden" name="isVerified" value={String(!club.isVerified)} />
-              <Button type="submit" variant="outline">
+              <Button type="submit" variant="secondary">
                 {club.isVerified ? t('admin.clubs.unverify_club') : t('admin.clubs.verify_club')}
               </Button>
             </form>
@@ -72,7 +72,7 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
             <form action={updateClubFlags}>
               <input type="hidden" name="clubId" value={club.id} />
               <input type="hidden" name="isActive" value={String(!club.isActive)} />
-              <Button type="submit" variant="outline">
+              <Button type="submit" variant="secondary">
                 {club.isActive ? t('admin.clubs.deactivate_club') : t('admin.clubs.activate_club')}
               </Button>
             </form>

@@ -189,7 +189,7 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                         </div>
                         <div className="flex flex-wrap gap-2 justify-end">
                           {event.cityName && (
-                            <Badge variant="outline" className="border-white/10 text-zinc-400 bg-white/5 uppercase tracking-widest text-[10px]">
+                            <Badge variant="secondary" className="border-white/10 text-zinc-400 bg-white/5 uppercase tracking-widest text-[10px]">
                               {event.cityName}
                             </Badge>
                           )}

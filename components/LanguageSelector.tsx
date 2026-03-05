@@ -40,28 +40,32 @@ export default function LanguageSelector({
   if (variant === 'footer') {
     return (
       <div className="relative">
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+          className="rounded-xl"
         >
           <Globe className="h-4 w-4" />
-          <span className="text-sm">{currentLanguage.name}</span>
+          <span>{currentLanguage.name}</span>
           <ChevronDown className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-        </button>
+        </Button>
 
         {isOpen && (
           <div className="absolute bottom-full left-0 mb-2 bg-gray-800 rounded-lg shadow-lg border border-gray-700 py-2 min-w-[160px] z-50">
             {Object.entries(languages).map(([code, lang]) => (
-              <button
+              <Button
                 key={code}
+                type="button"
+                variant={language === code ? 'secondary' : 'ghost'}
+                size="sm"
                 onClick={() => handleLanguageChange(code as Language)}
-                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-700 transition-colors flex items-center gap-3 ${
-                  language === code ? 'text-green-400 bg-gray-700' : 'text-gray-300'
-                }`}
+                className="w-full justify-start rounded-none px-4"
               >
                 <span className="text-lg">{lang.flag}</span>
                 <span>{lang.name}</span>
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -72,13 +76,12 @@ export default function LanguageSelector({
   return (
     <div className="relative">
       <Button
+        type="button"
         variant="ghost"
-        size="sm"
+        size="icon"
+        aria-label="Select language"
         onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          'flex items-center justify-center h-10 w-10 p-0 rounded-full transition-colors',
-          isLightTone ? 'hover:bg-white/10 text-white' : 'hover:bg-black/5 text-slate-800'
-        )}
+        className="h-10 w-10 rounded-full"
       >
         <Globe className="h-5 w-5" />
       </Button>
@@ -88,24 +91,17 @@ export default function LanguageSelector({
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className={menuPositionClassName}>
             {Object.entries(languages).map(([code, lang]) => (
-              <button
+              <Button
                 key={code}
+                type="button"
+                variant={language === code ? 'secondary' : 'ghost'}
+                size="sm"
                 onClick={() => handleLanguageChange(code as Language)}
-                className={`w-full px-4 py-2 text-left text-sm transition-colors flex items-center gap-3 ${
-                  isLightTone ? 'hover:bg-white/5' : 'hover:bg-black/5'
-                } ${
-                  language === code
-                    ? isLightTone
-                      ? 'text-brand-light bg-white/5'
-                      : 'text-brand-dark bg-black/5'
-                    : isLightTone
-                      ? 'text-white/70'
-                      : 'text-slate-700'
-                }`}
+                className="w-full justify-start rounded-none px-4"
               >
                 <span className="text-lg">{lang.flag}</span>
                 <span className="font-medium">{lang.name}</span>
-              </button>
+              </Button>
             ))}
           </div>
         </>

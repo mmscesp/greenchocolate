@@ -98,7 +98,7 @@ export default function UserRequestsPage() {
           </Badge>
         );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
@@ -130,7 +130,7 @@ export default function UserRequestsPage() {
               <AlertCircle className="h-8 w-8 text-destructive" />
             </div>
             <h3 className="text-lg font-semibold text-destructive mb-2">{error}</h3>
-            <Button onClick={loadRequests} variant="outline" className="mt-4">
+            <Button onClick={loadRequests} variant="secondary" className="mt-4">
               <RefreshCw className="h-4 w-4 mr-2" />
               {t('common.retry')}
             </Button>
@@ -151,7 +151,7 @@ export default function UserRequestsPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('dashboard.requests')}</h1>
           <p className="text-muted-foreground mt-1">{t('requests.subtitle')}</p>
         </div>
-        <Button variant="outline" onClick={loadRequests} disabled={loading} className="self-start">
+        <Button variant="secondary" onClick={loadRequests} disabled={loading} className="self-start">
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           {t('common.refresh')}
         </Button>
@@ -288,7 +288,7 @@ export default function UserRequestsPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <Link href={`/${language}/clubs/${request.clubSlug}`}>
-                      <Button variant="outline" size="sm">
+                      <Button variant="secondary" size="sm">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         {t('common.view')}
                       </Button>

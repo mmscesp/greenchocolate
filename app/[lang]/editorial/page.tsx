@@ -126,7 +126,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-12">
               <H2 className="text-white font-serif tracking-tight">{t('editorial.featured_articles')}</H2>
-              <Button variant="outline" asChild className="border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white rounded-full">
+              <Button variant="secondary" asChild className="border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white rounded-full">
                 <Link href={`/${lang}/editorial/legal`}>
                   {t('editorial.view_all')} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>

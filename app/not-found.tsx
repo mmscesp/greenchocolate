@@ -40,7 +40,7 @@ export default function NotFound() {
           </Link>
 
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

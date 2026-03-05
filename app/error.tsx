@@ -53,7 +53,7 @@ export default function GlobalError({
           </Button>
 
           <Link href="/" passHref className="w-full">
-            <Button variant="outline" className="w-full">
+            <Button variant="secondary" className="w-full">
               <Home className="h-4 w-4 mr-2" />
               Volver al inicio
             </Button>

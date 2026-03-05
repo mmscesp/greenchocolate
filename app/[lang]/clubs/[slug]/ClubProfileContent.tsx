@@ -221,6 +221,8 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
             <motion.div variants={FADE_UP} className="flex flex-wrap gap-3 sm:gap-4">
               {club.allowsPreRegistration && (
                 <Button
+                  type="button"
+                  variant="primary"
                   size="xl"
                   onClick={() => {
                     if (!user) {
@@ -229,7 +231,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     }
                     setShowPreRegistrationModal(true);
                   }}
-                  className="bg-brand hover:bg-brand-dark text-bg-base font-black min-h-11 h-auto py-3 sm:py-5 px-8 sm:px-10 rounded-full text-sm sm:text-base shadow-[0_10px_30px_-10px_hsl(var(--brand)/0.4)] transition-all hover:scale-105 uppercase tracking-[0.2em]"
+                  className="min-h-11 h-auto rounded-full px-8 py-3 text-sm sm:px-10 sm:py-5 sm:text-base"
                 >
                   {t('club.pre_register')}
                 </Button>
@@ -238,15 +240,15 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               {/* Image Navigation Dots */}
               {club.images.length > 1 && (
                 <div className="flex items-center gap-2 sm:ml-4 bg-bg-base/70 backdrop-blur-md px-3 sm:px-4 rounded-full border border-white/10">
-                  <button onClick={prevImage} className="min-h-11 min-w-11 p-2 hover:text-brand transition-colors text-white">
+                  <Button type="button" variant="ghost" size="icon" aria-label="Previous image" onClick={prevImage} className="text-white hover:text-brand">
                     <ChevronLeft className="h-5 w-5" />
-                  </button>
+                  </Button>
                   <span className="text-[10px] font-bold tracking-widest text-white/80">
                     {currentImageIndex + 1} / {club.images.length}
                   </span>
-                  <button onClick={nextImage} className="min-h-11 min-w-11 p-2 hover:text-brand transition-colors text-white">
+                  <Button type="button" variant="ghost" size="icon" aria-label="Next image" onClick={nextImage} className="text-white hover:text-brand">
                     <ChevronRight className="h-5 w-5" />
-                  </button>
+                  </Button>
                 </div>
               )}
             </motion.div>
@@ -312,14 +314,16 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <div className="flex flex-col gap-2 w-full max-w-[240px]">
                   {club.allowsPreRegistration && (
                     <Button 
+                      type="button"
+                      variant="primary"
                       onClick={() => setShowPreRegistrationModal(true)}
-                      className="w-full bg-brand hover:bg-brand-dark text-bg-base rounded-full shadow-lg shadow-brand/20 font-black uppercase tracking-widest text-[10px] py-6"
+                      className="w-full rounded-full py-6 text-[10px]"
                     >
                       {t('club_profile.pre_register_with_club')}
                     </Button>
                   )}
                   <Link href={`/${language}/app`} className="w-full">
-                    <Button variant="outline" className="w-full bg-white/5 border-white/10 hover:bg-white/10 text-white rounded-full uppercase tracking-widest text-[10px] py-6">
+                    <Button variant="secondary" className="w-full rounded-full py-6 text-[10px]">
                       {t('club_profile.register_on_app')}
                     </Button>
                   </Link>
@@ -414,9 +418,11 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                 <ConciergeLabel className="mb-4 text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('club_profile.ready_to_join')}</ConciergeLabel>
                 <EditorialHeading size="md" className="mb-8 text-white">{t('club_profile.apply_for_membership')}</EditorialHeading>
                 <Button
+                  type="button"
+                  variant="primary"
                   size="lg"
                   onClick={() => setShowPreRegistrationModal(true)}
-                  className="bg-brand text-bg-base hover:bg-brand-dark rounded-full min-h-11 px-10 font-black uppercase tracking-widest text-[11px] py-6 shadow-lg shadow-brand/20"
+                  className="min-h-11 rounded-full px-10 py-6 text-[11px]"
                 >
                   {t('club_profile.start_application')}
                 </Button>
@@ -450,15 +456,19 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                   <ConciergeLabel className="text-brand mb-2 uppercase tracking-[0.2em] text-[9px] font-bold">{t('club_profile.membership_application')}</ConciergeLabel>
                   <h3 className="text-3xl font-serif text-white">{club.name}</h3>
                 </div>
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Close modal"
                   onClick={() => {
                     setShowPreRegistrationModal(false);
                     setFormState(null);
                   }}
-                  className="absolute top-6 right-6 min-h-11 min-w-11 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-all z-30 border border-white/10"
+                  className="absolute right-6 top-6 z-30 bg-black/50 text-white hover:bg-white hover:text-black"
                 >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
 
               <div className="p-8">
@@ -513,8 +523,9 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
                     </Button>
                     <Button
                       type="submit"
+                      variant="primary"
                       disabled={isSubmitting}
-                      className="flex-1 bg-brand hover:bg-brand-dark text-bg-base font-black rounded-full py-7 shadow-lg shadow-brand/20 uppercase tracking-widest text-[10px]"
+                      className="flex-1 rounded-full py-7 text-[10px]"
                     >
                       {isSubmitting ? (
                         <>

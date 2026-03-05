@@ -302,18 +302,18 @@ export default function SettingsPage() {
             </div>
             <div className="flex items-center gap-3">
               {settings.security.twoFactor ? (
-                <Badge variant="outline" className="flex items-center gap-1 bg-green-500/10 text-green-600 border-green-500/20">
+                <Badge variant="secondary" className="flex items-center gap-1 bg-green-500/10 text-green-600 border-green-500/20">
                   <Check className="h-3 w-3" />
                   {t('common.enabled')}
                 </Badge>
               ) : (
-                <Badge variant="outline" className="flex items-center gap-1">
+                <Badge variant="secondary" className="flex items-center gap-1">
                   <X className="h-3 w-3" />
                   {t('common.disabled')}
                 </Badge>
               )}
               <Button
-                variant={settings.security.twoFactor ? "outline" : "default"}
+                variant={settings.security.twoFactor ? 'secondary' : 'primary'}
                 size="sm"
                 onClick={() => updateSecuritySetting('twoFactor', !settings.security.twoFactor)}
               >
@@ -354,7 +354,7 @@ export default function SettingsPage() {
           </div>
 
           <div className="pt-4">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="secondary" className="flex items-center gap-2">
               <Lock className="h-4 w-4" />
               {t('settings.security.change_password')}
             </Button>
@@ -381,7 +381,7 @@ export default function SettingsPage() {
               <h3 className="font-medium text-foreground">{t('settings.data.download')}</h3>
               <p className="text-sm text-muted-foreground">{t('settings.data.download_desc')}</p>
             </div>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="secondary" className="flex items-center gap-2">
               <Download className="h-4 w-4" />
               {t('common.download')}
             </Button>

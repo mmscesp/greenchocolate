@@ -126,7 +126,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm border-brand/20 text-zinc-300 bg-brand/10">
+              <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm border-brand/20 text-zinc-300 bg-brand/10">
                 <BookOpen className="w-4 h-4 mr-2" />
                 {t('editorial.badge')}
               </Badge>
@@ -238,7 +238,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <h2 className="text-2xl md:text-3xl font-bold text-white">{t('editorial.featured_articles')}</h2>
-              <Button variant="outline" asChild className="border-brand/15 text-zinc-300 hover:bg-brand/10 hover:text-white rounded-xl">
+              <Button variant="secondary" asChild className="border-brand/15 text-zinc-300 hover:bg-brand/10 hover:text-white rounded-xl">
                 <Link href={`/${lang}/editorial/legal`}>
                   {t('editorial.view_all')} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>

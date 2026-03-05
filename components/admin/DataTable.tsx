@@ -55,7 +55,7 @@ export function DataTable<T>({ columns, data, title, onEdit, onDelete, onAction,
                         actions.map((action) => (
                           <Button
                             key={action.value}
-                            variant="outline"
+                            variant="secondary"
                             size="sm"
                             onClick={() => onAction?.(row, action.value)}
                             className={`text-xs ${action.color || ''}`}

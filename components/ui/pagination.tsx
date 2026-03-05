@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from '@/lib/icons';
 
 import { cn } from '@/lib/utils';
-import { ButtonProps, buttonVariants } from '@/components/ui/button';
+import { type ButtonProps, buttonVariants } from '@/components/ui/button';
 
 interface PaginationLabels {
   navAriaLabel?: string;
@@ -67,7 +67,7 @@ const PaginationLink = ({
     aria-current={isActive ? 'page' : undefined}
     className={cn(
       buttonVariants({
-        variant: isActive ? 'outline' : 'ghost',
+        variant: isActive ? 'secondary' : 'ghost',
         size,
       }),
       className
@@ -84,7 +84,7 @@ const PaginationPrevious = ({
 }: React.ComponentProps<typeof PaginationLink> & { labels?: PaginationLabels }) => (
   <PaginationLink
     aria-label={labels?.previousAriaLabel || defaultPaginationLabels.previousAriaLabel}
-    size="default"
+    size="md"
     className={cn('gap-1 pl-2.5', className)}
     {...props}
   >
@@ -101,7 +101,7 @@ const PaginationNext = ({
 }: React.ComponentProps<typeof PaginationLink> & { labels?: PaginationLabels }) => (
   <PaginationLink
     aria-label={labels?.nextAriaLabel || defaultPaginationLabels.nextAriaLabel}
-    size="default"
+    size="md"
     className={cn('gap-1 pr-2.5', className)}
     {...props}
   >

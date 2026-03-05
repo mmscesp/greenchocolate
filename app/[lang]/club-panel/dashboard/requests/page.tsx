@@ -176,7 +176,7 @@ export default function ClubRequestsPage() {
           </Badge>
         );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>;
     }
   };
 
@@ -224,7 +224,7 @@ export default function ClubRequestsPage() {
         <Card className="p-12 text-center border-destructive/50 bg-destructive/5">
           <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h3 className="text-lg font-medium text-destructive mb-2">{error}</h3>
-          <Button onClick={loadRequests} variant="outline" className="mt-4">
+          <Button onClick={loadRequests} variant="secondary" className="mt-4">
             <RefreshCw className="h-4 w-4 mr-2" />
             {t('common.retry')}
           </Button>
@@ -241,7 +241,7 @@ export default function ClubRequestsPage() {
           <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.requests.title')}</h1>
           <p className="text-muted-foreground mt-2">{t('club_panel.requests.subtitle')}</p>
         </div>
-        <Button variant="outline" onClick={loadRequests} disabled={loading}>
+        <Button variant="secondary" onClick={loadRequests} disabled={loading}>
           <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
           {t('common.refresh')}
         </Button>
@@ -348,7 +348,7 @@ export default function ClubRequestsPage() {
                             {request.user.displayName || t('admin.common.anonymous')}
                           </h3>
                           {getStatusBadge(request.status)}
-                          <Badge variant="outline">{getStageLabel(request.stage)}</Badge>
+                          <Badge variant="secondary">{getStageLabel(request.stage)}</Badge>
                         </div>
                         
                         <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
@@ -375,7 +375,7 @@ export default function ClubRequestsPage() {
                     {request.status === 'UNDER_REVIEW' || request.status === 'BACKGROUND_CHECK' ? (
                       <>
                         <Button
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           onClick={() => {
                             setSelectedRequest(request);
@@ -435,7 +435,7 @@ export default function ClubRequestsPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsApproveDialogOpen(false)}>
+            <Button variant="secondary" onClick={() => setIsApproveDialogOpen(false)}>
               {t('common.cancel')}
             </Button>
             <Button
@@ -476,7 +476,7 @@ export default function ClubRequestsPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsRejectDialogOpen(false)}>
+            <Button variant="secondary" onClick={() => setIsRejectDialogOpen(false)}>
               {t('common.cancel')}
             </Button>
             <Button

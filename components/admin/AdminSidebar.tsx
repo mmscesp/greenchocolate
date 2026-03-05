@@ -287,6 +287,7 @@ export function AdminSidebar({
         <Button
           variant="ghost"
           size="icon"
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           onClick={onToggle}
           className="absolute -right-3 top-4 h-6 w-6 rounded-full border border-slate-700 bg-slate-800 shadow-md hover:bg-slate-700 z-40 text-slate-300 hover:text-slate-100"
         >
@@ -310,7 +311,7 @@ export function AdminMobileNav({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden hover:bg-slate-800 rounded-full transition-colors">
+        <Button variant="ghost" size="icon" aria-label={t('admin.nav.toggle_menu')} className="lg:hidden hover:bg-slate-800 rounded-full transition-colors">
           <Menu className="h-6 w-6 text-slate-300" />
           <span className="sr-only">{t('admin.nav.toggle_menu')}</span>
         </Button>

@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
               </Button>
             </Link>
             <Link href={`/${language}`} className="block">
-              <Button variant="outline" className="w-full">
+              <Button variant="secondary" className="w-full">
                 {t('auth.forgot.back_to_home')}
               </Button>
             </Link>

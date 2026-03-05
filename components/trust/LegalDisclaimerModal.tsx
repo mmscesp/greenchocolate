@@ -93,7 +93,7 @@ export default function LegalDisclaimerModal() {
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                 <Button 
-                  variant="outline" 
+                  variant="secondary" 
                   onClick={handleDecline}
                   className="h-12 border-destructive/20 hover:bg-destructive/10 hover:text-destructive transition-colors"
                 >

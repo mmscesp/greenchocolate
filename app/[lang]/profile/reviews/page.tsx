@@ -265,12 +265,13 @@ export default function ReviewsPage() {
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {review.isEditable && (
                           <>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white">
+                            <Button variant="ghost" size="icon" aria-label={t('reviews.edit_review')} className="h-9 w-9 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white">
                               <Edit3 className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
+                              aria-label={t('reviews.delete_review')}
                               onClick={() => deleteReview(review.id)}
                               className="h-9 w-9 rounded-full bg-red-500/10 text-red-500 hover:bg-red-500/20 hover:text-red-400"
                             >

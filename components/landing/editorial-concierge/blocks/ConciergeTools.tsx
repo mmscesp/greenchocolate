@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { CheckCircle2 } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Button } from '@/components/ui/button';
 
 export function ConciergeTools() {
   const { t } = useLanguage();
@@ -116,6 +117,7 @@ export function ConciergeTools() {
                   {questions[step].options.map((opt) => (
                     <button
                       key={opt}
+                      type="button"
                       onClick={() => handleAnswer(opt)}
                       className="w-full py-4 px-6 text-left bg-bg-surface hover:bg-bg-elevated border border-border hover:border-brand rounded-xl text-white font-bold transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-brand/50"
                     >
@@ -171,9 +173,9 @@ export function ConciergeTools() {
                   </div>
                 </div>
 
-                <button onClick={() => setStep(0)} className="w-full mt-4 text-sm font-bold text-zinc-400 hover:text-brand transition-colors">
+                <Button type="button" variant="ghost" size="sm" onClick={() => setStep(0)} className="mt-4 w-full text-zinc-400 hover:text-brand">
                   {t('landing.concierge_tools.restart')}
-                </button>
+                </Button>
               </motion.div>
             )}
           </AnimatePresence>

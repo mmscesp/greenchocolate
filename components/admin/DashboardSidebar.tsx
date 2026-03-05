@@ -54,7 +54,7 @@ export function DashboardSidebar() {
           <Home className="h-5 w-5" />
           <span>{t('nav.back_to_site')}</span>
         </Link>
-        <button className="w-full flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
+        <button type="button" className="w-full flex min-h-11 items-center gap-3 px-4 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
           <LogOut className="h-5 w-5" />
           <span>{t('nav.logout')}</span>
         </button>

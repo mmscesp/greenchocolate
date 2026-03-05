@@ -51,7 +51,7 @@ export default async function AdminContentEventsPage({ params }: AdminContentEve
                     <form action={toggleEventPublication}>
                       <input type="hidden" name="eventId" value={event.id} />
                       <input type="hidden" name="nextPublished" value={String(!event.isPublished)} />
-                      <Button type="submit" size="sm" variant="outline">
+                      <Button type="submit" size="sm" variant="secondary">
                         {event.isPublished ? t('admin.content.events.unpublish') : t('admin.content.events.publish')}
                       </Button>
                     </form>

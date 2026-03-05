@@ -131,6 +131,7 @@ export function RotaryFineEstimator() {
             {levels.map((l, i) => (
               <button 
                 key={i}
+                type="button"
                 onClick={() => setLevel(i)}
                 className={`
                   min-h-11 min-w-11 sm:min-h-5 sm:min-w-5 rounded-full border-2 transition-all duration-300 flex items-center justify-center
@@ -150,6 +151,7 @@ export function RotaryFineEstimator() {
           {levels.map((l, i) => (
             <button 
               key={i} 
+              type="button"
               onClick={() => setLevel(i)}
               className={`
                 font-mono text-xs uppercase tracking-wide transition-all duration-300 px-2 py-1 rounded-lg

@@ -42,7 +42,7 @@ export default async function AdminContentArticlesPage({ params }: AdminContentA
                     <div className="text-sm text-muted-foreground">/{article.slug}</div>
                   </div>
                   <div className="flex gap-2 flex-wrap">
-                    <Badge variant="outline">{article.category}</Badge>
+                    <Badge variant="secondary">{article.category}</Badge>
                     <Badge variant="secondary">{article.readTime} {t('admin.content.articles.min_read')}</Badge>
                   </div>
                 </div>

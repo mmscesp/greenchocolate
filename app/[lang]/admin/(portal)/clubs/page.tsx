@@ -103,20 +103,20 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
                         <Badge variant={club.isActive ? 'default' : 'destructive'}>
                           {club.isActive ? t('admin.common.active') : t('admin.common.inactive')}
                         </Badge>
-                        <Badge variant="outline">{club._count.membershipRequests} {t('admin.common.requests')}</Badge>
-                        <Badge variant="outline">{club.admins.length} {t('admin.common.admins')}</Badge>
+                        <Badge variant="secondary">{club._count.membershipRequests} {t('admin.common.requests')}</Badge>
+                        <Badge variant="secondary">{club.admins.length} {t('admin.common.admins')}</Badge>
                       </div>
                     </div>
 
                     <div className="flex flex-wrap gap-2 items-center">
                       <Link href={`/${lang}/admin/clubs/${club.id}`}>
-                        <Button variant="outline" size="sm">{t('admin.common.details')}</Button>
+                        <Button variant="secondary" size="sm">{t('admin.common.details')}</Button>
                       </Link>
 
                       <form action={updateClubFlags}>
                         <input type="hidden" name="clubId" value={club.id} />
                         <input type="hidden" name="isVerified" value={String(!club.isVerified)} />
-                        <Button type="submit" size="sm" variant="outline">
+                        <Button type="submit" size="sm" variant="secondary">
                           {club.isVerified ? t('admin.clubs.unverify') : t('admin.clubs.verify')}
                         </Button>
                       </form>
@@ -124,7 +124,7 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
                       <form action={updateClubFlags}>
                         <input type="hidden" name="clubId" value={club.id} />
                         <input type="hidden" name="isActive" value={String(!club.isActive)} />
-                        <Button type="submit" size="sm" variant="outline">
+                        <Button type="submit" size="sm" variant="secondary">
                           {club.isActive ? t('admin.clubs.deactivate') : t('admin.clubs.activate')}
                         </Button>
                       </form>
@@ -136,14 +136,14 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
           )}
 
           <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <Button asChild variant="outline" size="sm" disabled={data.page <= 1}>
+            <Button asChild variant="secondary" size="sm" disabled={data.page <= 1}>
               <Link href={buildUrl(Math.max(1, data.page - 1))}>
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 {t('admin.common.previous')}
               </Link>
             </Button>
             <span className="text-sm text-muted-foreground">{t('admin.common.page')} {data.page} {t('admin.common.of')} {Math.max(1, data.totalPages)}</span>
-            <Button asChild variant="outline" size="sm" disabled={data.page >= data.totalPages}>
+            <Button asChild variant="secondary" size="sm" disabled={data.page >= data.totalPages}>
               <Link href={buildUrl(Math.min(data.totalPages || 1, data.page + 1))}>
                 {t('admin.common.next')}
                 <ChevronRight className="h-4 w-4 ml-1" />

@@ -217,6 +217,7 @@ export function ClubSidebar({
         <Button
           variant="ghost"
           size="icon"
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           onClick={onToggle}
           className="absolute -right-4 top-4 h-8 w-8 rounded-full border bg-background shadow-md hover:bg-accent z-40 text-muted-foreground hover:text-foreground"
         >
@@ -234,7 +235,7 @@ export function ClubMobileNav() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden h-11 w-11 hover:bg-accent rounded-full transition-colors">
+        <Button variant="ghost" size="icon" aria-label={t('common.toggle_menu')} className="lg:hidden h-11 w-11 hover:bg-accent rounded-full transition-colors">
           <Menu className="h-6 w-6 text-muted-foreground" />
           <span className="sr-only">{t('common.toggle_menu')}</span>
         </Button>

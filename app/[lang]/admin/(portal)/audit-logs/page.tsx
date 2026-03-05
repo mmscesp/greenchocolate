@@ -73,7 +73,7 @@ export default async function AdminAuditLogsPage({ params, searchParams }: Audit
               <div key={log.id} className="border rounded-md p-3">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="outline">{log.tableName}</Badge>
+                    <Badge variant="secondary">{log.tableName}</Badge>
                     <Badge>{log.operation}</Badge>
                     <span className="text-xs text-muted-foreground">{t('admin.audit.record')}: {log.recordId}</span>
                   </div>
