@@ -23,7 +23,19 @@ interface AccountPageProps {
 export default async function AccountPage({ params }: AccountPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => {
+    const resolvedValue = key
+      .split('.')
+      .reduce<unknown>((current, segment) => {
+        if (!current || typeof current !== 'object' || !(segment in current)) {
+          return undefined;
+        }
+
+        return (current as Record<string, unknown>)[segment];
+      }, dictionary);
+
+    return typeof resolvedValue === 'string' ? resolvedValue : key;
+  };
   const userProfile = await getCurrentUserProfile();
 
   const formatText = (key: string, values: Record<string, string | number>) => {

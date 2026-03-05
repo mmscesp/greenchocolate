@@ -14,7 +14,7 @@ interface AdminContentEventsPageProps {
 export default async function AdminContentEventsPage({ params }: AdminContentEventsPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const events = await getAdminEventsIndex();
   type EventRow = (typeof events)[number];
 

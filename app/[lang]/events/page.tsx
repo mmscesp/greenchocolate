@@ -13,7 +13,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
   const { lang } = await params;
   const events = await getUpcomingEvents(24);
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   return (
     <EventsPageClient lang={lang} initialEvents={events} />

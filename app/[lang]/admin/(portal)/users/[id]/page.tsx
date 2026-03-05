@@ -15,7 +15,7 @@ interface UserDetailPageProps {
 export default async function AdminUserDetailPage({ params }: UserDetailPageProps) {
   const { lang, id } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const user = await getAdminUserById(id);
 
   if (!user) {

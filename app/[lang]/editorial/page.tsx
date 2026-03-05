@@ -14,7 +14,7 @@ interface EditorialPageProps {
 export default async function EditorialPage({ params }: EditorialPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const [featuredArticles, categories] = await Promise.all([
     getFeaturedArticles(3),
     getCategoriesWithCounts(),

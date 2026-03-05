@@ -20,7 +20,7 @@ function getString(value: string | string[] | undefined, fallback = ''): string 
 export default async function AdminClubsPage({ params, searchParams }: ClubsPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const query = await searchParams;
 
   const q = getString(query.q);

@@ -14,7 +14,7 @@ interface AdminAnalyticsPageProps {
 export default async function AdminAnalyticsPage({ params }: AdminAnalyticsPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const now = new Date();
   const last30Days = new Date(now);
   last30Days.setDate(now.getDate() - 30);

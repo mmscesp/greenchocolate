@@ -15,7 +15,7 @@ interface PageProps {
 export default async function CityGuidesPage({ params }: PageProps) {
   const { lang, city } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const format = (key: string, vars: Record<string, string>) => {
     const template = t(key);
     return Object.entries(vars).reduce(

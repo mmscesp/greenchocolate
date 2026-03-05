@@ -9,7 +9,7 @@ interface PrivacyPageProps {
 export default async function PrivacyPage({ params }: PrivacyPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   return (
     <div className="min-h-screen bg-background">

@@ -34,7 +34,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
   const { lang, slug } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const clubDetail = await getClubBySlug(slug);
   
   if (!clubDetail) {
@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
 export default async function ClubPage({ params }: ClubPageProps) {
   const { lang, slug } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const clubDetail = await getClubBySlug(slug);
 
   if (!clubDetail) {

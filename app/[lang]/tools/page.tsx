@@ -9,7 +9,7 @@ interface ToolsPageProps {
 export default async function ToolsPage({ params }: ToolsPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   return (
     <div className="min-h-screen bg-background">

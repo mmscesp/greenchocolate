@@ -14,7 +14,7 @@ interface AdminContentArticlesPageProps {
 export default async function AdminContentArticlesPage({ params }: AdminContentArticlesPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const articles = await getAdminArticleIndex();
   type ArticleRow = (typeof articles)[number];
 

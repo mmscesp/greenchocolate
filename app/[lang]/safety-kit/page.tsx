@@ -22,18 +22,30 @@ interface SafetyKitLandingPageProps {
 export default async function SafetyKitLandingPage({ params }: SafetyKitLandingPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => {
-    // Nested object support for the new dictionary structure
+  const translate = (key: string): unknown => {
     const keys = key.split('.');
-    let result: any = dictionary;
+    let result: unknown = dictionary;
     for (const k of keys) {
       if (result && typeof result === 'object') {
-        result = result[k];
+        result = (result as Record<string, unknown>)[k];
       } else {
         return key;
       }
     }
-    return result || key;
+    return result;
+  };
+
+  const t = (key: string): string => {
+    const result = translate(key);
+    return typeof result === 'string' ? result : key;
+  };
+
+  const tList = (key: string): string[] => {
+    const result = translate(key);
+    if (Array.isArray(result) && result.every((item) => typeof item === 'string')) {
+      return result;
+    }
+    return [];
   };
 
   return (
@@ -150,7 +162,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
             </div>
             
             <ul className="space-y-6 flex-1">
-              {t('safety_kit.who_bullets').map((bullet: string, idx: number) => (
+              {tList('safety_kit.who_bullets').map((bullet: string, idx: number) => (
                 <li key={idx} className="flex gap-4 group">
                   <div className="mt-1 w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center border border-green-500/20 shrink-0 group-hover:bg-green-500/20 transition-colors">
                     <Check className="w-3 h-3 text-green-400" />
@@ -174,7 +186,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
             </div>
             
             <ul className="space-y-6 mb-10 flex-1">
-              {t('safety_kit.not_bullets').map((bullet: string, idx: number) => (
+              {tList('safety_kit.not_bullets').map((bullet: string, idx: number) => (
                 <li key={idx} className="flex gap-4 group">
                   <div className="mt-1 w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 shrink-0 group-hover:bg-red-500/20 transition-colors">
                     <X className="w-3 h-3 text-red-400" />

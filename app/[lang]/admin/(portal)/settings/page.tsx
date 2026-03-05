@@ -11,7 +11,7 @@ interface AdminSettingsPageProps {
 export default async function AdminSettingsPage({ params }: AdminSettingsPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   return (
     <div className="space-y-6 max-w-4xl">

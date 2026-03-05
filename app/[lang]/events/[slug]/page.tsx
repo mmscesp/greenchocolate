@@ -14,7 +14,7 @@ interface EventPageProps {
 export default async function EventPage({ params }: EventPageProps) {
   const { lang, slug } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   const event = await getEventBySlug(slug);
 

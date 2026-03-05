@@ -9,7 +9,7 @@ import type { Locale } from '@/lib/i18n-config';
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   const title = t('mission.meta.title');
   const description = t('mission.meta.description');
@@ -37,7 +37,7 @@ interface MissionPageProps {
 export default async function MissionPage({ params }: MissionPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   const missionStandards = [
     { titleKey: 'mission.standards.legal.title', descriptionKey: 'mission.standards.legal.description', icon: Shield },

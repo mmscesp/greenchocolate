@@ -13,7 +13,7 @@ export const revalidate = 3600;
 export default async function LegalPage({ params }: LegalPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const t = (key: string) => dictionary[key] || key;
+  const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const articles = await getArticles({ category: 'Legal' });
 
   return (
