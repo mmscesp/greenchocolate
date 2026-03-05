@@ -11,7 +11,7 @@ interface RouteTransitionProps {
 export default function RouteTransition({ children }: RouteTransitionProps) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
-  const transition = getReducedMotionProps(shouldReduceMotion);
+  const transition = getReducedMotionProps(Boolean(shouldReduceMotion));
 
   return (
     // [motion]

@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from 'react';
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
 import { signUp, signInWithOAuth } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ import { FaApple } from 'react-icons/fa';
 
 export default function RegisterForm() {
   const { language, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -82,7 +84,15 @@ export default function RegisterForm() {
     return (
       <div className="w-full max-w-md mx-auto text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
-          <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+          {/* [motion] */}
+          <motion.svg viewBox="0 0 24 24" className="h-8 w-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <motion.path
+              d="M20 6L9 17l-5-5"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+            />
+          </motion.svg>
         </div>
         <h1 className="text-2xl font-bold text-foreground mb-2">{t('auth.register.check_email.title')}</h1>
         <p className="text-muted-foreground mb-6">
@@ -156,9 +166,19 @@ export default function RegisterForm() {
 
       <form action={formAction} onSubmit={handleSubmit} className="space-y-5">
         {(clientError || (state?.message && !state?.success)) && (
-          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+          // [motion]
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={
+              shouldReduceMotion
+                ? { opacity: 1 }
+                : { opacity: 1, x: [0, -6, 6, -4, 4, 0] }
+            }
+            transition={{ duration: 0.35 }}
+            className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm"
+          >
             {clientError || state?.message}
-          </div>
+          </motion.div>
         )}
 
         <div className="space-y-2">
@@ -215,13 +235,16 @@ export default function RegisterForm() {
               disabled={isPending}
               minLength={8}
             />
-            <button
+            {/* [motion] */}
+            <motion.button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
+              whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
+              transition={{ duration: 0.2 }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
+            </motion.button>
           </div>
           <div className="space-y-1 text-xs text-muted-foreground">
             {passwordRequirements.map((req, index) => (

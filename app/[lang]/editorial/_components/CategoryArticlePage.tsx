@@ -1,8 +1,5 @@
-'use client';
-
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Clock } from '@/lib/icons';
@@ -41,8 +38,6 @@ export default function CategoryArticlePage({
   badgeIcon,
   articles,
 }: CategoryArticlePageProps) {
-  const shouldReduceMotion = useReducedMotion();
-
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/50 via-bg-base to-bg-surface/50 pointer-events-none" />
@@ -79,70 +74,41 @@ export default function CategoryArticlePage({
       <section className="py-16 md:py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            {/* [motion] */}
-            <motion.div
-              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -8 }}
-              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              <H2 className="mb-8 text-white font-serif tracking-tight">{t(guidesTitleKey)}</H2>
-            </motion.div>
+            <H2 className="mb-8 text-white font-serif tracking-tight">{t(guidesTitleKey)}</H2>
 
-            {/* [motion] */}
-            <motion.div
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              className="grid gap-4"
-            >
+            <div className="grid gap-4">
               {articles.map((article, index) => (
-                <motion.div
+                <Link
                   key={article.id}
-                  variants={{
-                    hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
-                    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
-                  }}
-                  whileHover={
-                    shouldReduceMotion
-                      ? undefined
-                      : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
-                  }
-                  transition={{ duration: 0.2 }}
-                  style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
+                  href={`/${lang}/editorial/${article.slug}`}
+                  className="group block rounded-2xl border border-white/10 bg-bg-card/70 p-6 hover:border-brand/50 hover:shadow-2xl hover:shadow-brand/5 transition-all duration-500"
                 >
-                  <Link
-                    href={`/${lang}/editorial/${article.slug}`}
-                    className="group block rounded-2xl border border-white/10 bg-bg-card/70 p-6 hover:border-brand/50 hover:shadow-2xl hover:shadow-brand/5 transition-all duration-500"
-                  >
-                    <div className="flex flex-col md:flex-row md:items-center gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-3">
-                          {index === 0 ? (
-                            <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
-                              {t(featuredKey)}
-                            </Badge>
-                          ) : null}
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                            <Clock className="w-3.5 h-3.5" />
-                            {article.readTime} {t('editorial.min_read')}
-                          </div>
+                  <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        {index === 0 ? (
+                          <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
+                            {t(featuredKey)}
+                          </Badge>
+                        ) : null}
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                          <Clock className="w-3.5 h-3.5" />
+                          {article.readTime} {t('editorial.min_read')}
                         </div>
-                        <H3 className="mb-2 text-white group-hover:text-brand transition-colors font-serif">{article.title}</H3>
-                        <Text variant="muted" className="text-zinc-400 line-clamp-2">
-                          {article.excerpt}
-                        </Text>
                       </div>
-                      <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 shrink-0">
-                        <span>Read</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
+                      <H3 className="mb-2 text-white group-hover:text-brand transition-colors font-serif">{article.title}</H3>
+                      <Text variant="muted" className="text-zinc-400 line-clamp-2">
+                        {article.excerpt}
+                      </Text>
                     </div>
-                  </Link>
-                </motion.div>
+                    <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 shrink-0">
+                      <span>Read</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                </Link>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
