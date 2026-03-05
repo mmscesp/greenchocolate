@@ -26,7 +26,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.legal.title'),
       description: t('editorial.categories.legal.description'),
       icon: Scale,
-      color: 'bg-blue-50 text-blue-600 border-blue-200',
+      color: 'bg-brand/10 text-brand border-brand/20',
       articleCount: categories.find(c => c.name === 'Legal')?.count || 0,
     },
     {
@@ -34,7 +34,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.etiquette.title'),
       description: t('editorial.categories.etiquette.description'),
       icon: Heart,
-      color: 'bg-green-50 text-green-600 border-green-200',
+      color: 'bg-brand/10 text-brand-light border-brand/25',
       articleCount: categories.find(c => c.name === 'Etiquette')?.count || 0,
     },
     {
@@ -50,30 +50,30 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.culture.title'),
       description: t('editorial.categories.culture.description'),
       icon: History,
-      color: 'bg-purple-50 text-purple-600 border-purple-200',
+      color: 'bg-brand/15 text-brand-dark border-brand/30',
       articleCount: categories.find(c => c.name === 'Culture')?.count || 0,
     },
   ];
 
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 via-black to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/40 via-bg-base to-bg-base pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-gold/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
+        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-brand/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-brand/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-brand/5 blur-[120px]" />
       </div>
 
       {/* Hero Section */}
       <section className="relative pt-24 md:pt-32 pb-20 md:pb-28 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-gold">
+            <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-brand">
               <BookOpen className="w-4 h-4" />
               {t('editorial.badge')}
             </Eyebrow>
             <H1 size="xl" className="mb-6 text-white font-serif tracking-tight">
-              {t('editorial.title_prefix')} <span className="text-gold">{t('editorial.title_highlight')}</span>
+              {t('editorial.title_prefix')} <span className="text-brand">{t('editorial.title_highlight')}</span>
             </H1>
             <Lead className="mb-8 text-zinc-400">
               {t('editorial.subtitle')}
@@ -93,12 +93,12 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                 href={`/${lang}/editorial/${category.slug}`}
                 className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 md:p-8 hover:border-brand/50 transition-all duration-500"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative">
-                  <div className={`inline-flex p-3 rounded-xl bg-gold/10 text-gold border border-gold/20 mb-6 transition-transform duration-500 group-hover:scale-110`}>
+                  <div className={`inline-flex p-3 rounded-xl bg-brand/10 text-brand border border-brand/20 mb-6 transition-transform duration-500 group-hover:scale-110`}>
                     <category.icon className="w-6 h-6" />
                   </div>
-                  <H3 className="mb-3 text-white group-hover:text-gold transition-colors font-serif">
+                  <H3 className="mb-3 text-white group-hover:text-brand transition-colors font-serif">
                     {category.title}
                   </H3>
                   <Text variant="muted" className="mb-6 text-zinc-400 line-clamp-2">
@@ -108,7 +108,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                     <Text size="sm" variant="muted" className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
                       {category.articleCount} {category.articleCount === 1 ? t('editorial.article') : t('editorial.articles')}
                     </Text>
-                    <div className="flex items-center gap-2 text-gold font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                    <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                       <span>Explore</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
@@ -122,7 +122,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
 
       {/* Featured Articles */}
       {featuredArticles.length > 0 && (
-        <section className="py-16 md:py-24 bg-gold/5 border-y border-gold/10 relative z-10">
+        <section className="py-16 md:py-24 bg-brand/5 border-y border-brand/10 relative z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-12">
               <H2 className="text-white font-serif tracking-tight">{t('editorial.featured_articles')}</H2>
@@ -141,8 +141,8 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                 >
                   {article.heroImage ? (
                     <div className="aspect-video bg-bg-surface relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-                      <Badge className="absolute top-4 left-4 bg-gold text-black border-none font-bold uppercase tracking-widest text-[10px] z-20" variant="secondary">
+                      <div className="absolute inset-0 bg-gradient-to-t from-bg-base/80 via-bg-base/20 to-transparent z-10" />
+                      <Badge className="absolute top-4 left-4 bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px] z-20" variant="secondary">
                         {article.category}
                       </Badge>
                     </div>
@@ -152,7 +152,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                     </div>
                   )}
                   <div className="p-6">
-                    <H3 size="sm" className="mb-3 text-white group-hover:text-gold transition-colors line-clamp-2 font-serif">
+                    <H3 size="sm" className="mb-3 text-white group-hover:text-brand transition-colors line-clamp-2 font-serif">
                       {article.title}
                     </H3>
                     <Text variant="muted" size="sm" className="line-clamp-2 mb-6 text-zinc-400">
@@ -164,7 +164,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                         {article.readTime} {t('editorial.min_read')}
                       </div>
                       {article.cityName && (
-                        <span className="text-gold">{article.cityName}</span>
+                        <span className="text-brand">{article.cityName}</span>
                       )}
                     </div>
                   </div>
@@ -185,9 +185,9 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
             </Text>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               <div className="text-center group">
-                <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20 group-hover:scale-110 transition-transform duration-500">
-                  <Scale className="w-8 h-8 text-gold" />
-                  <Scale className="w-8 h-8 text-gold" />
+                <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20 group-hover:scale-110 transition-transform duration-500">
+                  <Scale className="w-8 h-8 text-brand" />
+                  <Scale className="w-8 h-8 text-brand" />
                 </div>
                 <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.legal.title')}</H4>
                 <Text size="sm" variant="muted" className="text-zinc-500">
@@ -195,9 +195,9 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                 </Text>
               </div>
               <div className="text-center group">
-                <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20 group-hover:scale-110 transition-transform duration-500">
-                  <Shield className="w-8 h-8 text-gold" />
-                  <Shield className="w-8 h-8 text-gold" />
+                <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20 group-hover:scale-110 transition-transform duration-500">
+                  <Shield className="w-8 h-8 text-brand" />
+                  <Shield className="w-8 h-8 text-brand" />
                 </div>
                 <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.harm_reduction.title')}</H4>
                 <Text size="sm" variant="muted" className="text-zinc-500">
@@ -205,9 +205,9 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                 </Text>
               </div>
               <div className="text-center group">
-                <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20 group-hover:scale-110 transition-transform duration-500">
-                  <BookOpen className="w-8 h-8 text-gold" />
-                  <BookOpen className="w-8 h-8 text-gold" />
+                <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20 group-hover:scale-110 transition-transform duration-500">
+                  <BookOpen className="w-8 h-8 text-brand" />
+                  <BookOpen className="w-8 h-8 text-brand" />
                 </div>
                 <H4 className="mb-3 text-white font-serif">{t('editorial.standards.items.updated.title')}</H4>
                 <Text size="sm" variant="muted" className="text-zinc-500">

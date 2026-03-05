@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -21,6 +21,7 @@ interface ArticleContentProps {
 
 export default function ArticleContent({ article, relatedArticles = [] }: ArticleContentProps) {
   const { t, language } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
   const [showStickyCTA, setShowStickyCTA] = useState(false);
@@ -52,14 +53,20 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       {/* Reading Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gold z-[60] origin-left"
+        className="fixed top-0 left-0 right-0 h-1 bg-brand z-[60] origin-left"
         style={{ scaleX }}
       />
 
       {/* Sticky CTA Banner */}
+      {/* [motion] */}
       <motion.div
-        initial={{ y: 100 }}
-        animate={{ y: showStickyCTA ? 0 : 100 }}
+        initial={shouldReduceMotion ? { opacity: 0 } : { y: 100, opacity: 0 }}
+        animate={
+          shouldReduceMotion
+            ? { opacity: showStickyCTA ? 1 : 0 }
+            : { y: showStickyCTA ? 0 : 100, opacity: showStickyCTA ? 1 : 0 }
+        }
+        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
         className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-bg-base/90 backdrop-blur-md border-t border-white/10"
       >
         <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -67,7 +74,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
           <p className="text-white font-bold sm:hidden">{t('article.sticky_cta.mobile')}</p>
           <div className="flex items-center gap-3">
             <Link href={`/${language}/clubs`}>
-              <Button className="bg-brand hover:bg-brand-dark text-black font-bold rounded-full">
+              <Button className="bg-brand hover:bg-brand-dark text-bg-base font-bold rounded-full">
                 {t('article.sticky_cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
@@ -103,12 +110,12 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
             priority
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/40 to-transparent" />
         
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-20">
           <div className="max-w-4xl mx-auto">
             <div className="flex gap-2 mb-8">
-              <TrustBadge type="legal" size="sm" className="bg-gold/10 border-gold/20 text-gold" />
+              <TrustBadge type="legal" size="sm" className="bg-brand/10 border-brand/20 text-brand" />
               <Badge variant="secondary" className="bg-white/10 text-white border-white/20 uppercase tracking-widest text-[10px] font-bold">
                 {article.category}
               </Badge>
@@ -118,11 +125,11 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
             </h1>
             <div className="flex items-center gap-8 text-zinc-400 font-bold text-[10px] uppercase tracking-widest">
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-gold" />
+                <Clock className="h-4 w-4 text-brand" />
                 <span>{article.readTime} {t('article.min_read')}</span>
               </div>
               <div className="hidden sm:flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gold" />
+                <Calendar className="h-4 w-4 text-brand" />
                 <span>{t('article.verified')} {new Date(article.publishedAt || '').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
               </div>
             </div>
@@ -143,12 +150,19 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                 date={new Date(article.publishedAt || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
               />
 
-              {/* Regulatory Box */}
-              <div className="mb-12 p-8 bg-gold/5 rounded-3xl border border-gold/20 relative overflow-hidden">
+              {/* [motion] */}
+              <motion.div
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+                whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
+              >
+                {/* Regulatory Box */}
+                <div className="mb-12 p-8 bg-brand/5 rounded-3xl border border-brand/20 relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-5">
-                  <Shield className="h-24 w-24 text-gold" />
+                  <Shield className="h-24 w-24 text-brand" />
                 </div>
-                <div className="flex items-center gap-2 text-gold font-bold text-[10px] uppercase tracking-widest mb-4">
+                <div className="flex items-center gap-2 text-brand font-bold text-[10px] uppercase tracking-widest mb-4">
                   <Info className="h-4 w-4" />
                   {t('article.compliance_summary')}
                 </div>
@@ -156,6 +170,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                   {article.excerpt}
                 </p>
               </div>
+              </motion.div>
 
               {/* Content Render */}
               <div className="prose prose-invert prose-gold max-w-none">
@@ -187,7 +202,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                 <EligibilityFlow />
                 <div className="mt-6 flex justify-center">
                   <Link href={`/${language}/safety`}>
-                    <Button className="rounded-full bg-brand hover:bg-brand-dark text-black font-bold uppercase tracking-widest text-[10px] px-8 py-6">
+                    <Button className="rounded-full bg-brand hover:bg-brand-dark text-bg-base font-bold uppercase tracking-widest text-[10px] px-8 py-6">
                       {t('article.open_safety_guide')} <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -202,20 +217,20 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                 </h4>
                 <ul className="space-y-5 text-[13px] font-medium text-zinc-400">
                   <li className="flex items-start gap-3">
-                    <div className="h-1.5 w-1.5 bg-gold rounded-full mt-1.5 shrink-0" />
+                    <div className="h-1.5 w-1.5 bg-brand rounded-full mt-1.5 shrink-0" />
                     {t('article.vetting_items.license')}
                   </li>
                   <li className="flex items-start gap-3">
-                    <div className="h-1.5 w-1.5 bg-gold rounded-full mt-1.5 shrink-0" />
+                    <div className="h-1.5 w-1.5 bg-brand rounded-full mt-1.5 shrink-0" />
                     {t('article.vetting_items.audit')}
                   </li>
                   <li className="flex items-start gap-3">
-                    <div className="h-1.5 w-1.5 bg-gold rounded-full mt-1.5 shrink-0" />
+                    <div className="h-1.5 w-1.5 bg-brand rounded-full mt-1.5 shrink-0" />
                     {t('article.vetting_items.house_rules')}
                   </li>
                 </ul>
                 <Link href={`/${language}/mission`}>
-                  <Button variant="link" className="mt-10 p-0 text-gold font-bold text-[10px] uppercase tracking-widest hover:text-gold-dark transition-colors">
+                  <Button variant="link" className="mt-10 p-0 text-brand font-bold text-[10px] uppercase tracking-widest hover:text-brand-dark transition-colors">
                     {t('article.learn_about_vetting')} <ExternalLink className="h-3 w-3 ml-2" />
                   </Button>
                 </Link>
@@ -227,11 +242,41 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         {/* Related Articles */}
         {relatedArticles.length > 0 && (
           <div className="mt-32 pt-20 border-t border-white/5">
-            <h2 className="text-3xl font-black text-white mb-12 tracking-tight uppercase font-serif">{t('blog.related_articles')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* [motion] */}
+            <motion.h2
+              className="text-3xl font-black text-white mb-12 tracking-tight uppercase font-serif"
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -8 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+            >
+              {t('blog.related_articles')}
+            </motion.h2>
+            {/* [motion] */}
+            <motion.div
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
               {relatedArticles.map((related) => (
-                <Link key={related.id} href={`/${language}/editorial/${related.slug}`}>
-                  <article className="group cursor-pointer relative">
+                <motion.div
+                  key={related.id}
+                  variants={{
+                    hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+                  }}
+                  whileHover={
+                    shouldReduceMotion
+                      ? undefined
+                      : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+                  }
+                  transition={{ duration: 0.2 }}
+                  style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
+                >
+                  <Link href={`/${language}/editorial/${related.slug}`}>
+                    <article className="group cursor-pointer relative">
                     <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-bg-surface border border-white/10 group-hover:border-brand/50 transition-all duration-500">
                       {related.heroImage && (
                         <Image
@@ -241,26 +286,27 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                           className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-80"
                         />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/20 to-transparent" />
                     </div>
                     <Badge variant="outline" className="mb-4 bg-white/5 text-zinc-400 text-[10px] font-bold uppercase border-white/10">
                       {related.category}
                     </Badge>
-                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gold transition-colors font-serif">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-brand transition-colors font-serif">
                       {related.title}
                     </h3>
                     <p className="text-zinc-400 text-sm line-clamp-2 leading-relaxed mb-6">
                       {related.excerpt}
                     </p>
                     
-                    <div className="flex items-center gap-2 text-gold font-bold text-xs opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                    <div className="flex items-center gap-2 text-brand font-bold text-xs opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                       <span>Read More</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
-                  </article>
-                </Link>
+                    </article>
+                  </Link>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         )}
       </div>

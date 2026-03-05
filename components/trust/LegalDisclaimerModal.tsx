@@ -1,13 +1,14 @@
 'use client';
 
 import { useCallback, useId, useState, useSyncExternalStore } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, AlertOctagon, Check, X } from '@/lib/icons';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { Shield, AlertOctagon, X } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export default function LegalDisclaimerModal() {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const subscribeToConsent = useCallback((onStoreChange: () => void) => {
     const onConsentUpdate = () => {
       onStoreChange();
@@ -51,11 +52,15 @@ export default function LegalDisclaimerModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
           className="fixed inset-0 z-[9999] bg-background/95 backdrop-blur-xl flex items-center justify-center p-4"
         >
+          {/* [motion] */}
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { scale: 0.95, opacity: 0 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { scale: 1, opacity: 1 }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0.95, opacity: 0 }}
+            transition={{ duration: 0.24, ease: [0.25, 0.1, 0.25, 1] }}
             className="w-full max-w-md bg-card border border-border/50 shadow-2xl rounded-2xl overflow-hidden relative"
           >
             {/* Warning Stripe */}
@@ -101,12 +106,21 @@ export default function LegalDisclaimerModal() {
                   className="h-12 bg-primary hover:bg-primary/90 text-primary-foreground transition-all relative overflow-hidden"
                 >
                   {hasAgreed ? (
+                    // [motion]
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="absolute inset-0 flex items-center justify-center bg-emerald-600"
                     >
-                      <Check className="mr-2 h-5 w-5" />
+                      {/* [motion] */}
+                      <motion.svg viewBox="0 0 24 24" className="mr-2 h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <motion.path
+                          d="M20 6L9 17l-5-5"
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+                        />
+                      </motion.svg>
                       {t('trust.legal_modal.verified')}
                     </motion.div>
                   ) : (

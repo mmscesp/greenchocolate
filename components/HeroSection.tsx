@@ -339,7 +339,7 @@ export default function HeroSection() {
                     {t('hero.section.body')}
                   </p>
                   <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                    <Button asChild size="lg" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full bg-gold text-black hover:bg-gold-dark hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_hsl(var(--gold)/0.3)]">
+                  <Button asChild size="lg" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full bg-brand text-bg-base hover:bg-brand-dark hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_hsl(var(--brand)/0.3)]">
                       <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
                     </Button>
                     <Button asChild size="lg" variant="outline" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full border-white/20 text-white bg-white/5 hover:bg-white/15 hover:border-white/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
@@ -356,7 +356,7 @@ export default function HeroSection() {
                 <div className="relative z-30 flex items-center gap-3 px-6 py-2.5">
                   <span className="text-xs text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                  <span className="text-sm font-bold text-gold-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                  <span className="text-sm font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
                 </div>
               </div>
             </div>
@@ -386,10 +386,10 @@ export default function HeroSection() {
               <span className="text-balance leading-[1.1]">{t('hero.section.headline.line_1')}</span>
               <span className="text-white/90 text-balance leading-[1.1]">{t('hero.section.headline.line_2')}</span>
               
-              <span className="text-gold text-balance leading-[1.1] relative inline-block">
+              <span className="text-brand text-balance leading-[1.1] relative inline-block">
                 <span className="relative z-10">{t('hero.section.headline.line_3')}</span>
                 <svg 
-                  className="absolute -bottom-2 md:-bottom-4 left-0 w-full h-[12px] text-gold opacity-80 overflow-visible"
+                  className="absolute -bottom-2 md:-bottom-4 left-0 w-full h-[12px] text-brand opacity-80 overflow-visible"
                   viewBox="0 0 300 20"
                   preserveAspectRatio="none"
                 >
@@ -420,7 +420,7 @@ export default function HeroSection() {
               <div className="relative z-30 w-full flex flex-col items-center gap-6">
                 <p className="text-[15px] text-white/95 font-medium leading-relaxed text-center text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.body')}</p>
                 <div className="w-full flex flex-col gap-3">
-                  <Button asChild size="lg" className="w-full py-6 text-base font-bold rounded-full bg-gold text-black hover:bg-gold-dark active:scale-[0.98] transition-all shadow-[0_4px_20px_hsl(var(--gold)/0.25)]">
+                  <Button asChild size="lg" className="w-full py-6 text-base font-bold rounded-full bg-brand text-bg-base hover:bg-brand-dark active:scale-[0.98] transition-all shadow-[0_4px_20px_hsl(var(--brand)/0.25)]">
                     <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="w-full py-6 text-base font-bold rounded-full border border-white/20 text-white bg-white/5 active:bg-white/10 active:scale-[0.98] transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
@@ -437,7 +437,7 @@ export default function HeroSection() {
               <div className="relative z-30 flex items-center gap-2.5 px-5 py-2">
                 <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
                 <span className="w-1 h-1 rounded-full bg-white/20" />
-                <span className="text-[13px] font-bold text-gold-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
               </div>
             </div>
           </div>
@@ -447,7 +447,7 @@ export default function HeroSection() {
       {!overlayDismissed && (
         <div className={`fixed inset-0 z-[100] flex items-center justify-center bg-bg-base transition-opacity duration-1000 ${overlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} aria-live="polite">
           <div className="flex flex-col items-center gap-5">
-            <div className={`w-16 h-16 md:w-20 md:h-20 border-[3px] border-gold border-t-transparent rounded-full ${prefersReducedMotion ? '' : 'animate-spin'}`} />
+            <div className={`w-16 h-16 md:w-20 md:h-20 border-[3px] border-brand border-t-transparent rounded-full ${prefersReducedMotion ? '' : 'animate-spin'}`} />
             <p className="text-white/60 text-sm tracking-widest uppercase">{t('hero.section.loading')}</p>
           </div>
         </div>

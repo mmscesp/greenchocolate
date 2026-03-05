@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import MainNavigation, { desktopExploreItems, desktopPrimaryItems } from './MainNavigation';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -14,6 +14,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 
 export default function Navbar() {
   const { t, language } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -76,7 +77,11 @@ export default function Navbar() {
           y: isScrolled ? pillOffsetY : 0,
           width: isScrolled ? 'min(95%, 1100px)' : '100%',
         }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        transition={
+          shouldReduceMotion
+            ? { duration: 0.2 }
+            : { type: 'spring', stiffness: 300, damping: 30 }
+        }
         className={cn(
           'fixed inset-x-0 mx-auto top-0 z-50 transition-all duration-500',
           isScrolled
@@ -116,15 +121,25 @@ export default function Navbar() {
           {/* Desktop Actions Section */}
           <div className={cn('hidden md:flex items-center gap-3')}>
             <Link href={withLocale('/safety-kit')}>
-              <button className="px-5 py-2 text-sm font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm">
+              {/* [motion] */}
+              <motion.button
+                whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+                transition={{ duration: 0.2 }}
+                className="px-5 py-2 text-sm font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
+              >
                 Get the Safety Kit
-              </button>
+              </motion.button>
             </Link>
           </div>
 
           {/* Mobile Actions Section */}
           <div className="flex md:hidden items-center gap-1">
-            <button
+            {/* [motion] */}
+            <motion.button
+              whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               aria-expanded={mobileMenuOpen}
@@ -135,17 +150,19 @@ export default function Navbar() {
               )}
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+            </motion.button>
           </div>
         </div>
       </motion.nav>
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
+          // [motion]
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             id="mobile-site-menu"
             className="fixed inset-x-0 top-0 h-[100dvh] z-40 md:hidden glass-liquid pt-20 px-6 pb-[env(safe-area-inset-bottom,24px)] flex flex-col gap-4 overflow-y-auto overscroll-contain"
           >
@@ -189,9 +206,15 @@ export default function Navbar() {
 
             <div className="mt-auto pb-8 flex flex-col gap-6 border-t border-white/10 pt-6 shrink-0">
               <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="w-full">
-                <button className="w-full py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm">
+                {/* [motion] */}
+                <motion.button
+                  whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+                  whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-full py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
+                >
                   Get the Safety Kit
-                </button>
+                </motion.button>
               </Link>
             </div>
           </motion.div>

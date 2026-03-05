@@ -112,7 +112,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
 
           <div className="space-y-6">
             {[1, 2, 3, 4, 5].map((num) => (
-              <div key={num} className="relative p-8 sm:p-10 rounded-3xl border border-white/10 bg-gradient-to-br from-bg-card/90 to-bg-base backdrop-blur-md hover:border-gold/50 transition-all duration-300 group overflow-hidden">
+              <div key={num} className="relative p-8 sm:p-10 rounded-3xl border border-white/10 bg-gradient-to-br from-bg-card/90 to-bg-base backdrop-blur-md hover:border-brand/50 transition-all duration-300 group overflow-hidden">
                 {/* Large Background Number for premium feel */}
                 <div className="absolute -top-6 -right-6 text-[120px] font-serif font-bold text-white/[0.03] group-hover:text-brand/[0.05] transition-colors pointer-events-none select-none leading-none">
                   0{num}

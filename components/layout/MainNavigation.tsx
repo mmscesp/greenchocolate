@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/hooks/useLanguage';
 import {
@@ -82,7 +84,13 @@ interface MainNavigationProps {
 
 export default function MainNavigation({ tone = 'light' }: MainNavigationProps) {
   const { t, language } = useLanguage();
+  const pathname = usePathname();
+  const shouldReduceMotion = useReducedMotion();
   const withLocale = (path: string) => `/${language}${path}`;
+  const isActiveRoute = (path: string) => {
+    const localized = withLocale(path);
+    return pathname === localized || pathname.startsWith(`${localized}/`);
+  };
   const triggerClassName = tone === 'light'
     ? 'bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5 text-white hover:text-white transition-colors'
     : 'bg-transparent hover:bg-black/5 data-[state=open]:bg-black/5 text-slate-800 hover:text-slate-900 transition-colors';
@@ -92,7 +100,22 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
       <NavigationMenuList>
         {desktopPrimaryItems.map(({ href, labelKey, Icon }) => (
           <NavigationMenuItem key={href}>
-            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), triggerClassName)}>
+            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), triggerClassName, 'relative')}> 
+              {/* [motion] */}
+              {isActiveRoute(href) ? (
+                <motion.span
+                  layoutId="main-nav-active"
+                  className={cn(
+                    'absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full',
+                    tone === 'light' ? 'bg-white/90' : 'bg-slate-900/80'
+                  )}
+                  transition={
+                    shouldReduceMotion
+                      ? { duration: 0.15 }
+                      : { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }
+                  }
+                />
+              ) : null}
               {Icon ? (
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4" />
@@ -153,7 +176,22 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
 
         {desktopTrailingItems.map(({ href, labelKey, Icon }) => (
           <NavigationMenuItem key={href}>
-            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), triggerClassName)}>
+            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), triggerClassName, 'relative')}>
+              {/* [motion] */}
+              {isActiveRoute(href) ? (
+                <motion.span
+                  layoutId="main-nav-active"
+                  className={cn(
+                    'absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full',
+                    tone === 'light' ? 'bg-white/90' : 'bg-slate-900/80'
+                  )}
+                  transition={
+                    shouldReduceMotion
+                      ? { duration: 0.15 }
+                      : { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }
+                  }
+                />
+              ) : null}
               {Icon ? (
                 <span className="inline-flex items-center gap-2">
                   <Icon className="h-4 w-4" />

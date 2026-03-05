@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { motion, useReducedMotion } from 'framer-motion';
 
 import { cn } from "@/lib/utils"
 
@@ -23,7 +24,7 @@ const buttonVariants = cva(
         
         // Accent: Premium highlights, CTAs, verified actions
         accent: 
-          "bg-gold text-neutral-900 hover:bg-gold-dark font-semibold shadow-sm hover:shadow",
+          "bg-brand text-bg-base hover:bg-brand-dark font-semibold shadow-sm hover:shadow",
         
         // Destructive: Danger actions
         destructive: 
@@ -61,13 +62,28 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const shouldReduceMotion = useReducedMotion();
+
+    // [motion]
+    const interactionProps = shouldReduceMotion
+      ? {}
+      : {
+          whileHover: variant === 'primary' || variant === 'default' || variant === 'accent' ? { scale: 1.02 } : undefined,
+          whileTap: variant === 'primary' || variant === 'default' || variant === 'accent' ? { scale: 0.97 } : undefined,
+          transition: { duration: 0.2 },
+        };
+
     const Comp = asChild ? Slot : "button"
+
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
+      // [motion]
+      <motion.span className="inline-flex" {...interactionProps}>
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        />
+      </motion.span>
     )
   }
 )

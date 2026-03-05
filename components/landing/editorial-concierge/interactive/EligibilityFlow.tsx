@@ -66,7 +66,7 @@ export function EligibilityFlow() {
                   key={i}
                   className={`
                     h-1 rounded-full transition-all duration-500
-                    ${i === step ? 'w-8 bg-gold' : i < step ? 'w-2 bg-gold/60' : 'w-2 bg-muted'}
+                    ${i === step ? 'w-8 bg-brand' : i < step ? 'w-2 bg-brand/60' : 'w-2 bg-muted'}
                   `}
                 />
               ))}
@@ -74,7 +74,7 @@ export function EligibilityFlow() {
 
             {/* Step number */}
             <div className="w-14 h-14 rounded-2xl bg-bg-surface border border-border flex items-center justify-center mx-auto mb-6">
-              <span className="font-serif text-gold text-lg font-bold">{step + 1}</span>
+              <span className="font-serif text-brand text-lg font-bold">{step + 1}</span>
             </div>
             
             {/* Question - HIGHER CONTRAST */}
@@ -93,10 +93,10 @@ export function EligibilityFlow() {
                 onClick={() => handleAnswer(true)}
                 className="
                   flex-1 min-h-11 py-4 sm:py-5 px-4 
-                  bg-gold hover:bg-gold-dark 
-                  shadow-lg shadow-gold/20
-                  border border-gold/30
-                  text-black font-bold rounded-2xl 
+                  bg-brand hover:bg-brand-dark 
+                  shadow-lg shadow-brand/20
+                  border border-brand/30
+                  text-bg-base font-bold rounded-2xl 
                   transition-all duration-200
                   flex items-center justify-center gap-2 
                   uppercase tracking-wide text-sm
@@ -128,8 +128,8 @@ export function EligibilityFlow() {
             transition={{ ...PREMIUM_SPRING, delay: 0.1 }}
             className="text-center w-full max-w-xs mx-auto"
           >
-            <div className="w-20 h-20 bg-gold/15 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/30">
-              <ShieldCheck className="w-10 h-10 text-gold" />
+            <div className="w-20 h-20 bg-brand/15 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/30">
+              <ShieldCheck className="w-10 h-10 text-brand" />
             </div>
             
             <EditorialHeading size="md" className="text-white mb-3">
@@ -140,9 +140,9 @@ export function EligibilityFlow() {
               {t('landing.eligibility.complete_description')}
             </p>
             
-            <div className="p-4 bg-gold/10 border border-gold/30 rounded-xl mb-6">
+            <div className="p-4 bg-brand/10 border border-brand/30 rounded-xl mb-6">
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-4 h-4 text-gold mt-0.5 flex-shrink-0" />
+                <AlertCircle className="w-4 h-4 text-brand mt-0.5 flex-shrink-0" />
                 <p className="text-zinc-300 text-xs text-left">
                   {t('landing.eligibility.warning')}
                 </p>

@@ -20,7 +20,7 @@ const badgeVariants = cva(
         verified:
           "border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200",
         premium:
-          "border-transparent bg-gradient-to-r from-gold to-gold-dark text-black hover:from-gold-light hover:to-gold",
+          "border-transparent bg-gradient-to-r from-brand to-brand-dark text-bg-base hover:from-brand-light hover:to-brand",
         cannabis:
           "border-transparent bg-green-100 text-green-800 hover:bg-green-200",
       },

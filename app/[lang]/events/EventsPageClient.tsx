@@ -110,7 +110,7 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
   if (isLoading) {
     return (
       <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/20 via-bg-base to-bg-base pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10 pt-24 md:pt-32">
           <div className="animate-pulse">
             <div className="h-64 bg-bg-card/70 rounded-3xl mb-12 border border-white/5" />
@@ -128,11 +128,11 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
       {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-black to-black pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/20 via-bg-base to-bg-base pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-gold/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
+        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-brand/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-brand/5 blur-[120px]" />
+        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-brand/5 blur-[120px]" />
       </div>
 
       <div className="relative z-10">
@@ -145,13 +145,13 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-gold">
+              <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-brand">
                 <Calendar className="w-4 h-4" />
                 {t('events.badge')}
               </Eyebrow>
               
               <H1 size="xl" className="mb-6 text-white font-serif tracking-tight">
-                {t('events.title_prefix')} <span className="text-gold">{t('events.title_highlight')}</span>
+                {t('events.title_prefix')} <span className="text-brand">{t('events.title_highlight')}</span>
               </H1>
               
               <Lead className="mb-8 text-zinc-400">
@@ -181,10 +181,10 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                     href={`/${lang}/events/${event.slug}`}
                     className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 md:p-8 hover:border-brand/50 transition-all duration-500 h-full flex flex-col"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="relative flex flex-col h-full">
                       <div className="flex items-center justify-between mb-6">
-                        <div className={`inline-flex p-3 rounded-xl bg-gold/10 text-gold border border-gold/20 transition-transform duration-500 group-hover:scale-110`}>
+                        <div className={`inline-flex p-3 rounded-xl bg-brand/10 text-brand border border-brand/20 transition-transform duration-500 group-hover:scale-110`}>
                           <Calendar className="w-6 h-6" />
                         </div>
                         <div className="flex flex-wrap gap-2 justify-end">
@@ -194,14 +194,14 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                             </Badge>
                           )}
                           {event.clubName && (
-                            <Badge className="bg-gold text-black border-none font-bold uppercase tracking-widest text-[10px]">
+                            <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
                               {event.clubName}
                             </Badge>
                           )}
                         </div>
                       </div>
                       
-                      <H3 className="mb-3 text-white group-hover:text-gold transition-colors font-serif">
+                      <H3 className="mb-3 text-white group-hover:text-brand transition-colors font-serif">
                         {event.name}
                       </H3>
                       
@@ -211,11 +211,11 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                       
                       <div className="space-y-2 mb-8 text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-auto">
                         <div className="flex items-center gap-2">
-                          <Clock className="h-3.5 w-3.5 text-gold" />
+                          <Clock className="h-3.5 w-3.5 text-brand" />
                           <span>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <MapPin className="h-3.5 w-3.5 text-gold" />
+                          <MapPin className="h-3.5 w-3.5 text-brand" />
                           <span>{event.location}</span>
                         </div>
                       </div>
@@ -224,7 +224,7 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                         <Text size="sm" variant="muted" className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
                           {t('events.view_details')}
                         </Text>
-                        <div className="flex items-center gap-2 text-gold font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                        <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                           <span>Explore</span>
                           <ArrowRight className="w-4 h-4" />
                         </div>
@@ -234,9 +234,9 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                 </motion.div>
               )) : (
                 <div className="col-span-full rounded-2xl border border-dashed border-white/10 p-12 text-center bg-bg-card/30">
-                  <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/20">
-                    <Calendar className="h-8 w-8 text-gold" />
-                    <Calendar className="h-8 w-8 text-gold" />
+                  <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20">
+                    <Calendar className="h-8 w-8 text-brand" />
+                    <Calendar className="h-8 w-8 text-brand" />
                   </div>
                   <Text variant="muted">{t('events.empty')}</Text>
                 </div>

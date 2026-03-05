@@ -139,9 +139,9 @@ export default function ReviewsPage() {
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.total')}</p>
               <p className="text-3xl font-serif text-white">{reviews.length}</p>
             </div>
-            <div className="bg-gold/10 p-3 rounded-full border border-gold/20">
-              <MessageCircle className="h-6 w-6 text-gold" />
-              <MessageCircle className="h-6 w-6 text-gold" />
+            <div className="bg-brand/10 p-3 rounded-full border border-brand/20">
+              <MessageCircle className="h-6 w-6 text-brand" />
+              <MessageCircle className="h-6 w-6 text-brand" />
             </div>
           </CardContent>
         </Card>
@@ -153,7 +153,7 @@ export default function ReviewsPage() {
               <p className="text-3xl font-serif text-white">{averageRating.toFixed(1)}</p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
-              <Star className="h-6 w-6 text-gold" />
+              <Star className="h-6 w-6 text-brand" />
             </div>
           </CardContent>
         </Card>

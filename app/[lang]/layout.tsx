@@ -4,6 +4,7 @@ import { LanguageProvider } from '@/hooks/useLanguage';
 import { notFound } from 'next/navigation';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import MotionProvider from '@/components/MotionProvider';
+import RouteTransition from '@/components/motion/RouteTransition';
 import ScrollRestoration from '@/components/ScrollRestoration';
 import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/layout/Navbar';
@@ -43,7 +44,7 @@ export default async function LocaleLayout({
               <Navbar />
               <PlatformBackground />
               <main className="flex-1">
-                {children}
+                <RouteTransition>{children}</RouteTransition>
               </main>
               <ConditionalFooter />
             </div>

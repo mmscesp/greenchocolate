@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import ClubCard from '@/components/ClubCard';
 import FilterBar from '@/components/FilterBar';
@@ -34,6 +34,7 @@ export default function ClubsPageClient({
   vibes 
 }: ClubsPageClientProps) {
   const { t, language } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [clubs, setClubs] = useState<ClubCardType[]>(initialClubs);
   const [loading, setLoading] = useState(false);
@@ -67,7 +68,7 @@ export default function ClubsPageClient({
   }, []);
 
   return (
-    <div className="min-h-screen bg-bg-base font-sans selection:bg-gold/30 selection:text-white">
+    <div className="min-h-screen bg-bg-base font-sans selection:bg-brand/30 selection:text-white">
       {/* JSON-LD Structured Data */}
       <CollectionPageStructuredData
         schema={{
@@ -82,7 +83,7 @@ export default function ClubsPageClient({
       <SectionWrapper dark className="pt-24 pb-16 sm:pt-32 sm:pb-20 relative overflow-hidden bg-bg-base backdrop-blur-none">
         {/* Background Gradients */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-gold/5 rounded-full blur-[100px] sm:blur-[140px] -translate-y-1/2 animate-pulse" />
+          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-brand/5 rounded-full blur-[100px] sm:blur-[140px] -translate-y-1/2 animate-pulse" />
           <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-white/[0.02] rounded-full blur-[80px] sm:blur-[120px] translate-y-1/2" />
         </div>
 
@@ -95,9 +96,9 @@ export default function ClubsPageClient({
           >
             {/* Eyebrow */}
             <motion.div variants={FADE_UP} className="flex justify-center mb-6 sm:mb-10">
-              <div className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-6 sm:py-2.5 bg-gold/10 border border-gold/20 rounded-full backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-6 sm:py-2.5 bg-brand/10 border border-brand/20 rounded-full backdrop-blur-md">
                 <PulsingStatusDot />
-                <ConciergeLabel size="xs" className="text-gold tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">
+                <ConciergeLabel size="xs" className="text-brand tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">
                   {t('clubs.verified_directory')}
                 </ConciergeLabel>
               </div>
@@ -106,7 +107,7 @@ export default function ClubsPageClient({
             {/* Main Title */}
             <motion.div variants={FADE_UP}>
               <EditorialHeading as="h1" size="hero" className="text-white mb-6 sm:mb-10">
-                {t('clubs.hero.title_prefix')} <span className="text-gold italic font-serif">{t('clubs.hero.title_highlight')}</span> {t('clubs.hero.title_suffix')}
+                {t('clubs.hero.title_prefix')} <span className="text-brand italic font-serif">{t('clubs.hero.title_highlight')}</span> {t('clubs.hero.title_suffix')}
               </EditorialHeading>
             </motion.div>
 
@@ -137,20 +138,21 @@ export default function ClubsPageClient({
 
           {/* Concierge Tip Banner */}
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             className="mb-12 sm:mb-20 glass-liquid rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10 relative overflow-hidden group"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-gold/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+            <div className="absolute inset-0 bg-gradient-to-r from-brand/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
             <div className="flex items-center gap-6 sm:gap-10 relative z-10">
-              <div className="hidden md:flex w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] bg-gold/10 items-center justify-center border border-gold/20 text-gold transform rotate-6 group-hover:rotate-0 transition-all duration-700 shadow-2xl shadow-gold/10">
+              <div className="hidden md:flex w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] bg-brand/10 items-center justify-center border border-brand/20 text-brand transform rotate-6 group-hover:rotate-0 transition-all duration-700 shadow-2xl shadow-brand/10">
                 <ShieldCheck className="h-8 w-8 sm:h-10 sm:w-10" />
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-2 sm:mb-4">
-                  <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-gold animate-pulse shadow-[0_0_10px_hsl(var(--gold))]" />
-                  <ConciergeLabel size="xs" className="text-gold tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
+                  <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-brand animate-pulse shadow-[0_0_10px_hsl(var(--brand))]" />
+                  <ConciergeLabel size="xs" className="text-brand tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
                 </div>
                 <p className="text-zinc-200 text-base sm:text-xl leading-relaxed font-serif italic max-w-2xl">
                   "{t('clubs.sidebar.concierge_quote')}"
@@ -191,10 +193,12 @@ export default function ClubsPageClient({
             
             <AnimatePresence>
               {loading && (
+                // [motion]
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
+                  initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
+                  animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                   className="flex items-center justify-center gap-3 sm:gap-4 text-brand bg-brand/10 px-6 py-3 sm:px-8 sm:py-4 rounded-full border border-brand/20 shadow-2xl shadow-brand/5 w-full sm:w-auto"
                 >
                   <Zap className="h-4 w-4 sm:h-5 sm:w-5 animate-pulse fill-current" />
@@ -221,19 +225,31 @@ export default function ClubsPageClient({
                   ))}
                 </div>
               ) : clubs.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                // [motion]
+                <motion.div
+                  variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+                >
                   {clubs.map((club, index) => (
+                    // [motion]
                     <motion.div
                       key={club.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: (index % 3) * 0.05, duration: 0.5, ease: PREMIUM_SPRING.ease }}
+                      variants={{
+                        hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
+                        show: {
+                          opacity: 1,
+                          y: 0,
+                          transition: { duration: 0.45, ease: 'easeOut', delay: (index % 3) * 0.02 },
+                        },
+                      }}
                     >
                       <ClubCard club={club} />
                     </motion.div>
                   ))}
-                </div>
+                </motion.div>
               ) : (
                 <div className="bg-bg-base rounded-[2rem] sm:rounded-[3rem] border border-white/5 p-8 sm:p-20 text-center max-w-4xl mx-auto">
                   <div className="w-16 h-16 sm:w-24 sm:h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 border border-white/5">

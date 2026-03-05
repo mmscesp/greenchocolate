@@ -102,12 +102,12 @@ export default function SafetyPage({ params }: SafetyPageProps) {
 
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 via-black to-zinc-900/50 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/50 via-bg-base to-bg-surface/50 pointer-events-none" />
       {/* Background Effects - subtle */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-gold/5 to-transparent" />
-        <div className="absolute top-[30%] right-[10%] h-[320px] w-[320px] rounded-full bg-gold/5 blur-[100px]" />
-        <div className="absolute top-[30%] right-[10%] h-[320px] w-[320px] rounded-full bg-gold/5 blur-[100px]" />
+        <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-brand/5 to-transparent" />
+        <div className="absolute top-[30%] right-[10%] h-[320px] w-[320px] rounded-full bg-brand/5 blur-[100px]" />
+        <div className="absolute top-[30%] right-[10%] h-[320px] w-[320px] rounded-full bg-brand/5 blur-[100px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-12 relative z-10">
@@ -118,22 +118,22 @@ export default function SafetyPage({ params }: SafetyPageProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent pointer-events-none" />
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 relative z-10">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gold/10 rounded-xl flex items-center justify-center border border-gold/20">
-                  <Shield className="h-6 w-6 text-gold" />
-                  <Shield className="h-6 w-6 text-gold" />
+                <div className="w-12 h-12 bg-brand/10 rounded-xl flex items-center justify-center border border-brand/20">
+                  <Shield className="h-6 w-6 text-brand" />
+                  <Shield className="h-6 w-6 text-brand" />
                 </div>
-                <Badge className="bg-gold text-black border-none font-bold uppercase tracking-widest text-[10px]">
+                <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
                   {t('safety.badge')}
                 </Badge>
               </div>
               
               <H1 className="mb-6 text-white font-serif tracking-tight">
                 {t('safety.title_prefix')}{' '}
-                <span className="text-gold">
+                <span className="text-brand">
                   {t('safety.title_highlight')}
                 </span>
               </H1>
@@ -145,7 +145,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               <div className="flex flex-wrap gap-3">
                 {[t('safety.tags.evidence_based'), t('safety.tags.updated'), t('safety.tags.expert_reviewed')].map((item) => (
                   <div key={item} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 bg-white/5 border border-white/10 px-4 py-2 rounded-full">
-                    <CheckCircle className="h-4 w-4 text-gold" />
+                    <CheckCircle className="h-4 w-4 text-brand" />
                     {item}
                   </div>
                 ))}
@@ -184,7 +184,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 className="rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 sm:p-8 hover:border-brand/50 transition-all duration-500"
               >
                 <div className="flex items-start gap-4 mb-6">
-                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center bg-gold/10 text-gold border border-gold/20`}>
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center bg-brand/10 text-brand border border-brand/20`}>
                     <category.icon className="h-7 w-7" />
                   </div>
                   <div>
@@ -198,7 +198,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
                 <ul className="space-y-4 mt-6 border-t border-white/5 pt-6">
                   {category.tips.map((tip, tipIndex) => (
                     <li key={tipIndex} className="flex items-start gap-3 text-sm text-zinc-400">
-                      <CheckCircle className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+                      <CheckCircle className="h-4 w-4 text-brand shrink-0 mt-0.5" />
                       <span>{tip}</span>
                     </li>
                   ))}
@@ -266,16 +266,16 @@ export default function SafetyPage({ params }: SafetyPageProps) {
 
         {/* CTA */}
         <motion.section 
-          className="mt-12 rounded-3xl border border-white/10 bg-gradient-to-br from-gold/10 via-zinc-900/40 to-zinc-900/40 p-8 sm:p-12 relative overflow-hidden"
+          className="mt-12 rounded-3xl border border-white/10 bg-gradient-to-br from-brand/10 via-bg-surface/40 to-bg-surface/40 p-8 sm:p-12 relative overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 relative z-10">
             <div className="flex items-start sm:items-center gap-6">
-              <div className="w-16 h-16 bg-gold/10 rounded-2xl flex items-center justify-center border border-gold/20 shrink-0">
-                <Leaf className="h-8 w-8 text-gold" />
-                <Leaf className="h-8 w-8 text-gold" />
+              <div className="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center border border-brand/20 shrink-0">
+                <Leaf className="h-8 w-8 text-brand" />
+                <Leaf className="h-8 w-8 text-brand" />
               </div>
               <div>
                 <H3 className="text-2xl font-bold text-white font-serif">{t('safety.cta.title')}</H3>
@@ -283,7 +283,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
               </div>
             </div>
             <div className="flex w-full sm:w-auto">
-              <Button asChild className="w-full sm:w-auto min-h-14 px-10 bg-gold hover:bg-gold-dark text-black font-bold rounded-full text-sm uppercase tracking-widest">
+              <Button asChild className="w-full sm:w-auto min-h-14 px-10 bg-brand hover:bg-brand-dark text-bg-base font-bold rounded-full text-sm uppercase tracking-widest">
                 <Link href={`/${lang}/clubs`}>
                   {t('safety.cta.button')} <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>

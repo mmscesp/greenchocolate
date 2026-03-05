@@ -257,7 +257,7 @@ export default function FilterBar({
                 <div className="pt-8 border-t border-white/5 space-y-4">
                   <button
                     onClick={() => updateFilter('isVerified', !filters.isVerified)}
-                    className="w-full flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/10 hover:border-gold/30 transition-all group"
+                    className="w-full flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/10 hover:border-brand/30 transition-all group"
                   >
                     <div className="flex items-center gap-4">
                       <div className={cn(

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -62,10 +62,10 @@ const buildCategories = (t: (key: string) => string) => [
     title: t('editorial.categories.legal.title'),
     description: t('editorial.categories.legal.description'),
     icon: Scale,
-    gradient: 'from-blue-500 to-indigo-500',
-    bgColor: 'bg-blue-500/10',
-    textColor: 'text-blue-400',
-    borderColor: 'border-blue-500/20',
+    gradient: 'from-brand to-brand-dark',
+    bgColor: 'bg-brand/10',
+    textColor: 'text-brand',
+    borderColor: 'border-brand/20',
     articleCount: 5,
   },
   {
@@ -73,10 +73,10 @@ const buildCategories = (t: (key: string) => string) => [
     title: t('editorial.categories.etiquette.title'),
     description: t('editorial.categories.etiquette.description'),
     icon: Heart,
-    gradient: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-500/10',
-    textColor: 'text-green-400',
-    borderColor: 'border-green-500/20',
+    gradient: 'from-brand-light to-brand',
+    bgColor: 'bg-brand/10',
+    textColor: 'text-brand-light',
+    borderColor: 'border-brand/25',
     articleCount: 4,
   },
   {
@@ -95,16 +95,17 @@ const buildCategories = (t: (key: string) => string) => [
     title: t('editorial.categories.culture.title'),
     description: t('editorial.categories.culture.description'),
     icon: History,
-    gradient: 'from-purple-500 to-violet-500',
-    bgColor: 'bg-purple-500/10',
-    textColor: 'text-purple-400',
-    borderColor: 'border-purple-500/20',
+    gradient: 'from-brand-dark to-brand',
+    bgColor: 'bg-brand/15',
+    textColor: 'text-brand-dark',
+    borderColor: 'border-brand/25',
     articleCount: 6,
   },
 ];
 
 export default function EditorialPageClient({ lang }: EditorialPageClientProps) {
   const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const featuredArticles = buildMockFeaturedArticles(t);
   const CATEGORIES = buildCategories(t);
 
@@ -112,8 +113,8 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
     <div className="min-h-screen bg-bg-base relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-brand/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-dark/5 rounded-full blur-3xl" />
       </div>
 
       {/* Hero Section */}
@@ -125,7 +126,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm border-emerald-500/20 text-zinc-400 bg-emerald-500/5">
+              <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm border-brand/20 text-zinc-300 bg-brand/10">
                 <BookOpen className="w-4 h-4 mr-2" />
                 {t('editorial.badge')}
               </Badge>
@@ -138,7 +139,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
               transition={{ duration: 0.6, delay: 0.1 }}
             >
               {t('editorial.title_prefix')}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand via-brand-light to-brand-dark">
                 {t('editorial.title_highlight')}
               </span>
             </motion.h1>
@@ -160,24 +161,40 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.h2 
             className="text-2xl md:text-3xl font-bold mb-8 text-white"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -8 }}
+            whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
           >
             {t('editorial.browse_by_topic')}
           </motion.h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {CATEGORIES.map((category, index) => (
+          {/* [motion] */}
+          <motion.div
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            {CATEGORIES.map((category) => (
               <motion.div
                 key={category.slug}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                variants={{
+                  hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
+                  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+                }}
+                whileHover={
+                  shouldReduceMotion
+                    ? undefined
+                    : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+                }
+                transition={{ duration: 0.2 }}
+                style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
               >
                 <Link
                   href={`/${lang}/editorial/${category.slug}`}
-                className="group relative overflow-hidden rounded-2xl border border-emerald-500/15 bg-emerald-500/5 backdrop-blur-sm p-6 md:p-8 hover:border-emerald-500/30 transition-all duration-500 block h-full"
+                className="group relative overflow-hidden rounded-2xl border border-brand/15 bg-brand/5 backdrop-blur-sm p-6 md:p-8 hover:border-brand/30 transition-all duration-500 block h-full"
                 >
                   {/* Glow effect */}
                   <div className={`absolute -inset-1 bg-gradient-to-r ${category.gradient} rounded-2xl blur-xl opacity-0 group-hover:opacity-10 transition-opacity duration-500 -z-10`} />
@@ -205,7 +222,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                 </Link>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -215,38 +232,54 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div 
               className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -8 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <h2 className="text-2xl md:text-3xl font-bold text-white">{t('editorial.featured_articles')}</h2>
-              <Button variant="outline" asChild className="border-emerald-500/15 text-zinc-300 hover:bg-emerald-500/10 hover:text-white rounded-xl">
+              <Button variant="outline" asChild className="border-brand/15 text-zinc-300 hover:bg-brand/10 hover:text-white rounded-xl">
                 <Link href={`/${lang}/editorial/legal`}>
                   {t('editorial.view_all')} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
             </motion.div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {featuredArticles.map((article, index) => (
+            {/* [motion] */}
+            <motion.div
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            >
+              {featuredArticles.map((article) => (
                 <motion.div
                   key={article.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.7 + index * 0.1 }}
+                  variants={{
+                    hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+                  }}
+                  whileHover={
+                    shouldReduceMotion
+                      ? undefined
+                      : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+                  }
+                  transition={{ duration: 0.2 }}
+                  style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
                 >
                   <Link
                     href={`/${lang}/editorial/${article.slug}`}
-                className="group block rounded-2xl border border-emerald-500/15 bg-emerald-500/5 backdrop-blur-sm overflow-hidden hover:border-emerald-500/30 transition-all duration-500 h-full"
+                className="group block rounded-2xl border border-brand/15 bg-brand/5 backdrop-blur-sm overflow-hidden hover:border-brand/30 transition-all duration-500 h-full"
                   >
                     <div className="aspect-video bg-bg-surface/50 relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
-                  <Badge className="absolute top-3 left-3 bg-emerald-500/10 text-zinc-300 border-emerald-500/20" variant="secondary">
+                  <Badge className="absolute top-3 left-3 bg-brand/10 text-zinc-200 border-brand/20" variant="secondary">
                         {article.category}
                       </Badge>
                     </div>
                     <div className="p-5">
-                      <h3 className="font-bold text-lg mb-2 text-white group-hover:text-blue-400 transition-colors line-clamp-2">
+                      <h3 className="font-bold text-lg mb-2 text-white group-hover:text-brand transition-colors line-clamp-2">
                         {article.title}
                       </h3>
                       <p className="text-zinc-400 text-sm line-clamp-2 mb-4">
@@ -265,7 +298,7 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                   </Link>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
@@ -275,9 +308,10 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="max-w-3xl mx-auto text-center"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+            whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <h2 className="text-2xl md:text-3xl font-bold mb-6 text-white">{t('editorial.standards.title')}</h2>
             <p className="text-zinc-400 mb-10">
@@ -285,8 +319,8 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="w-14 h-14 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-500/20">
-                  <Scale className="w-7 h-7 text-blue-400" />
+                <div className="w-14 h-14 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand/20">
+                  <Scale className="w-7 h-7 text-brand" />
                 </div>
                 <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.legal.title')}</h3>
                 <p className="text-sm text-zinc-400">
@@ -294,8 +328,8 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/20">
-                  <Shield className="w-7 h-7 text-green-400" />
+                <div className="w-14 h-14 bg-brand/15 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand/25">
+                  <Shield className="w-7 h-7 text-brand-light" />
                 </div>
                 <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.harm_reduction.title')}</h3>
                 <p className="text-sm text-zinc-400">
@@ -303,8 +337,8 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-14 h-14 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-purple-500/20">
-                  <BookOpen className="w-7 h-7 text-purple-400" />
+                <div className="w-14 h-14 bg-brand/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-brand/30">
+                  <BookOpen className="w-7 h-7 text-brand-dark" />
                 </div>
                 <h3 className="font-semibold mb-2 text-white">{t('editorial.standards.items.updated.title')}</h3>
                 <p className="text-sm text-zinc-400">

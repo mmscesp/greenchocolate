@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -23,12 +23,19 @@ interface ClubCardProps {
 
 export default function ClubCard({ club, className = '' }: ClubCardProps) {
   const { t, language } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
 
   return (
+    // [motion]
     <motion.div 
       className={cn("group relative h-full", className)}
-      whileHover={{ y: -8 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      whileHover={
+        shouldReduceMotion
+          ? undefined
+          : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
+      }
+      transition={shouldReduceMotion ? { duration: 0.2 } : { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+      style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
     >
       {/* Glow effect on hover */}
       <div className="absolute -inset-1 bg-gradient-to-r from-brand/10 to-brand-dark/10 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10" />
@@ -52,9 +59,11 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-2">
             {club.isVerified && (
+              // [motion]
               <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -10 }}
+                animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                 className="relative"
               >
                 <div className="absolute inset-0 bg-brand/15 rounded-full blur-md animate-pulse" />

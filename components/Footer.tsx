@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Locale } from '@/lib/i18n-config';
 import { Logo } from '@/components/ui/logo';
@@ -8,6 +9,7 @@ import { Instagram, Twitter, TikTok } from '@/lib/icons';
 
 export default function Footer() {
   const { language, setLanguage, t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
   const withLocale = (path: string) => `/${language}${path}`;
 
   return (
@@ -18,7 +20,14 @@ export default function Footer() {
         <div className="absolute -bottom-24 right-[5%] h-[400px] w-[400px] rounded-full bg-gold/5 blur-[120px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10">
+      {/* [motion] */}
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+        whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10"
+      >
         {/* 4 Column Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
           
@@ -29,33 +38,42 @@ export default function Footer() {
             </div>
             <p className="text-sm text-zinc-400 leading-relaxed mb-8 font-medium">{t('footer.new.description')}</p>
             <div className="flex items-center gap-4">
-              <a 
+              {/* [motion] */}
+              <motion.a
                 href="https://www.instagram.com/socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
+                whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
+                transition={{ duration: 0.2 }}
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
-              </a>
-              <a 
+              </motion.a>
+              {/* [motion] */}
+              <motion.a
                 href="https://x.com/socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
+                whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
+                transition={{ duration: 0.2 }}
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
                 aria-label="X (Twitter)"
               >
                 <Twitter className="h-4 w-4" />
-              </a>
-              <a 
+              </motion.a>
+              {/* [motion] */}
+              <motion.a
                 href="https://www.tiktok.com/@socialclubsmaps"
                 target="_blank"
                 rel="noreferrer"
+                whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
+                transition={{ duration: 0.2 }}
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
                 aria-label="TikTok"
               >
                 <TikTok className="h-4 w-4" />
-              </a>
+              </motion.a>
             </div>
           </div>
 
@@ -248,7 +266,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </footer>
   );
 }

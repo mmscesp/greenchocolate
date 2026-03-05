@@ -179,7 +179,7 @@ export default function BookingsPage() {
           </p>
         </div>
         <Link href={`/${language}/clubs`}>
-          <Button className="self-start gap-2 bg-gold text-black hover:bg-gold-dark rounded-full px-6 py-5 font-black uppercase tracking-widest text-[10px]">
+          <Button className="self-start gap-2 bg-brand text-bg-base hover:bg-brand-dark rounded-full px-6 py-5 font-black uppercase tracking-widest text-[10px]">
             <CalendarDays className="h-4 w-4" />
             {t('bookings.book_new_visit')}
           </Button>
@@ -194,9 +194,9 @@ export default function BookingsPage() {
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.total')}</p>
               <p className="text-3xl font-serif text-white">{bookings.length}</p>
             </div>
-            <div className="bg-gold/10 p-3 rounded-full border border-gold/20">
-              <Calendar className="h-6 w-6 text-gold" />
-              <Calendar className="h-6 w-6 text-gold" />
+            <div className="bg-brand/10 p-3 rounded-full border border-brand/20">
+              <Calendar className="h-6 w-6 text-brand" />
+              <Calendar className="h-6 w-6 text-brand" />
             </div>
           </CardContent>
         </Card>
