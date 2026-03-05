@@ -58,23 +58,18 @@ export function WeeklyIntelligence() {
         </motion.div>
 
         {/* [motion] */}
-        <motion.div
+        <div
           className="grid md:grid-cols-3 gap-8"
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
         >
           {intelligenceCards.map((item, i) => (
             <motion.div 
               key={i} 
-              variants={{
-                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.35, delay: i * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
               className="group relative p-8 rounded-[2rem] bg-bg-card border border-white/10 hover:border-brand/40 transition-all duration-500 overflow-hidden cursor-pointer"
               whileHover={shouldReduceMotion ? undefined : { y: -3 }}
-              transition={shouldReduceMotion ? { duration: 0.2 } : { duration: 0.2 }}
               style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
             >
               {/* Ambient Glow */}
@@ -99,7 +94,7 @@ export function WeeklyIntelligence() {
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gradient-to-r from-brand to-brand-light rounded-full group-hover:w-1/3 transition-all duration-500 z-20" />
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </SectionWrapper>
   );

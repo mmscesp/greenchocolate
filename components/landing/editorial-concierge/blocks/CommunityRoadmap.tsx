@@ -65,20 +65,16 @@ export function CommunityRoadmap() {
         </motion.div>
 
         {/* [motion] */}
-        <motion.div
+        <div
           className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
         >
-          {cities.map((city) => (
+          {cities.map((city, idx) => (
             <motion.div
               key={city.name}
-              variants={{
-                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.4, delay: idx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
               className="group relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-2xl bg-bg-surface border border-white/10"
             >
               {/* Image Layer */}
@@ -119,7 +115,7 @@ export function CommunityRoadmap() {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

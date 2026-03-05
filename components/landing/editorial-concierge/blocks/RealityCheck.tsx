@@ -5,16 +5,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-    }
-  }
-};
-
 const cardVariants = {
   hidden: { opacity: 0, y: 12 },
   visible: {
@@ -59,23 +49,17 @@ export function RealityCheck() {
         </div>
 
         {/* [motion] */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {cards.map((card, idx) => (
             <motion.div
               key={idx}
-              variants={
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={
                 shouldReduceMotion
-                  ? {
-                      hidden: { opacity: 0 },
-                      visible: { opacity: 1, transition: { duration: 0.2 } },
-                    }
-                  : cardVariants
+                  ? { duration: 0.2, delay: idx * 0.03 }
+                  : { ...cardVariants.visible.transition, delay: idx * 0.04 }
               }
               className="bg-bg-surface border border-white/10 p-6 md:p-8 rounded-2xl flex flex-col shadow-xl"
             >
@@ -90,7 +74,7 @@ export function RealityCheck() {
               </p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         {/* [motion] */}
         <motion.div

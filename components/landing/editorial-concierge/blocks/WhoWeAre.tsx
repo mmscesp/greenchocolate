@@ -5,14 +5,6 @@ import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 }
-  }
-};
-
 const cardVariants = {
   hidden: { opacity: 0, y: 12 },
   visible: {
@@ -79,13 +71,7 @@ export function WhoWeAre() {
 
         {/* The Three Pillars */}
         {/* [motion] */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
           <div className="md:col-span-3 mb-8">
             <h3 className="text-sm font-bold tracking-[0.2em] text-zinc-300 uppercase">{t('landing.who_we_are.pillars_title')}</h3>
           </div>
@@ -93,13 +79,13 @@ export function WhoWeAre() {
           {pillars.map((pillar, idx) => (
             <motion.div
               key={idx}
-              variants={
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={
                 shouldReduceMotion
-                  ? {
-                      hidden: { opacity: 0 },
-                      visible: { opacity: 1, transition: { duration: 0.2 } },
-                    }
-                  : cardVariants
+                  ? { duration: 0.2, delay: idx * 0.03 }
+                  : { ...cardVariants.visible.transition, delay: idx * 0.04 }
               }
               className="flex flex-col h-full group"
             >
@@ -122,7 +108,7 @@ export function WhoWeAre() {
               </Link>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

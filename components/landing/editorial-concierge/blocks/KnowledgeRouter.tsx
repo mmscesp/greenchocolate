@@ -62,26 +62,21 @@ export function KnowledgeRouter() {
         </motion.div>
 
         {/* [motion] */}
-        <motion.div
+        <div
           className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
         >
           {events.map((event, idx) => (
             <motion.div
               key={idx}
-              variants={{
-                hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.35, delay: idx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
               whileHover={
                 shouldReduceMotion
                   ? undefined
                   : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }
               }
-              transition={{ duration: 0.2 }}
               style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
               className="group bg-bg-card border border-white/10 hover:border-brand/50 rounded-xl p-5 md:p-6 transition-colors shadow-sm hover:shadow-md"
             >
@@ -108,7 +103,7 @@ export function KnowledgeRouter() {
               </Link>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         <div className="mt-8 text-center md:hidden">
           <Link
