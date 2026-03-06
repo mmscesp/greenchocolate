@@ -5,11 +5,44 @@ import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { usePathname } from 'next/navigation';
+import { trackEvent } from '@/lib/analytics';
+
+const SUPPORTED_LANGS = new Set(['en', 'es', 'fr', 'de', 'it', 'pl', 'ru', 'pt']);
+
+function isConstrainedDeviceRuntime(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const hardwareConcurrency = navigator.hardwareConcurrency ?? 8;
+  const nav = navigator as Navigator & {
+    deviceMemory?: number;
+    connection?: {
+      saveData?: boolean;
+    };
+  };
+  const deviceMemory = nav.deviceMemory ?? 8;
+  const saveData = Boolean(nav.connection?.saveData);
+
+  return coarsePointer || hardwareConcurrency <= 4 || deviceMemory <= 4 || saveData;
+}
+
+function getLanguageFromPath(pathname: string): string {
+  const [, maybeLang] = pathname.split('/');
+  return maybeLang && SUPPORTED_LANGS.has(maybeLang) ? maybeLang : 'unknown';
+}
+
+function isLocalizedHomePath(pathname: string): boolean {
+  const normalized = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+  const [, maybeLang, maybeRest] = normalized.split('/');
+  return Boolean(maybeLang && SUPPORTED_LANGS.has(maybeLang) && !maybeRest);
+}
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
   const tickerCallbackRef = useRef<((time: number) => void) | null>(null);
+  const initializedRef = useRef(false);
   const pathname = usePathname();
+  const initialPathnameRef = useRef(pathname);
 
   useEffect(() => {
     // Accessibility check: disable smooth scroll for users who prefer reduced motion
@@ -19,41 +52,95 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     // Register ScrollTrigger early
     gsap.registerPlugin(ScrollTrigger);
 
-    // Initialize Lenis with God-Level Physics
-    lenisRef.current = new Lenis({
-      duration: 1.2, // PERFECTLY MATCHES GSAP SCRUB (1.2)
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Apple-style heavy friction
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5, // 1.5 gives a premium, weighty feel on mobile touch
-      infinite: false,
-    });
+    const initialPathname = initialPathnameRef.current ?? window.location.pathname;
+    const isConstrainedDevice = isConstrainedDeviceRuntime();
+    const isHomePath = isLocalizedHomePath(initialPathname);
 
-    // Sync Lenis with GSAP ScrollTrigger
-    lenisRef.current.on('scroll', ScrollTrigger.update);
+    let idleId: number | null = null;
+    let timeoutId: number | null = null;
 
-    // Sync GSAP ticker with Lenis requestAnimationFrame
-    const tickerCallback = (time: number) => {
-      lenisRef.current?.raf(time * 1000);
-    };
-    tickerCallbackRef.current = tickerCallback;
-    gsap.ticker.add(tickerCallback);
-    
-    // Disable lag smoothing to prevent visual jumps on fast scrolls
-    gsap.ticker.lagSmoothing(0);
-
-    // CRITICAL FIX: Recalculate GSAP math if user resizes the window or rotates tablet
-    // Because our Hero uses absolute vh positioning, this is required.
     const handleResize = () => {
       ScrollTrigger.refresh();
     };
+
+    const clearDeferredStart = () => {
+      if (idleId !== null && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+      }
+      idleId = null;
+      timeoutId = null;
+    };
+
+    const initializeLenis = () => {
+      if (initializedRef.current) return;
+      initializedRef.current = true;
+      clearDeferredStart();
+
+      // Initialize Lenis with tuned physics. Constrained devices get lighter touch response.
+      lenisRef.current = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: isConstrainedDevice ? 1.2 : 1.5,
+        infinite: false,
+      });
+
+      // Sync Lenis with GSAP ScrollTrigger
+      lenisRef.current.on('scroll', ScrollTrigger.update);
+
+      // Sync GSAP ticker with Lenis requestAnimationFrame
+      const tickerCallback = (time: number) => {
+        lenisRef.current?.raf(time * 1000);
+      };
+      tickerCallbackRef.current = tickerCallback;
+      gsap.ticker.add(tickerCallback);
+
+      // Disable lag smoothing to prevent visual jumps on fast scrolls
+      gsap.ticker.lagSmoothing(0);
+
+      if (isHomePath) {
+        trackEvent('hero_effects_enabled', {
+          device_class: isConstrainedDevice ? 'constrained' : 'standard',
+          reduced_motion: false,
+          language: getLanguageFromPath(initialPathname),
+          pathname: initialPathname,
+        });
+      }
+    };
+
+    const handleHeroReady = () => {
+      initializeLenis();
+    };
+
+    if (isConstrainedDevice && isHomePath) {
+      window.addEventListener('scm:hero-visual-ready', handleHeroReady, { once: true });
+
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(() => initializeLenis(), { timeout: 1200 });
+      } else {
+        timeoutId = window.setTimeout(() => initializeLenis(), 1200);
+      }
+    } else {
+      initializeLenis();
+    }
+
+    // Recalculate GSAP math if user resizes the window or rotates tablet.
     window.addEventListener('resize', handleResize);
 
     return () => {
+      clearDeferredStart();
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scm:hero-visual-ready', handleHeroReady);
+
       lenisRef.current?.destroy();
+      lenisRef.current = null;
+
       if (tickerCallbackRef.current) {
         gsap.ticker.remove(tickerCallbackRef.current);
         tickerCallbackRef.current = null;
