@@ -13,6 +13,7 @@ import ExpertByline from '@/components/trust/ExpertByline';
 import TrustBadge from '@/components/trust/TrustBadge';
 import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
 import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
+import { getArticleCardImage } from '@/lib/image-fallbacks';
 
 interface ArticleContentProps {
   article: ArticleDetail;
@@ -25,6 +26,12 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
   const [showStickyCTA, setShowStickyCTA] = useState(false);
+
+  const articleHeroImage = getArticleCardImage({
+    heroImage: article.heroImage,
+    category: article.category,
+    citySlug: article.citySlug,
+  });
 
   useEffect(() => {
     let frameId = 0;
@@ -101,15 +108,13 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
 
       {/* Hero Section */}
       <div className="relative h-[450px] lg:h-[650px] overflow-hidden bg-bg-surface relative z-10">
-        {article.heroImage && (
-          <Image
-            src={article.heroImage}
-            alt={article.heroImageAlt || article.title}
-            fill
-            className="object-cover opacity-40"
-            priority
-          />
-        )}
+        <Image
+          src={articleHeroImage}
+          alt={article.heroImageAlt || article.title}
+          fill
+          className="object-cover opacity-40"
+          priority
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/40 to-transparent" />
         
         <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-20">
@@ -260,7 +265,14 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               viewport={{ once: true }}
               className="grid grid-cols-1 md:grid-cols-3 gap-8"
             >
-              {relatedArticles.map((related) => (
+              {relatedArticles.map((related) => {
+                const relatedImage = getArticleCardImage({
+                  heroImage: related.heroImage,
+                  category: related.category,
+                  citySlug: related.citySlug,
+                });
+
+                return (
                 <motion.div
                   key={related.id}
                   variants={{
@@ -278,14 +290,12 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                   <Link href={`/${language}/editorial/${related.slug}`}>
                     <article className="group cursor-pointer relative">
                     <div className="relative h-64 mb-6 rounded-2xl overflow-hidden bg-bg-surface border border-white/10 group-hover:border-brand/50 transition-all duration-500">
-                      {related.heroImage && (
-                        <Image
-                          src={related.heroImage}
-                          alt={related.title}
-                          fill
-                          className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-80"
-                        />
-                      )}
+                      <Image
+                        src={relatedImage}
+                        alt={related.title}
+                        fill
+                        className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-105 group-hover:opacity-80"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/20 to-transparent" />
                     </div>
                     <Badge variant="secondary" className="mb-4 bg-white/5 text-zinc-400 text-[10px] font-bold uppercase border-white/10">
@@ -305,7 +315,8 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                     </article>
                   </Link>
                 </motion.div>
-              ))}
+                );
+              })}
             </motion.div>
           </div>
         )}
@@ -313,3 +324,4 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
     </div>
   );
 }
+

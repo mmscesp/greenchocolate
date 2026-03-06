@@ -5,6 +5,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
+import { getClubPrimaryImage } from '@/lib/image-fallbacks';
 import { createClient } from '@/lib/supabase/server';
 import { EncryptionService } from '@/lib/encryption';
 import { Prisma } from '@prisma/client';
@@ -275,7 +276,7 @@ export async function getUserMembershipRequests() {
       clubId: req.club.id,
       clubName: req.club.name,
       clubSlug: req.club.slug,
-      clubImage: req.club.images[0] || null,
+      clubImage: getClubPrimaryImage(req.club.images),
       clubNeighborhood: req.club.neighborhood,
     }));
   } catch (error) {
@@ -594,3 +595,4 @@ export async function rejectClubMembershipRequest(
     };
   }
 }
+

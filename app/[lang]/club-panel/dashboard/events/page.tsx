@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,8 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Calendar, MapPin, Users, Edit, Trash2, Plus, Image as ImageIcon, Clock, X } from '@/lib/icons';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 import { useLanguage } from '@/hooks/useLanguage';
+import { getEventImage } from '@/lib/image-fallbacks';
 
 interface EventForm {
   title: string;
@@ -93,7 +93,7 @@ export default function EventsPage() {
         id: `${formData.title}-${formData.date}-${events.length + 1}`,
         attendees: 0, 
         ...formData,
-        image: formData.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'
+        image: getEventImage(formData.image)
       };
       setEvents([newEvent, ...events]);
       toast.success(t('club_panel.events.toast.created'));
@@ -206,7 +206,7 @@ export default function EventsPage() {
               <Card key={event.id} className="overflow-hidden group hover:shadow-lg transition-all duration-300">
                 <div className="relative aspect-video">
                   <Image
-                    src={event.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'}
+                    src={getEventImage(event.image)}
                     alt={event.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
@@ -284,7 +284,7 @@ export default function EventsPage() {
                 <Card key={event.id} className="overflow-hidden">
                   <div className="relative aspect-video grayscale">
                     <Image
-                      src={event.image || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800'}
+                      src={getEventImage(event.image)}
                       alt={event.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
@@ -447,3 +447,4 @@ export default function EventsPage() {
     </div>
   );
 }
+

@@ -21,6 +21,7 @@ List,
 Trash2,
 ExternalLink } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { getClubPrimaryImage } from '@/lib/image-fallbacks';
 
 export default function FavoritesPage() {
   const { t, language } = useLanguage();
@@ -153,7 +154,7 @@ export default function FavoritesPage() {
                 viewMode === 'list' ? "w-full md:w-64 h-48 md:h-auto" : "h-56"
               )}>
                 <Image
-                  src={club.images[0]}
+                  src={getClubPrimaryImage(club.images)}
                   alt={club.name}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -258,3 +259,4 @@ export default function FavoritesPage() {
     </div>
   );
 }
+

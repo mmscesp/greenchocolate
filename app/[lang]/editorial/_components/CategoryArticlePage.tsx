@@ -1,9 +1,11 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Clock } from '@/lib/icons';
 import { H1, H2, H3, Label, Lead, Text } from '@/components/typography';
+import { getArticleCardImage } from '@/lib/image-fallbacks';
 
 interface CategoryArticlePageProps {
   lang: string;
@@ -22,6 +24,9 @@ interface CategoryArticlePageProps {
     title: string;
     excerpt: string;
     readTime: number;
+    heroImage: string | null;
+    category: string;
+    citySlug: string | null;
   }>;
 }
 
@@ -77,37 +82,58 @@ export default function CategoryArticlePage({
             <H2 className="mb-8 text-white font-serif tracking-tight">{t(guidesTitleKey)}</H2>
 
             <div className="grid gap-4">
-              {articles.map((article, index) => (
-                <Link
-                  key={article.id}
-                  href={`/${lang}/editorial/${article.slug}`}
-                  className="group block rounded-2xl border border-white/10 bg-bg-card/70 p-6 hover:border-brand/50 hover:shadow-2xl hover:shadow-brand/5 transition-all duration-500"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        {index === 0 ? (
-                          <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
-                            {t(featuredKey)}
-                          </Badge>
-                        ) : null}
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-                          <Clock className="w-3.5 h-3.5" />
-                          {article.readTime} {t('editorial.min_read')}
+              {articles.map((article, index) => {
+                const articleImage = getArticleCardImage({
+                  heroImage: article.heroImage,
+                  category: article.category,
+                  citySlug: article.citySlug,
+                });
+
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/${lang}/editorial/${article.slug}`}
+                    className="group block rounded-2xl border border-white/10 bg-bg-card/70 hover:border-brand/50 hover:shadow-2xl hover:shadow-brand/5 transition-all duration-500 overflow-hidden"
+                  >
+                    <div className="flex flex-col md:flex-row md:items-stretch gap-0">
+                      <div className="relative h-52 md:h-auto md:w-64 shrink-0 overflow-hidden">
+                        <Image
+                          src={articleImage}
+                          alt={article.title}
+                          fill
+                          sizes="(min-width: 768px) 256px, 100vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent md:bg-gradient-to-r md:from-black/45 md:via-transparent md:to-transparent" />
+                      </div>
+
+                      <div className="p-6 flex-1 flex flex-col md:flex-row md:items-center gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-3">
+                            {index === 0 ? (
+                              <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
+                                {t(featuredKey)}
+                              </Badge>
+                            ) : null}
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+                              <Clock className="w-3.5 h-3.5" />
+                              {article.readTime} {t('editorial.min_read')}
+                            </div>
+                          </div>
+                          <H3 className="mb-2 text-white group-hover:text-brand transition-colors font-serif">{article.title}</H3>
+                          <Text variant="muted" className="text-zinc-400 line-clamp-2">
+                            {article.excerpt}
+                          </Text>
+                        </div>
+                        <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 shrink-0">
+                          <span>Read</span>
+                          <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>
-                      <H3 className="mb-2 text-white group-hover:text-brand transition-colors font-serif">{article.title}</H3>
-                      <Text variant="muted" className="text-zinc-400 line-clamp-2">
-                        {article.excerpt}
-                      </Text>
                     </div>
-                    <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 shrink-0">
-                      <span>Read</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -115,3 +141,4 @@ export default function CategoryArticlePage({
     </div>
   );
 }
+

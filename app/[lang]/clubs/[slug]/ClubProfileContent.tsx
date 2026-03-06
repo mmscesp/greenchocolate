@@ -6,25 +6,18 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import VerificationBadge from '@/components/VerificationBadge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
 import { submitMembershipApplication } from '@/app/actions/applications';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { Heading, H1, H2, H3, H4, Label, Text } from '@/components/typography';
-import { cn } from '@/lib/utils';
+import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { MapPin,
 Lock,
 Star,
-Phone,
 Mail,
 Globe,
-Instagram,
-Facebook,
 Clock,
-Users,
-Calendar,
 ChevronLeft,
 ChevronRight,
 X,
@@ -35,7 +28,7 @@ ArrowLeft,
 Sparkles,
 Shield,
 Cannabis,
-Info } from '@/lib/icons';
+} from '@/lib/icons';
 
 // Editorial Concierge Components
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
@@ -91,13 +84,14 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<{ success: boolean; message?: string; errors?: Record<string, string[]> } | null>(null);
+  const clubImages = getClubImageGallery(club.images);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % club.images.length);
+    setCurrentImageIndex((prev) => (prev + 1) % clubImages.length);
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + club.images.length) % club.images.length);
+    setCurrentImageIndex((prev) => (prev - 1 + clubImages.length) % clubImages.length);
   };
 
   const handlePreRegistrationSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -180,7 +174,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               className="absolute inset-0"
             >
               <Image
-                src={club.images[currentImageIndex]}
+                src={clubImages[currentImageIndex]}
                 alt={club.name}
                 fill
                 className="object-cover opacity-60"
@@ -238,13 +232,13 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               )}
               
               {/* Image Navigation Dots */}
-              {club.images.length > 1 && (
+              {clubImages.length > 1 && (
                 <div className="flex items-center gap-2 sm:ml-4 bg-bg-base/70 backdrop-blur-md px-3 sm:px-4 rounded-full border border-white/10">
                   <Button type="button" variant="ghost" size="icon" aria-label="Previous image" onClick={prevImage} className="text-white hover:text-brand">
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
                   <span className="text-[10px] font-bold tracking-widest text-white/80">
-                    {currentImageIndex + 1} / {club.images.length}
+                    {currentImageIndex + 1} / {clubImages.length}
                   </span>
                   <Button type="button" variant="ghost" size="icon" aria-label="Next image" onClick={nextImage} className="text-white hover:text-brand">
                     <ChevronRight className="h-5 w-5" />
@@ -451,7 +445,7 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
               {/* Modal Header */}
               <div className="relative h-40 bg-bg-surface overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-base z-10" />
-                <Image src={club.images[0]} alt="Header" fill className="object-cover opacity-40" />
+                <Image src={clubImages[0]} alt="Header" fill className="object-cover opacity-40" />
                 <div className="absolute bottom-0 left-0 p-8 z-20">
                   <ConciergeLabel className="text-brand mb-2 uppercase tracking-[0.2em] text-[9px] font-bold">{t('club_profile.membership_application')}</ConciergeLabel>
                   <h3 className="text-3xl font-serif text-white">{club.name}</h3>
@@ -546,3 +540,4 @@ export default function ClubProfileContent({ club }: ClubProfileContentProps) {
     </div>
   );
 }
+

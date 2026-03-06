@@ -13,6 +13,7 @@ import TrustBadge from './trust/TrustBadge';
 import { EditorialHeading } from './landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
 import { cn } from '@/lib/utils';
+import { getClubPrimaryImage } from '@/lib/image-fallbacks';
 
 type ClubCardEntity = ClubModel | ClubCardData;
 
@@ -24,11 +25,13 @@ interface ClubCardProps {
 export default function ClubCard({ club, className = '' }: ClubCardProps) {
   const { t, language } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
+  const clubCitySlug = 'citySlug' in club ? club.citySlug : null;
+  const primaryImage = getClubPrimaryImage(club.images, clubCitySlug);
 
   return (
     // [motion]
-    <motion.div 
-      className={cn("group relative h-full", className)}
+    <motion.div
+      className={cn('group relative h-full', className)}
       whileHover={
         shouldReduceMotion
           ? undefined
@@ -39,23 +42,23 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
     >
       {/* Glow effect on hover */}
       <div className="absolute -inset-1 bg-gradient-to-r from-brand/10 to-brand-dark/10 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10" />
-      
+
       <div className="relative bg-bg-base/80 backdrop-blur-xl rounded-3xl border border-white/5 overflow-hidden h-full flex flex-col transition-all duration-500 group-hover:border-brand/20 group-hover:bg-bg-surface">
         {/* Image Section */}
         <div className="relative h-56 sm:h-64 overflow-hidden flex-shrink-0">
           <Link href={`/${language}/clubs/${club.slug}`} aria-label={`${t('common.view')} ${club.name}`} className="relative block h-full w-full">
             <Image
-              src={club.images[0]}
+              src={primaryImage}
               alt={club.name}
               fill
               sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               className="object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
             />
           </Link>
-          
+
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-transparent to-transparent opacity-90"></div>
-          
+
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-2">
             {club.isVerified && (
@@ -93,24 +96,24 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
                 {club.name}
               </EditorialHeading>
             </Link>
-            
+
             <div className="flex items-center gap-2">
               <MapPin className="h-3 w-3 text-brand/70" />
-              <ConciergeLabel size="xs" emphasis="medium" className="text-zinc-400 font-sans tracking-widest text-[10px] sm:text-[11px]">{club.neighborhood}</ConciergeLabel>
+              <ConciergeLabel size="xs" emphasis="medium" className="text-zinc-400 font-sans tracking-widest text-[10px] sm:text-[11px]">
+                {club.neighborhood}
+              </ConciergeLabel>
             </div>
           </div>
 
           {/* Description */}
-          <p className="text-zinc-400 text-xs sm:text-sm mb-6 line-clamp-2 leading-relaxed font-serif italic opacity-80">
-            {club.description}
-          </p>
+          <p className="text-zinc-400 text-xs sm:text-sm mb-6 line-clamp-2 leading-relaxed font-serif italic opacity-80">{club.description}</p>
 
           {/* Vibe Tags */}
           <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
             {club.vibeTags.slice(0, 3).map((vibe, index) => (
-              <Badge 
-                key={index} 
-                variant="secondary" 
+              <Badge
+                key={index}
+                variant="secondary"
                 className="text-[8px] sm:text-[9px] uppercase tracking-widest border-white/5 text-zinc-400 bg-white/5 px-2.5 sm:px-3 py-0.5 rounded-full"
               >
                 {vibe}
@@ -124,19 +127,21 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
             <div className="flex items-center gap-6 mb-6 sm:mb-8">
               <div className="flex items-center gap-2">
                 <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand/60" />
-                <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">{club.capacity}</ConciergeLabel>
+                <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">
+                  {club.capacity}
+                </ConciergeLabel>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand/60" />
-                <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">{club.foundedYear}</ConciergeLabel>
+                <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">
+                  {club.foundedYear}
+                </ConciergeLabel>
               </div>
             </div>
 
             {/* CTA Button */}
             <Link href={`/${language}/clubs/${club.slug}`}>
-              <Button 
-                className="w-full bg-brand hover:bg-brand-dark text-black font-black rounded-full transition-all duration-500 border-none group/btn h-12 sm:h-14 shadow-[0_8px_20px_-10px_hsl(var(--brand)/0.4)]"
-              >
+              <Button className="w-full bg-brand hover:bg-brand-dark text-black font-black rounded-full transition-all duration-500 border-none group/btn h-12 sm:h-14 shadow-[0_8px_20px_-10px_hsl(var(--brand)/0.4)]">
                 <span className="uppercase tracking-[0.2em] text-[10px]">{t('nav.explore')}</span>
                 <ArrowRight className="h-3.5 w-3.5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
               </Button>
@@ -150,3 +155,4 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
     </motion.div>
   );
 }
+

@@ -8,6 +8,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.pexels.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
   async headers() {
@@ -100,3 +104,4 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+

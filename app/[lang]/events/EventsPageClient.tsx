@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { Heading, H1, H2, H3, H4, Label, Eyebrow, Text, Lead } from '@/components/typography';
+import { H1, H3, Eyebrow, Text, Lead } from '@/components/typography';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Calendar, MapPin, Star, Clock, ArrowRight } from '@/lib/icons';
+import { Calendar, MapPin, Clock, ArrowRight } from '@/lib/icons';
+import { getEventImage } from '@/lib/image-fallbacks';
 
 interface Event {
   id: string;
@@ -94,6 +96,22 @@ const buildMockEvents = (t: (key: string) => string): Event[] => [
   },
 ];
 
+function getCitySlugFromName(cityName?: string | null): string | null {
+  if (!cityName) {
+    return null;
+  }
+
+  const normalized = cityName.toLowerCase();
+  if (normalized.includes('barcelona')) return 'barcelona';
+  if (normalized.includes('madrid')) return 'madrid';
+  if (normalized.includes('valencia')) return 'valencia';
+  if (normalized.includes('sevill')) return 'sevilla';
+  if (normalized.includes('malaga') || normalized.includes('málaga')) return 'malaga';
+  if (normalized.includes('tenerife')) return 'tenerife';
+
+  return null;
+}
+
 export default function EventsPageClient({ lang, initialEvents }: EventsPageClientProps) {
   const { t } = useLanguage();
   const [events] = useState<Event[]>(() => initialEvents || buildMockEvents(t));
@@ -149,14 +167,12 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                 <Calendar className="w-4 h-4" />
                 {t('events.badge')}
               </Eyebrow>
-              
+
               <H1 size="xl" className="mb-6 text-white font-serif tracking-tight">
                 {t('events.title_prefix')} <span className="text-brand">{t('events.title_highlight')}</span>
               </H1>
-              
-              <Lead className="mb-8 text-zinc-400">
-                {t('events.subtitle')}
-              </Lead>
+
+              <Lead className="mb-8 text-zinc-400">{t('events.subtitle')}</Lead>
             </motion.div>
           </div>
         </section>
@@ -164,78 +180,93 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
         {/* Events Grid */}
         <section className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              {events.length > 0 ? events.map((event, index) => (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <Link
-                    href={`/${lang}/events/${event.slug}`}
-                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 md:p-8 hover:border-brand/50 transition-all duration-500 h-full flex flex-col"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative flex flex-col h-full">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className={`inline-flex p-3 rounded-xl bg-brand/10 text-brand border border-brand/20 transition-transform duration-500 group-hover:scale-110`}>
-                          <Calendar className="w-6 h-6" />
-                        </div>
-                        <div className="flex flex-wrap gap-2 justify-end">
-                          {event.cityName && (
-                            <Badge variant="secondary" className="border-white/10 text-zinc-400 bg-white/5 uppercase tracking-widest text-[10px]">
-                              {event.cityName}
-                            </Badge>
-                          )}
-                          {event.clubName && (
-                            <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
-                              {event.clubName}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <H3 className="mb-3 text-white group-hover:text-brand transition-colors font-serif">
-                        {event.name}
-                      </H3>
-                      
-                      <Text variant="muted" className="mb-6 text-zinc-400 line-clamp-2">
-                        {event.description}
-                      </Text>
-                      
-                      <div className="space-y-2 mb-8 text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-auto">
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-3.5 w-3.5 text-brand" />
-                          <span>{new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-3.5 w-3.5 text-brand" />
-                          <span>{event.location}</span>
-                        </div>
-                      </div>
+              {events.length > 0 ? (
+                events.map((event, index) => {
+                  const eventImage = getEventImage(event.imageUrl, getCitySlugFromName(event.cityName));
 
-                      <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                        <Text size="sm" variant="muted" className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
-                          {t('events.view_details')}
-                        </Text>
-                        <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                          <span>Explore</span>
-                          <ArrowRight className="w-4 h-4" />
+                  return (
+                    <motion.div
+                      key={event.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <Link
+                        href={`/${lang}/events/${event.slug}`}
+                        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm hover:border-brand/50 transition-all duration-500 h-full flex flex-col"
+                      >
+                        <div className="relative aspect-video overflow-hidden">
+                          <Image
+                            src={eventImage}
+                            alt={event.name}
+                            fill
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-bg-base/80 via-bg-base/20 to-transparent" />
                         </div>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              )) : (
+
+                        <div className="relative flex flex-col h-full p-6 md:p-8">
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="inline-flex p-3 rounded-xl bg-brand/10 text-brand border border-brand/20 transition-transform duration-500 group-hover:scale-110">
+                              <Calendar className="w-6 h-6" />
+                            </div>
+                            <div className="flex flex-wrap gap-2 justify-end">
+                              {event.cityName && (
+                                <Badge variant="secondary" className="border-white/10 text-zinc-400 bg-white/5 uppercase tracking-widest text-[10px]">
+                                  {event.cityName}
+                                </Badge>
+                              )}
+                              {event.clubName && (
+                                <Badge className="bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px]">
+                                  {event.clubName}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+
+                          <H3 className="mb-3 text-white group-hover:text-brand transition-colors font-serif">{event.name}</H3>
+
+                          <Text variant="muted" className="mb-6 text-zinc-400 line-clamp-2">
+                            {event.description}
+                          </Text>
+
+                          <div className="space-y-2 mb-8 text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-auto">
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-3.5 w-3.5 text-brand" />
+                              <span>
+                                {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MapPin className="h-3.5 w-3.5 text-brand" />
+                              <span>{event.location}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                            <Text size="sm" variant="muted" className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
+                              {t('events.view_details')}
+                            </Text>
+                            <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                              <span>Explore</span>
+                              <ArrowRight className="w-4 h-4" />
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  );
+                })
+              ) : (
                 <div className="col-span-full rounded-2xl border border-dashed border-white/10 p-12 text-center bg-bg-card/30">
                   <div className="w-16 h-16 bg-brand/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-brand/20">
-                    <Calendar className="h-8 w-8 text-brand" />
                     <Calendar className="h-8 w-8 text-brand" />
                   </div>
                   <Text variant="muted">{t('events.empty')}</Text>
@@ -248,3 +279,4 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
     </div>
   );
 }
+

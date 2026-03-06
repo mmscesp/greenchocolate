@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Clock } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { type ArticleCard } from '@/app/actions/articles';
+import { getArticleCardImage } from '@/lib/image-fallbacks';
 
 interface FeaturedVaultProps {
   articles?: ArticleCard[];
@@ -23,7 +24,9 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       description: t('landing.featured_vault.fallback.essential.description'),
       readTime: t('landing.featured_vault.fallback.essential.read_time'),
       slug: 'what-are-cannabis-social-clubs-spain',
-      image: '/images/editorial/club-interior-warm.webp'
+      category: 'culture',
+      citySlug: 'barcelona',
+      image: '/images/editorial/club-interior-warm.jpg',
     },
     {
       id: '2',
@@ -32,7 +35,9 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       description: t('landing.featured_vault.fallback.safety.description'),
       readTime: t('landing.featured_vault.fallback.safety.read_time'),
       slug: 'safety-kit-visitors-spain',
-      image: '/images/editorial/safety-kit-hero.webp'
+      category: 'harm-reduction',
+      citySlug: 'barcelona',
+      image: '/images/editorial/safety-kit-hero.jpg',
     },
     {
       id: '3',
@@ -41,7 +46,9 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       description: t('landing.featured_vault.fallback.culture.description'),
       readTime: t('landing.featured_vault.fallback.culture.read_time'),
       slug: 'barcelona-vs-amsterdam-cannabis',
-      image: '/images/editorial/bcn-vs-ams.webp'
+      category: 'culture',
+      citySlug: 'barcelona',
+      image: '/images/editorial/bcn-vs-ams.jpg',
     },
     {
       id: '4',
@@ -50,21 +57,28 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       description: t('landing.featured_vault.fallback.city_guide.description'),
       readTime: t('landing.featured_vault.fallback.city_guide.read_time'),
       slug: 'first-time-barcelona-cannabis-club',
-      image: '/images/editorial/first-time-bcn.webp'
-    }
+      category: 'etiquette',
+      citySlug: 'barcelona',
+      image: '/images/editorial/first-time-bcn.jpg',
+    },
   ];
 
-  const displayItems = articles.length > 0
-    ? articles.slice(0, 4).map((article) => ({
-        id: article.id,
-        tag: article.category,
-        title: article.title,
-        description: article.excerpt,
-        readTime: `${article.readTime} ${t('landing.featured_vault.read_time_suffix')}`,
-        slug: article.slug,
-        image: article.heroImage || '/images/editorial/club-interior-warm.webp',
-      }))
-    : fallbackArticles;
+  const displayItems =
+    articles.length > 0
+      ? articles.slice(0, 4).map((article) => ({
+          id: article.id,
+          tag: article.category,
+          title: article.title,
+          description: article.excerpt,
+          readTime: `${article.readTime} ${t('landing.featured_vault.read_time_suffix')}`,
+          slug: article.slug,
+          image: getArticleCardImage({
+            heroImage: article.heroImage,
+            category: article.category,
+            citySlug: article.citySlug,
+          }),
+        }))
+      : fallbackArticles;
 
   return (
     <section className="bg-bg-surface py-24 md:py-32 px-4 md:px-8 border-t border-white/10">
@@ -94,9 +108,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
         </motion.div>
 
         {/* [motion] */}
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
           {displayItems.map((item, idx) => (
             <motion.div
               key={item.id}
@@ -113,9 +125,14 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
             >
               <Link href={`/${language}/editorial/${item.slug}`} className="group block h-full">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-bg-elevated mb-6 shadow-sm group-hover:shadow-md transition-all duration-500">
-                  <div className="absolute inset-0 bg-bg-base/20 group-hover:bg-bg-base/0 transition-colors duration-500 z-10" />
-                  {/* In a real app, use Next/Image here */}
-                  <div className="absolute inset-0 bg-bg-card group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-bg-base/30 group-hover:bg-bg-base/15 transition-colors duration-500 z-10" />
                   <div className="absolute top-4 left-4 z-20">
                     <span className="px-3 py-1 bg-bg-base/85 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-brand rounded-sm shadow-sm border border-brand/30">
                       {item.tag}
@@ -180,3 +197,4 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
     </section>
   );
 }
+

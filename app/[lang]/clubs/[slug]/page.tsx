@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import ClubProfileContent from './ClubProfileContent';
-import { getClubBySlug, getCityNeighbors, getClubs } from '@/app/actions/clubs';
+import { getClubBySlug, getClubs } from '@/app/actions/clubs';
 import { getClubDetailsWithAccess } from '@/app/actions/gated-content';
 import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { getClubImageGallery, getClubPrimaryImage } from '@/lib/image-fallbacks';
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -36,7 +37,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const clubDetail = await getClubBySlug(slug);
-  
+
   if (!clubDetail) {
     return {
       title: `${t('clubs.detail.not_found_title')} | SocialClubsMaps`,
@@ -44,13 +45,15 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     };
   }
 
+  const primaryImage = getClubPrimaryImage(clubDetail.images, clubDetail.citySlug);
+
   return {
     title: `${clubDetail.name} | ${clubDetail.neighborhood}`,
     description: clubDetail.shortDescription || `Discover ${clubDetail.name} in ${clubDetail.neighborhood}`,
     openGraph: {
       title: clubDetail.name,
       description: clubDetail.shortDescription || '',
-      images: clubDetail.images.length > 0 ? [clubDetail.images[0]] : [],
+      images: [primaryImage],
       type: 'website',
     },
     alternates: {
@@ -70,8 +73,8 @@ export default async function ClubPage({ params }: ClubPageProps) {
   }
 
   const gatedClub = await getClubDetailsWithAccess(clubDetail.id);
-
-  const neighboringClubs = await getCityNeighbors(clubDetail.id, 4);
+  const clubImages = getClubImageGallery(clubDetail.images, clubDetail.citySlug);
+  const primaryImage = getClubPrimaryImage(clubImages, clubDetail.citySlug);
 
   // Map ClubDetail to Club type expected by ClubProfileContent
   const club: Club = {
@@ -80,12 +83,12 @@ export default async function ClubPage({ params }: ClubPageProps) {
     slug: clubDetail.slug,
     isVerified: clubDetail.isVerified,
     neighborhood: clubDetail.neighborhood,
-    images: clubDetail.images,
+    images: clubImages,
     description: clubDetail.description,
     amenities: clubDetail.amenities,
     vibeTags: clubDetail.vibeTags,
     openingHours: clubDetail.openingHours,
-    allowsPreRegistration: true, // Default value
+    allowsPreRegistration: true,
     coordinates: clubDetail.coordinates,
     address: gatedClub.accessLevel === 'FULL' ? clubDetail.addressDisplay : undefined,
     contactEmail: gatedClub.club?.contactEmail || '',
@@ -97,20 +100,19 @@ export default async function ClubPage({ params }: ClubPageProps) {
     priceRange: clubDetail.priceRange as '$' | '$$' | '$$$',
     capacity: clubDetail.capacity,
     foundedYear: clubDetail.foundedYear,
-    cityId: '', // Default value - not used in UI
+    cityId: '',
     addressDisplay: clubDetail.addressDisplay,
-    isActive: true, // Default value
-    createdAt: new Date(), // Default value
-    updatedAt: new Date(), // Default value
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
-  // LocalBusiness Schema.org structured data
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: club.name,
     description: club.description,
-    image: club.images[0],
+    image: primaryImage,
     address: {
       '@type': 'PostalAddress',
       addressLocality: club.neighborhood,
@@ -170,3 +172,4 @@ export default async function ClubPage({ params }: ClubPageProps) {
     </>
   );
 }
+

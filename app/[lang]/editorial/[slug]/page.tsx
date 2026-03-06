@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { getArticleBySlug, getRelatedArticles, getArticles } from '@/app/actions/articles';
 import { JsonLd } from '@/components/JsonLd';
 import ArticleContent from '@/app/[lang]/editorial/[slug]/ArticleContent';
+import { getArticleCardImage } from '@/lib/image-fallbacks';
 
 export const revalidate = 3600;
 
@@ -31,6 +32,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   }
 
   const canonicalUrl = `https://socialclubsmaps.com/${lang}/editorial/${article.slug}`;
+  const articleImage = getArticleCardImage({
+    heroImage: article.heroImage,
+    category: article.category,
+    citySlug: article.citySlug,
+  });
 
   return {
     title: article.metaTitle || article.title,
@@ -42,7 +48,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       title: article.title,
       description: article.excerpt,
       url: canonicalUrl,
-      images: article.heroImage ? [article.heroImage] : [],
+      images: [articleImage],
       type: 'article',
       publishedTime: article.publishedAt || undefined,
       authors: [article.authorName],
@@ -58,6 +64,12 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     notFound();
   }
 
+  const articleImage = getArticleCardImage({
+    heroImage: article.heroImage,
+    category: article.category,
+    citySlug: article.citySlug,
+  });
+
   const relatedArticles = await getRelatedArticles(article.id, 3);
 
   const jsonLd = {
@@ -65,7 +77,7 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     '@type': 'MedicalWebPage',
     headline: article.title,
     description: article.excerpt,
-    image: article.heroImage,
+    image: articleImage,
     datePublished: article.publishedAt,
     author: {
       '@type': 'Person',
@@ -116,3 +128,4 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     </>
   );
 }
+
