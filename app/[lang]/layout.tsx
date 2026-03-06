@@ -6,7 +6,6 @@ import { AuthProvider } from '@/components/auth/AuthProvider';
 import MotionProvider from '@/components/MotionProvider';
 import RouteTransition from '@/components/motion/RouteTransition';
 import ScrollRestoration from '@/components/ScrollRestoration';
-import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/layout/Navbar';
 import ConditionalFooter from '@/components/layout/ConditionalFooter';
 import PlatformBackground from '@/components/layout/PlatformBackground';
@@ -38,17 +37,15 @@ export default async function LocaleLayout({
       <AuthProvider>
         <MotionProvider>
           <ScrollRestoration />
-          <SmoothScroll>
-            <div className="min-h-screen flex flex-col">
-              <LegalDisclaimerModal />
-              <Navbar />
-              <PlatformBackground />
-              <main className="flex-1">
-                <RouteTransition>{children}</RouteTransition>
-              </main>
-              <ConditionalFooter />
-            </div>
-          </SmoothScroll>
+          <div className="min-h-screen flex flex-col">
+            <LegalDisclaimerModal />
+            <Navbar />
+            <PlatformBackground />
+            <main className="flex-1">
+              <RouteTransition>{children}</RouteTransition>
+            </main>
+            <ConditionalFooter />
+          </div>
         </MotionProvider>
       </AuthProvider>
     </LanguageProvider>

@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
 const STORAGE_PREFIX = 'scm:scroll:';
 
 export default function ScrollRestoration() {
   const pathname = usePathname();
+  const restoreOnNextRouteRef = useRef(false);
 
   const routeKey = useMemo(() => pathname, [pathname]);
 
@@ -14,7 +15,14 @@ export default function ScrollRestoration() {
     const previousMode = window.history.scrollRestoration;
     window.history.scrollRestoration = 'manual';
 
+    const onPopState = () => {
+      restoreOnNextRouteRef.current = true;
+    };
+
+    window.addEventListener('popstate', onPopState);
+
     return () => {
+      window.removeEventListener('popstate', onPopState);
       window.history.scrollRestoration = previousMode;
     };
   }, []);
@@ -48,8 +56,10 @@ export default function ScrollRestoration() {
 
     let firstFrame = 0;
     let secondFrame = 0;
+    const shouldRestore = restoreOnNextRouteRef.current;
+    restoreOnNextRouteRef.current = false;
 
-    if (!window.location.hash) {
+    if (shouldRestore && !window.location.hash) {
       const savedValue = window.sessionStorage.getItem(storageKey);
       const savedY = Number(savedValue);
 

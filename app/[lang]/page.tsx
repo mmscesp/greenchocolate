@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import HeroSection from '@/components/HeroSection';
+import SmoothScroll from '@/components/SmoothScroll';
 import DeferredEditorialConcierge from '@/components/landing/editorial-concierge/DeferredEditorialConcierge';
 
 const OG_LOCALE_BY_LANG: Record<string, string> = {
@@ -49,9 +50,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 export default async function HomePage() {
   return (
-    <div className="relative min-h-screen">
-      <HeroSection />
-      <DeferredEditorialConcierge />
-    </div>
+    <SmoothScroll>
+      <div className="relative min-h-screen">
+        <HeroSection />
+        <DeferredEditorialConcierge />
+      </div>
+    </SmoothScroll>
   );
 }

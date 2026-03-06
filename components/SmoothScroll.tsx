@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const tickerCallbackRef = useRef<((time: number) => void) | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -34,9 +35,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     lenisRef.current.on('scroll', ScrollTrigger.update);
 
     // Sync GSAP ticker with Lenis requestAnimationFrame
-    gsap.ticker.add((time) => {
+    const tickerCallback = (time: number) => {
       lenisRef.current?.raf(time * 1000);
-    });
+    };
+    tickerCallbackRef.current = tickerCallback;
+    gsap.ticker.add(tickerCallback);
     
     // Disable lag smoothing to prevent visual jumps on fast scrolls
     gsap.ticker.lagSmoothing(0);
@@ -51,7 +54,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     return () => {
       window.removeEventListener('resize', handleResize);
       lenisRef.current?.destroy();
-      gsap.ticker.remove((time) => lenisRef.current?.raf(time * 1000));
+      if (tickerCallbackRef.current) {
+        gsap.ticker.remove(tickerCallbackRef.current);
+        tickerCallbackRef.current = null;
+      }
     };
   }, []);
 
