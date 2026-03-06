@@ -64,7 +64,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     };
 
     const clearDeferredStart = () => {
-      if (idleId !== null && 'cancelIdleCallback' in window) {
+      if (idleId !== null && typeof window.cancelIdleCallback === 'function') {
         window.cancelIdleCallback(idleId);
       }
       if (timeoutId !== null) {
@@ -121,7 +121,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     if (isConstrainedDevice && isHomePath) {
       window.addEventListener('scm:hero-visual-ready', handleHeroReady, { once: true });
 
-      if ('requestIdleCallback' in window) {
+      if (typeof window.requestIdleCallback === 'function') {
         idleId = window.requestIdleCallback(() => initializeLenis(), { timeout: 1200 });
       } else {
         timeoutId = window.setTimeout(() => initializeLenis(), 1200);
@@ -161,3 +161,5 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
   return <>{children}</>;
 }
+
+
