@@ -1,78 +1,72 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { ImageGallery, type CircularGalleryImage } from '@/components/ui/carousel-circular-image-gallery';
 import VerificationBadge from '@/components/VerificationBadge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
 import { submitMembershipApplication } from '@/app/actions/applications';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
-import type { ClubMediaItem } from '@/lib/club-media';
-import { MapPin,
-Lock,
-Star,
-Mail,
-Globe,
-Clock,
-ChevronLeft,
-ChevronRight,
-X,
-Check,
-AlertCircle,
-Loader2,
-ArrowLeft,
-Sparkles,
-Shield,
-Cannabis,
+import { getClubPrimaryMediaImage, type ClubMediaItem } from '@/lib/club-media';
+import {
+  MapPin,
+  Lock,
+  Star,
+  Mail,
+  Globe,
+  Clock,
+  X,
+  Check,
+  AlertCircle,
+  Loader2,
+  ArrowLeft,
+  Sparkles,
+  Shield,
+  Cannabis,
 } from '@/lib/icons';
 
-// Editorial Concierge Components
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from '@/components/landing/editorial-concierge/typography/ConciergeLabel';
-import { SectionWrapper } from '@/components/landing/editorial-concierge/layout/SectionWrapper';
 import { PulsingStatusDot } from '@/components/landing/editorial-concierge/interactive/PulsingStatusDot';
-import { PREMIUM_SPRING, FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-concierge/motion/config';
+import { FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-concierge/motion/config';
 
-function ClubTrustStrip({ isVerified, lastAudit }: { isVerified: boolean; lastAudit?: string }) {
-  const { t } = useLanguage();
+/* ------------------------------------------------------------------ */
+/* TRUST STRIP                                                        */
+/* ------------------------------------------------------------------ */
+function ClubTrustStrip({ isVerified }: { isVerified: boolean }) {
+  const { t, language } = useLanguage();
 
   return (
-    <div className="sticky top-16 md:top-20 z-50 w-full min-h-12 bg-bg-base/90 backdrop-blur-md border-b border-white/5 flex items-center py-1">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 sm:gap-6 min-w-0">
-          <div className="flex items-center gap-2">
-            {isVerified ? (
-              <PulsingStatusDot color="hsl(var(--brand))" />
-            ) : (
-              <div className="w-2 h-2 rounded-full bg-zinc-600" />
-            )}
-            <ConciergeLabel size="xs" emphasis="high" className="truncate text-white">
-              {t('club_profile.trust_strip.status')}: {isVerified ? t('club_profile.trust_strip.verified') : t('club_profile.trust_strip.pending_audit')}
-            </ConciergeLabel>
-          </div>
-          {isVerified && (
-            <div className="hidden md:flex items-center gap-4 border-l border-white/5 pl-6">
-              <ConciergeLabel size="xs" className="text-zinc-400">{t('club_profile.trust_strip.last_audit')}: {lastAudit || t('club_profile.trust_strip.last_audit_fallback')}</ConciergeLabel>
-              <ConciergeLabel size="xs" className="text-brand/80">• {t('club_profile.trust_strip.education_first')}</ConciergeLabel>
-              <ConciergeLabel size="xs" className="text-brand/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
-              <ConciergeLabel size="xs" className="text-brand/80">• {t('club_profile.trust_strip.privacy_always')}</ConciergeLabel>
-            </div>
-          )}
+    // Sits perfectly at top-[72px] just beneath standard global navbars
+    <div className="sticky top-[64px] z-40 w-full border-b border-white/[0.08] bg-bg-base/80 supports-[backdrop-filter]:bg-bg-base/60 backdrop-blur-2xl [transform:translateZ(0)] md:top-[72px]">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-8">
+        <div className="min-w-0 flex items-center gap-3">
+          {isVerified ? <PulsingStatusDot color="hsl(var(--brand))" /> : <div className="h-2.5 w-2.5 rounded-full bg-zinc-600" />}
+          <ConciergeLabel size="xs" emphasis="high" className="truncate text-white/90 uppercase tracking-[0.2em] font-bold">
+            {isVerified ? t('club_profile.trust_strip.verified') : t('club_profile.trust_strip.pending_audit')}
+          </ConciergeLabel>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2 text-zinc-600">
-          <ConciergeLabel size="xs">{t('club_profile.trust_strip.no_brokering')}</ConciergeLabel>
-        </div>
+        <Link
+          href={`/${language}/app`}
+          className="shrink-0 text-[10px] font-bold uppercase tracking-[0.2em] text-brand transition-all hover:text-white"
+        >
+          {t('club_profile.register_on_app')}
+        </Link>
       </div>
     </div>
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* MAIN COMPONENT                                                     */
+/* ------------------------------------------------------------------ */
 interface ClubProfileContentProps {
   club: Club;
   mediaItems?: ClubMediaItem[];
@@ -82,10 +76,10 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const { t, language } = useLanguage();
   const { user } = useAuth();
   const router = useRouter();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<{ success: boolean; message?: string; errors?: Record<string, string[]> } | null>(null);
+
   const fallbackImages = getClubImageGallery(club.images);
   const galleryItems =
     mediaItems && mediaItems.length > 0
@@ -95,20 +89,31 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
           src,
           alt: `${club.name} gallery image ${index + 1}`,
         }));
-  const currentMedia = galleryItems[currentImageIndex] ?? galleryItems[0];
-  const primaryStaticImage =
-    galleryItems.find((item): item is Extract<ClubMediaItem, { kind: 'image' }> => item.kind === 'image')?.src ||
-    fallbackImages[0];
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % galleryItems.length);
+  const primaryStaticImage = getClubPrimaryMediaImage(galleryItems);
+  const clubPath = `/${language}/clubs/${club.slug}`;
+  const primaryActionLabel = user ? t('club_profile.start_application') : t('club_profile.register_on_app');
+  
+  // Format images for the new circular GSAP carousel
+  const carouselImages: CircularGalleryImage[] = galleryItems.map((item, index) => ({
+    title: item.alt || `${club.name} ${index + 1}`,
+    url: item.kind === 'video' ? item.poster : item.src,
+  }));
+
+  const openMembershipFlow = () => {
+    if (!user) {
+      router.push(`/${language}/account/login?redirect=${encodeURIComponent(clubPath)}`);
+      return;
+    }
+    setShowPreRegistrationModal(true);
   };
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
+  const closeMembershipModal = () => {
+    setShowPreRegistrationModal(false);
+    setFormState(null);
   };
 
-  const handlePreRegistrationSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePreRegistrationSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormState(null);
@@ -127,16 +132,13 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
 
       if (result.success) {
         setTimeout(() => {
-          setShowPreRegistrationModal(false);
+          closeMembershipModal();
           router.push(`/${language}/profile/requests`);
         }, 1500);
       }
     } catch (error) {
       console.error('Submit error:', error);
-      setFormState({
-        success: false,
-        message: t('club_profile.form.error_unexpected'),
-      });
+      setFormState({ success: false, message: t('club_profile.form.error_unexpected') });
     } finally {
       setIsSubmitting(false);
     }
@@ -144,440 +146,362 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
 
   const getDayName = (day: string) => {
     const dayMap: Record<string, string> = {
-      monday: t('days.monday'),
-      tuesday: t('days.tuesday'),
-      wednesday: t('days.wednesday'),
-      thursday: t('days.thursday'),
-      friday: t('days.friday'),
-      saturday: t('days.saturday'),
-      sunday: t('days.sunday'),
+      monday: t('days.monday'), tuesday: t('days.tuesday'), wednesday: t('days.wednesday'),
+      thursday: t('days.thursday'), friday: t('days.friday'), saturday: t('days.saturday'), sunday: t('days.sunday'),
     };
     return dayMap[day] || day;
   };
 
+  /* Premium Liquid Glass Reusable Class */
+  const glassCardClass = "relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-bg-surface/70 supports-[backdrop-filter]:bg-bg-surface/55 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5),inset_0_1px_1px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl [transform:translateZ(0)]";
+
   return (
-    <div className="min-h-screen bg-bg-base relative font-sans selection:bg-brand/30 selection:text-white">
-      <ClubTrustStrip isVerified={club.isVerified} />
+    <div className="relative min-h-screen bg-bg-base font-sans selection:bg-brand/30 selection:text-white pb-20">
       
-      {/* Navigation */}
-      <div className="absolute top-24 md:top-32 left-0 z-20 w-full px-4 sm:px-6 lg:px-8 pointer-events-none">
-        <div className="max-w-7xl mx-auto pointer-events-auto">
-          <Link href={`/${language}/clubs`}>
-            <Button 
-              variant="ghost" 
-              className="text-white/80 hover:text-white hover:bg-black/40 backdrop-blur-sm rounded-full"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+      <ClubTrustStrip isVerified={club.isVerified} />
+
+      {/* ========================================================= */}
+      {/* CINEMATIC HERO                                            */}
+      {/* ========================================================= */}
+      <section className="relative h-[60vh] min-h-[500px] w-full lg:h-[75vh]">
+        <div className="absolute inset-0">
+          <Image src={primaryStaticImage} alt={`${club.name} hero image`} fill priority sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/45 to-bg-base/15" />
+          <div className="absolute inset-0 bg-gradient-to-r from-bg-base/85 via-bg-base/25 to-transparent" />
+        </div>
+
+        {/* Back Button pushed down to clear top navbar completely */}
+        <div className="absolute left-4 top-24 sm:left-8 z-20">
+          <Button asChild variant="ghost" className="rounded-full border border-white/10 bg-bg-base/40 text-white/90 backdrop-blur-md transition-all hover:bg-bg-surface hover:text-white">
+            <Link href={`/${language}/clubs`}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
               {t('nav.back_to_clubs')}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* ASYMMETRICAL CONTENT LAYOUT                               */}
+      {/* ========================================================= */}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-8 -mt-32 lg:-mt-48">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          
+          {/* LEFT COLUMN: The Story, Gallery, & Deep Dive */}
+          <div className="lg:col-span-8 space-y-8 lg:space-y-12">
+            
+            {/* 1. The Liquid Glass Hero Title Card */}
+            <motion.div variants={STAGGER_CONTAINER} initial="initial" animate="animate">
+              <motion.div variants={FADE_UP} className={`${glassCardClass} p-8 lg:p-12`}>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
+                
+                <div className="relative z-10">
+                  <div className="mb-6 flex flex-wrap items-center gap-3">
+                    <VerificationBadge isVerified={club.isVerified} size="lg" />
+                    <span className="rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand">
+                      {club.neighborhood}
+                    </span>
+                    {club.rating && (
+                      <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
+                        <Star className="h-3 w-3 fill-brand text-brand" />
+                        {club.rating} ({club.reviewCount})
+                      </span>
+                    )}
+                  </div>
+
+                  <EditorialHeading as="h1" size="hero" className="mb-8 text-white drop-shadow-lg leading-tight">
+                    {club.name}
+                  </EditorialHeading>
+
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-t border-white/10 pt-8">
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="xl"
+                      onClick={openMembershipFlow}
+                      className="w-full rounded-full bg-brand px-10 py-6 text-base font-bold text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.25)] transition-all hover:scale-[1.02] hover:bg-brand-dark active:scale-[0.98] sm:w-auto"
+                    >
+                      {primaryActionLabel}
+                    </Button>
+                    <span className="text-zinc-400 uppercase tracking-[0.15em] text-[11px] font-medium max-w-[200px] text-center sm:text-left">
+                      {t('club_profile.membership_application')}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* 2. The Experience (Description) */}
+            <div className="px-2">
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="h-[1px] flex-grow bg-white/10" />
+                <span className="text-[10px] uppercase tracking-[0.3em] text-brand font-bold">
+                  {t('club_profile.experience')}
+                </span>
+                <div className="h-[1px] w-12 bg-white/10" />
+              </div>
+              
+              <p className="text-lg md:text-xl leading-relaxed text-zinc-300 font-serif italic text-pretty">
+                "{club.description}"
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-2">
+                {club.vibeTags.map((vibe, index) => (
+                  <span
+                    key={index}
+                    className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-300 transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    #{vibe}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 3. The New Circular Image Gallery */}
+            {carouselImages.length > 1 && (
+              <div className={`${glassCardClass} p-2 md:p-6 flex flex-col items-center justify-center`}>
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent pointer-events-none" />
+                <div className="relative z-10 w-full flex flex-col items-center justify-center">
+                  <div className="mx-auto w-full max-w-[760px]">
+                    <ImageGallery images={carouselImages} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 4. Amenities Grid */}
+            <div className={`${glassCardClass} p-8`}>
+              <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="mb-8 flex items-center gap-3">
+                  <Shield className="h-5 w-5 text-brand" />
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-white">
+                    {t('club_profile.services')}
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {club.amenities.map((amenity, index) => (
+                    <div key={index} className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4 transition-colors hover:bg-white/5">
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+                        <Check className="h-3 w-3" />
+                      </div>
+                      <span className="text-sm font-medium text-zinc-300">{amenity}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* RIGHT COLUMN: Sticky Dossier */}
+          <div className="lg:col-span-4 relative">
+            {/* Sticks exactly below the Navbar + TrustStrip */}
+            <div className="sticky top-[140px] md:top-[160px] space-y-6 flex flex-col pb-10">
+
+              {/* Box 1: Club Stats */}
+              <div className={`${glassCardClass} p-8 overflow-hidden group`}>
+                <div className="absolute -right-6 -top-6 p-8 opacity-5 transition-transform duration-700 group-hover:rotate-12 group-hover:scale-110 pointer-events-none">
+                  <Cannabis className="h-40 w-40" />
+                </div>
+                <div className="relative z-10">
+                  <h3 className="mb-8 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">
+                    {t('club_profile.club_details')}
+                  </h3>
+                  <div className="space-y-6">
+                    <div>
+                      <div className="mb-1.5 text-[9px] font-bold uppercase tracking-widest text-brand">{t('club_profile.capacity')}</div>
+                      <div className="text-3xl font-serif text-white">
+                        {club.capacity} <span className="text-xs font-sans text-zinc-500 tracking-widest uppercase ml-1">{t('club_profile.members')}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mb-1.5 text-[9px] font-bold uppercase tracking-widest text-brand">{t('club_profile.founded')}</div>
+                      <div className="text-2xl font-serif text-white">{club.foundedYear}</div>
+                    </div>
+                    <div>
+                      <div className="mb-1.5 text-[9px] font-bold uppercase tracking-widest text-brand">{t('club_profile.price_range')}</div>
+                      <div className="text-xl tracking-[0.2em] text-white font-mono">{club.priceRange}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Box 2: Opening Hours */}
+              <div className={`${glassCardClass} p-8`}>
+                <div className="relative z-10">
+                  <div className="mb-6 flex items-center gap-3">
+                    <Clock className="h-5 w-5 text-brand" />
+                    <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-white">{t('club_profile.opening_hours')}</h3>
+                  </div>
+                  <div className="space-y-3.5">
+                    {Object.entries(club.openingHours as Record<string, string>).map(([day, hours]) => (
+                      <div key={day} className="flex justify-between items-center border-b border-white/5 pb-3 text-xs last:border-0 last:pb-0">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-400">{getDayName(day)}</span>
+                        <span className="font-mono text-sm text-white/90">{hours}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Box 3: The Vault (Private Location) */}
+              <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.05] bg-bg-surface shadow-2xl p-1">
+                <div className="absolute inset-0 opacity-[0.15] mix-blend-screen pointer-events-none" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                
+                <div className="relative z-10 flex flex-col items-center justify-center rounded-[1.8rem] border border-white/[0.02] bg-bg-base/70 p-8 text-center backdrop-blur-md">
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 rounded-full bg-brand blur-xl opacity-20 animate-pulse" />
+                    <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-bg-base shadow-xl">
+                      <Lock className="h-6 w-6 text-brand" />
+                    </div>
+                  </div>
+
+                  <h4 className="mb-3 text-[11px] font-bold uppercase tracking-[0.2em] text-white">
+                    {t('club_profile.private_location')}
+                  </h4>
+                  <p className="mb-8 max-w-[220px] text-[13px] leading-relaxed text-zinc-400 font-serif italic">
+                    {t('club_profile.private_location_description')}
+                  </p>
+                  
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={openMembershipFlow}
+                    className="w-full rounded-full border-white/20 bg-brand/10 py-5 text-[11px] font-bold tracking-widest uppercase text-white transition-all hover:border-brand/40 hover:bg-brand/20"
+                  >
+                    {primaryActionLabel}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Contact Mini-Footer */}
+              <div className="px-2 pt-4 flex flex-col items-center gap-4">
+                <ConciergeLabel className="text-[9px] uppercase tracking-[0.3em] text-zinc-600">
+                  {t('club_profile.get_in_touch')}
+                </ConciergeLabel>
+                <div className="flex flex-wrap items-center justify-center gap-6">
+                  {club.website && (
+                    <a href={`https://${club.website}`} className="group flex items-center gap-2 text-zinc-400 transition-colors hover:text-brand">
+                      <Globe className="h-3.5 w-3.5" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Website</span>
+                    </a>
+                  )}
+                  <div className="flex items-center gap-2 text-zinc-500">
+                    <Mail className="h-3.5 w-3.5" />
+                    <span className="text-[10px] uppercase tracking-widest">{club.contactEmail ? "Email" : t('club_profile.email_hidden')}</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {/* Hero Section */}
-      <SectionWrapper dark className="pt-40 md:pt-48 pb-24 min-h-[80vh] flex items-end relative overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentImageIndex}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: PREMIUM_SPRING.ease }}
-              className="absolute inset-0"
-            >
-              {currentMedia.kind === 'video' ? (
-                <video
-                  className="h-full w-full object-cover opacity-70"
-                  controls
-                  playsInline
-                  preload="metadata"
-                  poster={currentMedia.poster}
-                >
-                  <source src={currentMedia.src} type="video/webm" />
-                  {currentMedia.mp4Fallback ? <source src={currentMedia.mp4Fallback} type="video/mp4" /> : null}
-                </video>
-              ) : (
-                <Image
-                  src={currentMedia.src}
-                  alt={currentMedia.alt}
-                  fill
-                  className="object-cover opacity-60"
-                  priority={currentImageIndex === 0}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent" />
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6">
-          <motion.div 
-            variants={STAGGER_CONTAINER}
-            initial="initial"
-            animate="animate"
-            className="max-w-4xl"
-          >
-            <motion.div variants={FADE_UP} className="flex flex-wrap items-center gap-3 mb-6">
-              <VerificationBadge isVerified={club.isVerified} size="lg" />
-              <ConciergeLabel className="text-brand border border-brand/30 px-3 py-1 rounded-full bg-brand/10 text-[10px] font-bold uppercase tracking-widest">
-                {club.neighborhood}
-              </ConciergeLabel>
-              {club.rating && (
-                <ConciergeLabel className="text-white border border-white/10 px-3 py-1 rounded-full bg-white/5 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                  <Star className="h-3 w-3 fill-brand text-brand" /> {club.rating} ({club.reviewCount})
-                </ConciergeLabel>
-              )}
-            </motion.div>
-            
-            <motion.div variants={FADE_UP}>
-              <EditorialHeading as="h1" size="hero" className="text-white mb-8">
-                {club.name}
-              </EditorialHeading>
-            </motion.div>
-
-            <motion.div variants={FADE_UP} className="flex flex-wrap gap-3 sm:gap-4">
-              {club.allowsPreRegistration && (
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="xl"
-                  onClick={() => {
-                    if (!user) {
-                      router.push(`/${language}/account/login?redirect=${encodeURIComponent(window.location.pathname)}`);
-                      return;
-                    }
-                    setShowPreRegistrationModal(true);
-                  }}
-                  className="min-h-11 h-auto rounded-full px-8 py-3 text-sm sm:px-10 sm:py-5 sm:text-base"
-                >
-                  {t('club.pre_register')}
-                </Button>
-              )}
-              
-              {/* Image Navigation Dots */}
-              {galleryItems.length > 1 && (
-                <div className="flex items-center gap-2 sm:ml-4 bg-bg-base/70 backdrop-blur-md px-3 sm:px-4 rounded-full border border-white/10">
-                  <Button type="button" variant="ghost" size="icon" aria-label="Previous image" onClick={prevImage} className="text-white hover:text-brand">
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-                  <span className="text-[10px] font-bold tracking-widest text-white/80">
-                    {currentImageIndex + 1} / {galleryItems.length}
-                  </span>
-                  <Button type="button" variant="ghost" size="icon" aria-label="Next image" onClick={nextImage} className="text-white hover:text-brand">
-                    <ChevronRight className="h-5 w-5" />
-                  </Button>
-                </div>
-              )}
-            </motion.div>
-
-            {galleryItems.length > 1 ? (
-              <motion.div variants={FADE_UP} className="mt-6 flex flex-wrap gap-2">
-                {galleryItems.map((item, index) => (
-                  <button
-                    key={`${item.kind}-${index}`}
-                    type="button"
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
-                      currentImageIndex === index
-                        ? 'border-brand bg-brand text-black'
-                        : 'border-white/10 bg-bg-base/60 text-white/75 hover:border-brand/40 hover:text-white'
-                    }`}
-                  >
-                    {item.kind === 'video' ? 'Video tour' : `Gallery ${index + 1}`}
-                  </button>
-                ))}
-              </motion.div>
-            ) : null}
-          </motion.div>
-        </div>
-      </SectionWrapper>
-
-      {/* Main Content - Bento Grid */}
-      <SectionWrapper className="bg-transparent">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
-          
-          {/* About Card - Large */}
-          <div className="md:col-span-2 bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center border border-brand/20">
-                <Sparkles className="h-5 w-5 text-brand" />
-                <Sparkles className="h-5 w-5 text-brand" />
-              </div>
-              <EditorialHeading size="md" className="text-white">{t('club_profile.experience')}</EditorialHeading>
-            </div>
-            <p className="text-zinc-400 leading-relaxed text-lg font-serif italic">
-              {club.description}
-            </p>
-            
-            <div className="mt-8 flex flex-wrap gap-2">
-              {club.vibeTags.map((vibe, i) => (
-                <span key={i} className="px-3 py-1 bg-white/5 text-zinc-400 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/5">
-                  #{vibe}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Info Column */}
-          <div className="space-y-6">
-            {/* Location Card (Blurred) */}
-            <div className="relative bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl overflow-hidden group">
-              <div className="flex items-center gap-3 mb-6 relative z-10">
-                <MapPin className="h-5 w-5 text-brand" />
-                <h3 className="font-bold text-white uppercase tracking-widest text-xs">{t('club_profile.location')}</h3>
-              </div>
-              
-              {/* Blurred Content Background */}
-              <div className="space-y-4 opacity-10 filter blur-[8px] select-none pointer-events-none grayscale">
-                <div className="flex gap-2 w-full">
-                  <div className="h-4 bg-white/20 rounded w-1/3" />
-                  <div className="h-4 bg-white/10 rounded w-1/4" />
-                </div>
-                <div className="h-4 bg-white/10 rounded w-1/2" />
-                <div className="h-32 bg-white/5 rounded-xl mt-4 w-full border border-white/5" />
-              </div>
-
-              {/* Overlay */}
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-bg-base/70 backdrop-blur-md p-6 text-center">
-                <div className="w-12 h-12 bg-bg-base rounded-full flex items-center justify-center mb-4 shadow-2xl border border-white/10">
-                  <Lock className="h-5 w-5 text-brand" />
-                </div>
-                <h4 className="font-bold text-white mb-2 uppercase tracking-widest text-[10px]">{t('club_profile.private_location')}</h4>
-                <p className="text-zinc-500 text-xs mb-6 max-w-[200px] leading-relaxed font-serif italic">
-                  {t('club_profile.private_location_description')}
-                </p>
-                
-                <div className="flex flex-col gap-2 w-full max-w-[240px]">
-                  {club.allowsPreRegistration && (
-                    <Button 
-                      type="button"
-                      variant="primary"
-                      onClick={() => setShowPreRegistrationModal(true)}
-                      className="w-full rounded-full py-6 text-[10px]"
-                    >
-                      {t('club_profile.pre_register_with_club')}
-                    </Button>
-                  )}
-                  <Link href={`/${language}/app`} className="w-full">
-                    <Button variant="secondary" className="w-full rounded-full py-6 text-[10px]">
-                      {t('club_profile.register_on_app')}
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Hours Card */}
-            <div className="bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl">
-              <div className="flex items-center gap-3 mb-6">
-                <Clock className="h-5 w-5 text-brand" />
-                <h3 className="font-bold text-white uppercase tracking-widest text-xs">{t('club_profile.opening_hours')}</h3>
-              </div>
-              <div className="space-y-3">
-                {Object.entries(club.openingHours as Record<string, string>).map(([day, hours]) => (
-                  <div key={day} className="flex justify-between text-xs border-b border-white/5 pb-2 last:border-0 last:pb-0">
-                    <span className="text-zinc-500 uppercase tracking-wider font-bold text-[10px]">{getDayName(day)}</span>
-                    <span className="font-mono font-medium text-white">{hours}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Stats Card */}
-            <div className="bg-bg-surface text-white rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-white/5">
-              <div className="absolute top-0 right-0 p-8 opacity-[0.03]">
-                <Cannabis className="h-32 w-32" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="font-bold text-zinc-500 mb-6 uppercase tracking-widest text-xs">{t('club_profile.club_details')}</h3>
-                <div className="space-y-6">
-                  <div>
-                    <div className="text-brand text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.capacity')}</div>
-                    <div className="text-2xl font-serif">{club.capacity} <span className="text-xs text-zinc-500 font-sans">{t('club_profile.members')}</span></div>
-                  </div>
-                  <div>
-                    <div className="text-brand text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.founded')}</div>
-                    <div className="text-2xl font-serif">{club.foundedYear}</div>
-                  </div>
-                  <div>
-                    <div className="text-brand text-[9px] font-bold uppercase tracking-widest mb-1">{t('club_profile.price_range')}</div>
-                    <div className="text-2xl font-mono text-white tracking-widest">{club.priceRange}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Amenities - Full Width */}
-          <div className="md:col-span-3 bg-bg-base rounded-[2rem] p-6 sm:p-8 border border-white/5 shadow-2xl mt-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Shield className="h-5 w-5 text-brand" />
-              <EditorialHeading size="md" className="text-white">{t('club_profile.services')}</EditorialHeading>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {club.amenities.map((amenity, i) => (
-                <div key={i} className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
-                  <Check className="h-4 w-4 text-brand" />
-                  <span className="text-zinc-300 text-sm sm:text-base font-medium">{amenity}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Contact Section */}
-          <div className="md:col-span-3 mt-12 border-t border-white/5 pt-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div>
-                <EditorialHeading size="lg" className="mb-6 text-white">{t('club_profile.get_in_touch')}</EditorialHeading>
-                <p className="text-zinc-500 mb-8 max-w-md font-serif italic leading-relaxed">
-                  {t('club_profile.contact_description')}
-                </p>
-                <div className="space-y-4">
-                  {club.website && (
-                    <a href={`https://${club.website}`} className="flex items-center gap-3 text-white hover:text-brand transition-colors group">
-                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-brand/10 transition-colors border border-white/5 group-hover:border-brand/20">
-                        <Globe className="h-5 w-5" />
-                      </div>
-                      <span className="font-bold underline decoration-brand/30 underline-offset-4 group-hover:decoration-brand uppercase tracking-widest text-[10px]">{club.website}</span>
-                    </a>
-                  )}
-                  <div className="flex items-center gap-3 text-zinc-500">
-                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/5">
-                      <Mail className="h-5 w-5" />
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest">{club.contactEmail || t('club_profile.email_hidden')}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-bg-surface rounded-[2rem] p-6 sm:p-8 flex flex-col justify-center items-center text-center border border-white/5 shadow-2xl">
-                <ConciergeLabel className="mb-4 text-zinc-500 uppercase tracking-[0.2em] text-[10px]">{t('club_profile.ready_to_join')}</ConciergeLabel>
-                <EditorialHeading size="md" className="mb-8 text-white">{t('club_profile.apply_for_membership')}</EditorialHeading>
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="lg"
-                  onClick={() => setShowPreRegistrationModal(true)}
-                  className="min-h-11 rounded-full px-10 py-6 text-[11px]"
-                >
-                  {t('club_profile.start_application')}
-                </Button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </SectionWrapper>
-
-      {/* Pre-registration Modal */}
+      {/* ========================================================= */}
+      {/* PRE-REGISTRATION MODAL                                    */}
+      {/* ========================================================= */}
       <AnimatePresence>
         {showPreRegistrationModal && (
-          <motion.div 
-            className="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 z-[100]"
+          <motion.div
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-bg-base/80 p-4 backdrop-blur-2xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div 
-              className="bg-bg-base border border-white/10 rounded-[2rem] max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative overflow-hidden"
+            <motion.div
+              className="relative w-full max-w-lg overflow-hidden rounded-[2.5rem] border border-white/[0.08] bg-bg-surface shadow-[0_0_80px_rgba(0,0,0,0.8)]"
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
             >
-              {/* Modal Header */}
-              <div className="relative h-40 bg-bg-surface overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-base z-10" />
-                <Image src={primaryStaticImage} alt="Header" fill className="object-cover opacity-40" />
-                <div className="absolute bottom-0 left-0 p-8 z-20">
-                  <ConciergeLabel className="text-brand mb-2 uppercase tracking-[0.2em] text-[9px] font-bold">{t('club_profile.membership_application')}</ConciergeLabel>
-                  <h3 className="text-3xl font-serif text-white">{club.name}</h3>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Close modal"
-                  onClick={() => {
-                    setShowPreRegistrationModal(false);
-                    setFormState(null);
-                  }}
-                  className="absolute right-6 top-6 z-30 bg-black/50 text-white hover:bg-white hover:text-black"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="p-8">
-                {/* Form State Message */}
-                {formState && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
-                      formState.success
-                        ? 'bg-brand/10 text-brand border border-brand/20'
-                        : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                    }`}
+              <div className="max-h-[90vh] overflow-y-auto no-scrollbar">
+                <div className="relative h-48 overflow-hidden bg-bg-base">
+                  <div className="absolute inset-0 z-10 bg-gradient-to-t from-bg-surface via-bg-surface/40 to-transparent" />
+                  <Image src={primaryStaticImage} alt={`${club.name} modal header`} fill className="object-cover opacity-50" />
+                  <div className="absolute bottom-0 left-0 z-20 p-8">
+                    <ConciergeLabel className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand">
+                      {t('club_profile.membership_application')}
+                    </ConciergeLabel>
+                    <h3 className="text-3xl font-serif text-white">{club.name}</h3>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Close modal"
+                    onClick={closeMembershipModal}
+                    className="absolute right-6 top-6 z-30 rounded-full border border-white/10 bg-bg-base/40 text-white backdrop-blur-md hover:bg-white hover:text-bg-base"
                   >
-                    {formState.success ? <Check className="h-5 w-5 mt-0.5" /> : <AlertCircle className="h-5 w-5 mt-0.5" />}
-                    <p className="text-sm font-medium">{formState.message}</p>
-                  </motion.div>
-                )}
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
 
-                <form onSubmit={handlePreRegistrationSubmit} className="space-y-8">
-                  <input type="hidden" name="clubId" value={club.id} />
-
-                  <div className="space-y-4">
-                    <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-brand">
-                      {t('club_profile.form.personal_message')} <span className="text-brand">*</span>
-                      {t('club_profile.form.personal_message')} <span className="text-brand">*</span>
-                    </label>
-                    <textarea
-                      name="message"
-                      required
-                      rows={4}
-                      placeholder={t('form.message_placeholder')}
-                      className="w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-zinc-700 focus:ring-2 focus:ring-brand/50 focus:border-brand transition-all outline-none resize-none font-serif italic"
-                    />
-                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-                      {t('club_profile.form.personal_message_help')}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:gap-4">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => {
-                        setShowPreRegistrationModal(false);
-                        setFormState(null);
-                      }}
-                      className="flex-1 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full py-7 uppercase tracking-widest text-[10px] font-bold"
-                      disabled={isSubmitting}
+                <div className="p-8">
+                  {formState && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`mb-6 flex items-start gap-3 rounded-2xl border p-5 ${
+                        formState.success
+                          ? 'border-brand/30 bg-brand/10 text-brand'
+                          : 'border-red-500/20 bg-red-500/10 text-red-400'
+                      }`}
                     >
-                      {t('form.cancel')}
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      disabled={isSubmitting}
-                      className="flex-1 rounded-full py-7 text-[10px]"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          {t('form.submitting')}
-                        </>
-                      ) : (
-                        t('form.submit')
-                      )}
-                    </Button>
-                  </div>
-                </form>
+                      {formState.success ? <Check className="mt-0.5 h-5 w-5" /> : <AlertCircle className="mt-0.5 h-5 w-5" />}
+                      <p className="text-sm font-medium leading-relaxed">{formState.message}</p>
+                    </motion.div>
+                  )}
+
+                  <form onSubmit={handlePreRegistrationSubmit} className="space-y-8">
+                    <input type="hidden" name="clubId" value={club.id} />
+
+                    <div className="space-y-4">
+                      <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+                        {t('club_profile.form.personal_message')} <span className="text-brand">*</span>
+                      </label>
+                      <textarea
+                        name="message"
+                        required
+                        rows={4}
+                        placeholder={t('form.message_placeholder')}
+                        className="w-full resize-none rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-lg text-white font-serif italic shadow-inner outline-none transition-all placeholder:text-zinc-600 focus:border-brand focus:bg-white/[0.05]"
+                      />
+                      <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                        {t('club_profile.form.personal_message_help')}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-4 pt-4 sm:flex-row">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={closeMembershipModal}
+                        className="flex-1 rounded-full py-6 text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400 hover:bg-white/5 hover:text-white border border-white/10"
+                        disabled={isSubmitting}
+                      >
+                        {t('form.cancel')}
+                      </Button>
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        disabled={isSubmitting}
+                        className="flex-1 rounded-full bg-brand py-6 text-[11px] font-bold uppercase tracking-[0.15em] text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.3)] hover:bg-brand-dark"
+                      >
+                        {isSubmitting ? (
+                          <span className="flex items-center justify-center">
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            {t('form.submitting')}
+                          </span>
+                        ) : (
+                          t('form.submit')
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -586,4 +510,3 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
     </div>
   );
 }
-
