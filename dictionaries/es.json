@@ -1211,6 +1211,8 @@
   "club_profile.modal.success.check_email": "Revisa tu correo para verificar y crear contraseña",
   "club_profile.apply_for_membership": "Solicitar Membresía",
   "club_profile.start_application": "Iniciar Solicitud",
+  "club_profile.virtual_tour": "Experiencia la Atmósfera",
+  "club_profile.press_to_play": "Click para ver el Tour Virtual",
   "article.sticky_cta.desktop": "Want to visit a club safely?",
   "article.sticky_cta.mobile": "Visit safely?",
   "article.sticky_cta.button": "Browse Clubs",
@@ -1914,5 +1916,6 @@
   "landing.knowledge_router.events.europa.location": "Londres, Reino Unido",
   "landing.verification_standard.cards.barcelona.city_badge": "Barcelona",
   "landing.verification_standard.cards.madrid.city_badge": "Madrid",
-  "landing.featured_vault.read_time_suffix": "min de lectura"
+  "landing.featured_vault.read_time_suffix": "min de lectura",
+  "clubs.club-311-barcelona.description": "Club 311 Barcelona es un club privado para socios de primer nivel ubicado a pocos pasos de la icónica Sagrada Família. Desde 2018, se ha consolidado como un santuario para los entusiastas respetuosos del cannabis, basado en los pilares de la calidad, la seguridad y la comunidad. El interior está diseñado como un salón de alta gama con estética de cristal líquido, bañado por una iluminación cálida y cinematográfica que crea una atmósfera acogedora para la conexión social o la reflexión tranquila.\n\nMás allá de su selección premium, el Club 311 sirve como un centro único para nómadas digitales y creativos. Su zona dedicada al trabajo remoto ofrece un entorno profesional pero cómodo, lo que lo convierte en el santuario favorito de autónomos y emprendedores. Con eventos regulares para socios como los 'Weedzza Thursdays', reuniones sociales y un acogedor rincón de cine, el club fomenta un profundo sentido de pertenencia. Es más que un simple club social; es un espacio impulsado por la comunidad donde la educación y el consumo responsable siempre tienen prioridad."
 }

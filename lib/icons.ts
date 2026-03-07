@@ -62,3 +62,8 @@ export { TrendUpIcon as TrendingUp } from '@phosphor-icons/react/ssr';
 export { TwitterLogoIcon as Twitter } from '@phosphor-icons/react/ssr';
 export { LightningIcon as Zap } from '@phosphor-icons/react/ssr';
 export { TiktokLogoIcon as TikTok } from '@phosphor-icons/react/ssr';
+export { CornersOutIcon as Maximize } from '@phosphor-icons/react/ssr';
+export { SpeakerHighIcon as Volume2 } from '@phosphor-icons/react/ssr';
+export { SpeakerSlashIcon as VolumeX } from '@phosphor-icons/react/ssr';
+export { PlayIcon as Play } from '@phosphor-icons/react/ssr';
+export { PauseIcon as Pause } from '@phosphor-icons/react/ssr';

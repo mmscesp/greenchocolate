@@ -1211,6 +1211,8 @@
   "club_profile.modal.success.check_email": "Überprüfe deine E-Mails zur Bestätigung und Passworterstellung",
   "club_profile.apply_for_membership": "Mitgliedschaft beantragen",
   "club_profile.start_application": "Antrag starten",
+  "club_profile.virtual_tour": "Erlebe die Atmosphäre",
+  "club_profile.press_to_play": "Klicken zum Abspielen der virtuellen Tour",
   "article.sticky_cta.desktop": "Want to visit a club safely?",
   "article.sticky_cta.mobile": "Visit safely?",
   "article.sticky_cta.button": "Browse Clubs",
@@ -1914,5 +1916,6 @@
   "landing.knowledge_router.events.europa.location": "London, Vereinigtes Konigreich",
   "landing.verification_standard.cards.barcelona.city_badge": "Barcelona",
   "landing.verification_standard.cards.madrid.city_badge": "Madrid",
-  "landing.featured_vault.read_time_suffix": "Min. Lesezeit"
+  "landing.featured_vault.read_time_suffix": "Min. Lesezeit",
+  "clubs.club-311-barcelona.description": "Der Club 311 Barcelona ist ein erstklassiger privater Mitgliederclub, nur wenige Schritte von der ikonischen Sagrada Família entfernt. Seit 2018 hat er sich als Zufluchtsort für respektvolle Cannabis-Enthusiasten etabliert, der auf den Säulen Qualität, Sicherheit und Gemeinschaft aufbaut. Das Interieur ist als hochwertiges Liquid-Glass-Lounge-Design konzipiert, das in warmes, kinoreifes Licht getaucht ist und eine einladende Atmosphäre für soziale Kontakte oder ruhige Reflexion schafft.\n\nÜber seine erstklassige Auswahl hinaus dient der Club 311 als einzigartiger Knotenpunkt für digitale Nomaden und Kreative. Seine spezielle Remote-Arbeitszone bietet eine professionelle und dennoch komfortable Umgebung, was ihn zu einem beliebten Zufluchtsort für Freiberufler und Unternehmer macht. Mit regelmäßigen Mitglieder-Events wie den 'Weedzza Thursdays', sozialen Mixern und einer gemütlichen Kinoecke fördert der Club ein tiefes Gefühl der Zugehörigkeit. Er ist mehr als nur ein Social Club; es ist ein gemeinschaftsorientierter Raum, in dem Bildung und verantwortungsbewusster Konsum immer Vorrang haben."
 }

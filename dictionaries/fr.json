@@ -1211,6 +1211,8 @@
   "club_profile.modal.success.check_email": "Vérifiez vos e-mails pour valider et créer un mot de passe",
   "club_profile.apply_for_membership": "Demander l'Adhésion",
   "club_profile.start_application": "Commencer la Demande",
+  "club_profile.virtual_tour": "Découvrez l'atmosphère",
+  "club_profile.press_to_play": "Cliquez pour lire la visite virtuelle",
   "article.sticky_cta.desktop": "Want to visit a club safely?",
   "article.sticky_cta.mobile": "Visit safely?",
   "article.sticky_cta.button": "Browse Clubs",
@@ -1914,5 +1916,6 @@
   "landing.knowledge_router.events.europa.location": "Londres, Royaume-Uni",
   "landing.verification_standard.cards.barcelona.city_badge": "Barcelone",
   "landing.verification_standard.cards.madrid.city_badge": "Madrid",
-  "landing.featured_vault.read_time_suffix": "min de lecture"
+  "landing.featured_vault.read_time_suffix": "min de lecture",
+  "clubs.club-311-barcelona.description": "Le Club 311 Barcelona est un club privé de premier plan pour ses membres, situé à quelques pas de l'emblématique Sagrada Família. Depuis 2018, il s'est imposé comme un sanctuaire pour les passionnés de cannabis respectueux, bâti sur les piliers de la qualité, de la sécurité et de la communauté. L'intérieur est conçu comme un salon en verre liquide haut de gamme, baigné d'un éclairage chaleureux et cinématographique qui crée une atmosphère accueillante pour le lien social ou la réflexion tranquille.\n\nAu-delà de sa sélection premium, le Club 311 sert de plaque tournante unique pour les nomades numériques et les créatifs. Sa zone de travail à distance dédiée offre un environnement professionnel mais confortable, ce qui en fait un sanctuaire privilégié pour les indépendants et les entrepreneurs. Avec des événements réguliers pour les membres comme les 'Weedzza Thursdays', des rencontres sociales et un coin cinéma confortable, le club favorise un profond sentiment d'appartenance. C'est plus qu'un simple club social ; c'est un espace axé sur la communauté où l'éducation et la consommation responsable sont toujours prioritaires."
 }

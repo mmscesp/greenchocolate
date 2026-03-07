@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,7 +12,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
-import { getClubPrimaryMediaImage, type ClubMediaItem } from '@/lib/club-media';
+import { getClubPrimaryMediaImage, type ClubMediaItem, type ClubVideoMediaItem } from '@/lib/club-media';
 import {
   Lock,
   Star,
@@ -29,6 +29,7 @@ import { EditorialHeading } from '@/components/landing/editorial-concierge/typog
 import { ConciergeLabel } from '@/components/landing/editorial-concierge/typography/ConciergeLabel';
 import { FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-concierge/motion/config';
 import MembershipApplicationModal from '@/components/clubs/MembershipApplicationModal';
+import ClubVideoTour from '@/components/clubs/ClubVideoTour';
 
 /* ------------------------------------------------------------------ */
 /* MAIN COMPONENT                                                     */
@@ -43,6 +44,14 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const { user } = useAuth();
   const router = useRouter();
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(e => console.log('Autoplay blocked', e));
+    }
+  }, []);
 
   const fallbackImages = getClubImageGallery(club.images);
   const galleryItems =
@@ -55,12 +64,14 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
         }));
 
   const primaryStaticImage = getClubPrimaryMediaImage(galleryItems);
+  const videoItem = galleryItems.find((item) => item.kind === 'video') as ClubVideoMediaItem | undefined;
+  const imagesOnly = galleryItems.filter((item) => item.kind === 'image');
   const primaryActionLabel = t('club_profile.apply_for_membership');
   
-  // Format images for the new circular GSAP carousel
-  const carouselImages: CircularGalleryImage[] = galleryItems.map((item, index) => ({
+  // Format images for the new circular GSAP carousel - ONLY IMAGES
+  const carouselImages: CircularGalleryImage[] = imagesOnly.map((item, index) => ({
     title: item.alt || `${club.name} ${index + 1}`,
-    url: item.kind === 'video' ? item.poster : item.src,
+    url: item.src,
   }));
 
   const openMembershipFlow = () => {
@@ -90,7 +101,22 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
       {/* ========================================================= */}
       <section className="relative h-[60vh] min-h-[500px] w-full lg:h-[75vh]">
         <div className="absolute inset-0">
-          <Image src={primaryStaticImage} alt={`${club.name} hero image`} fill priority sizes="100vw" className="object-cover" />
+          {videoItem ? (
+            <video
+              ref={videoRef}
+              poster={videoItem.poster}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="h-full w-full object-cover"
+            >
+              <source src={videoItem.src} type="video/webm" />
+              {videoItem.mp4Fallback && <source src={videoItem.mp4Fallback} type="video/mp4" />}
+            </video>
+          ) : (
+            <Image src={primaryStaticImage} alt={`${club.name} hero image`} fill priority sizes="100vw" className="object-cover" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/45 to-bg-base/15" />
           <div className="absolute inset-0 bg-gradient-to-r from-bg-base/85 via-bg-base/25 to-transparent" />
         </div>
@@ -166,8 +192,8 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                 <div className="h-[1px] w-12 bg-white/10" />
               </div>
               
-              <p className="text-lg md:text-xl leading-relaxed text-zinc-300 font-serif italic text-pretty">
-                "{club.description}"
+              <p className="text-lg md:text-xl leading-relaxed text-zinc-300 font-serif italic text-pretty whitespace-pre-line">
+                "{t(`clubs.${club.slug}.description`) !== `clubs.${club.slug}.description` ? t(`clubs.${club.slug}.description`) : club.description}"
               </p>
 
               <div className="mt-8 flex flex-wrap gap-2">
@@ -181,6 +207,11 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                 ))}
               </div>
             </div>
+
+            {/* 2.5 The Virtual Tour (Video) */}
+            {videoItem && (
+              <ClubVideoTour video={videoItem} clubName={club.name} />
+            )}
 
             {/* 3. The New Circular Image Gallery */}
             {carouselImages.length > 1 && (
