@@ -166,7 +166,22 @@ export async function getPopularCities(limit = 5): Promise<CityCard[]> {
     const cities = await prisma.city.findMany({
       include: {
         _count: {
-          select: { clubs: true },
+          select: {
+            clubs: {
+              where: {
+                isActive: true,
+                isVerified: true,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        clubs: {
+          some: {
+            isActive: true,
+            isVerified: true,
+          },
         },
       },
       orderBy: {

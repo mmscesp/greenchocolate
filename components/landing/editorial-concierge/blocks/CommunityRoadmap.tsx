@@ -26,7 +26,7 @@ export function CommunityRoadmap() {
       status: t('landing.community_roadmap.cities.madrid.status'),
       tagline: t('landing.community_roadmap.cities.madrid.tagline'),
       href: `/${language}/spain/madrid`,
-      active: true,
+      active: false,
     },
     {
       slug: 'valencia',

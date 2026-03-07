@@ -147,7 +147,7 @@ Missing IDs from `CompleteBlogDB.md`: 6, 7, 8, 9, 10, 14, 15, 16, 17, 18, 19, 20
 |---|---|---|---|
 | `/en/editorial/public-vs-private-cannabis-spain` | No | Yes (`/en/editorial/spain-cannabis-laws-tourists`) | Reroute to existing slug |
 | `/en/editorial/cannabis-fine-spain-what-to-do` | No | Yes (`/en/editorial/emergency-resources`) | Reroute to existing slug |
-| `/en/about/verification-standard` | No | Weak (`/en/about` generic only) | Create dedicated page route |
+| `/en/mission#verification-standard` | Yes | Yes (`/[lang]/mission#verification-standard`) | Use mission anchor as canonical target |
 
 ### Dead links found inside live editorial MDX
 
@@ -155,7 +155,7 @@ Missing IDs from `CompleteBlogDB.md`: 6, 7, 8, 9, 10, 14, 15, 16, 17, 18, 19, 20
    - `/en/editorial/public-vs-private-cannabis-spain` (missing)
    - `/en/editorial/cannabis-fine-spain-what-to-do` (missing)
 2. `data/content/culture/what-are-cannabis-social-clubs-spain.mdx` links to:
-   - `/en/about/verification-standard` (route missing; only `/[lang]/about/page.tsx` exists)
+   - deprecated `/en/about/verification-standard` references should target `/[lang]/mission#verification-standard`
 
 ### Structural consistency risks
 
@@ -196,7 +196,7 @@ flowchart LR
    - `public-vs-private-cannabis-spain`
    - `cannabis-fine-spain-what-to-do`
 2. Resolve verification methodology route mismatch:
-   - Create `/[lang]/about/verification-standard` or update link target.
+   - Update legacy references to `/[lang]/mission#verification-standard`.
 
 ### P1 - Complete trust moat cluster (high conversion support)
 

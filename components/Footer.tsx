@@ -149,12 +149,12 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link 
-                  href={withLocale('/spain/madrid')} 
-                  className="text-sm text-zinc-400 hover:text-white transition-colors"
+                <span
+                  className="group flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500"
+                  aria-disabled="true"
                 >
-                  Madrid
-                </Link>
+                  Madrid <span className="ml-0 rounded border border-brand/10 bg-brand/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-brand/50 sm:ml-2">{t('common.coming_soon')}</span>
+                </span>
               </li>
               <li>
                 <span

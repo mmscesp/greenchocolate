@@ -38,9 +38,7 @@ export function VerificationStandard() {
         </motion.div>
 
         {/* [motion] */}
-        <div
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
-        >
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
           {/* Club Card 1 */}
           <motion.div
             initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
@@ -66,37 +64,7 @@ export function VerificationStandard() {
             <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand mb-8">
               <CheckCircle2 className="w-4 h-4" /> {t('landing.verification_standard.verified_badge')}
             </div>
-            <Link href={`/${language}/clubs`} className="text-white hover:text-brand text-sm font-bold flex items-center gap-2 transition-colors">
-              {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
-            </Link>
-          </motion.div>
-
-          {/* Club Card 2 */}
-          <motion.div
-            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
-            whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.35, delay: 0.08, ease: [0.25, 0.1, 0.25, 1] }}
-            whileHover={shouldReduceMotion ? undefined : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}
-            style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
-            className="bg-bg-card border border-white/10 rounded-2xl p-6 md:p-8 group hover:border-brand/50 transition-colors duration-300"
-          >
-            <div className="flex justify-between items-start mb-6">
-              <span className="px-3 py-1 bg-brand text-bg-base text-[10px] font-bold uppercase tracking-widest rounded-sm">
-                {t('landing.verification_standard.cards.madrid.city_badge')}
-              </span>
-              <div className="w-2 h-2 rounded-full bg-brand shadow-[0_0_10px_hsl(var(--brand)/0.5)]" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-2">{t('landing.verification_standard.cards.madrid.name')}</h3>
-            <div className="space-y-2 mb-8 text-sm text-zinc-400 font-medium">
-              <p>{t('landing.verification_standard.cards.madrid.line_1')}</p>
-              <p><span className="text-zinc-300">{t('landing.verification_standard.labels.visitor_policy')}</span> {t('landing.verification_standard.cards.madrid.visitor_policy')}</p>
-              <p><span className="text-zinc-300">{t('landing.verification_standard.labels.response_time')}</span> {t('landing.verification_standard.cards.madrid.response_time')}</p>
-            </div>
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand mb-8">
-              <CheckCircle2 className="w-4 h-4" /> {t('landing.verification_standard.verified_badge')}
-            </div>
-            <Link href={`/${language}/clubs`} className="text-white hover:text-brand text-sm font-bold flex items-center gap-2 transition-colors">
+            <Link href={`/${language}/clubs/club-311-barcelona`} className="text-white hover:text-brand text-sm font-bold flex items-center gap-2 transition-colors">
               {t('landing.verification_standard.view_profile')} <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
@@ -106,7 +74,7 @@ export function VerificationStandard() {
             initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
             whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.35, delay: 0.12, ease: [0.25, 0.1, 0.25, 1] }}
+            transition={{ duration: 0.35, delay: 0.08, ease: [0.25, 0.1, 0.25, 1] }}
             whileHover={shouldReduceMotion ? undefined : { y: -3, boxShadow: '0 8px 30px rgba(0,0,0,0.10)' }}
             style={{ willChange: shouldReduceMotion ? undefined : 'transform' }}
             className="bg-bg-surface border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden"

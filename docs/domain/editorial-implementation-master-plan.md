@@ -27,8 +27,8 @@ Goal: Remove immediate trust leaks and make current system reliable.
   - Action: reroute link target to existing `spain-cannabis-laws-tourists`.
 - `cannabis-fine-spain-what-to-do` does not exist as a live slug.
   - Action: reroute link target to existing `emergency-resources`.
-- `/[lang]/about/verification-standard` does not exist as a route.
-  - Action: create new page route `app/[lang]/about/verification-standard/page.tsx` (recommended), or temporarily retarget to `/[lang]/about`.
+- Verification standard now resolves through `/[lang]/mission#verification-standard`.
+  - Action: keep legacy references pointed at the mission anchor instead of creating a deprecated about route.
 
 - Update links in:
   - `data/content/harm-reduction/safety-kit-visitors-spain.mdx` (2 link replacements)
@@ -113,7 +113,7 @@ Goal: Finish the highest-business-impact missing content block.
 
 Publish in this order:
 
-1. Article 6: verification standard (`/about/verification-standard`)
+1. Article 6: verification standard (`/mission#verification-standard`)
 2. Article 16: public vs private legal line
 3. Article 17: what to do if fined
 4. Article 14: scam red flags (canonicalize slug strategy)

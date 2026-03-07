@@ -10,16 +10,19 @@ const CITIES = [
     nameKey: 'home.city_selector.cities.barcelona',
     slug: 'barcelona',
     descriptionKey: 'home.city_selector.cities.barcelona_desc',
+    active: true,
   },
   {
     nameKey: 'home.city_selector.cities.madrid',
     slug: 'madrid',
     descriptionKey: 'home.city_selector.cities.madrid_desc',
+    active: false,
   },
   {
     nameKey: 'home.city_selector.cities.valencia',
     slug: 'valencia',
     descriptionKey: 'home.city_selector.cities.valencia_desc',
+    active: false,
   },
 ] as const;
 
@@ -37,20 +40,40 @@ export default function CitySelectorSection() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {CITIES.map((city) => (
-            <Link key={city.slug} href={`/${language}/spain/${city.slug}`} className="group relative block overflow-hidden rounded-xl aspect-[4/3]">
-              <Image
-                src={getCityImage(city.slug)}
-                alt={t(city.nameKey)}
-                fill
-                sizes="(min-width: 768px) 33vw, 100vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300 z-10" />
-              <div className="absolute inset-0 p-6 flex flex-col justify-end z-20">
-                <h3 className="text-2xl font-bold text-white mb-1">{t(city.nameKey)}</h3>
-                <p className="text-white/80 text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">{t(city.descriptionKey)}</p>
+            city.active ? (
+              <Link key={city.slug} href={`/${language}/spain/${city.slug}`} className="group relative block overflow-hidden rounded-xl aspect-[4/3]">
+                <Image
+                  src={getCityImage(city.slug)}
+                  alt={t(city.nameKey)}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300 z-10" />
+                <div className="absolute inset-0 p-6 flex flex-col justify-end z-20">
+                  <h3 className="text-2xl font-bold text-white mb-1">{t(city.nameKey)}</h3>
+                  <p className="text-white/80 text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">{t(city.descriptionKey)}</p>
+                </div>
+              </Link>
+            ) : (
+              <div key={city.slug} className="group relative block overflow-hidden rounded-xl aspect-[4/3]" aria-disabled="true">
+                <Image
+                  src={getCityImage(city.slug)}
+                  alt={t(city.nameKey)}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-black/60 z-10" />
+                <div className="absolute inset-0 p-6 flex flex-col justify-end z-20">
+                  <div className="mb-3 inline-flex w-fit items-center rounded-full border border-brand/20 bg-brand/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand">
+                    {t('common.coming_soon')}
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-1">{t(city.nameKey)}</h3>
+                  <p className="text-white/80 text-sm">{t(city.descriptionKey)}</p>
+                </div>
               </div>
-            </Link>
+            )
           ))}
         </div>
       </div>

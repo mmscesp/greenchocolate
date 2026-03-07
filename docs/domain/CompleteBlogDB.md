@@ -396,7 +396,7 @@ These articles are linked directly from your homepage. If they don't exist, you 
 
 **Tag:** Trust / About
 
-**Slug:** `/en/about/verification-standard`
+**Slug:** `/en/mission#verification-standard`
 
 **Read time:** 5 min
 
@@ -1020,7 +1020,7 @@ Supporting content that feeds the pillar pages. These drive long-tail traffic an
 | 3 | Barcelona vs. Amsterdam: Two Systems, Two Realities | Culture | /en/guides/barcelona-vs-amsterdam-cannabis | TIER 1 | 10 min |
 | 4 | Your First Time in a Barcelona Cannabis Club | City Guide | /en/guides/first-time-barcelona-cannabis-club | TIER 1 | 15 min |
 | 5 | Spain's Cannabis Laws: What Tourists Need to Know | Legal | /en/guides/spain-cannabis-laws-tourists | TIER 1 | 10 min |
-| 6 | How We Verify Clubs — And Why Most Aren't Listed | Trust | /en/about/verification-standard | TIER 1 | 5 min |
+| 6 | How We Verify Clubs — And Why Most Aren't Listed | Trust | /en/mission#verification-standard | TIER 1 | 5 min |
 | 7 | Cannabis Social Clubs in Barcelona: Complete Guide | City Guide | /en/spain/barcelona/guide | TIER 2 | 14 min |
 | 8 | Cannabis Social Clubs in Madrid: What's Different | City Guide | /en/spain/madrid/guide | TIER 2 | 12 min |
 | 9 | Cannabis Social Clubs in Valencia: Emerging Scene | City Guide | /en/spain/valencia/guide | TIER 2 | 8 min |

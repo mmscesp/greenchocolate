@@ -7,7 +7,8 @@ import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
-import { getClubImageGallery, getClubPrimaryImage } from '@/lib/image-fallbacks';
+import { getClubImageGallery } from '@/lib/image-fallbacks';
+import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -45,7 +46,13 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     };
   }
 
-  const primaryImage = getClubPrimaryImage(clubDetail.images, clubDetail.citySlug);
+  const mediaItems = buildClubMediaItems({
+    slug: clubDetail.slug,
+    name: clubDetail.name,
+    images: clubDetail.images,
+    citySlug: clubDetail.citySlug,
+  });
+  const primaryImage = getClubPrimaryMediaImage(mediaItems);
 
   return {
     title: `${clubDetail.name} | ${clubDetail.neighborhood}`,
@@ -74,7 +81,13 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   const gatedClub = await getClubDetailsWithAccess(clubDetail.id);
   const clubImages = getClubImageGallery(clubDetail.images, clubDetail.citySlug);
-  const primaryImage = getClubPrimaryImage(clubImages, clubDetail.citySlug);
+  const mediaItems = buildClubMediaItems({
+    slug: clubDetail.slug,
+    name: clubDetail.name,
+    images: clubImages,
+    citySlug: clubDetail.citySlug,
+  });
+  const primaryImage = getClubPrimaryMediaImage(mediaItems);
 
   // Map ClubDetail to Club type expected by ClubProfileContent
   const club: Club = {
@@ -125,7 +138,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     },
     priceRange: club.priceRange,
     telephone: club.phoneNumber,
-    url: club.website,
+    url: club.website ? `https://${club.website}` : undefined,
     email: club.contactEmail,
     amenityFeature: club.amenities.map((amenity) => ({
       '@type': 'LocationFeatureSpecification',
@@ -168,7 +181,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      <ClubProfileContent club={club} />
+      <ClubProfileContent club={club} mediaItems={mediaItems} />
     </>
   );
 }

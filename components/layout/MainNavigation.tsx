@@ -39,9 +39,9 @@ export const desktopExploreItems: DesktopExploreItem[] = [
     Icon: MapPin,
   },
   {
-    href: '/spain/madrid',
     titleKey: 'nav.explore.madrid.title',
     descriptionKey: 'nav.explore.madrid.description',
+    comingSoon: true,
     Icon: MapPin,
   },
   {
