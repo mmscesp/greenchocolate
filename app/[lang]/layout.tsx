@@ -10,6 +10,7 @@ import Navbar from '@/components/layout/Navbar';
 import ConditionalFooter from '@/components/layout/ConditionalFooter';
 import PlatformBackground from '@/components/layout/PlatformBackground';
 import LegalDisclaimerModal from '@/components/trust/LegalDisclaimerModal';
+import PendingApplicationProcessor from '@/components/clubs/PendingApplicationProcessor';
 import LanguageUpdater from '@/components/LanguageUpdater';
 
 export async function generateStaticParams() {
@@ -35,6 +36,7 @@ export default async function LocaleLayout({
     <LanguageProvider locale={lang as Locale} dictionary={dictionary}>
       <LanguageUpdater />
       <AuthProvider>
+        <PendingApplicationProcessor />
         <MotionProvider>
           <ScrollRestoration />
           <div className="min-h-screen flex flex-col">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,59 +10,25 @@ import { ImageGallery, type CircularGalleryImage } from '@/components/ui/carouse
 import VerificationBadge from '@/components/VerificationBadge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
-import { submitMembershipApplication } from '@/app/actions/applications';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { getClubPrimaryMediaImage, type ClubMediaItem } from '@/lib/club-media';
 import {
-  MapPin,
   Lock,
   Star,
   Mail,
   Globe,
   Clock,
-  X,
-  Check,
-  AlertCircle,
-  Loader2,
   ArrowLeft,
-  Sparkles,
+  Check,
   Shield,
   Cannabis,
 } from '@/lib/icons';
 
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from '@/components/landing/editorial-concierge/typography/ConciergeLabel';
-import { PulsingStatusDot } from '@/components/landing/editorial-concierge/interactive/PulsingStatusDot';
 import { FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-concierge/motion/config';
-
-/* ------------------------------------------------------------------ */
-/* TRUST STRIP                                                        */
-/* ------------------------------------------------------------------ */
-function ClubTrustStrip({ isVerified }: { isVerified: boolean }) {
-  const { t, language } = useLanguage();
-
-  return (
-    // Sits perfectly at top-[72px] just beneath standard global navbars
-    <div className="sticky top-[64px] z-40 w-full border-b border-white/[0.08] bg-bg-base/80 supports-[backdrop-filter]:bg-bg-base/60 backdrop-blur-2xl [transform:translateZ(0)] md:top-[72px]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-8">
-        <div className="min-w-0 flex items-center gap-3">
-          {isVerified ? <PulsingStatusDot color="hsl(var(--brand))" /> : <div className="h-2.5 w-2.5 rounded-full bg-zinc-600" />}
-          <ConciergeLabel size="xs" emphasis="high" className="truncate text-white/90 uppercase tracking-[0.2em] font-bold">
-            {isVerified ? t('club_profile.trust_strip.verified') : t('club_profile.trust_strip.pending_audit')}
-          </ConciergeLabel>
-        </div>
-
-        <Link
-          href={`/${language}/app`}
-          className="shrink-0 text-[10px] font-bold uppercase tracking-[0.2em] text-brand transition-all hover:text-white"
-        >
-          {t('club_profile.register_on_app')}
-        </Link>
-      </div>
-    </div>
-  );
-}
+import MembershipApplicationModal from '@/components/clubs/MembershipApplicationModal';
 
 /* ------------------------------------------------------------------ */
 /* MAIN COMPONENT                                                     */
@@ -77,8 +43,6 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const { user } = useAuth();
   const router = useRouter();
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formState, setFormState] = useState<{ success: boolean; message?: string; errors?: Record<string, string[]> } | null>(null);
 
   const fallbackImages = getClubImageGallery(club.images);
   const galleryItems =
@@ -91,8 +55,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
         }));
 
   const primaryStaticImage = getClubPrimaryMediaImage(galleryItems);
-  const clubPath = `/${language}/clubs/${club.slug}`;
-  const primaryActionLabel = user ? t('club_profile.start_application') : t('club_profile.register_on_app');
+  const primaryActionLabel = t('club_profile.apply_for_membership');
   
   // Format images for the new circular GSAP carousel
   const carouselImages: CircularGalleryImage[] = galleryItems.map((item, index) => ({
@@ -101,47 +64,11 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   }));
 
   const openMembershipFlow = () => {
-    if (!user) {
-      router.push(`/${language}/account/login?redirect=${encodeURIComponent(clubPath)}`);
-      return;
-    }
     setShowPreRegistrationModal(true);
   };
 
   const closeMembershipModal = () => {
     setShowPreRegistrationModal(false);
-    setFormState(null);
-  };
-
-  const handlePreRegistrationSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setFormState(null);
-
-    try {
-      const formData = new FormData(e.currentTarget);
-      const message = (formData.get('message') as string | null) || undefined;
-
-      const result = await submitMembershipApplication({
-        targetClubId: club.id,
-        message,
-        eligibilityAnswers: {},
-      });
-
-      setFormState({ success: result.success, message: result.error ?? t('club_profile.form.success') });
-
-      if (result.success) {
-        setTimeout(() => {
-          closeMembershipModal();
-          router.push(`/${language}/profile/requests`);
-        }, 1500);
-      }
-    } catch (error) {
-      console.error('Submit error:', error);
-      setFormState({ success: false, message: t('club_profile.form.error_unexpected') });
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const getDayName = (day: string) => {
@@ -158,8 +85,6 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   return (
     <div className="relative min-h-screen bg-bg-base font-sans selection:bg-brand/30 selection:text-white pb-20">
       
-      <ClubTrustStrip isVerified={club.isVerified} />
-
       {/* ========================================================= */}
       {/* CINEMATIC HERO                                            */}
       {/* ========================================================= */}
@@ -296,8 +221,8 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
 
           {/* RIGHT COLUMN: Sticky Dossier */}
           <div className="lg:col-span-4 relative">
-            {/* Sticks exactly below the Navbar + TrustStrip */}
-            <div className="sticky top-[140px] md:top-[160px] space-y-6 flex flex-col pb-10">
+            {/* Sticks exactly below the Navbar */}
+            <div className="sticky top-[72px] md:top-[80px] space-y-6 flex flex-col pb-10">
 
               {/* Box 1: Club Stats */}
               <div className={`${glassCardClass} p-8 overflow-hidden group`}>
@@ -400,113 +325,13 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
         </div>
       </div>
 
-      {/* ========================================================= */}
-      {/* PRE-REGISTRATION MODAL                                    */}
-      {/* ========================================================= */}
-      <AnimatePresence>
-        {showPreRegistrationModal && (
-          <motion.div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-bg-base/80 p-4 backdrop-blur-2xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="relative w-full max-w-lg overflow-hidden rounded-[2.5rem] border border-white/[0.08] bg-bg-surface shadow-[0_0_80px_rgba(0,0,0,0.8)]"
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            >
-              <div className="max-h-[90vh] overflow-y-auto no-scrollbar">
-                <div className="relative h-48 overflow-hidden bg-bg-base">
-                  <div className="absolute inset-0 z-10 bg-gradient-to-t from-bg-surface via-bg-surface/40 to-transparent" />
-                  <Image src={primaryStaticImage} alt={`${club.name} modal header`} fill className="object-cover opacity-50" />
-                  <div className="absolute bottom-0 left-0 z-20 p-8">
-                    <ConciergeLabel className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-brand">
-                      {t('club_profile.membership_application')}
-                    </ConciergeLabel>
-                    <h3 className="text-3xl font-serif text-white">{club.name}</h3>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Close modal"
-                    onClick={closeMembershipModal}
-                    className="absolute right-6 top-6 z-30 rounded-full border border-white/10 bg-bg-base/40 text-white backdrop-blur-md hover:bg-white hover:text-bg-base"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <div className="p-8">
-                  {formState && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`mb-6 flex items-start gap-3 rounded-2xl border p-5 ${
-                        formState.success
-                          ? 'border-brand/30 bg-brand/10 text-brand'
-                          : 'border-red-500/20 bg-red-500/10 text-red-400'
-                      }`}
-                    >
-                      {formState.success ? <Check className="mt-0.5 h-5 w-5" /> : <AlertCircle className="mt-0.5 h-5 w-5" />}
-                      <p className="text-sm font-medium leading-relaxed">{formState.message}</p>
-                    </motion.div>
-                  )}
-
-                  <form onSubmit={handlePreRegistrationSubmit} className="space-y-8">
-                    <input type="hidden" name="clubId" value={club.id} />
-
-                    <div className="space-y-4">
-                      <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
-                        {t('club_profile.form.personal_message')} <span className="text-brand">*</span>
-                      </label>
-                      <textarea
-                        name="message"
-                        required
-                        rows={4}
-                        placeholder={t('form.message_placeholder')}
-                        className="w-full resize-none rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-lg text-white font-serif italic shadow-inner outline-none transition-all placeholder:text-zinc-600 focus:border-brand focus:bg-white/[0.05]"
-                      />
-                      <p className="text-[10px] uppercase tracking-widest text-zinc-500">
-                        {t('club_profile.form.personal_message_help')}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-col gap-4 pt-4 sm:flex-row">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={closeMembershipModal}
-                        className="flex-1 rounded-full py-6 text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-400 hover:bg-white/5 hover:text-white border border-white/10"
-                        disabled={isSubmitting}
-                      >
-                        {t('form.cancel')}
-                      </Button>
-                      <Button
-                        type="submit"
-                        variant="primary"
-                        disabled={isSubmitting}
-                        className="flex-1 rounded-full bg-brand py-6 text-[11px] font-bold uppercase tracking-[0.15em] text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.3)] hover:bg-brand-dark"
-                      >
-                        {isSubmitting ? (
-                          <span className="flex items-center justify-center">
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            {t('form.submitting')}
-                          </span>
-                        ) : (
-                          t('form.submit')
-                        )}
-                      </Button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* MEMBERSHIP APPLICATION MODAL */}
+      <MembershipApplicationModal
+        club={club}
+        isOpen={showPreRegistrationModal}
+        onClose={closeMembershipModal}
+        clubImage={primaryStaticImage}
+      />
     </div>
   );
 }
