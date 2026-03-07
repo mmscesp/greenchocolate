@@ -13,7 +13,7 @@ import TrustBadge from './trust/TrustBadge';
 import { EditorialHeading } from './landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
 import { cn } from '@/lib/utils';
-import { getClubPrimaryImage } from '@/lib/image-fallbacks';
+import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 
 type ClubCardEntity = ClubModel | ClubCardData;
 
@@ -26,7 +26,13 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
   const { t, language } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
   const clubCitySlug = 'citySlug' in club ? club.citySlug : null;
-  const primaryImage = getClubPrimaryImage(club.images, clubCitySlug);
+  const mediaItems = buildClubMediaItems({
+    slug: club.slug,
+    name: club.name,
+    images: club.images,
+    citySlug: clubCitySlug,
+  });
+  const primaryImage = getClubPrimaryMediaImage(mediaItems);
 
   return (
     // [motion]

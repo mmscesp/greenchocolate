@@ -27,6 +27,8 @@ interface ClubsPageClientProps {
   vibes: string[];
 }
 
+const LIVE_CLUB_SLUGS = new Set(['club-311-barcelona']);
+
 export default function ClubsPageClient({ 
   initialClubs, 
   neighborhoods, 
@@ -59,7 +61,7 @@ export default function ClubsPageClient({
         priceRange: newFilters.priceRange.length > 0 ? newFilters.priceRange : undefined,
         isVerified: newFilters.isVerified ? true : undefined,
       });
-      setClubs(result);
+      setClubs(result.filter((club) => LIVE_CLUB_SLUGS.has(club.slug)));
     } catch (error) {
       console.error('Error fetching clubs:', error);
     } finally {
