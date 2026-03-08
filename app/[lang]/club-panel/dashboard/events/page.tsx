@@ -335,7 +335,7 @@ export default function EventsPage() {
                      />
                     <button
                       type="button"
-                      aria-label="Remove image"
+                      aria-label={t('club_panel.events.form.remove_image_aria')}
                       onClick={() => setFormData({ ...formData, image: '' })}
                       className="absolute top-2 right-2 p-1 bg-background/80 rounded-full hover:bg-background"
                     >

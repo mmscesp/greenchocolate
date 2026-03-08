@@ -60,7 +60,7 @@ export default function ClubVideoTour({ video, clubName }: ClubVideoTourProps) {
       <div className="flex items-center gap-4 px-2">
         <div className="h-[1px] flex-grow bg-white/10" />
         <span className="text-[10px] uppercase tracking-[0.3em] text-brand font-bold">
-          {t('club_profile.virtual_tour') || 'Virtual Tour'}
+          {t('club_profile.virtual_tour')}
         </span>
         <div className="h-[1px] w-12 bg-white/10" />
       </div>
@@ -122,7 +122,7 @@ export default function ClubVideoTour({ video, clubName }: ClubVideoTourProps) {
                 {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 fill-current" />}
               </button>
               <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">
-                Inside {clubName}
+                {t('club_profile.video_inside_prefix')} {clubName}
               </span>
             </div>
 
@@ -139,14 +139,14 @@ export default function ClubVideoTour({ video, clubName }: ClubVideoTourProps) {
 
         <div className="absolute top-6 left-8 flex items-center gap-4">
            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/40 drop-shadow-md">
-             {t('club_profile.press_to_play') || 'Click to Play Atmosphere'}
+             {t('club_profile.press_to_play')}
            </span>
            <button 
              onClick={toggleFullscreen}
              className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.2em] text-brand/60 hover:text-brand transition-colors drop-shadow-md"
            >
              <Maximize className="h-3 w-3" />
-             {t('club_profile.fullscreen_recommended') || 'Fullscreen Recommended'}
+             {t('club_profile.fullscreen_recommended')}
            </button>
         </div>
       </motion.div>

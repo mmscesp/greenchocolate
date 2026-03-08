@@ -23,31 +23,28 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
-        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertCircle className="h-10 w-10 text-red-600" />
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-card border border-border rounded-xl shadow-lg p-8 text-center">
+        <div className="w-20 h-20 bg-destructive/15 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="h-10 w-10 text-destructive" />
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-foreground mb-2">
           Algo salió mal
         </h1>
 
-        <p className="text-gray-600 mb-6">
+        <p className="text-muted-foreground mb-6">
           Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo o vuelve a la página principal.
         </p>
 
         {error.digest && (
-          <p className="text-xs text-gray-400 mb-6">
+          <p className="text-xs text-muted-foreground/80 mb-6">
             Error ID: {error.digest}
           </p>
         )}
 
         <div className="flex flex-col gap-3">
-          <Button
-            onClick={reset}
-            className="w-full bg-green-600 hover:bg-green-700"
-          >
+          <Button onClick={reset} className="w-full">
             <RefreshCw className="h-4 w-4 mr-2" />
             Intentar de nuevo
           </Button>

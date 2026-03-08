@@ -23,13 +23,13 @@ export default async function ContactPage({ params }: ContactPageProps) {
         <div className="rounded-2xl border bg-card p-6 md:p-8 space-y-4">
           <div className="inline-flex items-center gap-2 text-primary font-semibold">
             <Mail className="h-4 w-4" />
-            hello@socialclubsmaps.com
+            {t('contact.email')}
           </div>
           <p className="text-sm text-muted-foreground">
             {t('contact.urgent_note')}
           </p>
           <a
-            href="mailto:hello@socialclubsmaps.com"
+            href={`mailto:${t('contact.email')}`}
             className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             {t('contact.email_cta')}

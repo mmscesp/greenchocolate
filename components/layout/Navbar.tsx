@@ -104,7 +104,7 @@ export default function Navbar() {
             />
             <Link href={localizedHomePath} className="flex items-center">
               <span className={cn('text-xl font-bold tracking-tight transition-all duration-300', useLightNavForeground ? 'text-white' : 'text-slate-900')}>
-                SocialClubsMaps
+                {t('brand.name')}
               </span>
             </Link>
           </div>
@@ -128,7 +128,7 @@ export default function Navbar() {
                 transition={{ duration: 0.2 }}
                 className="px-5 py-2 text-sm font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
               >
-                Get the Safety Kit
+                {t('nav.get_safety_kit')}
               </motion.button>
             </Link>
           </div>
@@ -141,7 +141,7 @@ export default function Navbar() {
               whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
               transition={{ duration: 0.2 }}
               onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
-              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-label={mobileMenuOpen ? t('nav.mobile.close_menu') : t('nav.mobile.open_menu')}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-site-menu"
               className={cn(
@@ -213,7 +213,7 @@ export default function Navbar() {
                   transition={{ duration: 0.2 }}
                   className="w-full py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
                 >
-                  Get the Safety Kit
+                  {t('nav.get_safety_kit')}
                 </motion.button>
               </Link>
             </div>

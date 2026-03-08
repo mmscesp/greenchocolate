@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
-import { languages, Language } from '@/lib/i18n';
+import { i18n, localeLabels, type Locale } from '@/lib/i18n-config';
 import { ChevronDown, Globe } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
@@ -18,11 +18,10 @@ export default function LanguageSelector({
   direction = 'down',
   tone = 'light',
 }: LanguageSelectorProps) {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Fallback to 'en' if language key doesn't exist in languages object
-  const currentLanguage = languages[language] || languages['en'];
+  const currentLanguage = localeLabels[language] || localeLabels[i18n.defaultLocale];
   const isLightTone = tone === 'light';
   const menuPositionClassName = cn(
     direction === 'up' ? 'absolute bottom-full right-0 mb-2' : 'absolute top-full right-0 mt-2',
@@ -32,7 +31,7 @@ export default function LanguageSelector({
       : 'bg-white/95 backdrop-blur-xl border border-black/10 shadow-2xl'
   );
 
-  const handleLanguageChange = (newLanguage: Language) => {
+  const handleLanguageChange = (newLanguage: Locale) => {
     setLanguage(newLanguage);
     setIsOpen(false);
   };
@@ -54,19 +53,22 @@ export default function LanguageSelector({
 
         {isOpen && (
           <div className="absolute bottom-full left-0 mb-2 bg-gray-800 rounded-lg shadow-lg border border-gray-700 py-2 min-w-[160px] z-50">
-            {Object.entries(languages).map(([code, lang]) => (
+            {i18n.locales.map((code) => {
+              const lang = localeLabels[code];
+              return (
               <Button
                 key={code}
                 type="button"
                 variant={language === code ? 'secondary' : 'ghost'}
                 size="sm"
-                onClick={() => handleLanguageChange(code as Language)}
+                onClick={() => handleLanguageChange(code)}
                 className="w-full justify-start rounded-none px-4"
               >
                 <span className="text-lg">{lang.flag}</span>
                 <span>{lang.name}</span>
               </Button>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -79,7 +81,7 @@ export default function LanguageSelector({
         type="button"
         variant="ghost"
         size="icon"
-        aria-label="Select language"
+        aria-label={t('language_selector.aria_label')}
         onClick={() => setIsOpen(!isOpen)}
         className="h-10 w-10 rounded-full"
       >
@@ -90,19 +92,22 @@ export default function LanguageSelector({
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className={menuPositionClassName}>
-            {Object.entries(languages).map(([code, lang]) => (
+            {i18n.locales.map((code) => {
+              const lang = localeLabels[code];
+              return (
               <Button
                 key={code}
                 type="button"
                 variant={language === code ? 'secondary' : 'ghost'}
                 size="sm"
-                onClick={() => handleLanguageChange(code as Language)}
+                onClick={() => handleLanguageChange(code)}
                 className="w-full justify-start rounded-none px-4"
               >
                 <span className="text-lg">{lang.flag}</span>
                 <span className="font-medium">{lang.name}</span>
               </Button>
-            ))}
+              );
+            })}
           </div>
         </>
       )}

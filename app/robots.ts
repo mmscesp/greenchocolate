@@ -1,7 +1,16 @@
 import { MetadataRoute } from 'next';
+import { i18n } from '@/lib/i18n-config';
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://socialclubsmaps.com';
+  const localizedDisallow = i18n.locales.flatMap((locale) => [
+    `/${locale}/dashboard`,
+    `/${locale}/dashboard/*`,
+    `/${locale}/admin`,
+    `/${locale}/admin/*`,
+    `/${locale}/club-panel`,
+    `/${locale}/club-panel/*`,
+  ]);
 
   return {
     rules: [
@@ -24,6 +33,7 @@ export default function robots(): MetadataRoute.Robots {
           '/admin/*',
           '/club-panel/dashboard',
           '/club-panel/dashboard/*',
+          ...localizedDisallow,
           '/api/internal',
           '/api/internal/*',
           '/_next',
@@ -48,6 +58,7 @@ export default function robots(): MetadataRoute.Robots {
           '/admin/*',
           '/club-panel',
           '/club-panel/*',
+          ...localizedDisallow,
         ],
       },
     ],

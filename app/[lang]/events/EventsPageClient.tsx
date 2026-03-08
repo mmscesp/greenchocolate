@@ -255,7 +255,7 @@ export default function EventsPageClient({ lang, initialEvents }: EventsPageClie
                               {t('events.view_details')}
                             </Text>
                             <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                              <span>Explore</span>
+                              <span>{t('common.explore')}</span>
                               <ArrowRight className="w-4 h-4" />
                             </div>
                           </div>

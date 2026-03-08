@@ -340,12 +340,12 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                   {club.website && (
                     <a href={`https://${club.website}`} className="group flex items-center gap-2 text-zinc-400 transition-colors hover:text-brand">
                       <Globe className="h-3.5 w-3.5" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Website</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">{t('club_profile.website')}</span>
                     </a>
                   )}
                   <div className="flex items-center gap-2 text-zinc-500">
                     <Mail className="h-3.5 w-3.5" />
-                    <span className="text-[10px] uppercase tracking-widest">{club.contactEmail ? "Email" : t('club_profile.email_hidden')}</span>
+                    <span className="text-[10px] uppercase tracking-widest">{club.contactEmail ? t('club_profile.email') : t('club_profile.email_hidden')}</span>
                   </div>
                 </div>
               </div>

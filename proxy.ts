@@ -6,12 +6,12 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import { i18n } from '@/lib/i18n-config';
+import { i18n, isLocale } from '@/lib/i18n-config';
 
 function getLocale(request: NextRequest): string {
   // 1. Check cookie
   const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-  if (cookieLocale && i18n.locales.includes(cookieLocale as typeof i18n.locales[number])) {
+  if (cookieLocale && isLocale(cookieLocale)) {
     return cookieLocale;
   }
 
@@ -31,7 +31,7 @@ function getLocale(request: NextRequest): string {
 
 function getLocaleFromPathname(pathname: string): string | null {
   const firstSegment = pathname.split('/')[1];
-  if (firstSegment && i18n.locales.includes(firstSegment as typeof i18n.locales[number])) {
+  if (firstSegment && isLocale(firstSegment)) {
     return firstSegment;
   }
   return null;
@@ -52,6 +52,16 @@ export async function proxy(request: NextRequest) {
   // Check if there is any supported locale in the pathname
   const pathnameLocale = getLocaleFromPathname(pathname);
   const pathnameIsMissingLocale = !pathnameLocale;
+  const firstSegment = pathname.split('/')[1] ?? '';
+  const hasLocaleLikePrefix = /^[a-z]{2}$/i.test(firstSegment);
+
+  // Normalize unsupported locale-like prefixes (e.g. /it/** -> /es/**)
+  if (pathnameIsMissingLocale && hasLocaleLikePrefix) {
+    const locale = getLocale(request);
+    const strippedPath = pathname.replace(/^\/[a-z]{2}(?=\/|$)/i, '') || '/';
+    const normalizedPath = strippedPath === '/' ? '' : strippedPath;
+    return NextResponse.redirect(new URL(`/${locale}${normalizedPath}`, request.url));
+  }
 
   // Redirect if there is no locale (and it's not an API/static route)
   if (pathnameIsMissingLocale) {

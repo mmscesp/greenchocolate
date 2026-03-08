@@ -33,7 +33,9 @@ export default function CityPageClient({
   const safeDescription =
     description ||
     (isComingSoon
-      ? `${cityName} is on the SocialClubsMaps roadmap. Barcelona is the only live city right now.`
+      ? t('city.coming_soon.description_fallback')
+          .replace('{{city}}', cityName)
+          .replace('{{brand}}', t('brand.name'))
       : t('city.description_fallback').replace('{{city}}', cityName));
 
   return (
@@ -84,7 +86,7 @@ export default function CityPageClient({
             </div>
             <div className="flex items-center gap-2 text-muted-foreground bg-muted px-4 py-2 rounded-full">
               <Clock className="h-4 w-4 text-primary" />
-              <span>{isComingSoon ? t('common.coming_soon') : 'Barcelona live now'}</span>
+              <span>{isComingSoon ? t('common.coming_soon') : t('city.status.live_now')}</span>
             </div>
           </div>
         </motion.section>
@@ -103,7 +105,7 @@ export default function CityPageClient({
                 </div>
                 <h2 className="text-xl font-bold text-foreground mb-2">{t('city.cards.directory.title')}</h2>
                 <Text size="sm" variant="muted">
-                  Barcelona is the only live directory city in this handoff build. {cityName} remains on the roadmap.
+                  {t('city.coming_soon.cards.directory_description').replace('{{city}}', cityName)}
                 </Text>
               </div>
 
@@ -111,13 +113,13 @@ export default function CityPageClient({
                 <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
                   <Star className="h-6 w-6 text-primary" />
                 </div>
-                <h2 className="text-xl font-bold text-foreground mb-2">Explore Barcelona</h2>
+                <h2 className="text-xl font-bold text-foreground mb-2">{t('city.coming_soon.cards.explore_title')}</h2>
                 <Text size="sm" variant="muted" className="mb-6">
-                  View the live Club 311 profile and the Barcelona directory path that is ready in this version.
+                  {t('city.coming_soon.cards.explore_description')}
                 </Text>
                 <Button asChild className="rounded-xl">
                   <Link href={`/${lang}/spain/barcelona`}>
-                    Barcelona <ArrowRight className="h-4 w-4 ml-2" />
+                    {t('city.coming_soon.cards.explore_button')} <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
                 </Button>
               </div>
@@ -179,9 +181,9 @@ export default function CityPageClient({
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Building2 className="h-8 w-8 text-muted-foreground" />
               </div>
-              <H3 className="mb-3">{cityName} is not published yet</H3>
+              <H3 className="mb-3">{t('city.coming_soon.not_published').replace('{{city}}', cityName)}</H3>
               <Text variant="muted" className="max-w-2xl mx-auto">
-                The Spain-wide brand and editorial structure stay visible in this build, but only Barcelona inventory is live. Other city hubs remain reserved for future rollout.
+                {t('city.coming_soon.notice')}
               </Text>
             </div>
           ) : clubs.length > 0 ? (

@@ -133,7 +133,7 @@ export function SafetyKitFunnel() {
               onClick={() => setStep('email')}
               className="mt-6 text-zinc-500 hover:text-white"
             >
-              Start Over
+              {t('common.start_over')}
             </Button>
           </motion.div>
         )}

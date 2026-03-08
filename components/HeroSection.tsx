@@ -361,7 +361,7 @@ export default function HeroSection() {
             <div ref={droneWrapRef} className="absolute inset-0 scale-[1.06] origin-center will-change-transform">
               <div
                 ref={imageSharpRef}
-                className={`absolute inset-0 will-change-[transform,filter] transition-[filter,transform] duration-[380ms] ease-out ${desktopImageUpgradeClass}`}
+                className={`absolute inset-0 will-change-[transform,filter] transition-[filter,transform] [transition-duration:380ms] ease-out ${desktopImageUpgradeClass}`}
               >
                 <Image
                   src="/images/hero/barcelona-skyline.webp"
@@ -502,7 +502,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 z-0">
           <div
             ref={mobileBgRef}
-            className={`relative w-full h-full will-change-[transform,filter] transition-[filter,transform] duration-[380ms] ease-out ${mobileImageUpgradeClass}`}
+                className={`relative w-full h-full will-change-[transform,filter] transition-[filter,transform] [transition-duration:380ms] ease-out ${mobileImageUpgradeClass}`}
           >
             <Image
               src="/images/hero/barcelona-skyline.webp"

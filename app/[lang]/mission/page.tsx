@@ -116,54 +116,52 @@ export default async function MissionPage({ params }: MissionPageProps) {
             </div>
             
             <div className="max-w-3xl relative z-10">
-              <H2 size="md" className="mb-6 text-white font-serif tracking-tight">We Got Tired of the Scams. So We Built the Standard.</H2>
+              <H2 size="md" className="mb-6 text-white font-serif tracking-tight">{t('mission.standard_block.title')}</H2>
               <div className="space-y-4 mb-10">
                 <Text className="leading-relaxed text-zinc-300">
-                  As locals living in Barcelona, we constantly saw visitors misled by street promoters, confused by gray-area laws, and
-                  scammed into unsafe situations. We built this platform to fix that.
+                  {t('mission.standard_block.description_1')}
                 </Text>
                 <Text className="leading-relaxed text-zinc-300">
-                  Every club listed here is personally vetted. Every guide is written from firsthand experience. We are not brokers or
-                  promoters. We are a community-driven trust layer, dedicated to keeping you safe, informed, and on the right side of the rules.
+                  {t('mission.standard_block.description_2')}
                 </Text>
                 <div className="flex items-center gap-3 pt-4">
                   <div className="w-8 h-[1px] bg-brand" />
-                  <Text variant="muted" className="italic text-brand font-serif uppercase tracking-widest text-[10px] font-bold">The SCM Team, Barcelona</Text>
+                  <Text variant="muted" className="italic text-brand font-serif uppercase tracking-widest text-[10px] font-bold">{t('mission.standard_block.signature')}</Text>
                 </div>
               </div>
 
-              <H3 size="sm" className="mb-8 text-white font-serif tracking-tight pt-8 border-t border-white/10 uppercase tracking-wider">Our Three Pillars</H3>
+              <H3 size="sm" className="mb-8 text-white font-serif tracking-tight pt-8 border-t border-white/10 uppercase tracking-wider">{t('mission.standard_block.pillars_title')}</H3>
               <div className="grid gap-4">
                 <div className="group p-6 md:p-8 bg-bg-surface/60 border border-white/5 rounded-2xl hover:border-brand/30 transition-all duration-500">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="text-[10px] font-bold text-brand border border-brand/30 px-2 py-0.5 rounded uppercase tracking-tighter">01</div>
-                    <H4 size="xs" className="text-white font-serif group-hover:text-brand transition-colors">EDUCATE</H4>
+                    <H4 size="xs" className="text-white font-serif group-hover:text-brand transition-colors">{t('mission.standard_block.pillars.educate.title')}</H4>
                   </div>
-                  <Text size="sm" className="mb-2 text-white font-medium">Before you travel</Text>
+                  <Text size="sm" className="mb-2 text-white font-medium">{t('mission.standard_block.pillars.educate.subtitle')}</Text>
                   <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
-                    How CSCs actually work - city by city, rule by rule. Legal explainers. Etiquette guides. Scam checklists. Free. Always.
+                    {t('mission.standard_block.pillars.educate.description')}
                   </Text>
                 </div>
 
                 <div className="group p-6 md:p-8 bg-bg-surface/60 border border-white/5 rounded-2xl hover:border-brand/30 transition-all duration-500">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="text-[10px] font-bold text-brand border border-brand/30 px-2 py-0.5 rounded uppercase tracking-tighter">02</div>
-                    <H4 size="xs" className="text-white font-serif group-hover:text-brand transition-colors">VERIFY</H4>
+                    <H4 size="xs" className="text-white font-serif group-hover:text-brand transition-colors">{t('mission.standard_block.pillars.verify.title')}</H4>
                   </div>
-                  <Text size="sm" className="mb-2 text-white font-medium">Before you visit</Text>
+                  <Text size="sm" className="mb-2 text-white font-medium">{t('mission.standard_block.pillars.verify.subtitle')}</Text>
                   <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
-                    Every listed club is personally vetted, so you do not have to guess. No paid placements. No sponsorships. No scraped listings. One at a time, because speed and trust do not live in the same sentence.
+                    {t('mission.standard_block.pillars.verify.description')}
                   </Text>
                 </div>
 
                 <div className="group p-6 md:p-8 bg-bg-surface/60 border border-white/5 rounded-2xl hover:border-brand/30 transition-all duration-500">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="text-[10px] font-bold text-brand border border-brand/30 px-2 py-0.5 rounded uppercase tracking-tighter">03</div>
-                    <H4 size="xs" className="text-white font-serif group-hover:text-brand transition-colors">PROTECT</H4>
+                    <H4 size="xs" className="text-white font-serif group-hover:text-brand transition-colors">{t('mission.standard_block.pillars.protect.title')}</H4>
                   </div>
-                  <Text size="sm" className="mb-2 text-white font-medium">Before anything goes wrong</Text>
+                  <Text size="sm" className="mb-2 text-white font-medium">{t('mission.standard_block.pillars.protect.subtitle')}</Text>
                   <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
-                    The Safety Kit covers what to say, what never to say, how to spot a scam, and what to do when things go sideways. Free. Always. Over 2,500 distributed across Europe.
+                    {t('mission.standard_block.pillars.protect.description')}
                   </Text>
                 </div>
               </div>

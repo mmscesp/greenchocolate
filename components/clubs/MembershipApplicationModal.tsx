@@ -225,7 +225,7 @@ export default function MembershipApplicationModal({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  aria-label="Close modal"
+                  aria-label={t('common.close_modal')}
                   onClick={handleClose}
                   className="absolute right-4 top-4 z-30 rounded-full border border-white/10 bg-bg-base/40 text-white backdrop-blur-md hover:bg-white hover:text-bg-base"
                 >
@@ -345,7 +345,7 @@ export default function MembershipApplicationModal({
                       onValueChange={(value) => updateField('experience', value)}
                     >
                       <SelectTrigger className="rounded-xl border-white/10 bg-white/[0.02] text-white">
-                        <SelectValue placeholder="Select your experience level..." />
+                        <SelectValue placeholder={t('club_profile.modal.experience_placeholder')} />
                       </SelectTrigger>
                       <SelectContent className="bg-bg-surface border-white/10">
                         <SelectItem value="curious" className="text-white">

@@ -409,7 +409,7 @@ export default function FilterBar({
               )}
               {filters.isVerified && (
                 <Badge variant="secondary" className="bg-brand/10 text-brand border-brand/20 px-4 py-1.5 rounded-full flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase">
-                  Verified
+                  {t('filters.verified')}
                   <X className="h-3 w-3 cursor-pointer hover:text-white transition-colors" onClick={(e) => { e.stopPropagation(); updateFilter('isVerified', false); }} />
                 </Badge>
               )}

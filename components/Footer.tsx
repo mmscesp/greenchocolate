@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Locale } from '@/lib/i18n-config';
+import { i18n, type Locale } from '@/lib/i18n-config';
 import { Logo } from '@/components/ui/logo';
 import { Instagram, Twitter, TikTok } from '@/lib/icons';
 
@@ -46,7 +46,7 @@ export default function Footer() {
                 whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
                 transition={{ duration: 0.2 }}
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
-                aria-label="Instagram"
+                aria-label={t('footer.social.instagram_aria')}
               >
                 <Instagram className="h-4 w-4" />
               </motion.a>
@@ -58,7 +58,7 @@ export default function Footer() {
                 whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
                 transition={{ duration: 0.2 }}
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
-                aria-label="X (Twitter)"
+                aria-label={t('footer.social.twitter_aria')}
               >
                 <Twitter className="h-4 w-4" />
               </motion.a>
@@ -70,7 +70,7 @@ export default function Footer() {
                 whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}
                 transition={{ duration: 0.2 }}
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-zinc-400 hover:text-brand hover:border-brand/30 hover:bg-brand/5 transition-all duration-300"
-                aria-label="TikTok"
+                aria-label={t('footer.social.tiktok_aria')}
               >
                 <TikTok className="h-4 w-4" />
               </motion.a>
@@ -145,7 +145,7 @@ export default function Footer() {
                   href={withLocale('/spain/barcelona')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
-                  Barcelona
+                  {t('footer.new.explore.barcelona')}
                 </Link>
               </li>
               <li>
@@ -153,7 +153,7 @@ export default function Footer() {
                   className="group flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-zinc-500"
                   aria-disabled="true"
                 >
-                  Madrid <span className="ml-0 rounded border border-brand/10 bg-brand/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-brand/50 sm:ml-2">{t('common.coming_soon')}</span>
+                  {t('footer.new.explore.madrid')} <span className="ml-0 rounded border border-brand/10 bg-brand/5 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-brand/50 sm:ml-2">{t('common.coming_soon')}</span>
                 </span>
               </li>
               <li>
@@ -245,10 +245,10 @@ export default function Footer() {
         <div className="border-t border-white/5 mt-20 pt-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 text-center md:text-left">
-              {t('footer.new.copyright_prefix')} {new Date().getFullYear()} SocialClubsMaps. {t('footer.new.copyright_body')}
+              {t('footer.new.copyright_prefix')} {new Date().getFullYear()} {t('brand.name')}. {t('footer.new.copyright_body')}
             </p>
             <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest">
-              {(['en', 'es', 'fr', 'de'] as const).map((loc, index) => (
+              {i18n.locales.map((loc, index) => (
                 <div key={loc} className="flex items-center">
                   <button
                     type="button"
@@ -261,7 +261,7 @@ export default function Footer() {
                   >
                     {loc.toUpperCase()}
                   </button>
-                  {index < 3 && <span className="text-zinc-800 mx-1">·</span>}
+                  {index < i18n.locales.length - 1 && <span className="text-zinc-800 mx-1">·</span>}
                 </div>
               ))}
             </div>

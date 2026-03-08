@@ -126,7 +126,7 @@ export default function CategoryArticlePage({
                           </Text>
                         </div>
                         <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 shrink-0">
-                          <span>Read</span>
+                          <span>{t('common.read')}</span>
                           <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>

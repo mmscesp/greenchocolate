@@ -280,7 +280,7 @@ export default function UserRequestsPage() {
 
                     {request.message && (
                       <p className="text-sm text-muted-foreground line-clamp-2 italic bg-muted/50 p-2 rounded-lg">
-                        &ldquo;{request.message}&rdquo;
+                        {'"'}{request.message}{'"'}
                       </p>
                     )}
                   </div>

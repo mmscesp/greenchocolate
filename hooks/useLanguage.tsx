@@ -52,15 +52,19 @@ export function LanguageProvider({ children, locale, dictionary }: LanguageProvi
 
     void (async () => {
       try {
-        await fetch('/api/locale', {
+        const response = await fetch('/api/locale', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ locale: newLang }),
         });
+        if (!response.ok) {
+          console.warn('Locale cookie update failed with status', response.status);
+        }
       } catch {
         // Ignore cookie persistence failures; route locale still updates below.
+        console.warn('Locale cookie update failed due to a network or origin error.');
       }
     })();
 

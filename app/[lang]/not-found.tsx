@@ -13,31 +13,30 @@ import { useLanguage } from '@/hooks/useLanguage';
  */
 export default function NotFound() {
   const router = useRouter();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-16 md:pt-20">
-      <div className="max-w-lg w-full bg-card rounded-xl shadow-lg p-8 text-center">
-        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Search className="h-12 w-12 text-green-600" />
+      <div className="max-w-lg w-full bg-card border border-border rounded-xl shadow-lg p-8 text-center">
+        <div className="w-24 h-24 bg-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Search className="h-12 w-12 text-primary" />
         </div>
 
-        <h1 className="text-6xl font-bold text-gray-900 mb-2">404</h1>
+        <h1 className="text-6xl font-bold text-foreground mb-2">404</h1>
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          Página no encontrada
+        <h2 className="text-2xl font-semibold text-foreground mb-4">
+          {t('not_found.title')}
         </h2>
 
-        <p className="text-gray-600 mb-8">
-          Lo sentimos, la página que estás buscando no existe o ha sido movida.
-          Por favor, verifica la URL o vuelve a la página principal.
+        <p className="text-muted-foreground mb-8">
+          {t('not_found.description')}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href={`/${language}`} passHref>
-            <Button className="bg-green-600 hover:bg-green-700">
+            <Button>
               <Home className="h-4 w-4 mr-2" />
-              Volver al inicio
+              {t('not_found.back_home')}
             </Button>
           </Link>
 
@@ -46,18 +45,18 @@ export default function NotFound() {
             onClick={() => router.back()}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver atrás
+            {t('not_found.back')}
           </Button>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
-            ¿Necesitas ayuda?{' '}
+        <div className="mt-8 pt-6 border-t border-border">
+          <p className="text-sm text-muted-foreground">
+            {t('not_found.need_help')}{' '}
             <Link
-              href={`/${language}/contacto`}
-              className="text-green-600 hover:text-green-700 font-medium"
+              href={`/${language}/contact`}
+              className="text-primary hover:text-primary/80 font-medium"
             >
-              Contáctanos
+              {t('not_found.contact')}
             </Link>
           </p>
         </div>

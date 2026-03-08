@@ -17,10 +17,10 @@ import { useLanguage } from '@/hooks/useLanguage';
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const withLocale = (path: string) => `/${language}${path}`;
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
-  const [message, setMessage] = useState('Verifying your email...');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const localizeLandingPage = (path: string) => {
@@ -60,14 +60,14 @@ export default function AuthCallbackPage() {
             if (error) {
               console.error('Auth callback error:', error);
               setStatus('error');
-              setMessage('Failed to verify your email. The link may have expired.');
+              setMessage(t('auth_callback.messages.verify_failed'));
               return;
             }
             
             if (session) {
 
             setStatus('success');
-            setMessage('Your email has been verified successfully!');
+            setMessage(t('auth_callback.messages.verify_success'));
             
             // Get user profile to determine role-based landing page
             const { data: profile } = await supabase
@@ -97,12 +97,12 @@ export default function AuthCallbackPage() {
             if (error) {
               console.error('OAuth callback error:', error);
               setStatus('error');
-              setMessage('Failed to complete authentication.');
+              setMessage(t('auth_callback.messages.oauth_failed'));
               return;
             }
             
             setStatus('success');
-            setMessage('Authentication successful!');
+            setMessage(t('auth_callback.messages.oauth_success'));
             
             // Get session to find user profile
             const { data: { session } } = await supabase.auth.getSession();
@@ -127,12 +127,12 @@ export default function AuthCallbackPage() {
       } catch (error) {
         console.error('Callback processing error:', error);
         setStatus('error');
-        setMessage('An unexpected error occurred. Please try again.');
+        setMessage(t('auth_callback.messages.unexpected_error'));
       }
     };
 
     handleAuthCallback();
-  }, [language, router]);
+  }, [language, router, t]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">
@@ -140,7 +140,7 @@ export default function AuthCallbackPage() {
         <Link href={`/${language}`} className="inline-flex items-center gap-2 mb-6">
           <LogoIcon size="lg" />
           <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-            SocialClubsMaps
+            {t('brand.name')}
           </span>
         </Link>
 
@@ -150,10 +150,10 @@ export default function AuthCallbackPage() {
               <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Verifying Your Email
+              {t('auth_callback.headings.verifying')}
             </h2>
             <p className="text-gray-600">
-              {message}
+              {t('auth_callback.messages.verifying')}
             </p>
           </>
         )}
@@ -164,13 +164,13 @@ export default function AuthCallbackPage() {
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Email Verified!
+              {t('auth_callback.headings.success')}
             </h2>
             <p className="text-gray-600 mb-6">
               {message}
             </p>
             <p className="text-sm text-gray-500">
-              Redirecting you to the dashboard...
+              {t('auth_callback.redirecting')}
             </p>
           </>
         )}
@@ -181,7 +181,7 @@ export default function AuthCallbackPage() {
               <AlertCircle className="h-8 w-8 text-red-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Verification Failed
+              {t('auth_callback.headings.error')}
             </h2>
             <p className="text-gray-600 mb-8">
               {message}
@@ -189,12 +189,12 @@ export default function AuthCallbackPage() {
             <div className="space-y-3">
               <Link href={withLocale('/account/login')}>
                 <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                  Sign In
+                  {t('auth_callback.actions.sign_in')}
                 </Button>
               </Link>
               <Link href={withLocale('/resend-confirmation')}>
                 <Button variant="secondary" className="w-full">
-                  Resend Verification Email
+                  {t('auth_callback.actions.resend')}
                 </Button>
               </Link>
             </div>

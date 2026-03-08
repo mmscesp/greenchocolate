@@ -18,7 +18,7 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   useEffect(() => {
     // Log error to monitoring service
     console.error('Global error caught:', error);
@@ -26,38 +26,35 @@ export default function GlobalError({
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 pt-16 md:pt-20">
-      <div className="max-w-md w-full bg-card rounded-xl shadow-lg p-8 text-center">
-        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertCircle className="h-10 w-10 text-red-600" />
+      <div className="max-w-md w-full bg-card border border-border rounded-xl shadow-lg p-8 text-center">
+        <div className="w-20 h-20 bg-destructive/15 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="h-10 w-10 text-destructive" />
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Algo salió mal
+        <h1 className="text-2xl font-bold text-foreground mb-2">
+          {t('error.title')}
         </h1>
 
-        <p className="text-gray-600 mb-6">
-          Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo o vuelve a la página principal.
+        <p className="text-muted-foreground mb-6">
+          {t('error.description')}
         </p>
 
         {error.digest && (
-          <p className="text-xs text-gray-400 mb-6">
-            Error ID: {error.digest}
+          <p className="text-xs text-muted-foreground/80 mb-6">
+            {t('error.id_prefix')} {error.digest}
           </p>
         )}
 
         <div className="flex flex-col gap-3">
-          <Button
-            onClick={reset}
-            className="w-full bg-green-600 hover:bg-green-700"
-          >
+          <Button onClick={reset} className="w-full">
             <RefreshCw className="h-4 w-4 mr-2" />
-            Intentar de nuevo
+            {t('error.retry')}
           </Button>
 
           <Link href={`/${language}`} passHref className="w-full">
             <Button variant="secondary" className="w-full">
               <Home className="h-4 w-4 mr-2" />
-              Volver al inicio
+              {t('error.back_home')}
             </Button>
           </Link>
         </div>

@@ -309,7 +309,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                     </p>
                     
                     <div className="flex items-center gap-2 text-brand font-bold text-xs opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                      <span>Read More</span>
+                      <span>{t('blog.read_more')}</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
                     </article>

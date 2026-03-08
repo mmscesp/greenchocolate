@@ -366,7 +366,7 @@ export default function ClubRequestsPage() {
                     
                     {request.message && (
                       <div className="mt-3 ml-14 p-3 bg-muted/50 rounded-md text-sm italic text-muted-foreground border-l-2 border-primary/20">
-                        &ldquo;{request.message}&rdquo;
+                        {'"'}{request.message}{'"'}
                       </div>
                     )}
                   </div>

@@ -2,12 +2,26 @@ import { MetadataRoute } from 'next';
 import { getCities } from '@/app/actions/cities';
 import { getClubs } from '@/app/actions/clubs';
 import { getArticles } from '@/app/actions/articles';
+import { i18n } from '@/lib/i18n-config';
 
 // Force dynamic rendering to avoid build-time database calls
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://socialclubsmaps.com';
+  const now = new Date();
+  const toLocalizedEntries = (
+    path: string,
+    changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'],
+    priority: number,
+    lastModified: Date = now
+  ): MetadataRoute.Sitemap =>
+    i18n.locales.map((locale) => ({
+      url: `${baseUrl}/${locale}${path}`,
+      lastModified,
+      changeFrequency,
+      priority,
+    }));
 
   // Fetch dynamic data with error handling
   let cities: Awaited<ReturnType<typeof getCities>> = [];
@@ -24,57 +38,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.warn('Failed to fetch dynamic data for sitemap:', error);
   }
 
-  // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/clubs`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/editorial`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/club-panel`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
+    ...toLocalizedEntries('', 'daily', 1.0),
+    ...toLocalizedEntries('/clubs', 'daily', 0.9),
+    ...toLocalizedEntries('/editorial', 'weekly', 0.8),
+    ...toLocalizedEntries('/club-panel', 'monthly', 0.5),
   ];
 
-  // City pages
-  const cityRoutes: MetadataRoute.Sitemap = cities.map((city) => ({
-    url: `${baseUrl}/spain/${city.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
+  const cityRoutes: MetadataRoute.Sitemap = cities.flatMap((city) =>
+    toLocalizedEntries(`/spain/${city.slug}`, 'weekly', 0.8)
+  );
 
-  // Club pages
-  const clubRoutes: MetadataRoute.Sitemap = clubs.map((club) => ({
-    url: `${baseUrl}/clubs/${club.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }));
+  const clubRoutes: MetadataRoute.Sitemap = clubs.flatMap((club) =>
+    toLocalizedEntries(`/clubs/${club.slug}`, 'weekly', 0.7)
+  );
 
-  // Article pages
-  const articleRoutes: MetadataRoute.Sitemap = articles.map((article) => ({
-    url: `${baseUrl}/editorial/${article.slug}`,
-    lastModified: article.publishedAt ? new Date(article.publishedAt) : new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.6,
-  }));
+  const articleRoutes: MetadataRoute.Sitemap = articles.flatMap((article) =>
+    toLocalizedEntries(
+      `/editorial/${article.slug}`,
+      'monthly',
+      0.6,
+      article.publishedAt ? new Date(article.publishedAt) : now
+    )
+  );
 
   return [...staticRoutes, ...cityRoutes, ...clubRoutes, ...articleRoutes];
 }

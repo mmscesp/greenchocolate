@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';
 import { LegalDisclaimer } from '@/components/LegalDisclaimer';
 import AnalyticsDebugListener from '@/components/dev/AnalyticsDebugListener';
+import { i18n } from '@/lib/i18n-config';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -79,16 +80,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://socialclubsmaps.com',
-    languages: {
-      es: 'https://socialclubsmaps.com/es',
-      en: 'https://socialclubsmaps.com/en',
-      fr: 'https://socialclubsmaps.com/fr',
-      de: 'https://socialclubsmaps.com/de',
-      it: 'https://socialclubsmaps.com/it',
-      pl: 'https://socialclubsmaps.com/pl',
-      ru: 'https://socialclubsmaps.com/ru',
-      pt: 'https://socialclubsmaps.com/pt',
-    },
+    languages: Object.fromEntries(
+      i18n.locales.map((locale) => [locale, `https://socialclubsmaps.com/${locale}`])
+    ),
   },
   category: 'reference',
   classification: 'Cannabis Social Club Directory',
@@ -100,7 +94,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
+    <html lang={i18n.defaultLocale} className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
         <LegalDisclaimer />
         <AnalyticsDebugListener />

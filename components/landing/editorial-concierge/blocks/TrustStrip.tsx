@@ -37,7 +37,7 @@ export function TrustStrip() {
               {phrase}
             </span>
             {i < phrases.length - 1 && (
-              <span className="text-white/30 text-xs">&middot;</span>
+              <span className="text-white/30 text-xs">{'·'}</span>
             )}
           </React.Fragment>
         ))}
@@ -52,7 +52,7 @@ export function TrustStrip() {
               <span className="text-[10px] font-semibold uppercase tracking-wider text-brand/80 mx-3 sm:mx-4">
                 {phrase}
               </span>
-              <span className="text-white/30 text-xs mx-1">&middot;</span>
+              <span className="text-white/30 text-xs mx-1">{'·'}</span>
             </React.Fragment>
           ))}
         </div>
