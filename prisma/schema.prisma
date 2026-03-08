@@ -61,12 +61,14 @@ model Club {
   updatedAt             DateTime            @updatedAt
   articles              Article[]
   city                  City                @relation(fields: [cityId], references: [id])
-  membershipRequests    MembershipRequest[]
+  membershipRequests        MembershipRequest[]
+  membershipApplicationLeads MembershipApplicationLead[]
+  membershipApplicationAttempts MembershipApplicationAttempt[]
   clubRegistrationRequests ClubRegistrationRequest[]
-  admins                Profile[]           @relation("ClubAdmin")
-  reviews               Review[]
-  favorites             Favorite[]
-  events                Event[]
+  admins                    Profile[]                    @relation("ClubAdmin")
+  reviews                   Review[]
+  favorites                 Favorite[]
+  events                    Event[]
 
   @@index([slug])
   @@index([cityId])
@@ -93,12 +95,14 @@ model Profile {
   updatedAt              DateTime            @updatedAt
   managedClubId          String?
   consents               ConsentRecord[]
-  membershipRequests     MembershipRequest[]
-  membershipRequestNotes MembershipRequestNote[]
-  reviews                Review[]
-  favorites              Favorite[]
-  notifications          Notification[]
-  safetyPass             SafetyPass?
+  membershipRequests              MembershipRequest[]
+  membershipRequestNotes          MembershipRequestNote[]
+  membershipApplicationAttempts   MembershipApplicationAttempt[]
+  consumedMembershipApplicationLeads MembershipApplicationLead[] @relation("ConsumedMembershipApplicationLead")
+  reviews                         Review[]
+  favorites                       Favorite[]
+  notifications                   Notification[]
+  safetyPass                      SafetyPass?
   clubRegistrationRequests ClubRegistrationRequest[]
   managedClub            Club?               @relation("ClubAdmin", fields: [managedClubId], references: [id])
 
@@ -135,6 +139,8 @@ model MembershipRequest {
   appointmentDate   DateTime?
   appointmentNotes  String?
   encryptedSnapshot Json?
+  encryptedPayload  String?
+  snapshotMeta      Json?
   userId            String
   clubId            String
   reviewedBy        String?
@@ -151,6 +157,63 @@ model MembershipRequest {
   @@index([clubId, status])
   @@index([clubId, currentStage])
   @@index([userId])
+}
+
+model MembershipApplicationLead {
+  id                  String   @id @default(uuid())
+  clubId              String
+  encryptedPayload    String
+  payloadMeta         Json?
+  payloadHash         String
+  emailHash           String
+  fingerprintHash     String
+  riskLevel           String   @default("LOW")
+  challengeStatus     String   @default("NOT_REQUIRED")
+  challengeRequired   Boolean  @default(false)
+  countryCode         String?
+  experience          String?
+  expiresAt           DateTime
+  consumedAt          DateTime?
+  verifiedAt          DateTime?
+  consumedByProfileId String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  club                Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  consumedBy          Profile? @relation("ConsumedMembershipApplicationLead", fields: [consumedByProfileId], references: [id], onDelete: SetNull)
+  attempts            MembershipApplicationAttempt[]
+
+  @@index([clubId, createdAt])
+  @@index([emailHash, createdAt])
+  @@index([fingerprintHash, createdAt])
+  @@index([payloadHash])
+  @@index([expiresAt])
+  @@index([consumedByProfileId])
+}
+
+model MembershipApplicationAttempt {
+  id              String   @id @default(uuid())
+  clubId          String
+  profileId       String?
+  leadId          String?
+  subjectType     String
+  emailHash       String?
+  fingerprintHash String?
+  payloadHash     String?
+  riskLevel       String   @default("LOW")
+  decision        String
+  challengeStatus String   @default("NOT_REQUIRED")
+  countryCode     String?
+  createdAt       DateTime @default(now())
+  club            Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  profile         Profile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
+  lead            MembershipApplicationLead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@index([clubId, createdAt])
+  @@index([profileId, createdAt])
+  @@index([leadId, createdAt])
+  @@index([emailHash, createdAt])
+  @@index([fingerprintHash, createdAt])
+  @@index([payloadHash, createdAt])
 }
 
 model MembershipRequestNote {

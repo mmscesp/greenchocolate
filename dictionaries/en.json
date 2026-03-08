@@ -1983,6 +1983,7 @@
   "club_profile.email": "Email",
   "club_profile.video_inside_prefix": "Inside",
   "club_profile.modal.experience_placeholder": "Select your experience level...",
+  "club_profile.modal.country_placeholder": "Select your country...",
   "safety_alert.public_consumption": "Public consumption in Spain is ILLEGAL. Fines start at €601. Keep it private.",
   "nav.get_safety_kit": "Get the Safety Kit",
   "nav.mobile.close_menu": "Close navigation menu",

@@ -4,9 +4,32 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
+import { EncryptionService } from '@/lib/encryption';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
+import {
+  buildApplicantPayload,
+  buildLeadToken,
+  buildRequestMeta,
+  classifyDecision,
+  getChallengeStatus,
+  getLeadExpiry,
+  getMembershipSecurityConfig,
+  getMembershipSecurityContext,
+  getWindowStart,
+  hashEmail,
+  hashPayload,
+  isTurnstileEnabled,
+  membershipApplicationInputSchema,
+  readLeadToken,
+  resolveDecision,
+  verifyTurnstileToken,
+  type ChallengeStatus,
+  type LeadDecision,
+  type MembershipApplicationInput,
+  type RiskLevel,
+} from '@/lib/security/membership-application';
 import {
   mapRequestStatus,
   normalizeApplicationStage,
@@ -97,6 +120,7 @@ export interface AdminMembershipRequestDetail {
   rejectionReason: string | null;
   message: string | null;
   eligibilityAnswers: Record<string, unknown>;
+  riskSignals: Record<string, unknown>;
   appointmentNotes: string | null;
   club: {
     id: string;
@@ -134,11 +158,13 @@ export interface AdminMembershipQueueResult {
   }[];
 }
 
-const submitSchema = z.object({
-  targetClubId: z.string().uuid(),
-  eligibilityAnswers: z.record(z.string(), z.unknown()).default({}),
-  message: z.string().max(500).optional(),
-});
+const submitSchema = membershipApplicationInputSchema;
+
+const finalizeLeadSchema = z
+  .object({
+    pendingLeadToken: z.string().trim().min(1),
+  })
+  .strict();
 
 const requestStageSchema = z.object({
   requestId: z.string().uuid(),
@@ -326,24 +352,210 @@ async function createStageHistory(
   });
 }
 
-function parseEligibilityAnswers(snapshot: Prisma.JsonValue | null): Record<string, unknown> {
-  if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot)) {
-    return {};
+async function logMembershipSecurityEvent(input: {
+  recordId: string;
+  operation: string;
+  changedBy: string;
+  changeData: Record<string, unknown>;
+}) {
+  try {
+    await prisma.auditLog.create({
+      data: {
+        tableName: 'MembershipApplicationSecurity',
+        operation: input.operation,
+        changedBy: input.changedBy,
+        recordId: input.recordId,
+        changeData: input.changeData as Prisma.InputJsonValue,
+        changeHash: EncryptionService.hash(JSON.stringify({
+          recordId: input.recordId,
+          operation: input.operation,
+          changedBy: input.changedBy,
+          changeData: input.changeData,
+        })),
+      },
+    });
+  } catch (error) {
+    console.error('Failed to write membership security audit log:', error);
   }
-
-  const record = snapshot as Record<string, unknown>;
-  if (!record.eligibilityAnswers || typeof record.eligibilityAnswers !== 'object' || Array.isArray(record.eligibilityAnswers)) {
-    return {};
-  }
-
-  return record.eligibilityAnswers as Record<string, unknown>;
 }
 
-export async function submitMembershipApplication(data: {
-  targetClubId: string;
-  eligibilityAnswers: Record<string, unknown>;
-  message?: string;
-}): Promise<{ success: boolean; applicationId?: string; estimatedCompletion?: Date; error?: string }> {
+async function getAvailableClub(targetClubId: string) {
+  return prisma.club.findUnique({
+    where: { id: targetClubId },
+    select: {
+      id: true,
+      name: true,
+      isActive: true,
+      isVerified: true,
+      allowsPreRegistration: true,
+    },
+  });
+}
+
+function getMembershipPayloadFields(payload: Record<string, unknown>): Record<string, unknown> {
+  return {
+    firstName: payload.firstName ?? null,
+    lastName: payload.lastName ?? null,
+    email: payload.email ?? null,
+    city: payload.city ?? null,
+    country: payload.country ?? null,
+    countryCode: payload.countryCode ?? null,
+    experience: payload.experience ?? null,
+    phone: payload.phone ?? null,
+    ageConfirmed: payload.ageConfirmed ?? null,
+    termsConfirmed: payload.termsConfirmed ?? null,
+  };
+}
+
+function parseStoredPayload(request: {
+  encryptedPayload: string | null;
+  encryptedSnapshot: Prisma.JsonValue | null;
+  snapshotMeta: Prisma.JsonValue | null;
+}): {
+  payload: Record<string, unknown>;
+  riskSignals: Record<string, unknown>;
+} {
+  if (request.encryptedPayload) {
+    try {
+      const decryptedPayload = EncryptionService.decryptPayload(request.encryptedPayload);
+      const riskSignals =
+        request.snapshotMeta && typeof request.snapshotMeta === 'object' && !Array.isArray(request.snapshotMeta)
+          ? (request.snapshotMeta as Record<string, unknown>)
+          : {};
+
+      return {
+        payload: getMembershipPayloadFields(decryptedPayload),
+        riskSignals,
+      };
+    } catch (error) {
+      console.error('Failed to decrypt membership payload:', error);
+    }
+  }
+
+  if (!request.encryptedSnapshot || typeof request.encryptedSnapshot !== 'object' || Array.isArray(request.encryptedSnapshot)) {
+    return { payload: {}, riskSignals: {} };
+  }
+
+  const record = request.encryptedSnapshot as Record<string, unknown>;
+  const legacyAnswers =
+    record.eligibilityAnswers && typeof record.eligibilityAnswers === 'object' && !Array.isArray(record.eligibilityAnswers)
+      ? (record.eligibilityAnswers as Record<string, unknown>)
+      : {};
+
+  return {
+    payload: legacyAnswers,
+    riskSignals:
+      request.snapshotMeta && typeof request.snapshotMeta === 'object' && !Array.isArray(request.snapshotMeta)
+        ? (request.snapshotMeta as Record<string, unknown>)
+        : {},
+  };
+}
+
+async function countRecentMembershipAttempts(input: {
+  clubId: string;
+  profileId?: string;
+  emailHash?: string;
+  fingerprintHash?: string;
+  payloadHash?: string;
+}) {
+  const windowStart = getWindowStart(getMembershipSecurityConfig());
+
+  return prisma.membershipApplicationAttempt.count({
+    where: {
+      clubId: input.clubId,
+      createdAt: {
+        gte: windowStart,
+      },
+      OR: [
+        input.profileId ? { profileId: input.profileId } : undefined,
+        input.emailHash ? { emailHash: input.emailHash } : undefined,
+        input.fingerprintHash ? { fingerprintHash: input.fingerprintHash } : undefined,
+        input.payloadHash ? { payloadHash: input.payloadHash } : undefined,
+      ].filter(Boolean) as Prisma.MembershipApplicationAttemptWhereInput[],
+    },
+  });
+}
+
+async function createMembershipAttempt(input: {
+  clubId: string;
+  profileId?: string | null;
+  leadId?: string | null;
+  subjectType: string;
+  emailHash?: string | null;
+  fingerprintHash?: string | null;
+  payloadHash?: string | null;
+  riskLevel: RiskLevel;
+  decision: string;
+  challengeStatus: ChallengeStatus;
+  countryCode?: string | null;
+}) {
+  await prisma.membershipApplicationAttempt.create({
+    data: {
+      clubId: input.clubId,
+      profileId: input.profileId ?? null,
+      leadId: input.leadId ?? null,
+      subjectType: input.subjectType,
+      emailHash: input.emailHash ?? null,
+      fingerprintHash: input.fingerprintHash ?? null,
+      payloadHash: input.payloadHash ?? null,
+      riskLevel: input.riskLevel,
+      decision: input.decision,
+      challengeStatus: input.challengeStatus,
+      countryCode: input.countryCode ?? null,
+    },
+  });
+}
+
+async function createMembershipRequestRecord(
+  tx: Prisma.TransactionClient,
+  input: {
+    profile: CurrentProfile;
+    clubId: string;
+    message: string;
+    encryptedPayload: string;
+    snapshotMeta: Record<string, unknown>;
+  }
+) {
+  const request = await tx.membershipRequest.create({
+    data: {
+      userId: input.profile.id,
+      clubId: input.clubId,
+      message: input.message,
+      currentStage: 'INTAKE',
+      encryptedPayload: input.encryptedPayload,
+      snapshotMeta: input.snapshotMeta as Prisma.InputJsonValue,
+      status: 'PENDING',
+    },
+  });
+
+  await createStageHistory(tx, request.id, null, 'INTAKE', input.profile.id, 'Application submitted');
+
+  await tx.notification.create({
+    data: {
+      userId: input.profile.id,
+      type: 'APPLICATION_SUBMITTED',
+      title: 'Application submitted',
+      message: 'Your membership application has been received and is now under review.',
+      data: {
+        applicationId: request.id,
+        clubId: request.clubId,
+        stage: 'INTAKE',
+      } as Prisma.InputJsonValue,
+    },
+  });
+
+  return request;
+}
+
+export async function submitMembershipApplication(
+  data: MembershipApplicationInput
+): Promise<{
+  success: boolean;
+  applicationId?: string;
+  estimatedCompletion?: Date;
+  challengeRequired?: boolean;
+  error?: string;
+}> {
   const profile = await getCurrentProfile();
 
   if (!profile) {
@@ -355,16 +567,7 @@ export async function submitMembershipApplication(data: {
     return { success: false, error: validated.error.errors[0]?.message || 'Invalid input' };
   }
 
-  const club = await prisma.club.findUnique({
-    where: { id: validated.data.targetClubId },
-    select: {
-      id: true,
-      name: true,
-      isActive: true,
-      isVerified: true,
-      allowsPreRegistration: true,
-    },
-  });
+  const club = await getAvailableClub(validated.data.targetClubId);
 
   if (!club || !club.isActive || !club.isVerified) {
     return { success: false, error: 'Club is not available for applications' };
@@ -388,37 +591,143 @@ export async function submitMembershipApplication(data: {
   }
 
   try {
-    const created = await runSerializableTransactionWithRetry(async (tx) => {
-      const request = await tx.membershipRequest.create({
-        data: {
-          userId: profile.id,
+    const securityContext = await getMembershipSecurityContext();
+    const applicationPayload = buildApplicantPayload(validated.data, profile.email);
+    const payloadHash = hashPayload(applicationPayload);
+    const emailHash = hashEmail(profile.email);
+    const config = getMembershipSecurityConfig();
+    const recentAttempts = await countRecentMembershipAttempts({
+      clubId: validated.data.targetClubId,
+      profileId: profile.id,
+      emailHash,
+      fingerprintHash: securityContext.fingerprintHash,
+      payloadHash,
+    });
+    const challengePassed = validated.data.challengeToken
+      ? await verifyTurnstileToken({
+          token: validated.data.challengeToken,
+          ip: securityContext.ip,
+        })
+      : false;
+    const decision = resolveDecision({
+      attempts: recentAttempts,
+      softLimit: config.authSoftLimit,
+      hardLimit: config.authHardLimit,
+      challengePassed,
+    });
+    const riskLevel = classifyDecision(decision);
+    const challengeStatus =
+      decision === 'CHALLENGE'
+        ? validated.data.challengeToken
+          ? 'FAILED'
+          : 'REQUIRED'
+        : getChallengeStatus(challengePassed, Boolean(validated.data.challengeToken));
+
+    if (decision === 'BLOCK') {
+      await createMembershipAttempt({
+        clubId: validated.data.targetClubId,
+        profileId: profile.id,
+        subjectType: 'AUTHENTICATED',
+        emailHash,
+        fingerprintHash: securityContext.fingerprintHash,
+        payloadHash,
+        riskLevel,
+        decision: 'BLOCK',
+        challengeStatus,
+        countryCode: validated.data.countryCode,
+      });
+      await logMembershipSecurityEvent({
+        recordId: validated.data.targetClubId,
+        operation: 'MEMBERSHIP_APPLICATION_BLOCKED',
+        changedBy: profile.authId,
+        changeData: {
           clubId: validated.data.targetClubId,
-          message: validated.data.message,
-          currentStage: 'INTAKE',
-          encryptedSnapshot: {
-            eligibilityAnswers: validated.data.eligibilityAnswers,
-          } as Prisma.InputJsonValue,
-          status: 'PENDING',
+          emailHash,
+          fingerprintHash: securityContext.fingerprintHash,
+          countryCode: validated.data.countryCode,
+          riskLevel,
+          challengeStatus,
         },
       });
+      return { success: false, error: 'Too many attempts. Please try again later.' };
+    }
 
-      await createStageHistory(tx, request.id, null, 'INTAKE', profile.id, 'Application submitted');
-
-      await tx.notification.create({
-        data: {
-          userId: profile.id,
-          type: 'APPLICATION_SUBMITTED',
-          title: 'Application submitted',
-          message: 'Your membership application has been received and is now under review.',
-          data: {
-            applicationId: request.id,
-            clubId: request.clubId,
-            stage: 'INTAKE',
-          } as Prisma.InputJsonValue,
+    if (decision === 'CHALLENGE') {
+      await createMembershipAttempt({
+        clubId: validated.data.targetClubId,
+        profileId: profile.id,
+        subjectType: 'AUTHENTICATED',
+        emailHash,
+        fingerprintHash: securityContext.fingerprintHash,
+        payloadHash,
+        riskLevel,
+        decision: 'CHALLENGE',
+        challengeStatus,
+        countryCode: validated.data.countryCode,
+      });
+      await logMembershipSecurityEvent({
+        recordId: validated.data.targetClubId,
+        operation: 'MEMBERSHIP_APPLICATION_CHALLENGED',
+        changedBy: profile.authId,
+        changeData: {
+          clubId: validated.data.targetClubId,
+          emailHash,
+          fingerprintHash: securityContext.fingerprintHash,
+          countryCode: validated.data.countryCode,
+          riskLevel,
+          challengeStatus,
         },
       });
+      return {
+        success: false,
+        challengeRequired: true,
+        error: 'Please complete the verification challenge to continue.',
+      };
+    }
 
-      return request;
+    const encryptedPayload = EncryptionService.encryptPayload(applicationPayload);
+    const snapshotMeta = buildRequestMeta({
+      source: 'direct',
+      countryCode: validated.data.countryCode,
+      experience: validated.data.experience,
+      riskLevel,
+      challengeStatus,
+      emailHash,
+      fingerprintHash: securityContext.fingerprintHash,
+    });
+
+    const created = await runSerializableTransactionWithRetry(async (tx) => {
+      return createMembershipRequestRecord(tx, {
+        profile,
+        clubId: validated.data.targetClubId,
+        message: validated.data.message,
+        encryptedPayload,
+        snapshotMeta,
+      });
+    });
+
+    await createMembershipAttempt({
+      clubId: validated.data.targetClubId,
+      profileId: profile.id,
+      subjectType: 'AUTHENTICATED',
+      emailHash,
+      fingerprintHash: securityContext.fingerprintHash,
+      payloadHash,
+      riskLevel,
+      decision: 'ALLOW',
+      challengeStatus,
+      countryCode: validated.data.countryCode,
+    });
+    await logMembershipSecurityEvent({
+      recordId: created.id,
+      operation: 'MEMBERSHIP_APPLICATION_ACCEPTED',
+      changedBy: profile.authId,
+      changeData: {
+        clubId: validated.data.targetClubId,
+        countryCode: validated.data.countryCode,
+        riskLevel,
+        challengeStatus,
+      },
     });
 
     await attemptMembershipEmail(() =>
@@ -444,6 +753,381 @@ export async function submitMembershipApplication(data: {
     }
 
     console.error('submitMembershipApplication error:', error);
+    return { success: false, error: 'Failed to submit application. Please try again.' };
+  }
+}
+
+export async function createMembershipApplicationLead(
+  data: MembershipApplicationInput
+): Promise<{
+  success: boolean;
+  pendingLeadToken?: string;
+  expiresAt?: string;
+  challengeRequired?: boolean;
+  error?: string;
+}> {
+  const validated = submitSchema.safeParse(data);
+  if (!validated.success) {
+    return { success: false, error: validated.error.errors[0]?.message || 'Invalid input' };
+  }
+
+  const club = await getAvailableClub(validated.data.targetClubId);
+  if (!club || !club.isActive || !club.isVerified) {
+    return { success: false, error: 'Club is not available for applications' };
+  }
+
+  if (!club.allowsPreRegistration) {
+    return { success: false, error: 'This club is not accepting platform-managed applications right now' };
+  }
+
+  const securityContext = await getMembershipSecurityContext();
+  const applicationPayload = buildApplicantPayload(validated.data);
+  const payloadHash = hashPayload(applicationPayload);
+  const emailHash = hashEmail(validated.data.email);
+  const config = getMembershipSecurityConfig();
+  const recentAttempts = await countRecentMembershipAttempts({
+    clubId: validated.data.targetClubId,
+    emailHash,
+    fingerprintHash: securityContext.fingerprintHash,
+    payloadHash,
+  });
+  const challengePassed = validated.data.challengeToken
+    ? await verifyTurnstileToken({
+        token: validated.data.challengeToken,
+        ip: securityContext.ip,
+      })
+    : false;
+  const decision = resolveDecision({
+    attempts: recentAttempts,
+    softLimit: config.guestSoftLimit,
+    hardLimit: config.guestHardLimit,
+    challengePassed,
+  });
+  const riskLevel = classifyDecision(decision);
+  const challengeStatus =
+    decision === 'CHALLENGE'
+      ? validated.data.challengeToken
+        ? 'FAILED'
+        : 'REQUIRED'
+      : getChallengeStatus(challengePassed, Boolean(validated.data.challengeToken));
+
+  const existingLead = await prisma.membershipApplicationLead.findFirst({
+    where: {
+      clubId: validated.data.targetClubId,
+      payloadHash,
+      emailHash,
+      fingerprintHash: securityContext.fingerprintHash,
+      consumedAt: null,
+      expiresAt: {
+        gt: new Date(),
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  if (decision === 'BLOCK') {
+    await createMembershipAttempt({
+      clubId: validated.data.targetClubId,
+      subjectType: 'GUEST',
+      emailHash,
+      fingerprintHash: securityContext.fingerprintHash,
+      payloadHash,
+      riskLevel,
+      decision: 'BLOCK',
+      challengeStatus,
+      countryCode: validated.data.countryCode,
+    });
+    await logMembershipSecurityEvent({
+      recordId: validated.data.targetClubId,
+      operation: 'MEMBERSHIP_LEAD_BLOCKED',
+      changedBy: `guest:${emailHash.slice(0, 12)}`,
+      changeData: {
+        clubId: validated.data.targetClubId,
+        countryCode: validated.data.countryCode,
+        emailHash,
+        fingerprintHash: securityContext.fingerprintHash,
+        riskLevel,
+        challengeStatus,
+      },
+    });
+    return { success: false, error: 'Too many attempts. Please try again later.' };
+  }
+
+  if (decision === 'CHALLENGE') {
+    await createMembershipAttempt({
+      clubId: validated.data.targetClubId,
+      leadId: existingLead?.id ?? null,
+      subjectType: 'GUEST',
+      emailHash,
+      fingerprintHash: securityContext.fingerprintHash,
+      payloadHash,
+      riskLevel,
+      decision: 'CHALLENGE',
+      challengeStatus,
+      countryCode: validated.data.countryCode,
+    });
+    await logMembershipSecurityEvent({
+      recordId: existingLead?.id ?? validated.data.targetClubId,
+      operation: 'MEMBERSHIP_LEAD_CHALLENGED',
+      changedBy: `guest:${emailHash.slice(0, 12)}`,
+      changeData: {
+        clubId: validated.data.targetClubId,
+        countryCode: validated.data.countryCode,
+        emailHash,
+        fingerprintHash: securityContext.fingerprintHash,
+        riskLevel,
+        challengeStatus,
+      },
+    });
+    return {
+      success: false,
+      challengeRequired: isTurnstileEnabled(),
+      error: isTurnstileEnabled()
+        ? 'Please complete the verification challenge to continue.'
+        : 'Verification is temporarily unavailable. Please try again later.',
+    };
+  }
+
+  const expiresAt = existingLead?.expiresAt ?? getLeadExpiry(config);
+
+  const lead =
+    existingLead ??
+    (await prisma.membershipApplicationLead.create({
+      data: {
+        clubId: validated.data.targetClubId,
+        encryptedPayload: EncryptionService.encryptPayload(applicationPayload),
+        payloadMeta: buildRequestMeta({
+          source: 'lead',
+          countryCode: validated.data.countryCode,
+          experience: validated.data.experience,
+          riskLevel,
+          challengeStatus,
+          emailHash,
+          fingerprintHash: securityContext.fingerprintHash,
+        }) as Prisma.InputJsonValue,
+        payloadHash,
+        emailHash,
+        fingerprintHash: securityContext.fingerprintHash,
+        riskLevel,
+        challengeStatus,
+        challengeRequired: challengeStatus === 'PASSED',
+        countryCode: validated.data.countryCode,
+        experience: validated.data.experience,
+        expiresAt,
+        verifiedAt: challengePassed ? new Date() : null,
+      },
+    }));
+
+  if (existingLead) {
+    await prisma.membershipApplicationLead.update({
+      where: { id: existingLead.id },
+      data: {
+        riskLevel,
+        challengeStatus,
+        challengeRequired: challengeStatus === 'PASSED',
+        verifiedAt: challengePassed ? new Date() : existingLead.verifiedAt,
+        payloadMeta: buildRequestMeta({
+          source: 'lead',
+          countryCode: validated.data.countryCode,
+          experience: validated.data.experience,
+          riskLevel,
+          challengeStatus,
+          emailHash,
+          fingerprintHash: securityContext.fingerprintHash,
+          leadId: existingLead.id,
+        }) as Prisma.InputJsonValue,
+      },
+    });
+  }
+
+  await createMembershipAttempt({
+    clubId: validated.data.targetClubId,
+    leadId: lead.id,
+    subjectType: 'GUEST',
+    emailHash,
+    fingerprintHash: securityContext.fingerprintHash,
+    payloadHash,
+    riskLevel,
+    decision: existingLead ? 'REPLAY' : 'ALLOW',
+    challengeStatus,
+    countryCode: validated.data.countryCode,
+  });
+  await logMembershipSecurityEvent({
+    recordId: lead.id,
+    operation: existingLead ? 'MEMBERSHIP_LEAD_REPLAYED' : 'MEMBERSHIP_LEAD_CAPTURED',
+    changedBy: `guest:${emailHash.slice(0, 12)}`,
+    changeData: {
+      clubId: validated.data.targetClubId,
+      countryCode: validated.data.countryCode,
+      riskLevel,
+      challengeStatus,
+    },
+  });
+
+  return {
+    success: true,
+    pendingLeadToken: buildLeadToken({
+      leadId: lead.id,
+      payloadHash,
+      expiresAt: expiresAt.toISOString(),
+    }),
+    expiresAt: expiresAt.toISOString(),
+  };
+}
+
+export async function finalizeMembershipApplicationLead(input: {
+  pendingLeadToken: string;
+}): Promise<{
+  success: boolean;
+  applicationId?: string;
+  estimatedCompletion?: Date;
+  error?: string;
+}> {
+  const profile = await getCurrentProfile();
+
+  if (!profile) {
+    return { success: false, error: 'Unauthorized' };
+  }
+
+  const validated = finalizeLeadSchema.safeParse(input);
+  if (!validated.success) {
+    return { success: false, error: validated.error.errors[0]?.message || 'Invalid input' };
+  }
+
+  const tokenPayload = readLeadToken(validated.data.pendingLeadToken);
+  if (!tokenPayload) {
+    return { success: false, error: 'Invalid or expired application token' };
+  }
+
+  const lead = await prisma.membershipApplicationLead.findUnique({
+    where: { id: tokenPayload.leadId },
+    include: {
+      club: {
+        select: {
+          id: true,
+          name: true,
+          isActive: true,
+          isVerified: true,
+          allowsPreRegistration: true,
+        },
+      },
+    },
+  });
+
+  if (!lead || lead.consumedAt || new Date(lead.expiresAt) <= new Date()) {
+    return { success: false, error: 'Invalid or expired application token' };
+  }
+
+  const existing = await prisma.membershipRequest.findUnique({
+    where: {
+      userId_clubId: {
+        userId: profile.id,
+        clubId: lead.clubId,
+      },
+    },
+  });
+
+  if (existing) {
+    return { success: false, error: 'Application already exists for this club' };
+  }
+
+  if (lead.payloadHash !== tokenPayload.payloadHash || tokenPayload.expiresAt !== lead.expiresAt.toISOString()) {
+    return { success: false, error: 'Invalid or expired application token' };
+  }
+
+  if (!lead.club.isActive || !lead.club.isVerified || !lead.club.allowsPreRegistration) {
+    return { success: false, error: 'Club is not available for applications' };
+  }
+
+  const decryptedPayload = EncryptionService.decryptPayload(lead.encryptedPayload);
+  const payload = {
+    ...decryptedPayload,
+    email: profile.email,
+  } as Record<string, unknown>;
+  const securityContext = await getMembershipSecurityContext();
+
+  try {
+    const created = await runSerializableTransactionWithRetry(async (tx) => {
+      const request = await createMembershipRequestRecord(tx, {
+        profile,
+        clubId: lead.clubId,
+        message: typeof payload['message'] === 'string' ? payload['message'] : '',
+        encryptedPayload: EncryptionService.encryptPayload(payload),
+        snapshotMeta: buildRequestMeta({
+          source: 'lead',
+          countryCode: typeof payload['countryCode'] === 'string' ? payload['countryCode'] : lead.countryCode || 'UN',
+          experience: typeof payload['experience'] === 'string' ? payload['experience'] : lead.experience || 'curious',
+          riskLevel: (lead.riskLevel as RiskLevel) || 'LOW',
+          challengeStatus: (lead.challengeStatus as ChallengeStatus) || 'NOT_REQUIRED',
+          emailHash: lead.emailHash,
+          fingerprintHash: lead.fingerprintHash,
+          leadId: lead.id,
+        }),
+      });
+
+      await tx.membershipApplicationLead.update({
+        where: { id: lead.id },
+        data: {
+          consumedAt: new Date(),
+          consumedByProfileId: profile.id,
+          verifiedAt: lead.verifiedAt ?? new Date(),
+        },
+      });
+
+      return request;
+    });
+
+    await createMembershipAttempt({
+      clubId: lead.clubId,
+      profileId: profile.id,
+      leadId: lead.id,
+      subjectType: 'FINALIZE',
+      emailHash: lead.emailHash,
+      fingerprintHash: lead.fingerprintHash,
+      payloadHash: lead.payloadHash,
+      riskLevel: (lead.riskLevel as RiskLevel) || 'LOW',
+      decision: 'FINALIZE',
+      challengeStatus: (lead.challengeStatus as ChallengeStatus) || 'NOT_REQUIRED',
+      countryCode: lead.countryCode,
+    });
+    await logMembershipSecurityEvent({
+      recordId: created.id,
+      operation: 'MEMBERSHIP_LEAD_FINALIZED',
+      changedBy: profile.authId,
+      changeData: {
+        leadId: lead.id,
+        clubId: lead.clubId,
+        riskLevel: lead.riskLevel,
+        challengeStatus: lead.challengeStatus,
+        countryCode: lead.countryCode,
+      },
+    });
+
+    await attemptMembershipEmail(() =>
+      sendMembershipSubmissionEmail({
+        applicantEmail: profile.email,
+        applicantName: profile.displayName,
+        clubName: lead.club.name,
+        requestId: created.id,
+      })
+    );
+
+    const completion = new Date(created.createdAt);
+    completion.setDate(completion.getDate() + 10);
+
+    return {
+      success: true,
+      applicationId: created.id,
+      estimatedCompletion: completion,
+    };
+  } catch (error) {
+    if (isPrismaKnownError(error, 'P2002')) {
+      return { success: false, error: 'Application already exists for this club' };
+    }
+
+    console.error('finalizeMembershipApplicationLead error:', error);
     return { success: false, error: 'Failed to submit application. Please try again.' };
   }
 }
@@ -1011,6 +1695,8 @@ export async function getAdminMembershipRequestDetail(requestId: string): Promis
     return null;
   }
 
+  const storedPayload = parseStoredPayload(request);
+
   return {
     id: request.id,
     status: request.status as RequestStatus,
@@ -1021,7 +1707,8 @@ export async function getAdminMembershipRequestDetail(requestId: string): Promis
     reviewedBy: request.reviewedBy || null,
     rejectionReason: request.rejectionReason || null,
     message: request.message,
-    eligibilityAnswers: parseEligibilityAnswers(request.encryptedSnapshot),
+    eligibilityAnswers: storedPayload.payload,
+    riskSignals: storedPayload.riskSignals,
     appointmentNotes: request.appointmentNotes,
     club: request.club,
     user: {

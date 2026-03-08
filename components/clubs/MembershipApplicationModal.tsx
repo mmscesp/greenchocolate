@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useMemo, useState, type FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -19,8 +19,13 @@ import { X, Check, AlertCircle, Loader2 } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Club } from '@/lib/types';
-import { submitMembershipApplication } from '@/app/actions/applications';
+import {
+  createMembershipApplicationLead,
+  submitMembershipApplication,
+} from '@/app/actions/applications';
 import { ConciergeLabel } from '@/components/landing/editorial-concierge/typography/ConciergeLabel';
+import { getCountryOptions } from '@/lib/countries';
+import { MembershipApplicationChallenge } from '@/components/security/MembershipApplicationChallenge';
 
 interface MembershipApplicationModalProps {
   club: Club;
@@ -35,6 +40,7 @@ type FormData = {
   email: string;
   city: string;
   country: string;
+  countryCode: string;
   experience: string;
   message: string;
   phone: string;
@@ -48,6 +54,9 @@ type FormState = {
   needsAccount?: boolean;
 };
 
+const pendingMembershipLeadStorageKey = 'pendingMembershipLead';
+const hasTurnstileSiteKey = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+
 export default function MembershipApplicationModal({
   club,
   isOpen,
@@ -59,12 +68,16 @@ export default function MembershipApplicationModal({
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState<FormState | null>(null);
+  const [requiresChallenge, setRequiresChallenge] = useState(false);
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
+  const countryOptions = useMemo(() => getCountryOptions(language), [language]);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
     city: '',
     country: '',
+    countryCode: '',
     experience: '',
     message: '',
     phone: '',
@@ -79,6 +92,7 @@ export default function MembershipApplicationModal({
       email: '',
       city: '',
       country: '',
+      countryCode: '',
       experience: '',
       message: '',
       phone: '',
@@ -86,6 +100,8 @@ export default function MembershipApplicationModal({
       termsConfirmed: false,
     });
     setFormState(null);
+    setRequiresChallenge(false);
+    setChallengeToken(null);
   };
 
   const handleClose = () => {
@@ -99,20 +115,33 @@ export default function MembershipApplicationModal({
     setFormState(null);
 
     try {
+      if (!formData.ageConfirmed || !formData.termsConfirmed) {
+        setFormState({
+          success: false,
+          message: t('club_profile.form.error_unexpected'),
+        });
+        return;
+      }
+
+      const submission = {
+        targetClubId: club.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        city: formData.city,
+        country: formData.country,
+        countryCode: formData.countryCode,
+        experience: formData.experience as 'curious' | 'casual' | 'regular' | 'connoisseur' | 'medical',
+        message: formData.message,
+        phone: formData.phone,
+        ageConfirmed: true as const,
+        termsConfirmed: true as const,
+        ...(challengeToken ? { challengeToken } : {}),
+      };
+
       // If user is logged in, submit directly
       if (user) {
-        const result = await submitMembershipApplication({
-          targetClubId: club.id,
-          message: formData.message,
-          eligibilityAnswers: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            city: formData.city,
-            country: formData.country,
-            experience: formData.experience,
-            phone: formData.phone,
-          },
-        });
+        const result = await submitMembershipApplication(submission);
 
         if (result.success) {
           setFormState({
@@ -122,6 +151,12 @@ export default function MembershipApplicationModal({
           setTimeout(() => {
             handleClose();
           }, 2000);
+        } else if (result.challengeRequired) {
+          setRequiresChallenge(true);
+          setFormState({
+            success: false,
+            message: result.error || 'Please complete the verification challenge to continue.',
+          });
         } else {
           setFormState({
             success: false,
@@ -129,36 +164,45 @@ export default function MembershipApplicationModal({
           });
         }
       } else {
-        // Guest user - save to session storage and redirect to register
-        try {
-          sessionStorage.setItem('pendingApplication', JSON.stringify({
-            clubId: club.id,
-            clubSlug: club.slug, // Helpful for redirect back
-            message: formData.message,
-            eligibilityAnswers: {
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              city: formData.city,
-              country: formData.country,
-              experience: formData.experience,
-              phone: formData.phone,
-            }
-          }));
-        } catch (err) {
-          console.error('Failed to save to sessionStorage', err);
+        const result = await createMembershipApplicationLead(submission);
+
+        if (result.success && result.pendingLeadToken) {
+          try {
+            sessionStorage.removeItem('pendingApplication');
+            sessionStorage.setItem(
+              pendingMembershipLeadStorageKey,
+              JSON.stringify({
+                pendingLeadToken: result.pendingLeadToken,
+                clubId: club.id,
+                clubSlug: club.slug,
+                expiresAt: result.expiresAt,
+              })
+            );
+          } catch (err) {
+            console.error('Failed to save membership lead to sessionStorage', err);
+          }
+
+          setFormState({
+            success: true,
+            message: t('club_profile.modal.success.message'),
+            needsAccount: true,
+          });
+
+          setTimeout(() => {
+            router.push(`/${language}/account/register?redirect=/${language}/clubs/${club.slug}`);
+          }, 1500);
+        } else if (result.challengeRequired) {
+          setRequiresChallenge(true);
+          setFormState({
+            success: false,
+            message: result.error || 'Please complete the verification challenge to continue.',
+          });
+        } else {
+          setFormState({
+            success: false,
+            message: result.error || t('club_profile.form.error_unexpected'),
+          });
         }
-
-        setFormState({
-          success: true,
-          message: t('club_profile.modal.success.message'),
-          needsAccount: true,
-        });
-
-        // Redirect to register after a short delay
-        setTimeout(() => {
-          // Redirect to register with return URL to the club
-          router.push(`/${language}/account/register?redirect=/${language}/clubs/${club.slug}`);
-        }, 1500);
       }
     } catch (error) {
       console.error('Submit error:', error);
@@ -175,16 +219,28 @@ export default function MembershipApplicationModal({
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateCountry = (countryCode: string) => {
+    const selectedCountry = countryOptions.find((option) => option.code === countryCode);
+
+    setFormData((prev) => ({
+      ...prev,
+      countryCode,
+      country: selectedCountry?.label || '',
+    }));
+  };
+
   const canSubmit =
     formData.firstName &&
     formData.lastName &&
     formData.email &&
     formData.city &&
     formData.country &&
+    formData.countryCode &&
     formData.experience &&
     formData.message &&
     formData.ageConfirmed &&
-    formData.termsConfirmed;
+    formData.termsConfirmed &&
+    (!requiresChallenge || !hasTurnstileSiteKey || Boolean(challengeToken));
 
   return (
     <AnimatePresence>
@@ -325,13 +381,28 @@ export default function MembershipApplicationModal({
                       <Label htmlFor="country" className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                         {t('club_profile.modal.country')} *
                       </Label>
-                      <Input
-                        id="country"
-                        value={formData.country}
-                        onChange={(e) => updateField('country', e.target.value)}
-                        required
-                        className="rounded-xl border-white/10 bg-white/[0.02] text-white placeholder:text-zinc-600 focus:border-brand"
-                      />
+                      <Select
+                        value={formData.countryCode}
+                        onValueChange={updateCountry}
+                      >
+                        <SelectTrigger
+                          id="country"
+                          className="h-11 rounded-xl border-white/10 bg-white/[0.02] text-left text-white focus:border-brand focus:ring-brand/30 focus:ring-offset-0 data-[placeholder]:text-zinc-500"
+                        >
+                          <SelectValue placeholder={t('club_profile.modal.country_placeholder')} />
+                        </SelectTrigger>
+                        <SelectContent className="border-white/10 bg-bg-surface/95 text-white backdrop-blur-xl">
+                          {countryOptions.map((option) => (
+                            <SelectItem
+                              key={option.code}
+                              value={option.code}
+                              className="rounded-lg text-white focus:bg-white/10 focus:text-white"
+                            >
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
@@ -344,24 +415,24 @@ export default function MembershipApplicationModal({
                       value={formData.experience}
                       onValueChange={(value) => updateField('experience', value)}
                     >
-                      <SelectTrigger className="rounded-xl border-white/10 bg-white/[0.02] text-white">
+                      <SelectTrigger className="h-11 rounded-xl border-white/10 bg-white/[0.02] text-white focus:border-brand focus:ring-brand/30 focus:ring-offset-0 data-[placeholder]:text-zinc-500">
                         <SelectValue placeholder={t('club_profile.modal.experience_placeholder')} />
                       </SelectTrigger>
-                      <SelectContent className="bg-bg-surface border-white/10">
-                        <SelectItem value="curious" className="text-white">
-                          🌱 {t('club_profile.modal.experience.curious')}
+                      <SelectContent className="border-white/10 bg-bg-surface/95 text-white backdrop-blur-xl">
+                        <SelectItem value="curious" className="rounded-lg text-white focus:bg-white/10 focus:text-white">
+                          {t('club_profile.modal.experience.curious')}
                         </SelectItem>
-                        <SelectItem value="casual" className="text-white">
-                          🌿 {t('club_profile.modal.experience.casual')}
+                        <SelectItem value="casual" className="rounded-lg text-white focus:bg-white/10 focus:text-white">
+                          {t('club_profile.modal.experience.casual')}
                         </SelectItem>
-                        <SelectItem value="regular" className="text-white">
-                          🌲 {t('club_profile.modal.experience.regular')}
+                        <SelectItem value="regular" className="rounded-lg text-white focus:bg-white/10 focus:text-white">
+                          {t('club_profile.modal.experience.regular')}
                         </SelectItem>
-                        <SelectItem value="connoisseur" className="text-white">
-                          🏆 {t('club_profile.modal.experience.connoisseur')}
+                        <SelectItem value="connoisseur" className="rounded-lg text-white focus:bg-white/10 focus:text-white">
+                          {t('club_profile.modal.experience.connoisseur')}
                         </SelectItem>
-                        <SelectItem value="medical" className="text-white">
-                          💚 {t('club_profile.modal.experience.medical')}
+                        <SelectItem value="medical" className="rounded-lg text-white focus:bg-white/10 focus:text-white">
+                          {t('club_profile.modal.experience.medical')}
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -431,6 +502,24 @@ export default function MembershipApplicationModal({
                       </Label>
                     </div>
                   </div>
+
+                  {requiresChallenge && (
+                    <div className="space-y-3 rounded-2xl border border-brand/20 bg-brand/10 p-4">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">
+                        Verification required
+                      </p>
+                      <p className="text-sm leading-relaxed text-zinc-300">
+                        Complete the challenge to continue with your membership application.
+                      </p>
+                      {hasTurnstileSiteKey ? (
+                        <MembershipApplicationChallenge onTokenChange={setChallengeToken} />
+                      ) : (
+                        <p className="text-xs text-zinc-400">
+                          Verification is temporarily unavailable. Please try again later.
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Submit Buttons */}
                   <div className="flex flex-col gap-3 pt-4">

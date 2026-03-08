@@ -215,6 +215,22 @@ export default async function AdminRequestsPage({
                   )}
                 </div>
 
+                <div className="space-y-2 rounded-2xl border border-border p-4">
+                  <p className="text-sm font-semibold">Risk signals</p>
+                  {Object.keys(selectedRequest.riskSignals).length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No structured risk metadata captured.</p>
+                  ) : (
+                    <dl className="space-y-2 text-sm">
+                      {Object.entries(selectedRequest.riskSignals).map(([key, value]) => (
+                        <div key={key} className="grid grid-cols-[140px_1fr] gap-3">
+                          <dt className="font-medium text-slate-600">{key}</dt>
+                          <dd className="text-slate-800">{String(value)}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
+                </div>
+
                 <div className="grid gap-4">
                   <form action={advanceApplicationStageAction} className="space-y-3 rounded-2xl border border-border p-4">
                     <input type="hidden" name="requestId" value={selectedRequest.id} />

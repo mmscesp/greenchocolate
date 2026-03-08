@@ -3,7 +3,6 @@
 import {
   cancelMembershipRequest as cancelApplicationRequest,
   getUserMembershipRequests as getCanonicalUserMembershipRequests,
-  submitMembershipApplication,
   type ActionState,
   type MembershipRequestCard,
 } from '@/app/actions/applications';
@@ -25,20 +24,11 @@ export interface ClubRequest {
 
 export async function submitMembershipRequest(
   _prevState: ActionState,
-  formData: FormData
+  _formData: FormData
 ): Promise<ActionState> {
-  const clubId = String(formData.get('clubId') || '');
-  const message = String(formData.get('message') || '');
-
-  const result = await submitMembershipApplication({
-    targetClubId: clubId,
-    message: message || undefined,
-    eligibilityAnswers: {},
-  });
-
   return {
-    success: result.success,
-    message: result.success ? 'Request submitted successfully' : result.error,
+    success: false,
+    message: 'Use the club membership application modal. Legacy membership form submission is disabled.',
   };
 }
 

@@ -1,5 +1,16 @@
 /** @type {import('next').NextConfig} */
+const allowedServerActionOrigins = (process.env.SERVER_ACTION_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
+
 const nextConfig = {
+  experimental: {
+    serverActions: {
+      allowedOrigins: allowedServerActionOrigins,
+      bodySizeLimit: '64kb',
+    },
+  },
   images: {
     unoptimized: false,
     qualities: [50, 68, 72, 74, 75, 78, 80, 82, 85, 88, 90],
@@ -26,6 +37,7 @@ const nextConfig = {
       "media-src 'self' data: blob: https:",
       "font-src 'self' data: https:",
       "connect-src 'self' https: wss:",
+      "frame-src 'self' https://challenges.cloudflare.com",
       "object-src 'none'",
       'upgrade-insecure-requests',
     ].join('; ');
@@ -105,4 +117,3 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-
