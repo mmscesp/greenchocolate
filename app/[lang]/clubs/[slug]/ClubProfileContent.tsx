@@ -66,7 +66,10 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const primaryStaticImage = getClubPrimaryMediaImage(galleryItems);
   const videoItem = galleryItems.find((item) => item.kind === 'video') as ClubVideoMediaItem | undefined;
   const imagesOnly = galleryItems.filter((item) => item.kind === 'image');
-  const primaryActionLabel = t('club_profile.apply_for_membership');
+  const acceptsApplications = club.allowsPreRegistration;
+  const primaryActionLabel = acceptsApplications
+    ? t('club_profile.apply_for_membership')
+    : 'Applications unavailable';
   
   // Format images for the new circular GSAP carousel - ONLY IMAGES
   const carouselImages: CircularGalleryImage[] = imagesOnly.map((item, index) => ({
@@ -75,6 +78,9 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   }));
 
   const openMembershipFlow = () => {
+    if (!acceptsApplications) {
+      return;
+    }
     setShowPreRegistrationModal(true);
   };
 
@@ -170,6 +176,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                       variant="primary"
                       size="xl"
                       onClick={openMembershipFlow}
+                      disabled={!acceptsApplications}
                       className="w-full rounded-full bg-brand px-10 py-6 text-base font-bold text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.25)] transition-all hover:scale-[1.02] hover:bg-brand-dark active:scale-[0.98] sm:w-auto"
                     >
                       {primaryActionLabel}
@@ -324,6 +331,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                     type="button"
                     variant="secondary"
                     onClick={openMembershipFlow}
+                    disabled={!acceptsApplications}
                     className="w-full rounded-full border-white/20 bg-brand/10 py-5 text-[11px] font-bold tracking-widest uppercase text-white transition-all hover:border-brand/40 hover:bg-brand/20"
                   >
                     {primaryActionLabel}

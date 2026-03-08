@@ -62,6 +62,7 @@ model Club {
   articles              Article[]
   city                  City                @relation(fields: [cityId], references: [id])
   membershipRequests    MembershipRequest[]
+  clubRegistrationRequests ClubRegistrationRequest[]
   admins                Profile[]           @relation("ClubAdmin")
   reviews               Review[]
   favorites             Favorite[]
@@ -93,10 +94,12 @@ model Profile {
   managedClubId          String?
   consents               ConsentRecord[]
   membershipRequests     MembershipRequest[]
+  membershipRequestNotes MembershipRequestNote[]
   reviews                Review[]
   favorites              Favorite[]
   notifications          Notification[]
   safetyPass             SafetyPass?
+  clubRegistrationRequests ClubRegistrationRequest[]
   managedClub            Club?               @relation("ClubAdmin", fields: [managedClubId], references: [id])
 
   @@index([authId])
@@ -127,6 +130,7 @@ model SafetyPass {
 model MembershipRequest {
   id                String                    @id @default(uuid())
   status            RequestStatus             @default(PENDING)
+  currentStage      String                    @default("INTAKE")
   message           String?
   appointmentDate   DateTime?
   appointmentNotes  String?
@@ -141,10 +145,43 @@ model MembershipRequest {
   club              Club                      @relation(fields: [clubId], references: [id])
   user              Profile                   @relation(fields: [userId], references: [id])
   stageHistory      ApplicationStageHistory[]
+  notes             MembershipRequestNote[]
 
   @@unique([userId, clubId])
   @@index([clubId, status])
+  @@index([clubId, currentStage])
   @@index([userId])
+}
+
+model MembershipRequestNote {
+  id         String            @id @default(uuid())
+  requestId   String
+  authorId    String
+  body        String
+  createdAt   DateTime          @default(now())
+  request     MembershipRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  author      Profile           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, createdAt])
+  @@index([authorId, createdAt])
+}
+
+model ClubRegistrationRequest {
+  id               String   @id @default(uuid())
+  profileId        String
+  clubId           String
+  status           String   @default("PENDING")
+  encryptedPayload String
+  submittedAt      DateTime @default(now())
+  reviewedAt       DateTime?
+  reviewedBy       String?
+  notes            String?
+  profile          Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  club             Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, clubId])
+  @@index([status, submittedAt])
+  @@index([clubId, status])
 }
 
 model Article {

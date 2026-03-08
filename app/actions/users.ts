@@ -6,6 +6,7 @@
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { normalizeApplicationStage } from '@/lib/application-utils';
 
 // ==========================================
 // TYPES
@@ -264,13 +265,13 @@ export async function isClubAdmin(): Promise<boolean> {
 
 function resolveProfileStatusFromSnapshot(
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED',
-  snapshot: Record<string, unknown> | null
+  currentStage?: string | null
 ): ProfileApplicationStatus {
   if (status === 'APPROVED') return 'approved';
   if (status === 'REJECTED') return 'rejected';
   if (status === 'SCHEDULED') return 'background_check';
 
-  const stage = snapshot?.stage;
+  const stage = normalizeApplicationStage(currentStage, status);
   if (stage === 'INTAKE') return 'submitted';
   if (stage === 'BACKGROUND_CHECK') return 'background_check';
   return 'reviewing';
@@ -320,8 +321,7 @@ export async function getProfileBackendStatus(): Promise<UserProfileBackendStatu
     }
 
     const requestStatus = latestRequest.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED';
-    const snapshot = (latestRequest.encryptedSnapshot as Record<string, unknown> | null) || null;
-    const applicationStatus = resolveProfileStatusFromSnapshot(requestStatus, snapshot);
+    const applicationStatus = resolveProfileStatusFromSnapshot(requestStatus, latestRequest.currentStage);
 
     let estimatedCompletion: Date | undefined;
     if (applicationStatus === 'reviewing') {

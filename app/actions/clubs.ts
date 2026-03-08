@@ -151,6 +151,7 @@ export interface ClubDetail extends ClubCard {
   website: string | null;
   socialMedia: Record<string, string> | null;
   openingHours: Record<string, string>;
+  allowsPreRegistration: boolean;
   capacity: number;
   foundedYear: number;
 }
@@ -301,6 +302,7 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
       website: club.website,
       socialMedia: validatedSocialMedia.success ? validatedSocialMedia.data : null,
       openingHours: validatedOpeningHours.success ? validatedOpeningHours.data : {},
+      allowsPreRegistration: club.allowsPreRegistration,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
     };

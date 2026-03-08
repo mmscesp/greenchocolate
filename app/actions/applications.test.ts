@@ -4,6 +4,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('@/lib/prisma', () => ({
   prisma: {
     $transaction: vi.fn(),
+    club: {
+      findUnique: vi.fn(),
+    },
     membershipRequest: {
       findUnique: vi.fn(),
       findFirst: vi.fn(),
@@ -44,6 +47,8 @@ describe('Application Actions', () => {
   const mockProfile = {
     id: '550e8400-e29b-41d4-a716-446655440002',
     authId: '550e8400-e29b-41d4-a716-446655440001',
+    email: 'test@example.com',
+    displayName: 'Test User',
     role: 'USER',
     managedClubId: null,
   };
@@ -62,11 +67,19 @@ describe('Application Actions', () => {
       if (typeof arg === 'function') {
         return arg({
           membershipRequest: prisma.membershipRequest,
+          applicationStageHistory: prisma.applicationStageHistory,
           notification: prisma.notification,
         } as never);
       }
 
       return Promise.resolve(arg as never);
+    });
+    (prisma.club.findUnique as any).mockResolvedValue({
+      id: mockClubId,
+      name: 'Test Club',
+      isActive: true,
+      isVerified: true,
+      allowsPreRegistration: true,
     });
   });
 
@@ -151,17 +164,13 @@ describe('Application Actions', () => {
       expect(result.success).toBe(true);
       expect(result.applicationId).toBe(mockRequestId);
       expect(prisma.membershipRequest.create).toHaveBeenCalled();
-      // Stage history is stored in encryptedSnapshot JSON field, not separate table
       const createCall = (prisma.membershipRequest.create as any).mock.calls[0][0];
       expect(createCall.data.encryptedSnapshot).toMatchObject({
-        stage: 'INTAKE',
-        stageHistory: expect.arrayContaining([
-          expect.objectContaining({
-            stage: 'INTAKE',
-            changedBy: mockUser.id,
-          }),
-        ]),
+        eligibilityAnswers: {
+          over18: true,
+        },
       });
+      expect(prisma.applicationStageHistory.create).toHaveBeenCalled();
       expect(prisma.notification.create).toHaveBeenCalled();
     });
 
@@ -206,6 +215,7 @@ describe('Application Actions', () => {
           if (typeof arg === 'function') {
             return arg({
               membershipRequest: prisma.membershipRequest,
+              applicationStageHistory: prisma.applicationStageHistory,
               notification: prisma.notification,
             });
           }
@@ -244,11 +254,15 @@ describe('Application Actions', () => {
       (prisma.membershipRequest.findFirst as any).mockResolvedValue({
         id: mockRequestId,
         status: 'PENDING',
+        currentStage: 'DOCUMENT_VERIFICATION',
         createdAt: new Date('2026-01-01'),
-        encryptedSnapshot: {
-          stage: 'DOCUMENT_VERIFICATION',
-          stageHistory: mockHistory,
-        },
+        stageHistory: mockHistory.map((entry, index) => ({
+          id: `hist-${index}`,
+          toStage: entry.stage,
+          createdAt: new Date(entry.changedAt),
+          changedBy: entry.changedBy,
+          notes: entry.notes,
+        })),
       });
 
       const result = await getApplicationStatus('550e8400-e29b-41d4-a716-446655440001');
@@ -271,19 +285,16 @@ describe('Application Actions', () => {
     });
 
     it('should advance stage and create history entry', async () => {
-      const adminProfile = { ...mockProfile, role: 'CLUB_ADMIN', managedClubId: mockClubId };
+      const adminProfile = { ...mockProfile, role: 'ADMIN', managedClubId: mockClubId };
       (prisma.profile.findUnique as any).mockResolvedValue(adminProfile);
       (prisma.membershipRequest.findUnique as any).mockResolvedValue({
         id: mockRequestId,
         clubId: mockClubId,
         userId: '550e8400-e29b-41d4-a716-446655440006',
         status: 'PENDING',
-        encryptedSnapshot: {
-          stage: 'INTAKE',
-          stageHistory: [
-            { stage: 'INTAKE', changedAt: '2026-01-01T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440006' },
-          ],
-        },
+        currentStage: 'INTAKE',
+        user: { role: 'USER', email: 'test@example.com', displayName: 'Test User' },
+        club: { name: 'Test Club', slug: 'test-club', contactEmail: 'club@example.com', neighborhood: 'Center' },
       });
       (prisma.membershipRequest.update as any).mockResolvedValue({});
       (prisma.notification.create as any).mockResolvedValue({ id: 'notification-2' });
@@ -292,15 +303,12 @@ describe('Application Actions', () => {
 
       expect(result.success).toBe(true);
       expect(prisma.membershipRequest.update).toHaveBeenCalled();
-      // Stage history is stored in encryptedSnapshot JSON field, not separate table
       const updateCall = (prisma.membershipRequest.update as any).mock.calls[0][0];
-      expect(updateCall.data.encryptedSnapshot).toMatchObject({
-        stage: 'BACKGROUND_CHECK',
-        stageHistory: expect.arrayContaining([
-          expect.objectContaining({ stage: 'INTAKE' }),
-          expect.objectContaining({ stage: 'BACKGROUND_CHECK', notes: 'Moving to background check' }),
-        ]),
+      expect(updateCall.data).toMatchObject({
+        currentStage: 'BACKGROUND_CHECK',
+        status: 'PENDING',
       });
+      expect(prisma.applicationStageHistory.create).toHaveBeenCalled();
       expect(prisma.notification.create).toHaveBeenCalled();
     });
   });
@@ -313,13 +321,9 @@ describe('Application Actions', () => {
         clubId: mockClubId,
         userId: '550e8400-e29b-41d4-a716-446655440006',
         status: 'PENDING',
-        encryptedSnapshot: {
-          stage: 'DOCUMENT_VERIFICATION',
-          stageHistory: [
-            { stage: 'INTAKE', changedAt: '2026-01-01T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440006' },
-            { stage: 'DOCUMENT_VERIFICATION', changedAt: '2026-01-02T00:00:00.000Z', changedBy: '550e8400-e29b-41d4-a716-446655440001' },
-          ],
-        },
+        currentStage: 'DOCUMENT_VERIFICATION',
+        user: { role: 'USER', email: 'test@example.com', displayName: 'Test User' },
+        club: { name: 'Test Club', slug: 'test-club', contactEmail: 'club@example.com', neighborhood: 'Center' },
       });
       (prisma.membershipRequest.update as any).mockResolvedValue({});
       (prisma.notification.create as any).mockResolvedValue({ id: 'notification-3' });
@@ -334,13 +338,7 @@ describe('Application Actions', () => {
           rejectionReason: 'Missing required documents',
         }),
       });
-      // Stage history is stored in encryptedSnapshot JSON field, not separate table
-      const updateCall = (prisma.membershipRequest.update as any).mock.calls[0][0];
-      expect(updateCall.data.encryptedSnapshot).toMatchObject({
-        stageHistory: expect.arrayContaining([
-          expect.objectContaining({ notes: 'Missing required documents' }),
-        ]),
-      });
+      expect(prisma.applicationStageHistory.create).toHaveBeenCalled();
     });
   });
 
@@ -359,10 +357,11 @@ describe('Application Actions', () => {
         {
           id: mockRequestId,
           status: 'PENDING',
+          currentStage: 'DOCUMENT_VERIFICATION',
           createdAt: new Date(),
           message: 'Test',
+          club: { id: mockClubId, name: 'Test Club', slug: 'test-club' },
           user: { id: 'user-1', displayName: 'Test User', email: 'test@example.com', avatarUrl: null },
-          stageHistory: [{ toStage: 'DOCUMENT_VERIFICATION' }],
         },
       ]);
 

@@ -101,7 +101,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     amenities: clubDetail.amenities,
     vibeTags: clubDetail.vibeTags,
     openingHours: clubDetail.openingHours,
-    allowsPreRegistration: true,
+    allowsPreRegistration: clubDetail.allowsPreRegistration,
     coordinates: clubDetail.coordinates,
     address: gatedClub.accessLevel === 'FULL' ? clubDetail.addressDisplay : undefined,
     contactEmail: gatedClub.club?.contactEmail || '',

@@ -83,7 +83,7 @@ describe('clubSignUp', () => {
       club: {
         create: vi.fn().mockResolvedValue({ id: 'club-1' }),
       },
-      membershipRequest: {
+      clubRegistrationRequest: {
         create: vi.fn().mockResolvedValue({ id: 'request-1' }),
       },
       $executeRaw: vi.fn().mockResolvedValue(1),
@@ -115,10 +115,10 @@ describe('clubSignUp', () => {
         }),
       })
     );
-    expect(tx.membershipRequest.create).toHaveBeenCalledWith(
+    expect(tx.clubRegistrationRequest.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          userId: 'profile-1',
+          profileId: 'profile-1',
           clubId: 'club-1',
         }),
       })

@@ -104,6 +104,7 @@ export interface Article {
 export interface MembershipRequest {
   id: string;
   status: RequestStatus;
+  currentStage?: string;
   message?: string;
   appointmentDate?: Date;
   appointmentNotes?: string;

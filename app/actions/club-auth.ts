@@ -199,15 +199,12 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
         },
       });
 
-      await tx.membershipRequest.create({
+      await tx.clubRegistrationRequest.create({
         data: {
-          userId: profile.id,
+          profileId: profile.id,
           clubId: club.id,
           status: 'PENDING',
-          message: `New club registration request: ${validated.data.clubName}`,
-          encryptedSnapshot: {
-            encryptedData: encryptedRegistrationSnapshot,
-          },
+          encryptedPayload: encryptedRegistrationSnapshot,
         },
       });
     });
