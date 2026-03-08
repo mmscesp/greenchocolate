@@ -40,3 +40,5 @@ next-env.d.ts
 /lib/generated/prisma
 /.codex-temp/
 /public/images/FOTOS 311/
+
+.pydeps/
