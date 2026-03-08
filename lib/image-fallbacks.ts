@@ -1,10 +1,8 @@
 const CITY_IMAGE_BY_SLUG = {
-  barcelona: '/images/cities/barcelona-dusk.jpg',
-  madrid: '/images/cities/madrid-night.jpg',
-  valencia: '/images/cities/valencia-arts.jpg',
-  sevilla: '/images/cities/sevilla-oldtown.jpg',
-  malaga: '/images/cities/malaga-harbor.jpg',
-  tenerife: '/images/cities/tenerife-coast.jpg',
+  barcelona: '/images/cities/barcelona-city.webp',
+  madrid: '/images/cities/madrid-city.webp',
+  valencia: '/images/cities/valencia-city.webp',
+  tenerife: '/images/cities/tenerife-city.webp',
 } as const;
 
 const CATEGORY_IMAGE_BY_SLUG = {

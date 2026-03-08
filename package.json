@@ -15,6 +15,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
+    "images:cities:webp": "python scripts/convert_city_images_to_webp.py",
     "translations:check": "node scripts/check-translations.js",
     "translations:fix": "node scripts/check-translations.js --fix"
   },
