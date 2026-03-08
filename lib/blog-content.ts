@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { normalizeArticleContent } from '@/lib/article-content';
 
 const CONTENT_ROOT = path.join(process.cwd(), 'data/content');
 
@@ -120,7 +121,7 @@ function normalizeMdxToMarkdown(body: string): string {
 
   result = result.replace(/<[^>]+>/g, '');
 
-  return result.trim();
+  return normalizeArticleContent(result);
 }
 
 function wordsToReadTime(text: string): number {

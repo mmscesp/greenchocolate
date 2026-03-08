@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getArticleBySlug, getRelatedArticles } from '@/app/actions/articles';
+import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 
@@ -26,7 +27,6 @@ export default async function GuidePage({ params }: PageProps) {
   }
 
   const related = await getRelatedArticles(guide.id, 3);
-  const paragraphs = guide.content.split('\n\n').filter(Boolean);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -36,10 +36,8 @@ export default async function GuidePage({ params }: PageProps) {
         <p className="text-muted-foreground">{guide.excerpt}</p>
       </section>
 
-      <article className="rounded-2xl border bg-card p-8 prose max-w-none">
-        {paragraphs.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
+      <article className="rounded-2xl border bg-card p-8 prose prose-invert max-w-none">
+        <ArticleContentRenderer content={guide.content} />
       </article>
 
       <section className="rounded-2xl border bg-muted/30 p-6">

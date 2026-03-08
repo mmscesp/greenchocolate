@@ -1,144 +1,254 @@
 'use client';
 
-import { AlertTriangle, CheckCircle2, Info, Lightbulb } from '@/lib/icons';
+import { AlertTriangle, Info, Lightbulb } from '@/lib/icons';
+import { normalizeArticleContent } from '@/lib/article-content';
 
-// Parse content blocks with basic markdown-like syntax
+type CalloutType = 'info' | 'warning' | 'tip' | 'danger';
+
+function isSeparatorLine(line: string): boolean {
+  return /^\s*([-_*])\1{2,}\s*$/.test(line);
+}
+
+function isTableBlock(block: string): boolean {
+  const lines = block
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length < 2) {
+    return false;
+  }
+
+  const hasHeader = lines[0].includes('|');
+  const hasDivider = /^\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?$/.test(lines[1]);
+
+  return hasHeader && hasDivider;
+}
+
+function parseTable(block: string, key: number): React.ReactNode {
+  const lines = block
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const header = lines[0]
+    .split('|')
+    .map((cell) => cell.trim())
+    .filter((cell, index, arr) => !(cell === '' && (index === 0 || index === arr.length - 1)));
+
+  const rows = lines
+    .slice(2)
+    .map((line) =>
+      line
+        .split('|')
+        .map((cell) => cell.trim())
+        .filter((cell, index, arr) => !(cell === '' && (index === 0 || index === arr.length - 1)))
+    )
+    .filter((row) => row.length > 0);
+
+  return (
+    <div key={key} className="my-8 overflow-x-auto rounded-2xl border border-white/10">
+      <table className="min-w-full border-collapse text-left text-sm text-zinc-200">
+        <thead className="bg-white/5">
+          <tr>
+            {header.map((cell, index) => (
+              <th key={index} className="border-b border-white/10 px-4 py-3 font-semibold text-white">
+                {formatInline(cell)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, rowIndex) => (
+            <tr key={rowIndex} className="odd:bg-transparent even:bg-white/5">
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex} className="border-b border-white/5 px-4 py-3 align-top">
+                  {formatInline(cell)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function formatInline(text: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`|\*[^*\n]+\*|_[^_\n]+_)/g;
+
+  let lastIndex = 0;
+  let key = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = tokenRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    const token = match[0];
+
+    if (token.startsWith('[')) {
+      const linkMatch = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (linkMatch) {
+        const [, label, url] = linkMatch;
+        const isExternal = /^https?:\/\//i.test(url);
+        parts.push(
+          <a
+            key={key++}
+            href={url}
+            className="text-brand underline decoration-brand/50 underline-offset-2 hover:text-brand-dark"
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
+          >
+            {label}
+          </a>
+        );
+      } else {
+        parts.push(token);
+      }
+    } else if (token.startsWith('**')) {
+      parts.push(
+        <strong key={key++} className="font-bold text-white">
+          {token.slice(2, -2)}
+        </strong>
+      );
+    } else if (token.startsWith('`')) {
+      parts.push(
+        <code key={key++} className="rounded bg-white/10 px-1.5 py-0.5 text-[0.92em] text-zinc-100">
+          {token.slice(1, -1)}
+        </code>
+      );
+    } else if (token.startsWith('*') || token.startsWith('_')) {
+      parts.push(
+        <em key={key++} className="italic text-zinc-100">
+          {token.slice(1, -1)}
+        </em>
+      );
+    } else {
+      parts.push(token);
+    }
+
+    lastIndex = match.index + token.length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts;
+}
+
 function parseContent(content: string): React.ReactNode[] {
+  const normalized = normalizeArticleContent(content);
   const blocks: React.ReactNode[] = [];
-  const paragraphs = content.split(/\n\n+/);
-  
-  let i = 0;
+  const paragraphs = normalized.split(/\n\n+/);
+
+  let key = 0;
+
   for (const paragraph of paragraphs) {
     const trimmed = paragraph.trim();
-    if (!trimmed) continue;
-    
-    // Check for callouts first (must be at start of paragraph)
-    const calloutMatch = trimmed.match(/^\[!(INFO|WARNING|TIP|DANGER)\]\s*(.*)?/i);
+    if (!trimmed) {
+      continue;
+    }
+
+    const lines = trimmed.split('\n').map((line) => line.trimEnd());
+
+    const calloutMatch = lines[0].match(/^\[!(INFO|WARNING|TIP|DANGER)\]\s*(.*)?/i);
     if (calloutMatch) {
       const [, type, title] = calloutMatch;
-      const rest = trimmed.replace(calloutMatch[0], '').trim();
-      const calloutType = type.toLowerCase() as 'info' | 'warning' | 'tip' | 'danger';
+      const calloutType = type.toLowerCase() as CalloutType;
+      const rest = lines.slice(1).join('\n').trim();
       blocks.push(
-        <CalloutBox key={i++} type={calloutType} title={title || undefined}>
+        <CalloutBox key={key++} type={calloutType} title={title?.trim() || undefined}>
           {rest}
         </CalloutBox>
       );
       continue;
     }
-    
-    // Check for headings
-    const headingMatch = trimmed.match(/^(#{1,3})\s+(.+)$/);
-    if (headingMatch) {
+
+    if (lines.length === 1 && isSeparatorLine(lines[0])) {
+      blocks.push(<hr key={key++} className="my-10 border-white/10" />);
+      continue;
+    }
+
+    if (isTableBlock(trimmed)) {
+      blocks.push(parseTable(trimmed, key++));
+      continue;
+    }
+
+    const headingMatch = lines[0].match(/^(#{1,3})\s+(.+)$/);
+    if (headingMatch && lines.length === 1) {
       const [, hashes, text] = headingMatch;
       const level = hashes.length;
+
       if (level === 1) {
-        blocks.push(<h2 key={i++} className="text-2xl font-black text-white mt-12 mb-6 tracking-tight">{text}</h2>);
+        blocks.push(
+          <h2 key={key++} className="mt-12 mb-6 text-2xl font-black tracking-tight text-white">
+            {text}
+          </h2>
+        );
       } else if (level === 2) {
-        blocks.push(<h3 key={i++} className="text-xl font-bold text-white mt-8 mb-4">{text}</h3>);
+        blocks.push(
+          <h3 key={key++} className="mt-8 mb-4 text-xl font-bold text-white">
+            {text}
+          </h3>
+        );
       } else {
-        blocks.push(<h4 key={i++} className="text-lg font-semibold text-zinc-200 mt-6 mb-3">{text}</h4>);
+        blocks.push(
+          <h4 key={key++} className="mt-6 mb-3 text-lg font-semibold text-zinc-200">
+            {text}
+          </h4>
+        );
       }
       continue;
     }
-    
-    // Check for blockquote
-    if (trimmed.startsWith('> ')) {
-      const quote = trimmed.replace(/^>\s*/g, '');
+
+    if (lines.every((line) => line.startsWith('> '))) {
+      const quote = lines.map((line) => line.replace(/^>\s*/, '')).join(' ');
       blocks.push(
-        <blockquote key={i++} className="border-l-4 border-green-500 pl-6 py-2 my-6 text-zinc-400 italic">
-          {quote}
+        <blockquote key={key++} className="my-6 border-l-4 border-green-500 pl-6 py-2 italic text-zinc-400">
+          {formatInline(quote)}
         </blockquote>
       );
       continue;
     }
-    
-    // Check for list items (unordered)
-    if (trimmed.match(/^[-*]\s+/m)) {
-      const items = trimmed.split(/\n/).filter(line => line.match(/^[-*]\s+/));
-      if (items.length > 0) {
-        blocks.push(
-          <ul key={i++} className="list-disc list-inside space-y-2 my-6 text-zinc-300">
-            {items.map((item, idx) => (
-              <li key={idx}>{item.replace(/^[-*]\s+/, '')}</li>
-            ))}
-          </ul>
-        );
-        continue;
-      }
+
+    if (lines.every((line) => /^[-*]\s+/.test(line))) {
+      blocks.push(
+        <ul key={key++} className="my-6 list-inside list-disc space-y-2 text-zinc-300">
+          {lines.map((line, index) => (
+            <li key={index}>{formatInline(line.replace(/^[-*]\s+/, '').trim())}</li>
+          ))}
+        </ul>
+      );
+      continue;
     }
-    
-    // Check for ordered list
-    if (trimmed.match(/^\d+\.\s+/m)) {
-      const items = trimmed.split(/\n/).filter(line => line.match(/^\d+\.\s+/));
-      if (items.length > 0) {
-        blocks.push(
-          <ol key={i++} className="list-decimal list-inside space-y-2 my-6 text-zinc-300">
-            {items.map((item, idx) => (
-              <li key={idx}>{item.replace(/^\d+\.\s+/, '')}</li>
-            ))}
-          </ol>
-        );
-        continue;
-      }
+
+    if (lines.every((line) => /^\d+\.\s+/.test(line))) {
+      blocks.push(
+        <ol key={key++} className="my-6 list-inside list-decimal space-y-2 text-zinc-300">
+          {lines.map((line, index) => (
+            <li key={index}>{formatInline(line.replace(/^\d+\.\s+/, '').trim())}</li>
+          ))}
+        </ol>
+      );
+      continue;
     }
-    
-    // Regular paragraph with inline formatting
+
     blocks.push(
-      <p key={i++} className="text-zinc-300 leading-relaxed mb-6">
-        {formatInline(trimmed)}
+      <p key={key++} className="mb-6 leading-relaxed text-zinc-300">
+        {formatInline(lines.join('\n'))}
       </p>
     );
   }
-  
+
   return blocks;
 }
 
-// Format inline elements (bold, italic, links)
-function formatInline(text: string): React.ReactNode {
-  const parts: React.ReactNode[] = [];
-  let remaining = text;
-  let key = 0;
-  
-  // Bold: **text**
-  const boldRegex = /\*\*(.+?)\*\*/g;
-  // Italic: *text* or _text_
-  const italicRegex = /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|_(.+?)_/g;
-  
-  let lastIndex = 0;
-  let match;
-  
-  // Process bold
-  const boldMatches: { start: number; end: number; text: string }[] = [];
-  while ((match = boldRegex.exec(text)) !== null) {
-    boldMatches.push({ start: match.index, end: match.index + match[0].length, text: match[1] });
-  }
-  
-  // Simple approach: replace bold first, then italic
-  let result = text.replace(/\*\*(.+?)\*\*/g, '___BOLD___$1___BOLD___');
-  result = result.replace(/_(.+?)_/g, '___ITALIC___$1___ITALIC___');
-  
-  const segments = result.split(/___(BOLD|ITALIC)___/);
-  
-  for (const segment of segments) {
-    if (segment === 'BOLD' || segment === 'ITALIC') continue;
-    if (!segment) continue;
-    
-    if (segment.startsWith('BOLD') || segment.endsWith('BOLD')) {
-      const content = segment.replace(/BOLD/g, '');
-      parts.push(<strong key={key++} className="text-white font-bold">{content}</strong>);
-    } else if (segment.startsWith('ITALIC') || segment.endsWith('ITALIC')) {
-      const content = segment.replace(/ITALIC/g, '');
-      parts.push(<em key={key++} className="text-zinc-200 italic">{content}</em>);
-    } else {
-      parts.push(segment);
-    }
-  }
-  
-  return parts.length > 0 ? parts : text;
-}
-
 interface CalloutBoxProps {
-  type: 'info' | 'warning' | 'tip' | 'danger';
+  type: CalloutType;
   title?: string;
   children: string;
 }
@@ -174,22 +284,24 @@ function CalloutBox({ type, title, children }: CalloutBoxProps) {
       titleColor: 'text-red-400',
     },
   };
-  
+
   const config = configs[type];
   const Icon = config.icon;
-  
+  const lines = children
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
   return (
-    <div className={`relative p-6 rounded-2xl ${config.bg} border ${config.border} my-6`}>
+    <div className={`relative my-6 rounded-2xl border p-6 ${config.bg} ${config.border}`}>
       <div className="flex items-start gap-3">
-        <Icon className={`h-5 w-5 ${config.iconColor} shrink-0 mt-0.5`} />
+        <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${config.iconColor}`} />
         <div>
-          {title && (
-            <h4 className={`font-bold ${config.titleColor} mb-2`}>
-              {title}
-            </h4>
-          )}
-          <div className="text-zinc-300 text-sm leading-relaxed">
-            {children}
+          {title && <h4 className={`mb-2 font-bold ${config.titleColor}`}>{title}</h4>}
+          <div className="space-y-2 text-sm leading-relaxed text-zinc-300">
+            {lines.map((line, index) => (
+              <p key={index}>{formatInline(line)}</p>
+            ))}
           </div>
         </div>
       </div>
@@ -202,9 +314,5 @@ interface ArticleContentRendererProps {
 }
 
 export default function ArticleContentRenderer({ content }: ArticleContentRendererProps) {
-  return (
-    <div className="article-content">
-      {parseContent(content)}
-    </div>
-  );
+  return <div className="article-content">{parseContent(content)}</div>;
 }
