@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import MainNavigation, { desktopExploreItems, desktopPrimaryItems } from './MainNavigation';
+import MainNavigation, { desktopExploreItems } from './MainNavigation';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
 import LanguageSelector from '@/components/LanguageSelector';
 import { Logo } from '@/components/ui/logo';
@@ -23,9 +23,6 @@ export default function Navbar() {
   const closeMobileMenu = () => setMobileMenuOpen(false);
   const withLocale = (path: string) => `/${language}${path}`;
   const localizedHomePath = `/${language}`;
-  const isHomepage = pathname === localizedHomePath || pathname === `${localizedHomePath}/`;
-  const isHomepageOverlay = isHomepage && !isScrolled;
-  const useLightNavForeground = isHomepageOverlay || isScrolled;
 
   useEffect(() => {
     let frameId: number | null = null;
@@ -69,6 +66,29 @@ export default function Navbar() {
     };
   }, [mobileMenuOpen]);
 
+  // Close mobile menu on resize to desktop, and handle Escape key
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <>
       <motion.nav
@@ -83,12 +103,10 @@ export default function Navbar() {
             : { type: 'spring', stiffness: 300, damping: 30 }
         }
         className={cn(
-          'fixed inset-x-0 mx-auto top-0 z-50 transition-all duration-500',
+          'fixed inset-x-0 mx-auto z-50 transition-all duration-500',
           isScrolled
-            ? 'glass-liquid rounded-full px-6 py-2'
-            : isHomepage
-              ? 'w-full px-4 md:px-8 py-3 md:py-4 bg-transparent border-transparent'
-              : 'w-full px-4 md:px-8 py-3 md:py-4 bg-white/60 supports-[backdrop-filter]:bg-white/45 backdrop-blur-2xl border-b border-black/10 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.45)]'
+            ? 'top-4 glass-liquid rounded-full px-6 py-2'
+            : 'top-0 w-full px-4 md:px-8 py-3 md:py-4 bg-transparent border-transparent'
         )}
       >
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
@@ -103,7 +121,7 @@ export default function Navbar() {
               priority
             />
             <Link href={localizedHomePath} className="flex items-center">
-              <span className={cn('text-xl font-bold tracking-tight transition-all duration-300', useLightNavForeground ? 'text-white' : 'text-slate-900')}>
+              <span className="text-xl font-bold tracking-tight transition-all duration-300 text-white">
                 {t('brand.name')}
               </span>
             </Link>
@@ -112,25 +130,28 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className={cn(
             'hidden md:flex items-center rounded-full px-2 py-1 mx-4 transition-all duration-300',
-            useLightNavForeground ? 'text-white' : 'text-slate-900',
-            isScrolled ? 'bg-white/5' : isHomepage ? 'bg-transparent' : 'bg-bg-surface/40 border border-black/10'
+            isScrolled ? 'bg-white/5' : 'bg-transparent'
           )}>
-            <MainNavigation tone={useLightNavForeground ? 'light' : 'dark'} />
+            <MainNavigation tone="light" />
           </div>
 
           {/* Desktop Actions Section */}
           <div className={cn('hidden md:flex items-center gap-3')}>
-            <Link href={withLocale('/safety-kit')}>
-              {/* [motion] */}
-              <motion.button
-                whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
-                whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
-                transition={{ duration: 0.2 }}
-                className="px-5 py-2 text-sm font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
+            <LanguageSelector />
+            <UserProfileDropdown />
+            <motion.div
+              whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+              transition={{ duration: 0.2 }}
+              className="inline-block"
+            >
+              <Link
+                href={withLocale('/safety-kit')}
+                className="inline-block px-5 py-2 text-sm font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
               >
                 {t('nav.get_safety_kit')}
-              </motion.button>
-            </Link>
+              </Link>
+            </motion.div>
           </div>
 
           {/* Mobile Actions Section */}
@@ -146,7 +167,7 @@ export default function Navbar() {
               aria-controls="mobile-site-menu"
               className={cn(
                 'relative flex h-10 w-10 items-center justify-center rounded-full transition-colors',
-                useLightNavForeground ? 'hover:bg-white/10 text-white' : 'hover:bg-bg-surface/40 text-slate-900'
+                'hover:bg-white/10 text-white'
               )}
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -164,11 +185,19 @@ export default function Navbar() {
             exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
             transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             id="mobile-site-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('nav.mobile.open_menu')}
             className="fixed inset-x-0 top-0 h-[100dvh] z-40 md:hidden glass-liquid pt-20 px-6 pb-[env(safe-area-inset-bottom,24px)] flex flex-col gap-4 overflow-y-auto overscroll-contain"
           >
-            {/* Rich Profile Header inside Mobile Menu */}
-            <div className="pb-4 border-b border-white/10 shrink-0">
-              <UserProfileDropdown variant="mobile-menu-row" onMobileClose={closeMobileMenu} />
+            {/* Rich Profile Header & Actions inside Mobile Menu */}
+            <div className="pb-4 border-b border-white/10 shrink-0 flex items-center justify-between gap-4">
+              <div className="flex-1">
+                <UserProfileDropdown variant="mobile-menu-row" onMobileClose={closeMobileMenu} />
+              </div>
+              <div className="shrink-0 flex items-center justify-end">
+                <LanguageSelector />
+              </div>
             </div>
 
             <div className="flex flex-col gap-4 text-xl font-semibold text-white/90 pt-2 shrink-0">
@@ -205,17 +234,20 @@ export default function Navbar() {
             </div>
 
             <div className="mt-auto pb-8 flex flex-col gap-6 border-t border-white/10 pt-6 shrink-0">
-              <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="w-full">
-                {/* [motion] */}
-                <motion.button
-                  whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
-                  whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
-                  transition={{ duration: 0.2 }}
-                  className="w-full py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
+              <motion.div
+                whileHover={shouldReduceMotion ? undefined : { scale: 1.02 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+                transition={{ duration: 0.2 }}
+                className="w-full"
+              >
+                <Link
+                  href={withLocale('/safety-kit')}
+                  onClick={closeMobileMenu}
+                  className="block w-full text-center py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
                 >
                   {t('nav.get_safety_kit')}
-                </motion.button>
-              </Link>
+                </Link>
+              </motion.div>
             </div>
           </motion.div>
         )}
