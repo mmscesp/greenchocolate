@@ -127,7 +127,7 @@ export default function ClubsPageClient({
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           
           {/* Filter Bar - Sticky on Desktop */}
-          <div className="sticky top-20 sm:top-28 z-40 mb-10 sm:mb-16">
+          <div className="mb-10 sm:mb-16">
             <FilterBar 
               filters={filters} 
               onFiltersChange={handleFiltersChange}
