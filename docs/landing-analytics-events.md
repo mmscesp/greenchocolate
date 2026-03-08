@@ -64,6 +64,38 @@ Transport behavior:
   - Payload: `destination`
   - KPI mapping: trust-story to mission/standards CTR.
 
+- `landing_concierge_quiz_start`
+  - Payload: `question_count`
+  - KPI mapping: tool engagement start rate.
+
+- `landing_concierge_question_answered`
+  - Payload: `question_id`, `option_id`, `step_index`
+  - KPI mapping: step-level drop-off and segment demand.
+
+- `landing_concierge_plan_view`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`
+  - KPI mapping: diagnostic completion rate and intent-quality mix.
+
+- `landing_concierge_preview_toggle`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`, `step_kind`, `position_index`, `opened`
+  - KPI mapping: preview engagement depth and which route steps get inspected.
+
+- `landing_concierge_preview_link_click_before_submit`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`, `step_kind`, `position_index`, `destination`
+  - KPI mapping: outbound leak rate before capture and which steps still pull users away early.
+
+- `landing_concierge_preview_link_click_after_submit`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`, `step_kind`, `position_index`, `destination`
+  - KPI mapping: post-capture continuation rate by recommended step.
+
+- `landing_concierge_cta_click`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`, `cta_role`, `cta_kind`, `destination`
+  - KPI mapping: route quality, CTA fit, and post-diagnostic click-through.
+
+- `landing_concierge_state_restore`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`, `active_step_kind`, `capture_submitted`, `age_seconds`
+  - KPI mapping: recovered-session value and how often users return after leaving the page.
+
 ### Trust and objection handling
 
 - `landing_reality_card_toggle`
@@ -95,6 +127,14 @@ Transport behavior:
 - `safety_kit_submit_success`
   - Payload: `source`
   - KPI mapping: Safety Kit landing conversion completion rate.
+
+- `landing_concierge_plan_submit_attempt`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`, `email_length`
+  - KPI mapping: email-capture attempt rate after personalized value is shown.
+
+- `landing_concierge_plan_submit_success`
+  - Payload: `plan_variant`, `readiness_tier`, `timeline_id`, `experience_id`, `city_id`, `city_live`, `source`
+  - KPI mapping: personalized-plan conversion completion rate.
 
 ### Directory interaction events
 
