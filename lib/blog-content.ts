@@ -1,6 +1,8 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { normalizeArticleContent } from '@/lib/article-content';
+import { ARTICLE_TRANSLATIONS } from '@/lib/article-translations';
+import type { Locale } from '@/lib/i18n-config';
 
 const CONTENT_ROOT = path.join(process.cwd(), 'data/content');
 
@@ -231,7 +233,39 @@ async function loadArticleFromFile(filePath: string): Promise<BlogArticleRecord>
   };
 }
 
-export async function getAllBlogArticles(): Promise<BlogArticleRecord[]> {
+function localizeInternalLinks(content: string, locale: Locale): string {
+  return content.replace(/\/(en|es|fr|de)\//g, `/${locale}/`);
+}
+
+function localizeArticle(article: BlogArticleRecord, locale: Locale): BlogArticleRecord {
+  if (locale === 'en') {
+    return {
+      ...article,
+      content: localizeInternalLinks(article.content, locale),
+    };
+  }
+
+  const translation = ARTICLE_TRANSLATIONS[locale]?.[article.slug];
+
+  if (!translation) {
+    return {
+      ...article,
+      content: localizeInternalLinks(article.content, locale),
+    };
+  }
+
+  return {
+    ...article,
+    title: translation.title,
+    excerpt: translation.excerpt,
+    content: localizeInternalLinks(normalizeArticleContent(translation.content), locale),
+    metaTitle: translation.metaTitle ?? article.metaTitle,
+    metaDescription: translation.metaDescription ?? article.metaDescription,
+    tags: translation.tags ?? article.tags,
+  };
+}
+
+export async function getAllBlogArticles(locale: Locale = 'en'): Promise<BlogArticleRecord[]> {
   const categoryDirs = await fs.readdir(CONTENT_ROOT, { withFileTypes: true });
   const fileReadTasks = categoryDirs
     .filter((entry) => entry.isDirectory())
@@ -244,6 +278,7 @@ export async function getAllBlogArticles(): Promise<BlogArticleRecord[]> {
 
   return articles
     .filter((article) => article.isPublished)
+    .map((article) => localizeArticle(article, locale))
     .sort((a, b) => {
       const aTime = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
       const bTime = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
@@ -251,7 +286,10 @@ export async function getAllBlogArticles(): Promise<BlogArticleRecord[]> {
     });
 }
 
-export async function getBlogArticleBySlug(slug: string): Promise<BlogArticleRecord | null> {
-  const articles = await getAllBlogArticles();
+export async function getBlogArticleBySlug(
+  slug: string,
+  locale: Locale = 'en'
+): Promise<BlogArticleRecord | null> {
+  const articles = await getAllBlogArticles(locale);
   return articles.find((article) => article.slug === slug) ?? null;
 }

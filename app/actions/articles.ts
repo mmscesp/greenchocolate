@@ -6,12 +6,14 @@ import {
   getAllBlogArticles,
   getBlogArticleBySlug,
 } from '@/lib/blog-content';
+import type { Locale } from '@/lib/i18n-config';
 
 const articleFiltersSchema = z.object({
   category: z.string().optional(),
   citySlug: z.string().optional(),
   limit: z.number().int().min(1).max(100).optional(),
   offset: z.number().int().min(0).optional(),
+  locale: z.enum(['es', 'en', 'fr', 'de']).optional(),
 });
 
 const slugSchema = z.string().min(1);
@@ -66,10 +68,11 @@ export async function getArticles(filters?: {
   citySlug?: string;
   limit?: number;
   offset?: number;
+  locale?: Locale;
 }): Promise<ArticleCard[]> {
   try {
     const validatedFilters = filters ? articleFiltersSchema.parse(filters) : undefined;
-    const all = await getAllBlogArticles();
+    const all = await getAllBlogArticles(validatedFilters?.locale ?? 'en');
 
     const filtered = all.filter((article) => {
       if (validatedFilters?.category && article.category !== validatedFilters.category) {
@@ -93,10 +96,10 @@ export async function getArticles(filters?: {
   }
 }
 
-export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
+export async function getArticleBySlug(slug: string, locale: Locale = 'en'): Promise<ArticleDetail | null> {
   try {
     const validatedSlug = slugSchema.parse(slug);
-    const article = await getBlogArticleBySlug(validatedSlug);
+    const article = await getBlogArticleBySlug(validatedSlug, locale);
 
     if (!article) {
       return null;
@@ -117,10 +120,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleDetail | nu
   }
 }
 
-export async function getFeaturedArticles(limit = 3): Promise<ArticleCard[]> {
+export async function getFeaturedArticles(limit = 3, locale: Locale = 'en'): Promise<ArticleCard[]> {
   try {
     const validatedLimit = limitSchema.parse(limit) ?? 3;
-    const all = await getAllBlogArticles();
+    const all = await getAllBlogArticles(locale);
 
     const featured = all
       .filter((article) => article.featuredOrder > 0)
@@ -143,11 +146,15 @@ export async function getFeaturedArticles(limit = 3): Promise<ArticleCard[]> {
   }
 }
 
-export async function getRelatedArticles(articleId: string, limit = 3): Promise<ArticleCard[]> {
+export async function getRelatedArticles(
+  articleId: string,
+  limit = 3,
+  locale: Locale = 'en'
+): Promise<ArticleCard[]> {
   try {
     const validatedId = idSchema.parse(articleId);
     const validatedLimit = limitSchema.parse(limit) ?? 3;
-    const all = await getAllBlogArticles();
+    const all = await getAllBlogArticles(locale);
     const reference = all.find((article) => article.id === validatedId);
 
     if (!reference) {
@@ -176,9 +183,9 @@ export async function getRelatedArticles(articleId: string, limit = 3): Promise<
   }
 }
 
-export async function getCategoriesWithCounts(): Promise<{ name: string; count: number }[]> {
+export async function getCategoriesWithCounts(locale: Locale = 'en'): Promise<{ name: string; count: number }[]> {
   try {
-    const all = await getAllBlogArticles();
+    const all = await getAllBlogArticles(locale);
     const counts = new Map<string, number>();
 
     for (const article of all) {

@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     [cities, clubs, articles] = await Promise.all([
       getCities(),
       getClubs({ isVerified: true }),
-      getArticles(),
+      getArticles({ locale: 'en' }),
     ]);
   } catch (error) {
     console.warn('Failed to fetch dynamic data for sitemap:', error);

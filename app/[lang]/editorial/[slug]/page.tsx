@@ -13,7 +13,7 @@ interface ArticlePageProps {
 
 export async function generateStaticParams() {
   try {
-    const articles = await getArticles();
+    const articles = await getArticles({ locale: 'en' });
     return articles.map((article) => ({
       slug: article.slug,
     }));
@@ -25,7 +25,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { lang, slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug, lang as 'es' | 'en' | 'fr' | 'de');
 
   if (!article) {
     return { title: 'Article Not Found' };
@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 export default async function EditorialArticlePage({ params }: ArticlePageProps) {
   const { lang, slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug, lang as 'es' | 'en' | 'fr' | 'de');
 
   if (!article) {
     notFound();
@@ -70,7 +70,7 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     citySlug: article.citySlug,
   });
 
-  const relatedArticles = await getRelatedArticles(article.id, 3);
+  const relatedArticles = await getRelatedArticles(article.id, 3, lang as 'es' | 'en' | 'fr' | 'de');
 
   const jsonLd = {
     '@context': 'https://schema.org',

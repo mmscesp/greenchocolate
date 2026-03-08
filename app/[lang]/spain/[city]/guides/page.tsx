@@ -7,6 +7,7 @@ import { BookOpen, Clock, ArrowRight, MapPin, Shield } from '@/lib/icons';
 import { H1, H3, Text, Lead } from '@/components/typography';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
@@ -25,7 +26,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
   };
   const [cityDetail, guides] = await Promise.all([
     getCityBySlug(city),
-    getArticles({ citySlug: city, limit: 24 }),
+    getArticles({ citySlug: city, limit: 24, locale: lang as Locale }),
   ]);
 
   if (!cityDetail) {
@@ -97,7 +98,7 @@ export default async function CityGuidesPage({ params }: PageProps) {
                 <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <BookOpen className="h-3 w-3 text-primary" />
-                    <span className="bg-muted px-2 py-1 rounded-full">{guide.category}</span>
+                    <span className="bg-muted px-2 py-1 rounded-full">{getLocalizedArticleCategory(guide.category, t)}</span>
                   </div>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />

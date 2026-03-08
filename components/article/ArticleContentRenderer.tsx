@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Info, Lightbulb } from '@/lib/icons';
 import { normalizeArticleContent } from '@/lib/article-content';
+import { useLanguage } from '@/hooks/useLanguage';
 
 type CalloutType = 'info' | 'warning' | 'tip' | 'danger';
 
@@ -25,7 +26,15 @@ function isTableBlock(block: string): boolean {
   return hasHeader && hasDivider;
 }
 
-function parseTable(block: string, key: number): React.ReactNode {
+function normalizeHref(url: string, language: string): string {
+  if (/^\/(en|es|fr|de)\//.test(url)) {
+    return url.replace(/^\/(en|es|fr|de)\//, `/${language}/`);
+  }
+
+  return url;
+}
+
+function parseTable(block: string, key: number, language: string): React.ReactNode {
   const lines = block
     .split('\n')
     .map((line) => line.trim())
@@ -53,7 +62,7 @@ function parseTable(block: string, key: number): React.ReactNode {
           <tr>
             {header.map((cell, index) => (
               <th key={index} className="border-b border-white/10 px-4 py-3 font-semibold text-white">
-                {formatInline(cell)}
+                {formatInline(cell, language)}
               </th>
             ))}
           </tr>
@@ -63,7 +72,7 @@ function parseTable(block: string, key: number): React.ReactNode {
             <tr key={rowIndex} className="odd:bg-transparent even:bg-white/5">
               {row.map((cell, cellIndex) => (
                 <td key={cellIndex} className="border-b border-white/5 px-4 py-3 align-top">
-                  {formatInline(cell)}
+                  {formatInline(cell, language)}
                 </td>
               ))}
             </tr>
@@ -74,7 +83,7 @@ function parseTable(block: string, key: number): React.ReactNode {
   );
 }
 
-function formatInline(text: string): React.ReactNode[] {
+function formatInline(text: string, language: string): React.ReactNode[] {
   const parts: React.ReactNode[] = [];
   const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`|\*[^*\n]+\*|_[^_\n]+_)/g;
 
@@ -97,7 +106,7 @@ function formatInline(text: string): React.ReactNode[] {
         parts.push(
           <a
             key={key++}
-            href={url}
+            href={normalizeHref(url, language)}
             className="text-brand underline decoration-brand/50 underline-offset-2 hover:text-brand-dark"
             target={isExternal ? '_blank' : undefined}
             rel={isExternal ? 'noopener noreferrer' : undefined}
@@ -140,7 +149,7 @@ function formatInline(text: string): React.ReactNode[] {
   return parts;
 }
 
-function parseContent(content: string): React.ReactNode[] {
+function parseContent(content: string, language: string): React.ReactNode[] {
   const normalized = normalizeArticleContent(content);
   const blocks: React.ReactNode[] = [];
   const paragraphs = normalized.split(/\n\n+/);
@@ -161,7 +170,7 @@ function parseContent(content: string): React.ReactNode[] {
       const calloutType = type.toLowerCase() as CalloutType;
       const rest = lines.slice(1).join('\n').trim();
       blocks.push(
-        <CalloutBox key={key++} type={calloutType} title={title?.trim() || undefined}>
+        <CalloutBox key={key++} type={calloutType} title={title?.trim() || undefined} language={language}>
           {rest}
         </CalloutBox>
       );
@@ -174,7 +183,7 @@ function parseContent(content: string): React.ReactNode[] {
     }
 
     if (isTableBlock(trimmed)) {
-      blocks.push(parseTable(trimmed, key++));
+      blocks.push(parseTable(trimmed, key++, language));
       continue;
     }
 
@@ -209,7 +218,7 @@ function parseContent(content: string): React.ReactNode[] {
       const quote = lines.map((line) => line.replace(/^>\s*/, '')).join(' ');
       blocks.push(
         <blockquote key={key++} className="my-6 border-l-4 border-green-500 pl-6 py-2 italic text-zinc-400">
-          {formatInline(quote)}
+          {formatInline(quote, language)}
         </blockquote>
       );
       continue;
@@ -219,7 +228,7 @@ function parseContent(content: string): React.ReactNode[] {
       blocks.push(
         <ul key={key++} className="my-6 list-inside list-disc space-y-2 text-zinc-300">
           {lines.map((line, index) => (
-            <li key={index}>{formatInline(line.replace(/^[-*]\s+/, '').trim())}</li>
+            <li key={index}>{formatInline(line.replace(/^[-*]\s+/, '').trim(), language)}</li>
           ))}
         </ul>
       );
@@ -230,7 +239,7 @@ function parseContent(content: string): React.ReactNode[] {
       blocks.push(
         <ol key={key++} className="my-6 list-inside list-decimal space-y-2 text-zinc-300">
           {lines.map((line, index) => (
-            <li key={index}>{formatInline(line.replace(/^\d+\.\s+/, '').trim())}</li>
+            <li key={index}>{formatInline(line.replace(/^\d+\.\s+/, '').trim(), language)}</li>
           ))}
         </ol>
       );
@@ -239,7 +248,7 @@ function parseContent(content: string): React.ReactNode[] {
 
     blocks.push(
       <p key={key++} className="mb-6 leading-relaxed text-zinc-300">
-        {formatInline(lines.join('\n'))}
+        {formatInline(lines.join('\n'), language)}
       </p>
     );
   }
@@ -251,9 +260,10 @@ interface CalloutBoxProps {
   type: CalloutType;
   title?: string;
   children: string;
+  language: string;
 }
 
-function CalloutBox({ type, title, children }: CalloutBoxProps) {
+function CalloutBox({ type, title, children, language }: CalloutBoxProps) {
   const configs = {
     info: {
       bg: 'bg-blue-500/10',
@@ -300,7 +310,7 @@ function CalloutBox({ type, title, children }: CalloutBoxProps) {
           {title && <h4 className={`mb-2 font-bold ${config.titleColor}`}>{title}</h4>}
           <div className="space-y-2 text-sm leading-relaxed text-zinc-300">
             {lines.map((line, index) => (
-              <p key={index}>{formatInline(line)}</p>
+              <p key={index}>{formatInline(line, language)}</p>
             ))}
           </div>
         </div>
@@ -314,5 +324,7 @@ interface ArticleContentRendererProps {
 }
 
 export default function ArticleContentRenderer({ content }: ArticleContentRendererProps) {
-  return <div className="article-content">{parseContent(content)}</div>;
+  const { language } = useLanguage();
+
+  return <div className="article-content">{parseContent(content, language)}</div>;
 }

@@ -14,6 +14,7 @@ import TrustBadge from '@/components/trust/TrustBadge';
 import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
 import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
+import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
 
 interface ArticleContentProps {
   article: ArticleDetail;
@@ -32,6 +33,9 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
     category: article.category,
     citySlug: article.citySlug,
   });
+
+  const locale = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : 'en-US';
+  const localizedCategory = getLocalizedArticleCategory(article.category, t);
 
   useEffect(() => {
     let frameId = 0;
@@ -122,7 +126,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
             <div className="flex gap-2 mb-8">
               <TrustBadge type="legal" size="sm" className="bg-brand/10 border-brand/20 text-brand" />
               <Badge variant="secondary" className="bg-white/10 text-white border-white/20 uppercase tracking-widest text-[10px] font-bold">
-                {article.category}
+                {localizedCategory}
               </Badge>
             </div>
             <h1 className="text-4xl lg:text-7xl font-black text-white mb-8 leading-[0.95] tracking-tight font-serif">
@@ -135,7 +139,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               </div>
               <div className="hidden sm:flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-brand" />
-                <span>{t('article.verified')} {new Date(article.publishedAt || '').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                <span>{t('article.verified')} {new Date(article.publishedAt || '').toLocaleDateString(locale, { month: 'short', year: 'numeric' })}</span>
               </div>
             </div>
           </div>
@@ -152,7 +156,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               <ExpertByline 
                 name={article.authorName} 
                 role={t('article.author_role')} 
-                date={new Date(article.publishedAt || '').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                date={new Date(article.publishedAt || '').toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}
               />
 
               {/* [motion] */}
@@ -299,7 +303,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                       <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/20 to-transparent" />
                     </div>
                     <Badge variant="secondary" className="mb-4 bg-white/5 text-zinc-400 text-[10px] font-bold uppercase border-white/10">
-                      {related.category}
+                      {getLocalizedArticleCategory(related.category, t)}
                     </Badge>
                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-brand transition-colors font-serif">
                       {related.title}

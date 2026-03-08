@@ -8,6 +8,7 @@ import { H1, H2, H3, H4, Eyebrow, Text, Lead } from '@/components/typography';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
+import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
 
 interface EditorialPageProps {
   params: Promise<{ lang: string }>;
@@ -17,7 +18,10 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
-  const [featuredArticles, categories] = await Promise.all([getFeaturedArticles(3), getCategoriesWithCounts()]);
+  const [featuredArticles, categories] = await Promise.all([
+    getFeaturedArticles(3, lang as Locale),
+    getCategoriesWithCounts(lang as Locale),
+  ]);
 
   const CATEGORIES = [
     {
@@ -175,7 +179,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-bg-base/80 via-bg-base/20 to-transparent z-10" />
                       <Badge className="absolute top-4 left-4 bg-brand text-bg-base border-none font-bold uppercase tracking-widest text-[10px] z-20" variant="secondary">
-                        {article.category}
+                        {getLocalizedArticleCategory(article.category, t)}
                       </Badge>
                     </div>
                     <div className="p-6">

@@ -14,7 +14,7 @@ export default async function CulturePage({ params }: CulturePageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
-  const articles = await getArticles({ category: 'Culture' });
+  const articles = await getArticles({ category: 'Culture', locale: lang as Locale });
 
   return (
     <CategoryArticlePage
