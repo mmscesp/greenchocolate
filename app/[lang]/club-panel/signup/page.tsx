@@ -18,7 +18,7 @@ import { FaApple } from 'react-icons/fa';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ClubSignupPage() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const formatText = (key: string, values: Record<string, string | number>) => {
     let message = t(key);
 
@@ -77,7 +77,7 @@ export default function ClubSignupPage() {
     else setIsAppleLoading(true);
 
     try {
-      const result = await signInWithOAuth(provider);
+      const result = await signInWithOAuth(provider, language, `/${language}/club-panel/dashboard`);
       if (result.success && result.data) {
         window.location.href = result.data;
       }
@@ -104,12 +104,12 @@ export default function ClubSignupPage() {
             {formatText('club_panel.signup.success.description', { clubName: formData.clubName })}
           </p>
           <div className="space-y-3">
-            <Link href="/club-panel/login" className="block">
+            <Link href={`/${language}/club-panel/login`} className="block">
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
                 {t('club_panel.signup.success.go_to_sign_in')}
               </Button>
             </Link>
-            <Link href="/" className="block">
+            <Link href={`/${language}`} className="block">
               <Button variant="secondary" className="w-full">
                 {t('club_panel.entry.back_to_home')}
               </Button>
@@ -124,7 +124,7 @@ export default function ClubSignupPage() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100/40 pt-24 md:pt-32 pb-12 px-4">
       <div className="max-w-2xl mx-auto">
         <Link
-          href={step === 1 ? "/club-panel" : "#"}
+          href={step === 1 ? `/${language}/club-panel` : "#"}
           onClick={(e) => {
             if (step > 1) {
               e.preventDefault();
@@ -139,7 +139,7 @@ export default function ClubSignupPage() {
 
         <Card className="p-8 shadow-xl">
           <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4">
+            <Link href={`/${language}`} className="inline-flex items-center gap-2 mb-4">
               <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 {t('brand.name')}
@@ -288,6 +288,7 @@ export default function ClubSignupPage() {
           ) : (
             <form action={formAction} className="space-y-6">
               {/* Hidden fields from step 1 */}
+              <input type="hidden" name="lang" value={language} />
               <input type="hidden" name="clubName" value={formData.clubName} />
               <input type="hidden" name="email" value={formData.email} />
               <input type="hidden" name="password" value={formData.password} />
@@ -375,7 +376,7 @@ export default function ClubSignupPage() {
 
           <div className="mt-6 text-center text-sm text-gray-600">
             {t('club_panel.signup.already_have_account')}{' '}
-            <Link href="/club-panel/login" className="text-green-600 hover:text-green-700 font-medium">
+            <Link href={`/${language}/club-panel/login`} className="text-green-600 hover:text-green-700 font-medium">
               {t('auth.login.submit')}
             </Link>
           </div>

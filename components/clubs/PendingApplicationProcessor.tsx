@@ -27,9 +27,12 @@ export default function PendingApplicationProcessor() {
   useEffect(() => {
     if (!user) return;
 
-    const pendingLeadStr = sessionStorage.getItem(pendingMembershipLeadStorageKey);
+    const pendingLeadStr =
+      sessionStorage.getItem(pendingMembershipLeadStorageKey) ||
+      localStorage.getItem(pendingMembershipLeadStorageKey);
     if (!pendingLeadStr) {
       sessionStorage.removeItem(legacyPendingApplicationStorageKey);
+      localStorage.removeItem(pendingMembershipLeadStorageKey);
       return;
     }
 
@@ -40,12 +43,14 @@ export default function PendingApplicationProcessor() {
       console.error('Failed to parse pending membership lead', error);
       sessionStorage.removeItem(pendingMembershipLeadStorageKey);
       sessionStorage.removeItem(legacyPendingApplicationStorageKey);
+      localStorage.removeItem(pendingMembershipLeadStorageKey);
       return;
     }
 
     if (!pendingLead.pendingLeadToken) {
       sessionStorage.removeItem(pendingMembershipLeadStorageKey);
       sessionStorage.removeItem(legacyPendingApplicationStorageKey);
+      localStorage.removeItem(pendingMembershipLeadStorageKey);
       return;
     }
 
@@ -59,6 +64,7 @@ export default function PendingApplicationProcessor() {
 
         sessionStorage.removeItem(pendingMembershipLeadStorageKey);
         sessionStorage.removeItem(legacyPendingApplicationStorageKey);
+        localStorage.removeItem(pendingMembershipLeadStorageKey);
 
         if (result.success) {
           toast.success(t('club_profile.modal.success.message') || 'Application submitted successfully');
@@ -71,6 +77,7 @@ export default function PendingApplicationProcessor() {
         toast.error('An unexpected error occurred while submitting your application');
         sessionStorage.removeItem(pendingMembershipLeadStorageKey);
         sessionStorage.removeItem(legacyPendingApplicationStorageKey);
+        localStorage.removeItem(pendingMembershipLeadStorageKey);
       } finally {
         setIsProcessing(false);
       }

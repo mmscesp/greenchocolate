@@ -18,7 +18,7 @@ export default function ForgotPasswordPage() {
   const withLocale = (path: string) => `/${language}${path}`;
   
   const [state, formAction, isPending] = useActionState(async () => {
-    const { error } = await resetPassword(email);
+    const { error } = await resetPassword(email, language);
     return {
       success: !error,
       message: error?.message || '',

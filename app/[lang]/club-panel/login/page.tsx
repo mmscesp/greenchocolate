@@ -18,7 +18,7 @@ import { FaApple } from 'react-icons/fa';
 import { useLanguage } from '@/hooks/useLanguage';
 
 function ClubLoginForm() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/club-panel/dashboard';
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -37,7 +37,7 @@ function ClubLoginForm() {
     else setIsAppleLoading(true);
 
     try {
-      const result = await signInWithOAuth(provider);
+      const result = await signInWithOAuth(provider, language, redirectTo);
       if (result.success && result.data) {
         window.location.href = result.data;
       }
@@ -103,6 +103,7 @@ function ClubLoginForm() {
       )}
 
       <form action={formAction} className="space-y-6">
+        <input type="hidden" name="lang" value={language} />
         {/* Hidden redirect field */}
         <input type="hidden" name="redirect" value={redirectTo} />
         
@@ -170,7 +171,7 @@ function ClubLoginForm() {
             </Label>
           </div>
           <Link
-            href="/forgot-password"
+            href={`/${language}/forgot-password`}
             className="text-sm text-green-600 hover:text-green-700"
           >
             {t('auth.login.forgot_password')}
@@ -196,7 +197,7 @@ function ClubLoginForm() {
       <div className="mt-6 text-center">
         <p className="text-gray-600">
           {t('auth.login.no_account')}{' '}
-          <Link href="/club-panel/signup" className="text-green-600 hover:text-green-700 font-medium">
+          <Link href={`/${language}/club-panel/signup`} className="text-green-600 hover:text-green-700 font-medium">
             {t('club_panel.login.register_club_link')}
           </Link>
         </p>
@@ -206,19 +207,19 @@ function ClubLoginForm() {
 }
 
 export default function ClubLoginPage() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-emerald-100/40 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="w-full max-w-md">
-        <Link href="/club-panel" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
+        <Link href={`/${language}/club-panel`} className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           <span>{t('club_panel.common.back')}</span>
         </Link>
 
         <Card className="p-8 shadow-xl border-2">
           <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4">
+            <Link href={`/${language}`} className="inline-flex items-center gap-2 mb-4">
               <LogoIcon size="lg" />
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 {t('brand.name')}

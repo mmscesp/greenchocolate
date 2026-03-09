@@ -2,15 +2,15 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { getCurrentUserBookings, getCurrentUserFavorites, removeCurrentUserFavorite, type UserBookingItem, type UserFavoriteClub } from '@/app/actions/users';
 import { useLanguage } from '@/hooks/useLanguage';
-import { useClubs } from '@/hooks/useClubs';
 import { Heart, 
 Star, 
 MapPin, 
@@ -25,20 +25,95 @@ import { getClubPrimaryImage } from '@/lib/image-fallbacks';
 
 export default function FavoritesPage() {
   const { t, language } = useLanguage();
-  const { clubs } = useClubs();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Mock favorite clubs (first 4 clubs as favorites)
-  const [favoriteClubs, setFavoriteClubs] = useState(clubs.slice(0, 4));
+  const [favoriteClubs, setFavoriteClubs] = useState<UserFavoriteClub[]>([]);
+  const [bookings, setBookings] = useState<UserBookingItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pendingRemovalClubId, setPendingRemovalClubId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFavorites = async () => {
+      try {
+        const [favoriteItems, bookingItems] = await Promise.all([
+          getCurrentUserFavorites(),
+          getCurrentUserBookings(),
+        ]);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setFavoriteClubs(favoriteItems);
+        setBookings(
+          bookingItems.map((booking) => ({
+            ...booking,
+            scheduledFor: new Date(booking.scheduledFor),
+            cancelledAt: booking.cancelledAt ? new Date(booking.cancelledAt) : null,
+            completedAt: booking.completedAt ? new Date(booking.completedAt) : null,
+            createdAt: new Date(booking.createdAt),
+            updatedAt: new Date(booking.updatedAt),
+          }))
+        );
+      } catch (error) {
+        console.error('Failed to load favorites:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadFavorites();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredFavorites = favoriteClubs.filter(club =>
     club.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     club.neighborhood.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const removeFavorite = (clubId: string) => {
-    setFavoriteClubs(prev => prev.filter(club => club.id !== clubId));
+  const favoriteStats = useMemo(() => {
+    const now = new Date();
+    const completedClubIds = new Set(
+      bookings.filter((booking) => booking.status === 'COMPLETED').map((booking) => booking.clubId)
+    );
+    const upcomingClubIds = new Set(
+      bookings
+        .filter(
+          (booking) =>
+            booking.scheduledFor >= now &&
+            booking.status !== 'CANCELLED' &&
+            booking.status !== 'COMPLETED'
+        )
+        .map((booking) => booking.clubId)
+    );
+
+    return {
+      visited: favoriteClubs.filter((club) => completedClubIds.has(club.id)).length,
+      upcoming: favoriteClubs.filter((club) => upcomingClubIds.has(club.id)).length,
+    };
+  }, [bookings, favoriteClubs]);
+
+  const removeFavorite = async (clubId: string) => {
+    setPendingRemovalClubId(clubId);
+
+    try {
+      const result = await removeCurrentUserFavorite(clubId);
+
+      if (!result.success) {
+        return;
+      }
+
+      setFavoriteClubs((prev) => prev.filter((club) => club.id !== clubId));
+    } finally {
+      setPendingRemovalClubId(null);
+    }
   };
 
   return (
@@ -57,7 +132,7 @@ export default function FavoritesPage() {
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('favorites.stats.total')}</p>
-              <p className="text-3xl font-serif text-white">{favoriteClubs.length}</p>
+              <p className="text-3xl font-serif text-white">{isLoading ? '...' : favoriteClubs.length}</p>
             </div>
             <div className="bg-brand/10 p-3 rounded-full border border-brand/20">
               <Heart className="h-6 w-6 text-brand" />
@@ -69,7 +144,7 @@ export default function FavoritesPage() {
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('favorites.stats.visited')}</p>
-              <p className="text-3xl font-serif text-white">3</p>
+              <p className="text-3xl font-serif text-white">{isLoading ? '...' : favoriteStats.visited}</p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
               <MapPin className="h-6 w-6 text-zinc-400" />
@@ -81,7 +156,7 @@ export default function FavoritesPage() {
           <CardContent className="flex items-center justify-between p-6">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('favorites.stats.upcoming')}</p>
-              <p className="text-3xl font-serif text-white">2</p>
+              <p className="text-3xl font-serif text-white">{isLoading ? '...' : favoriteStats.upcoming}</p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
               <Calendar className="h-6 w-6 text-zinc-400" />
@@ -167,6 +242,7 @@ export default function FavoritesPage() {
                     variant="ghost"
                     aria-label={t('favorites.remove')}
                     className="h-9 w-9 rounded-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                    disabled={pendingRemovalClubId === club.id}
                     onClick={() => removeFavorite(club.id)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -222,9 +298,11 @@ export default function FavoritesPage() {
                       {t('favorites.view_club')}
                     </Button>
                   </Link>
-                  <Button variant="ghost" size="icon" aria-label={t('bookings.book_new_visit')} className="h-10 w-10 rounded-full">
-                    <Calendar className="h-4 w-4" />
-                  </Button>
+                  <Link href={`/${language}/clubs/${club.slug}`}>
+                    <Button variant="ghost" size="icon" aria-label={t('bookings.book_new_visit')} className="h-10 w-10 rounded-full">
+                      <Calendar className="h-4 w-4" />
+                    </Button>
+                  </Link>
                 </CardFooter>
               </div>
             </Card>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { signUp, signInWithOAuth } from '@/app/actions/auth';
@@ -17,6 +17,7 @@ import { FaApple } from 'react-icons/fa';
 export default function RegisterForm() {
   const { language, t } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
+  const [redirectUrl, setRedirectUrl] = useState('');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -39,6 +40,11 @@ export default function RegisterForm() {
 
   const allRequirementsMet = passwordRequirements.every(req => req.met);
   const passwordsMatch = password === confirmPassword && confirmPassword !== '';
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setRedirectUrl(params.get('redirect') || '');
+  }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     setClientError(null);
@@ -67,7 +73,7 @@ export default function RegisterForm() {
     else setIsAppleLoading(true);
 
     try {
-      const result = await signInWithOAuth(provider);
+      const result = await signInWithOAuth(provider, language, redirectUrl || null);
       if (result.success && result.data) {
         window.location.href = result.data;
       }
@@ -165,6 +171,8 @@ export default function RegisterForm() {
       </div>
 
       <form action={formAction} onSubmit={handleSubmit} className="space-y-5">
+        <input type="hidden" name="lang" value={language} />
+        <input type="hidden" name="redirect" value={redirectUrl} />
         {(clientError || (state?.message && !state?.success)) && (
           // [motion]
           <motion.div

@@ -2,12 +2,13 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cancelCurrentUserBooking, getCurrentUserBookings, type UserBookingItem } from '@/app/actions/users';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Calendar,
 Clock,
@@ -19,137 +20,123 @@ ExternalLink,
 CalendarDays,
 Search } from '@/lib/icons';
 
-interface Booking {
-  id: string;
-  clubId: string;
-  clubName: string;
-  clubImage: string;
-  clubNeighborhood: string;
-  date: string;
-  time: string;
-  guests: number;
-  status: 'confirmed' | 'pending' | 'cancelled' | 'completed';
-  type: 'visit' | 'event' | 'tour';
-}
-
 export default function BookingsPage() {
   const { t, language } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<'all' | 'upcoming' | 'past'>('all');
+  const [bookings, setBookings] = useState<UserBookingItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pendingCancellationId, setPendingCancellationId] = useState<string | null>(null);
 
-  // Mock bookings data
-  const [bookings] = useState<Booking[]>([
-    {
-      id: '1',
-      clubId: '1',
-      clubName: 'Green Harmony Barcelona',
-      clubImage: 'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
-      clubNeighborhood: 'Gracia',
-      date: '2026-02-25',
-      time: '19:00',
-      guests: 2,
-      status: 'confirmed',
-      type: 'visit'
-    },
-    {
-      id: '2',
-      clubId: '3',
-      clubName: 'Sagrada Flora Social',
-      clubImage: 'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
-      clubNeighborhood: 'Eixample',
-      date: '2026-03-01',
-      time: '20:00',
-      guests: 4,
-      status: 'pending',
-      type: 'event'
-    },
-    {
-      id: '3',
-      clubId: '5',
-      clubName: 'Barceloneta Beach Club',
-      clubImage: 'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-      clubNeighborhood: 'Barceloneta',
-      date: '2026-01-15',
-      time: '18:30',
-      guests: 2,
-      status: 'completed',
-      type: 'visit'
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBookings = async () => {
+      try {
+        const bookingItems = await getCurrentUserBookings();
+        if (!isMounted) {
+          return;
+        }
+
+        setBookings(
+          bookingItems.map((booking) => ({
+            ...booking,
+            scheduledFor: new Date(booking.scheduledFor),
+            cancelledAt: booking.cancelledAt ? new Date(booking.cancelledAt) : null,
+            completedAt: booking.completedAt ? new Date(booking.completedAt) : null,
+            createdAt: new Date(booking.createdAt),
+            updatedAt: new Date(booking.updatedAt),
+          }))
+        );
+      } catch (error) {
+        console.error('Failed to load bookings:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadBookings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredBookings = useMemo(() => {
+    const now = new Date();
+
+    return bookings.filter((booking) => {
+      if (activeFilter === 'upcoming') {
+        return booking.scheduledFor >= now && booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED';
+      }
+
+      if (activeFilter === 'past') {
+        return booking.scheduledFor < now || booking.status === 'COMPLETED' || booking.status === 'CANCELLED';
+      }
+
+      return true;
+    });
+  }, [activeFilter, bookings]);
+
+  const upcomingCount = bookings.filter(
+    (booking) =>
+      booking.scheduledFor >= new Date() &&
+      booking.status !== 'CANCELLED' &&
+      booking.status !== 'COMPLETED'
+  ).length;
+
+  const handleCancelBooking = async (bookingId: string) => {
+    setPendingCancellationId(bookingId);
+
+    try {
+      const result = await cancelCurrentUserBooking(bookingId);
+      if (!result.success) {
+        return;
+      }
+
+      setBookings((prev) =>
+        prev.map((booking) =>
+          booking.id === bookingId
+            ? {
+                ...booking,
+                status: 'CANCELLED',
+                cancelledAt: new Date(),
+              }
+            : booking
+        )
+      );
+    } finally {
+      setPendingCancellationId(null);
     }
-  ]);
-
-  const filteredBookings = bookings.filter(booking => {
-    const bookingDate = new Date(booking.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (activeFilter === 'upcoming') {
-      return bookingDate >= today && booking.status !== 'cancelled';
-    }
-    if (activeFilter === 'past') {
-      return bookingDate < today || booking.status === 'completed' || booking.status === 'cancelled';
-    }
-    return true;
-  });
-
-  const upcomingCount = bookings.filter(b => {
-    const bookingDate = new Date(b.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return bookingDate >= today && b.status !== 'cancelled';
-  }).length;
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'confirmed':
+      case 'CONFIRMED':
         return (
           <Badge variant="secondary" className="bg-gold/10 text-gold border-gold/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.confirmed')}
           </Badge>
         );
-      case 'pending':
+      case 'PENDING':
         return (
           <Badge variant="secondary" className="bg-white/5 text-zinc-400 border-white/10 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <Clock className="h-3 w-3 mr-1" />
             {t('bookings.status.pending')}
           </Badge>
         );
-      case 'cancelled':
+      case 'CANCELLED':
         return (
           <Badge variant="secondary" className="bg-red-500/10 text-red-500 border-red-500/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
             <X className="h-3 w-3 mr-1" />
             {t('bookings.status.cancelled')}
           </Badge>
         );
-      case 'completed':
+      case 'COMPLETED':
         return (
           <Badge variant="secondary" className="bg-white/10 text-white border-white/20 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-widest">
-            <Check className="h-3 w-3 mr-1" />
-            {t('bookings.status.completed')}
-          </Badge>
-        );
-        return (
-          <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20">
-            <Check className="h-3 w-3 mr-1" />
-            {t('bookings.status.confirmed')}
-          </Badge>
-        );
-      case 'pending':
-        return (
-          <Badge variant="secondary" className="bg-brand/10 text-brand border-brand/20">
-            <Clock className="h-3 w-3 mr-1" />
-            {t('bookings.status.pending')}
-          </Badge>
-        );
-      case 'cancelled':
-        return (
-          <Badge variant="secondary" className="bg-red-500/10 text-red-600 border-red-500/20">
-            <X className="h-3 w-3 mr-1" />
-            {t('bookings.status.cancelled')}
-          </Badge>
-        );
-      case 'completed':
-        return (
-          <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
             <Check className="h-3 w-3 mr-1" />
             {t('bookings.status.completed')}
           </Badge>
@@ -161,9 +148,9 @@ export default function BookingsPage() {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'visit': return t('bookings.type.visit');
-      case 'event': return t('bookings.type.event');
-      case 'tour': return t('bookings.type.tour');
+      case 'VISIT': return t('bookings.type.visit');
+      case 'EVENT': return t('bookings.type.event');
+      case 'TOUR': return t('bookings.type.tour');
       default: return type;
     }
   };
@@ -192,10 +179,9 @@ export default function BookingsPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.total')}</p>
-              <p className="text-3xl font-serif text-white">{bookings.length}</p>
+              <p className="text-3xl font-serif text-white">{isLoading ? '...' : bookings.length}</p>
             </div>
             <div className="bg-brand/10 p-3 rounded-full border border-brand/20">
-              <Calendar className="h-6 w-6 text-brand" />
               <Calendar className="h-6 w-6 text-brand" />
             </div>
           </CardContent>
@@ -205,7 +191,7 @@ export default function BookingsPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.upcoming')}</p>
-              <p className="text-3xl font-serif text-white">{upcomingCount}</p>
+              <p className="text-3xl font-serif text-white">{isLoading ? '...' : upcomingCount}</p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
               <Clock className="h-6 w-6 text-zinc-400" />
@@ -218,7 +204,7 @@ export default function BookingsPage() {
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.completed')}</p>
               <p className="text-3xl font-serif text-white">
-                {bookings.filter(b => b.status === 'completed').length}
+                {bookings.filter((booking) => booking.status === 'COMPLETED').length}
               </p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
@@ -232,7 +218,7 @@ export default function BookingsPage() {
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('bookings.stats.pending')}</p>
               <p className="text-3xl font-serif text-white">
-                {bookings.filter(b => b.status === 'pending').length}
+                {bookings.filter((booking) => booking.status === 'PENDING').length}
               </p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
@@ -269,7 +255,7 @@ export default function BookingsPage() {
                 <div className="flex flex-col md:flex-row md:items-center gap-6">
                   {/* Club Image */}
                   <Avatar className="w-full md:w-32 h-24 rounded-2xl border-2 border-gold/20 shadow-lg">
-                    <AvatarImage src={booking.clubImage} alt={booking.clubName} className="object-cover" />
+                    <AvatarImage src={booking.clubImage || undefined} alt={booking.clubName} className="object-cover" />
                     <AvatarFallback className="rounded-2xl bg-gold text-black">
                       <MapPin className="h-8 w-8" />
                     </AvatarFallback>
@@ -292,7 +278,7 @@ export default function BookingsPage() {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Calendar className="h-3.5 w-3.5 text-gold" />
-                        <span>{new Date(booking.date).toLocaleDateString('es-ES', { 
+                        <span>{new Date(booking.scheduledFor).toLocaleDateString(language, { 
                           day: 'numeric', 
                           month: 'short', 
                           year: 'numeric' 
@@ -300,25 +286,31 @@ export default function BookingsPage() {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5 text-gold" />
-                        <span>{booking.time}</span>
+                        <span>{new Date(booking.scheduledFor).toLocaleTimeString(language, { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Users className="h-3.5 w-3.5 text-gold" />
-                        <span>{booking.guests} {t('bookings.guests')}</span>
+                        <span>{booking.guestCount} {t('bookings.guests')}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Actions */}
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <Link href={`/${language}/clubs/${booking.clubId}`}>
+                    <Link href={`/${language}/clubs/${booking.clubSlug}`}>
                       <Button variant="secondary" size="sm" className="gap-2 rounded-full border-white/10 hover:bg-white/5 hover:text-white uppercase tracking-widest text-[9px] font-bold h-9">
                         <ExternalLink className="h-3.5 w-3.5" />
                         {t('bookings.view_club')}
                       </Button>
                     </Link>
-                    {booking.status === 'confirmed' && (
-                      <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-full uppercase tracking-widest text-[9px] font-bold h-9">
+                    {(booking.status === 'CONFIRMED' || booking.status === 'PENDING') && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-full uppercase tracking-widest text-[9px] font-bold h-9"
+                        disabled={pendingCancellationId === booking.id}
+                        onClick={() => handleCancelBooking(booking.id)}
+                      >
                         {t('bookings.cancel')}
                       </Button>
                     )}

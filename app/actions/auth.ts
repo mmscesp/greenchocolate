@@ -10,6 +10,12 @@ import { prisma } from '@/lib/prisma';
 import { EncryptionService, type PIIData } from '@/lib/encryption';
 import { z } from 'zod';
 import { getLandingPageByRole } from '@/lib/auth-utils';
+import {
+  getAuthCallbackUrl,
+  getLocalizedHomePath,
+  getSafeRedirectPath as getSafeLocalizedRedirectPath,
+  resolveLocale,
+} from '@/lib/auth-urls';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
 import { ensureProfileForUser, getSessionProfile, getSessionUser } from '@/lib/session-profile';
 
@@ -74,22 +80,8 @@ async function enforceFailureDelay(startTime: number): Promise<void> {
   }
 }
 
-function getSafeRedirectPath(rawRedirect: string | null, role: string): string {
-  if (!rawRedirect) {
-    return getLandingPageByRole(role, 'en');
-  }
-
-  const normalized = rawRedirect.trim();
-
-  if (!normalized.startsWith('/') || normalized.startsWith('//')) {
-    return getLandingPageByRole(role, 'en');
-  }
-
-  if (normalized.includes('://')) {
-    return getLandingPageByRole(role, 'en');
-  }
-
-  return normalized;
+function getSafeRedirectPath(rawRedirect: string | null, role: string, lang: string): string {
+  return getSafeLocalizedRedirectPath(rawRedirect, lang, getLandingPageByRole(role, lang));
 }
 
 // ==========================================
@@ -109,6 +101,8 @@ async function getCurrentUser() {
  */
 export async function signUp(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
+  const lang = resolveLocale(formData.get('lang') as string | null);
+  const redirectPath = getSafeRedirectPath(formData.get('redirect') as string | null, 'USER', lang);
 
   // Extract form data
   const data = {
@@ -137,6 +131,12 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
     const signUpResult = await supabase.auth.signUp({
       email: validated.data.email,
       password: validated.data.password,
+      options: {
+        data: {
+          full_name: validated.data.fullName,
+        },
+        emailRedirectTo: getAuthCallbackUrl(lang, redirectPath),
+      },
     });
 
     const user = signUpResult.data.user;
@@ -200,7 +200,7 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
     revalidatePath('/', 'layout');
     
     // Determine landing page after signup
-    const landingPage = getLandingPageByRole('USER', 'en');
+    const landingPage = redirectPath || getLandingPageByRole('USER', lang);
     
     // Check if email confirmation is required
     const { data: { session } } = await supabase.auth.getSession();
@@ -244,6 +244,7 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
 export async function login(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const failureStartTime = Date.now();
   const supabase = await createClient();
+  const lang = resolveLocale(formData.get('lang') as string | null);
 
   const data = {
     email: formData.get('email') as string,
@@ -318,7 +319,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
   
   // Get redirect URL from form or default based on role
   const formDataRedirect = formData.get('redirect') as string | null;
-  const redirectUrl = getSafeRedirectPath(formDataRedirect, userRole);
+  const redirectUrl = getSafeRedirectPath(formDataRedirect, userRole, lang);
 
   redirect(redirectUrl);
 }
@@ -329,6 +330,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
  */
 export async function signOut() {
   const supabase = await createClient();
+  const lang = resolveLocale(null);
   const { data: { user } } = await supabase.auth.getUser();
   await supabase.auth.signOut();
 
@@ -339,7 +341,7 @@ export async function signOut() {
     changeData: { status: 'success' },
   });
 
-  redirect('/');
+  redirect(getLocalizedHomePath(lang));
 }
 
 /**
@@ -409,10 +411,16 @@ export async function updateProfile(prevState: ActionState, formData: FormData):
  * OAuth Sign In Action
  * Initiates OAuth flow for Google or Apple
  */
-export async function signInWithOAuth(provider: OAuthProvider) {
+export async function signInWithOAuth(
+  provider: OAuthProvider,
+  lang: string,
+  redirectPath?: string | null
+) {
   const supabase = await createClient();
-
-  const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`;
+  const redirectUrl = getAuthCallbackUrl(
+    lang,
+    redirectPath ? getSafeLocalizedRedirectPath(redirectPath, lang) : null
+  );
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,

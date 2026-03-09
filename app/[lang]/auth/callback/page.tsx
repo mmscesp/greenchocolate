@@ -9,6 +9,7 @@ import { Logo, LogoIcon } from '@/components/ui/logo';
 import { Loader2, CheckCircle, AlertCircle } from '@/lib/icons';
 import { createClient } from '@/lib/supabase/client';
 import { getLandingPageByRole } from '@/lib/auth-utils';
+import { getSafeRedirectPath } from '@/lib/auth-urls';
 import { useLanguage } from '@/hooks/useLanguage';
 
 type CallbackProfileResponse = {
@@ -29,18 +30,6 @@ export default function AuthCallbackPage() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    const localizeLandingPage = (path: string) => {
-      if (!path || path === '/') {
-        return `/${language}`;
-      }
-
-      if (path === `/${language}` || path.startsWith(`/${language}/`)) {
-        return path;
-      }
-
-      return `/${language}${path}`;
-    };
-
     const clearAuthHash = () => {
       if (!window.location.hash) {
         return;
@@ -53,22 +42,28 @@ export default function AuthCallbackPage() {
     const handleAuthCallback = async () => {
       try {
         const supabase = createClient();
+        const searchParams = new URLSearchParams(window.location.search);
+        const requestedRedirect = searchParams.get('redirect');
 
         const resolveLandingPage = async () => {
+          if (requestedRedirect) {
+            return getSafeRedirectPath(requestedRedirect, language, getLandingPageByRole('USER', language));
+          }
+
           try {
             const response = await fetch('/api/profile/me', {
               cache: 'no-store',
             });
 
             if (!response.ok) {
-              return localizeLandingPage(getLandingPageByRole('USER', language));
+              return getSafeRedirectPath(null, language, getLandingPageByRole('USER', language));
             }
 
             const payload = (await response.json()) as CallbackProfileResponse;
-            return localizeLandingPage(getLandingPageByRole(payload.profile?.role || 'USER', language));
+            return getSafeRedirectPath(null, language, getLandingPageByRole(payload.profile?.role || 'USER', language));
           } catch (error) {
             console.error('Profile bootstrap lookup failed:', error);
-            return localizeLandingPage(getLandingPageByRole('USER', language));
+            return getSafeRedirectPath(null, language, getLandingPageByRole('USER', language));
           }
         };
         
@@ -103,7 +98,6 @@ export default function AuthCallbackPage() {
 
         } else {
           // Check if there's a code parameter (PKCE flow for OAuth)
-          const searchParams = new URLSearchParams(window.location.search);
           const code = searchParams.get('code');
           
           if (code) {

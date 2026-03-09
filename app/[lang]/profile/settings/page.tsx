@@ -2,9 +2,11 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -22,6 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { getCurrentUserSettings, updateCurrentUserSettings, deleteCurrentUserAccount } from '@/app/actions/users';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Bell,
 Shield,
@@ -64,7 +68,9 @@ type UserSettings = {
 };
 
 export default function SettingsPage() {
-  const { t } = useLanguage();
+  const router = useRouter();
+  const { changePassword, profile } = useAuth();
+  const { language, t } = useLanguage();
   const [settings, setSettings] = useState<UserSettings>({
     notifications: {
       email: true,
@@ -89,18 +95,121 @@ export default function SettingsPage() {
     }
   });
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [confirmationEmail, setConfirmationEmail] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadSettings = async () => {
+      try {
+        const persistedSettings = await getCurrentUserSettings();
+        if (!isMounted) {
+          return;
+        }
+
+        if (persistedSettings) {
+          setSettings(persistedSettings);
+        }
+      } catch (error) {
+        console.error('Failed to load settings:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    setConfirmationEmail(profile?.email ?? '');
+  }, [profile?.email]);
 
   const handleSave = async (): Promise<void> => {
     setIsSaving(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success(t('settings.save_success'));
+      const result = await updateCurrentUserSettings(settings);
+
+      if (!result.success) {
+        toast.error(result.message || 'Failed to save settings. Please try again.');
+        return;
+      }
+
+      toast.success(result.message || t('settings.save_success'));
     } catch (error) {
       console.error('Failed to save settings:', error);
       toast.error('Failed to save settings. Please try again.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async (): Promise<void> => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Fill in all password fields.');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      toast.error(t('auth.reset.errors.min_length'));
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error(t('auth.register.errors.password_mismatch'));
+      return;
+    }
+
+    setIsChangingPassword(true);
+
+    try {
+      const { error } = await changePassword(currentPassword, newPassword);
+
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
+  const handleDataExport = () => {
+    window.location.href = '/api/profile/export';
+  };
+
+  const handleDeleteAccount = async (): Promise<void> => {
+    setIsDeletingAccount(true);
+
+    try {
+      const result = await deleteCurrentUserAccount(confirmationEmail);
+
+      if (!result.success) {
+        toast.error(result.message || 'Failed to delete account');
+        return;
+      }
+
+      toast.success('Account deleted successfully');
+      router.push(`/${language}`);
+      router.refresh();
+    } finally {
+      setIsDeletingAccount(false);
     }
   };
 
@@ -156,7 +265,7 @@ export default function SettingsPage() {
 
         <Button
           onClick={handleSave}
-          disabled={isSaving}
+          disabled={isSaving || isLoading}
           className="flex items-center gap-2 self-start"
         >
           {isSaving ? (
@@ -353,10 +462,54 @@ export default function SettingsPage() {
             </Select>
           </div>
 
-          <div className="pt-4">
-            <Button variant="secondary" className="flex items-center gap-2">
+          <div className="space-y-4 pt-4 border-t border-border/50">
+            <div className="flex items-center gap-2">
               <Lock className="h-4 w-4" />
-              {t('settings.security.change_password')}
+              <Label className="font-medium">{t('settings.security.change_password')}</Label>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="security-currentPassword">Current password</Label>
+                <Input
+                  id="security-currentPassword"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(event) => setCurrentPassword(event.target.value)}
+                  disabled={isChangingPassword}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="security-newPassword">{t('auth.reset.new_password')}</Label>
+                <Input
+                  id="security-newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  disabled={isChangingPassword}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="security-confirmPassword">{t('auth.register.confirm_password')}</Label>
+              <Input
+                id="security-confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                disabled={isChangingPassword}
+              />
+            </div>
+
+            <Button
+              variant="secondary"
+              className="flex items-center gap-2"
+              onClick={handlePasswordChange}
+              disabled={isChangingPassword}
+            >
+              <Lock className="h-4 w-4" />
+              {isChangingPassword ? t('auth.reset.updating') : t('settings.security.change_password')}
             </Button>
           </div>
         </CardContent>
@@ -381,18 +534,35 @@ export default function SettingsPage() {
               <h3 className="font-medium text-foreground">{t('settings.data.download')}</h3>
               <p className="text-sm text-muted-foreground">{t('settings.data.download_desc')}</p>
             </div>
-            <Button variant="secondary" className="flex items-center gap-2">
+            <Button variant="secondary" className="flex items-center gap-2" onClick={handleDataExport}>
               <Download className="h-4 w-4" />
               {t('common.download')}
             </Button>
           </div>
 
-          <div className="flex items-center justify-between p-4 rounded-xl border border-destructive/20 bg-destructive/5 hover:bg-destructive/10 transition-colors">
+          <div className="space-y-4 rounded-xl border border-destructive/20 bg-destructive/5 p-4 transition-colors hover:bg-destructive/10">
             <div className="space-y-1">
               <h3 className="font-medium text-destructive">{t('settings.data.delete_account')}</h3>
               <p className="text-sm text-destructive/70">{t('settings.data.delete_account_desc')}</p>
             </div>
-            <Button variant="destructive" className="flex items-center gap-2">
+
+            <div className="space-y-2">
+              <Label htmlFor="settings-deleteAccount">Confirmation email</Label>
+              <Input
+                id="settings-deleteAccount"
+                type="email"
+                value={confirmationEmail}
+                onChange={(event) => setConfirmationEmail(event.target.value)}
+                disabled={isDeletingAccount}
+              />
+            </div>
+
+            <Button
+              variant="destructive"
+              className="flex items-center gap-2"
+              onClick={handleDeleteAccount}
+              disabled={isDeletingAccount}
+            >
               <Trash2 className="h-4 w-4" />
               {t('common.delete')}
             </Button>

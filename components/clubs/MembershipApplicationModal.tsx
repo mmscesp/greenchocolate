@@ -169,15 +169,15 @@ export default function MembershipApplicationModal({
         if (result.success && result.pendingLeadToken) {
           try {
             sessionStorage.removeItem('pendingApplication');
-            sessionStorage.setItem(
-              pendingMembershipLeadStorageKey,
-              JSON.stringify({
-                pendingLeadToken: result.pendingLeadToken,
-                clubId: club.id,
-                clubSlug: club.slug,
-                expiresAt: result.expiresAt,
-              })
-            );
+            const pendingLead = JSON.stringify({
+              pendingLeadToken: result.pendingLeadToken,
+              clubId: club.id,
+              clubSlug: club.slug,
+              expiresAt: result.expiresAt,
+            });
+
+            sessionStorage.setItem(pendingMembershipLeadStorageKey, pendingLead);
+            localStorage.setItem(pendingMembershipLeadStorageKey, pendingLead);
           } catch (err) {
             console.error('Failed to save membership lead to sessionStorage', err);
           }

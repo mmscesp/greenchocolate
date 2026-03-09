@@ -36,7 +36,7 @@ export default function LoginForm() {
     else setIsAppleLoading(true);
 
     try {
-      const result = await signInWithOAuth(provider);
+      const result = await signInWithOAuth(provider, language, redirectUrl || null);
       if (result.success && result.data) {
         window.location.href = result.data;
       }
@@ -105,6 +105,7 @@ export default function LoginForm() {
       </div>
 
       <form action={formAction} className="space-y-6">
+        <input type="hidden" name="lang" value={language} />
         {/* Hidden redirect field */}
         <input type="hidden" name="redirect" value={redirectUrl} />
         

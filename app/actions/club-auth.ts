@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { getAuthCallbackUrl, getSafeRedirectPath, resolveLocale } from '@/lib/auth-urls';
 import { prisma } from '@/lib/prisma';
 import { EncryptionService } from '@/lib/encryption';
 import type { ActionState } from './auth';
@@ -64,6 +65,8 @@ function shortDescription(description: string): string {
 
 export async function clubSignUp(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
+  const lang = resolveLocale(formData.get('lang') as string | null);
+  const redirectPath = getSafeRedirectPath('/club-panel/dashboard', lang);
 
   const data = {
     clubName: String(formData.get('clubName') ?? ''),
@@ -94,6 +97,7 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
           club_name: validated.data.clubName,
           user_type: 'club_admin',
         },
+        emailRedirectTo: getAuthCallbackUrl(lang, redirectPath),
       },
     });
 
@@ -222,7 +226,7 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
       };
     }
 
-    redirect('/club-panel/dashboard');
+    redirect(redirectPath);
   } catch (error) {
     console.error('Club signup error:', error);
     return {

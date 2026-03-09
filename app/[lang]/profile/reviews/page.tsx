@@ -2,11 +2,14 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -16,6 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  deleteCurrentUserReview,
+  getCurrentUserReviews,
+  updateCurrentUserReview,
+  type UserReviewItem,
+} from '@/app/actions/users';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Star, 
 Edit3, 
@@ -25,90 +34,110 @@ MapPin,
 ThumbsUp,
 MessageCircle,
 Filter,
-Search } from '@/lib/icons';
-
-interface Review {
-  id: string;
-  clubId: string;
-  clubName: string;
-  clubImage: string;
-  clubNeighborhood: string;
-  rating: number;
-  title: string;
-  content: string;
-  date: string;
-  likes: number;
-  replies: number;
-  isEditable: boolean;
-}
-
-const buildMockReviews = (t: (key: string) => string): Review[] => [
-  {
-    id: '1',
-    clubId: '1',
-    clubName: 'Green Harmony Madrid',
-    clubImage: 'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
-    clubNeighborhood: 'Malasana',
-    rating: 5,
-    title: t('reviews.mock.1.title'),
-    content: t('reviews.mock.1.content'),
-    date: '2024-01-15',
-    likes: 12,
-    replies: 3,
-    isEditable: true,
-  },
-  {
-    id: '2',
-    clubId: '2',
-    clubName: 'Cannabis Culture Centro',
-    clubImage: 'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
-    clubNeighborhood: 'Centro',
-    rating: 4,
-    title: t('reviews.mock.2.title'),
-    content: t('reviews.mock.2.content'),
-    date: '2024-01-10',
-    likes: 8,
-    replies: 1,
-    isEditable: true,
-  },
-  {
-    id: '3',
-    clubId: '4',
-    clubName: 'Latina Green Collective',
-    clubImage: 'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-    clubNeighborhood: 'La Latina',
-    rating: 5,
-    title: t('reviews.mock.3.title'),
-    content: t('reviews.mock.3.content'),
-    date: '2024-01-05',
-    likes: 15,
-    replies: 5,
-    isEditable: true,
-  },
-];
+Search,
+Check,
+X } from '@/lib/icons';
 
 export default function ReviewsPage() {
   const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number>(0);
-  
-  // Mock reviews data
-  const [reviews, setReviews] = useState<Review[]>(() => buildMockReviews(t));
+  const [reviews, setReviews] = useState<UserReviewItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
+  const [editRating, setEditRating] = useState('5');
+  const [editContent, setEditContent] = useState('');
+  const [editIsPublic, setEditIsPublic] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadReviews = async () => {
+      try {
+        const reviewItems = await getCurrentUserReviews();
+        if (!isMounted) {
+          return;
+        }
+
+        setReviews(
+          reviewItems.map((review) => ({
+            ...review,
+            createdAt: new Date(review.createdAt),
+            updatedAt: new Date(review.updatedAt),
+          }))
+        );
+      } catch (error) {
+        console.error('Failed to load reviews:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadReviews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const filteredReviews = reviews.filter(review => {
     const matchesSearch = !searchQuery || 
       review.clubName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      review.title.toLowerCase().includes(searchQuery.toLowerCase());
+      (review.content || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRating = ratingFilter === 0 || review.rating === ratingFilter;
     
     return matchesSearch && matchesRating;
   });
 
-  const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+  const averageRating =
+    reviews.length > 0 ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0;
 
-  const deleteReview = (reviewId: string) => {
+  const startEditing = (review: UserReviewItem) => {
+    setEditingReviewId(review.id);
+    setEditRating(review.rating.toString());
+    setEditContent(review.content || '');
+    setEditIsPublic(review.isPublic);
+  };
+
+  const saveReview = async () => {
+    if (!editingReviewId) {
+      return;
+    }
+
+    const result = await updateCurrentUserReview(editingReviewId, {
+      rating: Number(editRating),
+      content: editContent,
+      isPublic: editIsPublic,
+    });
+
+    if (!result.success) {
+      return;
+    }
+
+    setReviews((prev) =>
+      prev.map((review) =>
+        review.id === editingReviewId
+          ? {
+              ...review,
+              rating: Number(editRating),
+              content: editContent || null,
+              isPublic: editIsPublic,
+              updatedAt: new Date(),
+            }
+          : review
+      )
+    );
+    setEditingReviewId(null);
+  };
+
+  const deleteReview = async (reviewId: string) => {
     if (confirm(t('reviews.confirm_delete'))) {
-      setReviews(prev => prev.filter(review => review.id !== reviewId));
+      const result = await deleteCurrentUserReview(reviewId);
+      if (result.success) {
+        setReviews(prev => prev.filter(review => review.id !== reviewId));
+      }
     }
   };
 
@@ -139,10 +168,9 @@ export default function ReviewsPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.total')}</p>
-              <p className="text-3xl font-serif text-white">{reviews.length}</p>
+              <p className="text-3xl font-serif text-white">{isLoading ? '...' : reviews.length}</p>
             </div>
             <div className="bg-brand/10 p-3 rounded-full border border-brand/20">
-              <MessageCircle className="h-6 w-6 text-brand" />
               <MessageCircle className="h-6 w-6 text-brand" />
             </div>
           </CardContent>
@@ -152,7 +180,7 @@ export default function ReviewsPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.average_rating')}</p>
-              <p className="text-3xl font-serif text-white">{averageRating.toFixed(1)}</p>
+              <p className="text-3xl font-serif text-white">{isLoading ? '...' : averageRating.toFixed(1)}</p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
               <Star className="h-6 w-6 text-brand" />
@@ -165,7 +193,7 @@ export default function ReviewsPage() {
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.total_likes')}</p>
               <p className="text-3xl font-serif text-white">
-                {reviews.reduce((sum, review) => sum + review.likes, 0)}
+                0
               </p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
@@ -179,7 +207,7 @@ export default function ReviewsPage() {
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('reviews.stats.replies')}</p>
               <p className="text-3xl font-serif text-white">
-                {reviews.reduce((sum, review) => sum + review.replies, 0)}
+                0
               </p>
             </div>
             <div className="bg-white/5 p-3 rounded-full border border-white/10">
@@ -238,7 +266,7 @@ export default function ReviewsPage() {
                 {/* Review Header */}
                 <div className="flex items-start gap-5 mb-5">
                   <Avatar className="h-16 w-16 rounded-2xl border-2 border-gold/20 shadow-lg">
-                    <AvatarImage src={review.clubImage} alt={review.clubName} className="object-cover" />
+                    <AvatarImage src={review.clubImage || undefined} alt={review.clubName} className="object-cover" />
                     <AvatarFallback className="rounded-2xl bg-gold text-black font-black uppercase text-xl">{review.clubName[0]}</AvatarFallback>
                   </Avatar>
 
@@ -246,7 +274,7 @@ export default function ReviewsPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
                         <Link
-                          href={`/${language}/clubs/${review.clubId}`}
+                          href={`/${language}/clubs/${review.clubSlug}`}
                           className="text-xl font-serif text-white hover:text-gold transition-colors truncate block mb-1"
                         >
                           {review.clubName}
@@ -259,15 +287,20 @@ export default function ReviewsPage() {
                           <span className="text-zinc-700">•</span>
                           <div className="flex items-center gap-1.5">
                             <Calendar className="h-3.5 w-3.5 text-gold" />
-                            <span>{new Date(review.date).toLocaleDateString()}</span>
+                            <span>{new Date(review.createdAt).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        {review.isEditable && (
-                          <>
-                            <Button variant="ghost" size="icon" aria-label={t('reviews.edit_review')} className="h-9 w-9 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white">
+                        <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label={t('reviews.edit_review')}
+                              className="h-9 w-9 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white"
+                              onClick={() => startEditing(review)}
+                            >
                               <Edit3 className="h-4 w-4" />
                             </Button>
                             <Button
@@ -279,8 +312,7 @@ export default function ReviewsPage() {
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
-                          </>
-                        )}
+                        </>
                       </div>
                     </div>
                   </div>
@@ -297,24 +329,71 @@ export default function ReviewsPage() {
                     </Badge>
                   </div>
                   <h3 className="text-lg font-bold text-white">
-                    {review.title}
+                    {review.clubName}
                   </h3>
                 </div>
 
                 {/* Review Content */}
-                <p className="text-zinc-400 leading-relaxed mb-6 font-serif italic pl-1 border-l-2 border-gold/30">
-                  "{review.content}"
-                </p>
+                {editingReviewId === review.id ? (
+                  <div className="mb-6 space-y-4 rounded-xl border border-white/10 bg-white/5 p-4">
+                    <div className="space-y-2">
+                      <Label htmlFor={`review-rating-${review.id}`}>{t('reviews.stats.average_rating')}</Label>
+                      <Select value={editRating} onValueChange={setEditRating}>
+                        <SelectTrigger id={`review-rating-${review.id}`} className="w-full bg-white/5 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-bg-base text-white">
+                          {['5', '4', '3', '2', '1'].map((value) => (
+                            <SelectItem key={value} value={value}>
+                              {value}/5
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`review-content-${review.id}`}>Review</Label>
+                      <Textarea
+                        id={`review-content-${review.id}`}
+                        value={editContent}
+                        onChange={(event) => setEditContent(event.target.value)}
+                        rows={4}
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id={`review-public-${review.id}`}
+                        checked={editIsPublic}
+                        onCheckedChange={(checked) => setEditIsPublic(Boolean(checked))}
+                      />
+                      <Label htmlFor={`review-public-${review.id}`}>Show publicly</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="primary" size="sm" className="gap-2" onClick={saveReview}>
+                        <Check className="h-4 w-4" />
+                        {t('common.save_changes')}
+                      </Button>
+                      <Button variant="secondary" size="sm" className="gap-2" onClick={() => setEditingReviewId(null)}>
+                        <X className="h-4 w-4" />
+                        {t('common.cancel')}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-zinc-400 leading-relaxed mb-6 font-serif italic pl-1 border-l-2 border-gold/30">
+                    "{review.content || review.clubName}"
+                  </p>
+                )}
 
                 {/* Review Stats */}
                 <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-white/5">
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
                     <ThumbsUp className="h-4 w-4 text-gold" />
-                    <span>{review.likes} {t('reviews.likes')}</span>
+                    <span>0 {t('reviews.likes')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
                     <MessageCircle className="h-4 w-4 text-gold" />
-                    <span>{review.replies} {t('reviews.replies')}</span>
+                    <span>0 {t('reviews.replies')}</span>
                   </div>
                 </div>
               </CardContent>

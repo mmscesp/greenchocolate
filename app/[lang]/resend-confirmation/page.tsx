@@ -18,7 +18,7 @@ export default function ResendConfirmationPage() {
   const withLocale = (path: string) => `/${language}${path}`;
   
   const [state, formAction, isPending] = useActionState(async () => {
-    const { error } = await resendEmailConfirmation(email);
+    const { error } = await resendEmailConfirmation(email, language);
     return {
       success: !error,
       message: error?.message || '',

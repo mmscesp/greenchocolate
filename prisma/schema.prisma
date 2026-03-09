@@ -69,6 +69,7 @@ model Club {
   reviews                   Review[]
   favorites                 Favorite[]
   events                    Event[]
+  bookings                  Booking[]
 
   @@index([slug])
   @@index([cityId])
@@ -103,6 +104,7 @@ model Profile {
   favorites                       Favorite[]
   notifications                   Notification[]
   safetyPass                      SafetyPass?
+  bookings                        Booking[]
   clubRegistrationRequests ClubRegistrationRequest[]
   managedClub            Club?               @relation("ClubAdmin", fields: [managedClubId], references: [id])
 
@@ -341,10 +343,35 @@ model Event {
   
   club        Club?     @relation(fields: [clubId], references: [id], onDelete: SetNull)
   city        City?     @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  bookings    Booking[]
   
   @@index([clubId])
   @@index([cityId])
   @@index([startDate])
+}
+
+model Booking {
+  id           String        @id @default(uuid())
+  userId       String
+  clubId       String
+  eventId      String?
+  type         BookingType
+  status       BookingStatus @default(PENDING)
+  scheduledFor DateTime
+  guestCount   Int           @default(1)
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  cancelledAt  DateTime?
+  completedAt  DateTime?
+
+  user         Profile       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club         Club          @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  event        Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([userId, scheduledFor])
+  @@index([clubId, status, scheduledFor])
+  @@index([eventId])
 }
 
 model Notification {
@@ -414,4 +441,17 @@ enum SafetyPassStatus {
   ACTIVE
   EXPIRED
   SUSPENDED
+}
+
+enum BookingType {
+  VISIT
+  EVENT
+  TOUR
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
 }

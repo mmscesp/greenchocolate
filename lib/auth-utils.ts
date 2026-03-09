@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { i18n } from '@/lib/i18n-config';
 import { UserRole } from './types';
 
 /**
@@ -7,7 +8,7 @@ import { UserRole } from './types';
  * @param lang The current language locale
  * @returns The absolute path for the landing page
  */
-export function getLandingPageByRole(role: UserRole | string, lang: string = 'en'): string {
+export function getLandingPageByRole(role: UserRole | string, lang: string = i18n.defaultLocale): string {
   switch (role) {
     case 'CLUB_ADMIN':
       return `/${lang}/club-panel/dashboard`;
@@ -22,6 +23,6 @@ export function getLandingPageByRole(role: UserRole | string, lang: string = 'en
 /**
  * Server-side redirect based on user role.
  */
-export function roleRedirect(role: UserRole | string, lang: string = 'en') {
+export function roleRedirect(role: UserRole | string, lang: string = i18n.defaultLocale) {
   return redirect(getLandingPageByRole(role, lang));
 }

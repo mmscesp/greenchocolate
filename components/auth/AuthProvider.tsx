@@ -2,9 +2,15 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
-import type { User, Session } from '@supabase/supabase-js';
+import { createClient as createSupabaseClient, type User, type Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import {
+  getAuthCallbackUrl,
+  getLocalizedHomePath,
+  getResetPasswordUrl,
+  resolveLocale,
+} from '@/lib/auth-urls';
 
 // Types for the auth context
 interface Profile {
@@ -29,11 +35,23 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string, fullName: string, metadata?: Record<string, string>) => Promise<{ error: Error | null, needsEmailConfirmation?: boolean }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    lang: string,
+    metadata?: Record<string, string>,
+    redirectPath?: string | null
+  ) => Promise<{ error: Error | null, needsEmailConfirmation?: boolean }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string) => Promise<{ error: Error | null }>;
+  resetPassword: (email: string, lang: string) => Promise<{ error: Error | null }>;
   updatePassword: (newPassword: string) => Promise<{ error: Error | null }>;
-  resendEmailConfirmation: (email: string) => Promise<{ error: Error | null }>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: Error | null }>;
+  resendEmailConfirmation: (
+    email: string,
+    lang: string,
+    redirectPath?: string | null
+  ) => Promise<{ error: Error | null }>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -45,6 +63,28 @@ function createSupabaseBrowserClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
+}
+
+function createSupabaseVerificationClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    }
+  );
+}
+
+function getCurrentLocale() {
+  if (typeof window === 'undefined') {
+    return resolveLocale(null);
+  }
+
+  return resolveLocale(window.location.pathname.split('/')[1] ?? null);
 }
 
 async function logAuthEvent(operation: string, status: 'success' | 'failed', metadata?: Record<string, unknown>) {
@@ -182,7 +222,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     fullName: string,
-    metadata?: Record<string, string>
+    lang: string,
+    metadata?: Record<string, string>,
+    redirectPath?: string | null
   ): Promise<{ error: Error | null, needsEmailConfirmation?: boolean }> => {
     try {
       const { error, data } = await supabase.auth.signUp({
@@ -193,7 +235,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             full_name: fullName,
             ...metadata,
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: getAuthCallbackUrl(lang, redirectPath, window.location.origin),
         },
       });
 
@@ -226,7 +268,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await supabase.auth.signOut();
       router.refresh();
-      router.push('/');
+      router.push(getLocalizedHomePath(getCurrentLocale()));
       await logAuthEvent('SIGN_OUT_CLIENT', 'success');
     } catch (error) {
       console.error('Error signing out:', error);
@@ -235,10 +277,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Reset password (send email)
-  const resetPassword = async (email: string): Promise<{ error: Error | null }> => {
+  const resetPassword = async (email: string, lang: string): Promise<{ error: Error | null }> => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: getResetPasswordUrl(lang, window.location.origin),
       });
 
       if (error) {
@@ -282,14 +324,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ): Promise<{ error: Error | null }> => {
+    try {
+      if (!user?.email) {
+        return { error: new Error('You must be signed in to change your password') };
+      }
+
+      const verificationClient = createSupabaseVerificationClient();
+      const { error: verifyError } = await verificationClient.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
+
+      await verificationClient.auth.signOut();
+
+      if (verifyError) {
+        toast.error(verifyError.message);
+        await logAuthEvent('CHANGE_PASSWORD_CLIENT', 'failed', { reason: 'invalid_current_password' });
+        return { error: new Error(verifyError.message) };
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) {
+        toast.error(error.message);
+        await logAuthEvent('CHANGE_PASSWORD_CLIENT', 'failed', { reason: 'update_failed' });
+        return { error: new Error(error.message) };
+      }
+
+      toast.success('Password updated successfully');
+      await logAuthEvent('CHANGE_PASSWORD_CLIENT', 'success');
+      return { error: null };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error updating password';
+      toast.error(message);
+      await logAuthEvent('CHANGE_PASSWORD_CLIENT', 'failed', { reason: 'exception' });
+      return { error: new Error(message) };
+    }
+  };
+
   // Resend email confirmation
-  const resendEmailConfirmation = async (email: string): Promise<{ error: Error | null }> => {
+  const resendEmailConfirmation = async (
+    email: string,
+    lang: string,
+    redirectPath?: string | null
+  ): Promise<{ error: Error | null }> => {
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: getAuthCallbackUrl(lang, redirectPath, window.location.origin),
         },
       });
 
@@ -325,6 +415,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signOut,
     resetPassword,
     updatePassword,
+    changePassword,
     resendEmailConfirmation,
     refreshProfile,
   };

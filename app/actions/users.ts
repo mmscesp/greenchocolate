@@ -3,6 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { createClient } from '@/lib/supabase/server';
 import {
   cancelMembershipRequest as cancelCanonicalMembershipRequest,
   getUserMembershipRequests as getCanonicalUserMembershipRequests,
@@ -80,12 +82,14 @@ export interface UserFavoriteClub {
   id: string;
   name: string;
   slug: string;
+  description: string;
   neighborhood: string;
   cityName: string;
   citySlug: string;
   images: string[];
   logoUrl: string | null;
   priceRange: string;
+  vibeTags: string[];
   isVerified: boolean;
   rating: number | null;
   reviewCount: number;
@@ -102,6 +106,32 @@ export interface UserReviewItem {
   rating: number;
   content: string | null;
   isPublic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type UserReviewUpdateInput = {
+  rating: number;
+  content: string | null;
+  isPublic: boolean;
+};
+
+export interface UserBookingItem {
+  id: string;
+  clubId: string;
+  clubName: string;
+  clubSlug: string;
+  clubImage: string | null;
+  clubNeighborhood: string;
+  eventId: string | null;
+  eventName: string | null;
+  type: 'VISIT' | 'EVENT' | 'TOUR';
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+  scheduledFor: Date;
+  guestCount: number;
+  notes: string | null;
+  cancelledAt: Date | null;
+  completedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -158,6 +188,21 @@ const userSettingsSchema = z.object({
     loginAlerts: z.boolean(),
     sessionTimeout: z.number().int().min(0).max(1440),
   }),
+});
+
+const reviewUpdateSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  content: z
+    .string()
+    .trim()
+    .max(2000)
+    .nullable()
+    .transform((value) => (value && value.length > 0 ? value : null)),
+  isPublic: z.boolean(),
+});
+
+const accountDeletionSchema = z.object({
+  confirmationEmail: z.string().trim().email(),
 });
 
 function toUserProfile(profile: SessionProfile): UserProfile {
@@ -489,12 +534,14 @@ export async function getCurrentUserFavorites(): Promise<UserFavoriteClub[]> {
         id: favorite.club.id,
         name: favorite.club.name,
         slug: favorite.club.slug,
+        description: favorite.club.description,
         neighborhood: favorite.club.neighborhood,
         cityName: favorite.club.city.name,
         citySlug: favorite.club.city.slug,
         images: favorite.club.images,
         logoUrl: favorite.club.logoUrl,
         priceRange: favorite.club.priceRange,
+        vibeTags: favorite.club.vibeTags,
         isVerified: favorite.club.isVerified,
         rating,
         reviewCount: ratings.length,
@@ -514,14 +561,16 @@ export async function removeCurrentUserFavorite(clubId: string): Promise<{ succe
       return { success: false, message: 'Unauthorized' };
     }
 
-    await prisma.favorite.delete({
+    const deleted = await prisma.favorite.deleteMany({
       where: {
-        userId_clubId: {
-          userId: profile.id,
-          clubId,
-        },
+        userId: profile.id,
+        clubId,
       },
     });
+
+    if (deleted.count === 0) {
+      return { success: false, message: 'Favorite not found' };
+    }
 
     revalidatePath('/profile/favorites');
 
@@ -571,6 +620,45 @@ export async function getCurrentUserReviews(): Promise<UserReviewItem[]> {
   } catch (error) {
     console.error('getCurrentUserReviews error:', error);
     return [];
+  }
+}
+
+export async function updateCurrentUserReview(
+  reviewId: string,
+  input: UserReviewUpdateInput
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const profile = await getCurrentProfileRecord();
+    if (!profile) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    const validated = reviewUpdateSchema.safeParse(input);
+    if (!validated.success) {
+      return { success: false, message: validated.error.errors[0]?.message || 'Invalid review data' };
+    }
+
+    const updated = await prisma.review.updateMany({
+      where: {
+        id: reviewId,
+        userId: profile.id,
+      },
+      data: {
+        rating: validated.data.rating,
+        content: validated.data.content,
+        isPublic: validated.data.isPublic,
+      },
+    });
+
+    if (updated.count === 0) {
+      return { success: false, message: 'Review not found' };
+    }
+
+    revalidatePath('/profile/reviews');
+    return { success: true };
+  } catch (error) {
+    console.error('updateCurrentUserReview error:', error);
+    return { success: false, message: 'Failed to update review' };
   }
 }
 
@@ -635,6 +723,104 @@ export async function getCurrentUserSettings(): Promise<UserSettings | null> {
   }
 }
 
+export async function getCurrentUserBookings(): Promise<UserBookingItem[]> {
+  try {
+    const profile = await getCurrentProfileRecord();
+    if (!profile) {
+      return [];
+    }
+
+    const bookings = await prisma.booking.findMany({
+      where: { userId: profile.id },
+      orderBy: [{ scheduledFor: 'asc' }, { createdAt: 'desc' }],
+      include: {
+        club: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            neighborhood: true,
+            images: true,
+          },
+        },
+        event: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return bookings.map((booking) => ({
+      id: booking.id,
+      clubId: booking.club.id,
+      clubName: booking.club.name,
+      clubSlug: booking.club.slug,
+      clubImage: booking.club.images[0] || null,
+      clubNeighborhood: booking.club.neighborhood,
+      eventId: booking.event?.id ?? null,
+      eventName: booking.event?.name ?? null,
+      type: booking.type,
+      status: booking.status,
+      scheduledFor: booking.scheduledFor,
+      guestCount: booking.guestCount,
+      notes: booking.notes,
+      cancelledAt: booking.cancelledAt,
+      completedAt: booking.completedAt,
+      createdAt: booking.createdAt,
+      updatedAt: booking.updatedAt,
+    }));
+  } catch (error) {
+    console.error('getCurrentUserBookings error:', error);
+    return [];
+  }
+}
+
+export async function cancelCurrentUserBooking(
+  bookingId: string
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const profile = await getCurrentProfileRecord();
+    if (!profile) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    const booking = await prisma.booking.findFirst({
+      where: {
+        id: bookingId,
+        userId: profile.id,
+      },
+      select: {
+        id: true,
+        status: true,
+      },
+    });
+
+    if (!booking) {
+      return { success: false, message: 'Booking not found' };
+    }
+
+    if (booking.status !== 'PENDING' && booking.status !== 'CONFIRMED') {
+      return { success: false, message: 'This booking can no longer be cancelled' };
+    }
+
+    await prisma.booking.update({
+      where: { id: booking.id },
+      data: {
+        status: 'CANCELLED',
+        cancelledAt: new Date(),
+      },
+    });
+
+    revalidatePath('/profile/bookings');
+    return { success: true };
+  } catch (error) {
+    console.error('cancelCurrentUserBooking error:', error);
+    return { success: false, message: 'Failed to cancel booking' };
+  }
+}
+
 export async function updateCurrentUserSettings(
   settings: UserSettings
 ): Promise<{ success: boolean; message?: string }> {
@@ -662,5 +848,54 @@ export async function updateCurrentUserSettings(
   } catch (error) {
     console.error('updateCurrentUserSettings error:', error);
     return { success: false, message: 'Failed to update settings' };
+  }
+}
+
+export async function deleteCurrentUserAccount(
+  confirmationEmail: string
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const profile = await getCurrentProfileRecord();
+    if (!profile) {
+      return { success: false, message: 'Unauthorized' };
+    }
+
+    if (profile.role !== 'USER') {
+      return {
+        success: false,
+        message: 'Admin and club admin accounts must be deleted by another administrator.',
+      };
+    }
+
+    const validated = accountDeletionSchema.safeParse({ confirmationEmail });
+    if (!validated.success) {
+      return { success: false, message: validated.error.errors[0]?.message || 'Invalid confirmation email' };
+    }
+
+    if (validated.data.confirmationEmail.toLowerCase() !== profile.email.toLowerCase()) {
+      return { success: false, message: 'Confirmation email does not match the signed-in account.' };
+    }
+
+    const adminClient = createAdminClient();
+
+    await prisma.profile.delete({
+      where: { id: profile.id },
+    });
+
+    const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(profile.authId);
+
+    if (deleteAuthError) {
+      console.error('deleteCurrentUserAccount auth deletion error:', deleteAuthError);
+      return { success: false, message: 'Account data was removed, but auth cleanup failed.' };
+    }
+
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+
+    revalidatePath('/', 'layout');
+    return { success: true };
+  } catch (error) {
+    console.error('deleteCurrentUserAccount error:', error);
+    return { success: false, message: 'Failed to delete account' };
   }
 }
