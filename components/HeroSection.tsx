@@ -30,8 +30,8 @@ const HERO_CONFIG = {
     Card moves lower.
   */
   act2: {
-    headline: { scale: 0.85, y: '-24vh' },
-    contentBlock: { y: '16vh', scale: 1 },
+    headline: { scale: 0.85, y: '-16vh' },
+    contentBlock: { y: '20vh', scale: 1 },
     vignette: { opacity: 0.85 },
     blur: { opacity: 0.22 },
   },
@@ -171,6 +171,47 @@ export default function HeroSection() {
       const { act2 } = HERO_CONFIG;
       const reducedMotion = prefersReducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       /* ============================================================ */
+      /*  LIVING GLASS (Mouse tracking internal parallax)              */
+      /* ============================================================ */
+      const contentContainer = contentBlockRef.current;
+      let xTo: gsap.QuickToFunc | null = null;
+      let yTo: gsap.QuickToFunc | null = null;
+
+      if (contentContainer && !reducedMotion && !isConstrainedDevice) {
+        // Target the inner content layer for movement
+        const innerContent = contentContainer.querySelector('.relative.z-30');
+        if (innerContent) {
+          xTo = gsap.quickTo(innerContent, 'x', { duration: 0.6, ease: 'power3' });
+          yTo = gsap.quickTo(innerContent, 'y', { duration: 0.6, ease: 'power3' });
+
+          const handleMouseMove = (e: MouseEvent) => {
+            const rect = contentContainer.getBoundingClientRect();
+            // Calculate mouse position relative to center of the card (-1 to 1)
+            const x = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+            const y = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+            // Move opposite to mouse by a few pixels
+            xTo?.(x * -12);
+            yTo?.(y * -12);
+          };
+          const handleMouseLeave = () => {
+            xTo?.(0);
+            yTo?.(0);
+          };
+
+          contentContainer.addEventListener('mousemove', handleMouseMove);
+          contentContainer.addEventListener('mouseleave', handleMouseLeave);
+
+          // Clean up listeners on revert
+          mm.add('(min-width: 768px)', () => {
+            return () => {
+              contentContainer.removeEventListener('mousemove', handleMouseMove);
+              contentContainer.removeEventListener('mouseleave', handleMouseLeave);
+            };
+          });
+        }
+      }
+
+      /* ============================================================ */
       /*  DESKTOP — Cinematic 2-Act Timeline                           */
       /* ============================================================ */
       mm.add('(min-width: 768px)', () => {
@@ -219,16 +260,18 @@ export default function HeroSection() {
         }
 
         // ACT 1 INITIAL STATE: Text center, card hidden way down
-        gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1 });
-        gsap.set(contentBlockRef.current, { opacity: 0, y: '30vh', scale: 0.95 });
 
-        // Stagger Title load-in
+        // ACT 1 INITIAL STATE: Text center, card hidden way down
+        gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1, transformOrigin: 'center center' });
+        gsap.set(contentBlockRef.current, { opacity: 0, y: '30vh', scale: 0.95, transformOrigin: 'center center' });
+
+        // Stagger Title load-in with Blur-to-Focus reveal
+        const h1Lines = gsap.utils.toArray('.h1-line', headlineWrapRef.current) as HTMLElement[];
         gsap.fromTo(
-          gsap.utils.toArray('.h1-line', headlineWrapRef.current),
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: 'expo.out', delay: 0.3 }
+          h1Lines,
+          { y: 40, opacity: 0, filter: 'blur(10px)' },
+          { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.2, stagger: 0.15, ease: 'expo.out', delay: 0.3 }
         );
-
         // Native GSAP Underline Draw Animation
         gsap.to('.h1-underline-path', {
           strokeDashoffset: 0,
@@ -242,23 +285,23 @@ export default function HeroSection() {
             trigger: desktopContainerRef.current,
             start: 'top top',
             end: 'bottom bottom',
-            scrub: 0.8,
-            snap: { snapTo: 'labels', duration: { min: 0.2, max: 0.5 }, delay: 0.1, ease: 'power2.inOut' },
+            scrub: 1.2,
+            snap: { snapTo: 'labels', duration: { min: 0.3, max: 0.6 }, delay: 0.1, ease: 'power3.inOut' },
           },
         });
 
         tl.addLabel('act1', 0);
-        tl.to(imageTargets, { scale: HERO_CONFIG.focal.finalScale, ease: 'power1.inOut', duration: 1 }, 0);
+        tl.to(imageTargets, { scale: HERO_CONFIG.focal.finalScale, ease: 'power3.inOut', duration: 1 }, 0);
         if (imageBlurRef.current) {
-          tl.to(imageBlurRef.current, { opacity: blurOpacity, ease: 'power1.inOut', duration: 1 }, 0);
+          tl.to(imageBlurRef.current, { opacity: blurOpacity, ease: 'power3.inOut', duration: 1 }, 0);
         }
-        tl.to(vignetteRef.current, { opacity: vignetteOpacity, ease: 'power2.inOut', duration: 1 }, 0);
+        tl.to(vignetteRef.current, { opacity: vignetteOpacity, ease: 'power3.inOut', duration: 1 }, 0);
 
-        // Pushes headline high up
-        tl.to(headlineWrapRef.current, { scale: act2.headline.scale, y: act2.headline.y, ease: 'power2.inOut', duration: 1 }, 0);
+        // Pushes headline gently up to sit below the pill navbar
+        tl.to(headlineWrapRef.current, { scale: act2.headline.scale, y: act2.headline.y, ease: 'power3.inOut', duration: 1 }, 0);
 
-        // Pulls card up into the pocket below
-        tl.to(contentBlockRef.current, { opacity: 1, y: act2.contentBlock.y, scale: act2.contentBlock.scale, ease: 'power2.out', duration: 0.8 }, 0.2);
+        // Pulls card up to form a cohesive optical center with the headline
+        tl.to(contentBlockRef.current, { opacity: 1, y: act2.contentBlock.y, scale: act2.contentBlock.scale, ease: 'power3.inOut', duration: 1 }, 0);
         tl.addLabel('act2', 1);
       });
 
@@ -380,8 +423,8 @@ export default function HeroSection() {
                   ref={imageBlurRef}
                   className="absolute inset-0 will-change-[transform,opacity]"
                   style={{
-                    WebkitMaskImage: 'radial-gradient(ellipse 120% 115% at 50% 42%, transparent 50%, black 100%)',
-                    maskImage: 'radial-gradient(ellipse 120% 115% at 50% 42%, transparent 50%, black 100%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse 120% 115% at 50% 55%, transparent 50%, black 100%)',
+                    maskImage: 'radial-gradient(ellipse 120% 115% at 50% 55%, transparent 50%, black 100%)',
                   }}
                 >
                   <Image
@@ -403,7 +446,7 @@ export default function HeroSection() {
           <div
             ref={vignetteRef}
             className="absolute inset-0 z-[2] pointer-events-none will-change-opacity"
-            style={{ background: 'radial-gradient(ellipse 75% 70% at 50% 42%, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)' }}
+            style={{ background: 'radial-gradient(ellipse 75% 70% at 50% 55%, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%)' }}
           />
 
           {/* ---- CONTENT CANVAS ---- */}
