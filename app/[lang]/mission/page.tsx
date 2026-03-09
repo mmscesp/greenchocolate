@@ -44,17 +44,17 @@ export default async function MissionPage({ params }: MissionPageProps) {
     {
       titleKey: 'mission.standards.legal.title',
       descriptionKey: 'mission.standards.legal.description',
-      imageUrl: '/images/cards/verifiedLegalCompliant.png',
+      imageUrl: '/images/cards/verifiedLegalCompliant.webp',
     },
     {
       titleKey: 'mission.standards.privacy.title',
       descriptionKey: 'mission.standards.privacy.description',
-      imageUrl: '/images/cards/lock.png',
+      imageUrl: '/images/cards/lock.webp',
     },
     {
       titleKey: 'mission.standards.vetting.title',
       descriptionKey: 'mission.standards.vetting.description',
-      imageUrl: '/images/cards/onsitevetting.png',
+      imageUrl: '/images/cards/onsitevetting.webp',
     },
   ];
 
