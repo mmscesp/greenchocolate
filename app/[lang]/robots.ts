@@ -8,8 +8,6 @@ export default function robots(): MetadataRoute.Robots {
     `/${locale}/dashboard/*`,
     `/${locale}/admin`,
     `/${locale}/admin/*`,
-    `/${locale}/club-panel`,
-    `/${locale}/club-panel/*`,
   ]);
 
   return {
@@ -31,8 +29,6 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/*',
           '/admin',
           '/admin/*',
-          '/club-panel/dashboard',
-          '/club-panel/dashboard/*',
           ...localizedDisallow,
           '/api/internal',
           '/api/internal/*',
@@ -56,8 +52,6 @@ export default function robots(): MetadataRoute.Robots {
           '/dashboard/*',
           '/admin',
           '/admin/*',
-          '/club-panel',
-          '/club-panel/*',
           ...localizedDisallow,
         ],
       },

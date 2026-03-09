@@ -75,6 +75,14 @@ export async function proxy(request: NextRequest) {
     );
   }
 
+  const localizedPathname = pathnameLocale
+    ? pathname.replace(new RegExp(`^/${pathnameLocale}`), '') || '/'
+    : pathname;
+
+  if (localizedPathname === '/club-panel' || localizedPathname.startsWith('/club-panel/')) {
+    return NextResponse.redirect(new URL(`/${pathnameLocale}/contact`, request.url));
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -95,10 +103,6 @@ export async function proxy(request: NextRequest) {
 
   // Refresh session if expired
   const { data: { user } } = await supabase.auth.getUser();
-
-  const localizedPathname = pathnameLocale
-    ? pathname.replace(new RegExp(`^/${pathnameLocale}`), '') || '/'
-    : pathname;
 
   // Protected routes (require authentication)
   const protectedRoutes = [

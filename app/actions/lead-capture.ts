@@ -42,6 +42,14 @@ const conciergePlanSchema = z.object({
     .max(3),
 });
 
+const editorialDigestSchema = z.object({
+  email: z.string().trim().email(),
+  locale: z.string().trim().optional(),
+  primaryHref: z.string().trim().startsWith('/'),
+  primaryLabel: z.string().trim().min(1).max(120),
+  source: z.string().trim().max(120).optional(),
+});
+
 function normalizeLocale(locale?: string): SupportedLocale {
   if (locale && supportedLocales.has(locale as SupportedLocale)) {
     return locale as SupportedLocale;
@@ -274,6 +282,115 @@ function buildConciergeText(
   ].join('\n');
 }
 
+function buildEditorialDigestCopy(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
+  const sharedLinks = [
+    {
+      labelByLocale: {
+        en: 'How clubs actually work in Spain',
+        es: 'Como funcionan realmente los clubs en Espana',
+        fr: 'Comment fonctionnent vraiment les clubs en Espagne',
+        de: 'Wie Clubs in Spanien wirklich funktionieren',
+      },
+      path: `/${locale}/editorial/what-are-cannabis-social-clubs-spain`,
+    },
+    {
+      labelByLocale: {
+        en: 'Open the Spain Safety Kit',
+        es: 'Abrir el Safety Kit de Espana',
+        fr: 'Ouvrir le Safety Kit Espagne',
+        de: 'Das Spanien Safety Kit offnen',
+      },
+      path: `/${locale}/editorial/safety-kit-visitors-spain`,
+    },
+  ].map((link) => ({
+    label: link.labelByLocale[locale],
+    path: link.path,
+  }));
+
+  switch (locale) {
+    case 'es':
+      return {
+        subject: 'Tu actualizacion de SocialClubsMaps',
+        heading: 'Ya estas en la lista.',
+        intro:
+          'Te enviaremos nuevas guias, drops verificados y contexto de seguridad. Mientras tanto, empieza por estos recursos base.',
+        primaryCta: primaryLabel,
+        primaryPath: primaryHref,
+        secondaryLinks: sharedLinks,
+        footer:
+          'SocialClubsMaps es educacion primero. No vendemos acceso ni garantizamos aprobaciones.',
+      };
+    case 'fr':
+      return {
+        subject: 'Votre mise a jour SocialClubsMaps',
+        heading: 'Vous etes sur la liste.',
+        intro:
+          'Nous vous enverrons de nouveaux guides, des mises a jour verifiees et du contexte securitaire. En attendant, commencez par ces ressources de base.',
+        primaryCta: primaryLabel,
+        primaryPath: primaryHref,
+        secondaryLinks: sharedLinks,
+        footer:
+          'SocialClubsMaps reste centre sur l education. Nous ne vendons pas d acces et ne garantissons aucune approbation.',
+      };
+    case 'de':
+      return {
+        subject: 'Dein SocialClubsMaps Update',
+        heading: 'Du stehst auf der Liste.',
+        intro:
+          'Wir schicken dir verifizierte Updates, neue Guides und Sicherheitskontext. Starte bis dahin mit diesen Kernressourcen.',
+        primaryCta: primaryLabel,
+        primaryPath: primaryHref,
+        secondaryLinks: sharedLinks,
+        footer:
+          'SocialClubsMaps ist education-first. Wir verkaufen keinen Zugang und garantieren keine Zusagen.',
+      };
+    case 'en':
+    default:
+      return {
+        subject: 'Your SocialClubsMaps update',
+        heading: "You're on the list.",
+        intro:
+          'We will send verified updates, new guides, and safety context. Until then, start with these core resources.',
+        primaryCta: primaryLabel,
+        primaryPath: primaryHref,
+        secondaryLinks: sharedLinks,
+        footer:
+          'SocialClubsMaps is education-first. We do not sell access or guarantee approvals.',
+      };
+  }
+}
+
+function buildEditorialDigestHtml(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
+  const copy = buildEditorialDigestCopy(locale, primaryLabel, primaryHref);
+
+  return [
+    `<h1>${copy.heading}</h1>`,
+    `<p>${copy.intro}</p>`,
+    `<p><a href="${toAbsoluteUrl(copy.primaryPath)}">${copy.primaryCta}</a></p>`,
+    '<ul>',
+    ...copy.secondaryLinks.map(
+      (link) => `<li><a href="${toAbsoluteUrl(link.path)}">${link.label}</a></li>`
+    ),
+    '</ul>',
+    `<p>${copy.footer}</p>`,
+  ].join('');
+}
+
+function buildEditorialDigestText(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
+  const copy = buildEditorialDigestCopy(locale, primaryLabel, primaryHref);
+
+  return [
+    copy.heading,
+    '',
+    copy.intro,
+    '',
+    `${copy.primaryCta}: ${toAbsoluteUrl(copy.primaryPath)}`,
+    ...copy.secondaryLinks.map((link) => `${link.label}: ${toAbsoluteUrl(link.path)}`),
+    '',
+    copy.footer,
+  ].join('\n');
+}
+
 export async function deliverSafetyKitLead(input: {
   email: string;
   locale?: string;
@@ -341,6 +458,49 @@ export async function deliverConciergePlan(input: {
     subject: buildConciergeCopy(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps).subject,
     htmlContent: buildConciergeHtml(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps),
     textContent: buildConciergeText(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps),
+  });
+
+  if (!delivery.success) {
+    return {
+      success: true,
+      deliveryMode: 'direct',
+      fallbackPath,
+      error: delivery.error,
+    };
+  }
+
+  return {
+    success: true,
+    deliveryMode: 'email',
+    fallbackPath,
+  };
+}
+
+export async function deliverEditorialDigestLead(input: {
+  email: string;
+  locale?: string;
+  primaryHref: string;
+  primaryLabel: string;
+  source?: string;
+}): Promise<LeadCaptureResult> {
+  const parsed = editorialDigestSchema.safeParse(input);
+  const locale = normalizeLocale(parsed.success ? parsed.data.locale : input.locale);
+  const fallbackPath = parsed.success ? parsed.data.primaryHref : `/${locale}/editorial`;
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      deliveryMode: 'direct',
+      fallbackPath,
+      error: parsed.error.errors[0]?.message || 'Invalid email address',
+    };
+  }
+
+  const delivery = await sendBrevoEmail({
+    to: [{ email: parsed.data.email }],
+    subject: buildEditorialDigestCopy(locale, parsed.data.primaryLabel, parsed.data.primaryHref).subject,
+    htmlContent: buildEditorialDigestHtml(locale, parsed.data.primaryLabel, parsed.data.primaryHref),
+    textContent: buildEditorialDigestText(locale, parsed.data.primaryLabel, parsed.data.primaryHref),
   });
 
   if (!delivery.success) {

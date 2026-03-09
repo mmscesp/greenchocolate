@@ -2,17 +2,49 @@
 
 import React, { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
+import { deliverEditorialDigestLead } from '@/app/actions/lead-capture';
 
 export function FinalMicDrop() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (!email.trim()) return;
+
+    const fallbackPath = `/${language}/editorial`;
+    setIsSubmitting(true);
+
+    try {
+      const result = await deliverEditorialDigestLead({
+        email: email.trim(),
+        locale: language,
+        primaryHref: fallbackPath,
+        primaryLabel: t('landing.featured_vault.all_guides'),
+        source: 'final_mic_drop',
+      });
+
+      if (result.deliveryMode === 'direct') {
+        setIsSubmitting(false);
+        router.push(result.fallbackPath);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Final mic drop signup failed:', error);
+      setIsSubmitting(false);
+      router.push(fallbackPath);
+      return;
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -55,14 +87,16 @@ export function FinalMicDrop() {
                 required
                 placeholder={t('landing.final_mic_drop.email_placeholder')}
                 value={email}
+                disabled={isSubmitting}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-xl text-xl text-center text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand transition-all"
               />
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full px-8 py-5 bg-brand hover:bg-brand-dark text-bg-base font-black text-xl rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                {t('landing.final_mic_drop.cta')}
+                {isSubmitting ? '...' : t('landing.final_mic_drop.cta')}
               </button>
             </form>
           )}

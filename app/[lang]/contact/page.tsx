@@ -7,9 +7,34 @@ interface ContactPageProps {
   params: Promise<{ lang: string }>;
 }
 
+const operatorSupportCopy = {
+  en: {
+    title: 'Club operators',
+    description:
+      'Club onboarding, application operations, and operator support are currently handled directly by SocialClubsMaps. Reach out here and we will route the request.',
+  },
+  es: {
+    title: 'Operadores de clubs',
+    description:
+      'El onboarding de clubs, la gestion de solicitudes y el soporte operativo se coordinan directamente con SocialClubsMaps por ahora. Escribenos y lo canalizamos.',
+  },
+  fr: {
+    title: 'Operateurs de club',
+    description:
+      'L onboarding club, les operations de demandes et le support operateur sont actuellement geres directement par SocialClubsMaps. Ecrivez-nous et nous orienterons la demande.',
+  },
+  de: {
+    title: 'Club-Betreiber',
+    description:
+      'Club-Onboarding, Antragsprozesse und Betreiber-Support werden derzeit direkt durch SocialClubsMaps koordiniert. Schreib uns, und wir leiten dein Anliegen passend weiter.',
+  },
+} as const;
+
 export default async function ContactPage({ params }: ContactPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
+  const operatorSupport =
+    operatorSupportCopy[lang as keyof typeof operatorSupportCopy] ?? operatorSupportCopy.en;
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   return (
@@ -34,6 +59,11 @@ export default async function ContactPage({ params }: ContactPageProps) {
           >
             {t('contact.email_cta')}
           </a>
+        </div>
+
+        <div className="mt-6 rounded-2xl border bg-card p-6 md:p-8 space-y-3">
+          <h2 className="text-lg font-semibold text-foreground">{operatorSupport.title}</h2>
+          <p className="text-sm text-muted-foreground">{operatorSupport.description}</p>
         </div>
 
         <div className="mt-8 text-sm text-muted-foreground">

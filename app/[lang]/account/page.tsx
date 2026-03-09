@@ -20,9 +20,38 @@ interface AccountPageProps {
   params: Promise<{ lang: string }>;
 }
 
+const clubOperatorSupportCopy = {
+  en: {
+    title: 'Club operator support',
+    description:
+      'Club onboarding and application operations are handled directly by SocialClubsMaps right now. Use contact to coordinate support, onboarding, or request questions.',
+    cta: 'Contact operator support',
+  },
+  es: {
+    title: 'Soporte para operadores',
+    description:
+      'El alta de clubs y la operativa de solicitudes se gestiona directamente con SocialClubsMaps por ahora. Usa contacto para soporte, onboarding o dudas operativas.',
+    cta: 'Contactar con soporte',
+  },
+  fr: {
+    title: 'Support operateurs',
+    description:
+      'L onboarding club et la gestion des demandes passent actuellement directement par SocialClubsMaps. Utilisez la page contact pour le support, l onboarding ou les questions operationnelles.',
+    cta: 'Contacter le support',
+  },
+  de: {
+    title: 'Support fur Club-Betreiber',
+    description:
+      'Club-Onboarding und Antragsablaufe werden aktuell direkt durch SocialClubsMaps betreut. Nutze die Kontaktseite fur Support, Onboarding oder operative Fragen.',
+    cta: 'Support kontaktieren',
+  },
+} as const;
+
 export default async function AccountPage({ params }: AccountPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
+  const clubOperatorSupport =
+    clubOperatorSupportCopy[lang as keyof typeof clubOperatorSupportCopy] ?? clubOperatorSupportCopy.en;
   const t = (key: string): string => {
     const resolvedValue = key
       .split('.')
@@ -177,24 +206,23 @@ export default async function AccountPage({ params }: AccountPageProps) {
           })}
         </div>
 
-        {/* Club Admin Section */}
-        {(userProfile.role === 'CLUB_ADMIN' || userProfile.role === 'ADMIN') && (
+        {userProfile.role === 'CLUB_ADMIN' && (
           <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">{t('account.club_management.title')}</h2>
+            <h2 className="text-2xl font-bold mb-6">{clubOperatorSupport.title}</h2>
             <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-green-600" />
-                  {t('account.club_management.panel_title')}
+                  {clubOperatorSupport.title}
                 </CardTitle>
                 <CardDescription>
-                  {t('account.club_management.panel_desc')}
+                  {clubOperatorSupport.description}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href={`/${lang}/club-panel/dashboard`}>
+                <Link href={`/${lang}/contact`}>
                   <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    {t('account.club_management.access_dashboard')}
+                    {clubOperatorSupport.cta}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>

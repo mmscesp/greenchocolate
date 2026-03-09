@@ -42,7 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...toLocalizedEntries('', 'daily', 1.0),
     ...toLocalizedEntries('/clubs', 'daily', 0.9),
     ...toLocalizedEntries('/editorial', 'weekly', 0.8),
-    ...toLocalizedEntries('/club-panel', 'monthly', 0.5),
   ];
 
   const cityRoutes: MetadataRoute.Sitemap = cities.flatMap((city) =>

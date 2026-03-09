@@ -3,19 +3,50 @@
 import React, { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
 import { CheckCircle2, ArrowRight } from '@/lib/icons';
+import { deliverEditorialDigestLead } from '@/app/actions/lead-capture';
 
 export function VerificationStandard() {
   const { language, t } = useLanguage();
+  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    // Integrate actual subscription logic here
+    if (!email.trim()) return;
+
+    const fallbackPath = `/${language}/clubs`;
+    setIsSubmitting(true);
+
+    try {
+      const result = await deliverEditorialDigestLead({
+        email: email.trim(),
+        locale: language,
+        primaryHref: fallbackPath,
+        primaryLabel: t('landing.verification_standard.view_full_directory'),
+        source: 'verification_standard',
+      });
+
+      if (result.deliveryMode === 'direct') {
+        setIsSubmitting(false);
+        router.push(result.fallbackPath);
+        return;
+      }
+
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Verification standard signup failed:', error);
+      setIsSubmitting(false);
+      router.push(fallbackPath);
+      return;
+    }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -96,15 +127,17 @@ export function VerificationStandard() {
                     autoComplete="email"
                     placeholder={t('landing.verification_standard.email_placeholder')}
                     required
+                    disabled={isSubmitting}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
                   />
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="w-full px-4 py-3 bg-brand hover:bg-brand-dark text-bg-base font-bold rounded-lg text-sm transition-colors border border-brand/40"
                   >
-                    {t('landing.verification_standard.notify_me')}
+                    {isSubmitting ? '...' : t('landing.verification_standard.notify_me')}
                   </button>
                 </form>
               )}

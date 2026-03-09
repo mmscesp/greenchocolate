@@ -5,9 +5,12 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Check } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useRouter } from 'next/navigation';
+import { deliverEditorialDigestLead } from '@/app/actions/lead-capture';
 
 export function NewsletterDrop() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
@@ -21,13 +24,39 @@ export function NewsletterDrop() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!email.trim()) return;
+
+    const fallbackPath = `/${language}/editorial`;
     setStatus('loading');
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setStatus('success');
-    trackEvent('newsletter_signup_success', { source: 'landing_climax' });
+
+    try {
+      const result = await deliverEditorialDigestLead({
+        email: email.trim(),
+        locale: language,
+        primaryHref: fallbackPath,
+        primaryLabel: t('landing.featured_vault.all_guides'),
+        source: 'landing_climax',
+      });
+
+      if (result.deliveryMode === 'direct') {
+        setStatus('idle');
+        trackEvent('newsletter_signup_fallback', {
+          source: 'landing_climax',
+          fallback_path: result.fallbackPath,
+        });
+        router.push(result.fallbackPath);
+        return;
+      }
+
+      setStatus('success');
+      trackEvent('newsletter_signup_success', {
+        source: 'landing_climax',
+        delivery_mode: 'email',
+      });
+    } catch (error) {
+      console.error('Newsletter signup failed:', error);
+      setStatus('idle');
+      router.push(fallbackPath);
+    }
   };
 
   return (

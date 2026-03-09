@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Clock } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { type ArticleCard } from '@/app/actions/articles';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
+import { deliverEditorialDigestLead } from '@/app/actions/lead-capture';
 
 interface FeaturedVaultProps {
   articles?: ArticleCard[];
@@ -14,7 +17,47 @@ interface FeaturedVaultProps {
 
 export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
   const { language, t } = useLanguage();
+  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+
+  const newsletterSuccessCopy = {
+    en: 'Check your inbox for the guide pack and next verified updates.',
+    es: 'Revisa tu email para ver la guia y las proximas actualizaciones verificadas.',
+    fr: 'Verifiez votre email pour recevoir le pack de guides et les prochaines mises a jour verifiees.',
+    de: 'Pruf dein Postfach fur das Guide-Paket und die nachsten verifizierten Updates.',
+  } as const;
+
+  const handleNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!newsletterEmail.trim()) return;
+
+    const fallbackPath = `/${language}/editorial`;
+    setNewsletterStatus('loading');
+
+    try {
+      const result = await deliverEditorialDigestLead({
+        email: newsletterEmail.trim(),
+        locale: language,
+        primaryHref: fallbackPath,
+        primaryLabel: t('landing.featured_vault.all_guides'),
+        source: 'featured_vault',
+      });
+
+      if (result.deliveryMode === 'direct') {
+        setNewsletterStatus('idle');
+        router.push(result.fallbackPath);
+        return;
+      }
+
+      setNewsletterStatus('success');
+    } catch (error) {
+      console.error('Featured vault signup failed:', error);
+      setNewsletterStatus('idle');
+      router.push(fallbackPath);
+    }
+  };
 
   const fallbackArticles = [
     {
@@ -177,21 +220,32 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
             <p className="text-lg font-bold text-white mb-1">{t('landing.featured_vault.newsletter.title')}</p>
             <p className="text-zinc-400 text-sm">{t('landing.featured_vault.newsletter.subtitle')}</p>
           </div>
-          <form className="flex w-full md:w-auto gap-2" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="email"
-              name="email"
-              autoComplete="email"
-              placeholder={t('landing.featured_vault.newsletter.email_placeholder')}
-              className="flex-1 md:w-64 px-4 py-3 bg-bg-card border border-white/15 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-            />
-            <button
-              type="submit"
-              className="px-6 py-3 bg-brand text-bg-base text-sm font-bold rounded-lg hover:bg-brand-dark transition-colors"
-            >
-              {t('landing.featured_vault.newsletter.subscribe')}
-            </button>
-          </form>
+          {newsletterStatus === 'success' ? (
+            <div className="w-full md:w-auto rounded-lg border border-brand/30 bg-brand/10 px-4 py-3 text-sm font-medium text-brand">
+              {newsletterSuccessCopy[language as keyof typeof newsletterSuccessCopy] ?? newsletterSuccessCopy.en}
+            </div>
+          ) : (
+            <form className="flex w-full md:w-auto gap-2" onSubmit={handleNewsletterSubmit}>
+              <input
+                type="email"
+                name="email"
+                autoComplete="email"
+                required
+                disabled={newsletterStatus === 'loading'}
+                value={newsletterEmail}
+                onChange={(event) => setNewsletterEmail(event.target.value)}
+                placeholder={t('landing.featured_vault.newsletter.email_placeholder')}
+                className="flex-1 md:w-64 px-4 py-3 bg-bg-card border border-white/15 rounded-lg text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+              />
+              <button
+                type="submit"
+                disabled={newsletterStatus === 'loading'}
+                className="px-6 py-3 bg-brand text-bg-base text-sm font-bold rounded-lg hover:bg-brand-dark transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {newsletterStatus === 'loading' ? '...' : t('landing.featured_vault.newsletter.subscribe')}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </section>

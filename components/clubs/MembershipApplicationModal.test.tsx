@@ -236,15 +236,15 @@ vi.mock('@/hooks/useLanguage', () => ({
           'club_profile.modal.experience.regular': '🌲 Regular member (weekly)',
           'club_profile.modal.experience.connoisseur': '🏆 Green connoisseur (daily/expert)',
           'club_profile.modal.experience.medical': '💚 Medical patient',
-          'club_profile.modal.message': 'Tell the club about yourself',
-          'club_profile.modal.message_placeholder': 'Why do you want to join?',
+          'club_profile.modal.message': 'Tell us about yourself',
+          'club_profile.modal.message_placeholder': 'Why do you want to join? Any context that helps our review?',
           'club_profile.modal.phone': 'Phone (optional)',
           'club_profile.modal.phone_hint': "We'll only call for urgent updates",
           'club_profile.modal.age_confirmation': 'I am 18+ and confirm cannabis is legal in my jurisdiction',
           'club_profile.modal.terms_agreement': 'I agree to the Terms of Service and Privacy Policy',
           'club_profile.modal.submit': 'Submit Application',
-          'club_profile.modal.success.message': 'The club will review your application and get back to you soon.',
-          'club_profile.modal.success.create_account': 'Create an account to track your application',
+          'club_profile.modal.success.message': 'SocialClubsMaps received your application. We review it centrally and unlock gated club details after approval.',
+          'club_profile.modal.success.create_account': 'Create an account to track your platform review',
           'club_profile.form.error_unexpected': 'Unexpected error',
           'common.close_modal': 'Close modal',
           'form.submitting': 'Submitting...',
@@ -301,7 +301,7 @@ async function completeRequiredFields() {
 
   await user.selectOptions(screen.getAllByRole('combobox')[1], 'regular');
 
-  await user.type(screen.getByLabelText(/tell the club about yourself/i), 'Interested in responsible membership.');
+    await user.type(screen.getByLabelText(/tell us about yourself/i), 'Interested in responsible membership.');
   await user.click(screen.getByLabelText(/i am 18\+/i));
   await user.click(screen.getByLabelText(/i agree to the terms/i));
 }
