@@ -13,11 +13,11 @@ import {
   Settings, 
   Heart, 
   Star, 
+  Calendar,
   LogOut, 
   ChevronDown, 
   Bell, 
   Loader2, 
-  ClipboardList, 
   PanelTop 
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
@@ -218,9 +218,9 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
         {/* Main Menu Items */}
         <div className="px-3 md:px-2 py-3 md:py-2 space-y-1">
           <MenuLink href={withLocale('/profile')} icon={<User className="h-5 w-5 md:h-4 md:w-4 text-blue-400" />} label={t('user.my_profile')} sublabel={t('user.menu.profile_desc')} onClick={handleLinkClick} />
-          <MenuLink href={withLocale('/profile/favorites')} icon={<Heart className="h-5 w-5 md:h-4 md:w-4 text-red-400" />} label={t('user.favorite_clubs')} sublabel={t('user.menu.favorites_desc')} onClick={handleLinkClick} />
+          <MenuLink href={withLocale('/profile/favorites')} icon={<Heart className="h-5 w-5 md:h-4 md:w-4 text-red-400" />} label={t('user.favorites')} sublabel={t('user.menu.favorites_desc')} onClick={handleLinkClick} />
           <MenuLink href={withLocale('/profile/reviews')} icon={<Star className="h-5 w-5 md:h-4 md:w-4 text-brand" />} label={t('user.my_reviews')} sublabel={t('user.menu.reviews_desc')} onClick={handleLinkClick} />
-          <MenuLink href={withLocale('/profile/requests')} icon={<ClipboardList className="h-5 w-5 md:h-4 md:w-4 text-green-400" />} label={t('dashboard.requests')} sublabel={t('user.menu.requests_desc')} onClick={handleLinkClick} />
+          <MenuLink href={withLocale('/profile/bookings')} icon={<Calendar className="h-5 w-5 md:h-4 md:w-4 text-green-400" />} label={t('user.bookings')} sublabel={t('user.bookings_desc')} onClick={handleLinkClick} />
         </div>
 
         {/* Secondary Menu */}
