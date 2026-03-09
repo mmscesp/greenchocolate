@@ -1,7 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';
-import { LegalDisclaimer } from '@/components/LegalDisclaimer';
 import AnalyticsDebugListener from '@/components/dev/AnalyticsDebugListener';
 import { i18n } from '@/lib/i18n-config';
 
@@ -96,7 +95,6 @@ export default function RootLayout({
   return (
     <html lang={i18n.defaultLocale} className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased">
-        <LegalDisclaimer />
         <AnalyticsDebugListener />
         {children}
       </body>
