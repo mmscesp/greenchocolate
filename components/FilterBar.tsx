@@ -255,13 +255,13 @@ function MobileFilterDrawer({
               <span className="block truncate text-left text-sm font-semibold text-white">{title}</span>
             </span>
           </span>
-          <span className="flex items-center gap-2 text-xs font-medium text-zinc-300">
+          <span className="flex min-w-0 max-w-[45%] items-center justify-end gap-2 text-xs font-medium text-zinc-300">
             {activeDraftCount > 0 && (
               <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-[11px] font-bold text-bg-base">
                 {activeDraftCount}
               </span>
             )}
-            <span className="whitespace-nowrap">
+            <span className="truncate text-right">
               {totalResults} {resultsLabel}
             </span>
           </span>

@@ -188,8 +188,8 @@ export default async function AccountPage({ params }: AccountPageProps) {
             return (
               <Link key={item.href} href={item.href}>
                 <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group h-full">
-                  <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <div className="flex items-center gap-4">
+                  <CardHeader className="flex flex-col items-start justify-between gap-4 pb-2 sm:flex-row sm:items-center">
+                    <div className="flex items-start gap-4">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center ${item.color}`}>
                         <Icon className="h-6 w-6" />
                       </div>
@@ -198,7 +198,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
                         <CardDescription>{item.description}</CardDescription>
                       </div>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="h-5 w-5 self-end text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-primary sm:self-auto" />
                   </CardHeader>
                 </Card>
               </Link>

@@ -335,7 +335,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
       {variant === 'dropdown' && isOpen && (
         <>
           <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-50 glass-dropdown flex flex-col overflow-hidden top-full right-0 mt-2 w-[320px] rounded-2xl border-b pb-4 pt-4 shadow-2xl animate-in slide-in-from-top-2 zoom-in-95 duration-200">
+          <div className="absolute right-0 top-full z-50 mt-2 flex w-[min(20rem,calc(100vw-1.5rem))] max-w-[calc(100vw-1.5rem)] flex-col overflow-hidden glass-dropdown rounded-2xl border-b pb-4 pt-4 shadow-2xl animate-in slide-in-from-top-2 zoom-in-95 duration-200">
             {renderProfileMenuContent()}
           </div>
         </>

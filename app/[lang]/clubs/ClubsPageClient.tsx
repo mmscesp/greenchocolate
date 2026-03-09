@@ -163,7 +163,7 @@ export default function ClubsPageClient({
             </div>
             <Link 
               href={`/${language}/mission#verification-standard`} 
-              className="relative z-10 w-full lg:w-auto flex items-center justify-center gap-3 sm:gap-4 text-[11px] sm:text-[12px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-white hover:text-black transition-all whitespace-nowrap bg-white/5 px-6 py-4 sm:px-10 sm:py-5 rounded-full border border-white/10 hover:bg-brand hover:border-brand shadow-2xl"
+              className="relative z-10 flex w-full items-center justify-center gap-3 bg-white/5 px-6 py-4 text-center text-[11px] font-black uppercase tracking-[0.2em] text-white transition-all hover:border-brand hover:bg-brand hover:text-black sm:gap-4 sm:px-10 sm:py-5 sm:text-[12px] sm:tracking-[0.3em] sm:whitespace-nowrap lg:w-auto rounded-full border border-white/10 shadow-2xl"
             >
               {t('clubs.sidebar.learn_standard')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-2" />
             </Link>

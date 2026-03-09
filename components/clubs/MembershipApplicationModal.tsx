@@ -290,7 +290,7 @@ export default function MembershipApplicationModal({
               </div>
 
               {/* Form */}
-              <div className="p-6">
+              <div className="p-5 sm:p-6">
                 {formState && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
@@ -321,7 +321,7 @@ export default function MembershipApplicationModal({
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   {/* Name Fields */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="firstName" className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                         {t('club_profile.modal.first_name')} *
@@ -364,7 +364,7 @@ export default function MembershipApplicationModal({
                   </div>
 
                   {/* City & Country */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="city" className="text-xs font-bold uppercase tracking-wider text-zinc-400">
                         {t('club_profile.modal.city')} *

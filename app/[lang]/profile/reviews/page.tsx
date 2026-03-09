@@ -163,7 +163,7 @@ export default function ReviewsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
@@ -271,7 +271,7 @@ export default function ReviewsPage() {
                   </Avatar>
 
                   <div className="flex-1 min-w-0 pt-1">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div className="min-w-0">
                         <Link
                           href={`/${language}/clubs/${review.clubSlug}`}
@@ -292,7 +292,7 @@ export default function ReviewsPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="flex flex-shrink-0 items-center gap-2 self-start sm:self-auto">
                         <>
                             <Button
                               variant="ghost"
@@ -368,12 +368,12 @@ export default function ReviewsPage() {
                       />
                       <Label htmlFor={`review-public-${review.id}`}>Show publicly</Label>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="primary" size="sm" className="gap-2" onClick={saveReview}>
+                    <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+                      <Button variant="primary" size="sm" className="w-full gap-2 sm:w-auto" onClick={saveReview}>
                         <Check className="h-4 w-4" />
                         {t('common.save_changes')}
                       </Button>
-                      <Button variant="secondary" size="sm" className="gap-2" onClick={() => setEditingReviewId(null)}>
+                      <Button variant="secondary" size="sm" className="w-full gap-2 sm:w-auto" onClick={() => setEditingReviewId(null)}>
                         <X className="h-4 w-4" />
                         {t('common.cancel')}
                       </Button>

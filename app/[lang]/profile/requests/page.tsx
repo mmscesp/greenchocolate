@@ -158,7 +158,7 @@ export default function UserRequestsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-sm">
           <CardContent className="p-5 flex items-center justify-between">
             <div>
@@ -286,9 +286,9 @@ export default function UserRequestsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <Link href={`/${language}/clubs/${request.clubSlug}`}>
-                      <Button variant="secondary" size="sm">
+                  <div className="flex w-full flex-shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                    <Link href={`/${language}/clubs/${request.clubSlug}`} className="w-full sm:w-auto">
+                      <Button variant="secondary" size="sm" className="w-full sm:w-auto">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         {t('common.view')}
                       </Button>
@@ -300,6 +300,7 @@ export default function UserRequestsPage() {
                         size="sm"
                         onClick={() => handleCancel(request.id)}
                         disabled={cancellingId === request.id}
+                        className="w-full sm:w-auto"
                       >
                         {cancellingId === request.id ? (
                           <Loader2 className="h-4 w-4 animate-spin" />

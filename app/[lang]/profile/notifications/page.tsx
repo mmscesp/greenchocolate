@@ -77,7 +77,7 @@ export default function ProfileNotificationsPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('notifications.title')}</h1>
           <p className="text-muted-foreground mt-1">{t('notifications.subtitle')}</p>
         </div>
-        <div className="flex items-center gap-2 self-start">
+        <div className="flex flex-wrap items-center gap-2 self-start">
           <Button variant="secondary" onClick={loadNotifications} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             {t('notifications.refresh')}
@@ -93,7 +93,7 @@ export default function ProfileNotificationsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card className="shadow-sm">
           <CardContent className="p-5">
             <p className="text-sm font-medium text-muted-foreground">{t('notifications.stats.total')}</p>
@@ -150,9 +150,9 @@ export default function ProfileNotificationsPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Link href={`/${language}/profile/requests`}>
-                    <Button variant="secondary" size="sm">
+                <div className="flex w-full flex-col gap-2 md:w-auto sm:flex-row sm:items-center">
+                  <Link href={`/${language}/profile/requests`} className="w-full sm:w-auto">
+                    <Button variant="secondary" size="sm" className="w-full sm:w-auto">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       {t('notifications.open_requests')}
                     </Button>
@@ -162,6 +162,7 @@ export default function ProfileNotificationsPage() {
                       size="sm"
                       onClick={() => markOneAsRead(item.id)}
                       disabled={markingId === item.id}
+                      className="w-full sm:w-auto"
                     >
                       {markingId === item.id ? (
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />

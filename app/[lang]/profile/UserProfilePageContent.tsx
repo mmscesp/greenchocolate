@@ -147,11 +147,11 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
             {t('profile.edit')}
           </Button>
         ) : (
-          <div className="flex gap-2 self-start">
+          <div className="flex w-full flex-col gap-2 self-start sm:w-auto sm:flex-row">
             <Button
               variant="secondary"
               onClick={handleCancel}
-              className="flex items-center gap-2"
+              className="flex w-full items-center gap-2 sm:w-auto"
               disabled={isSaving}
             >
               <X className="h-4 w-4" />
@@ -160,7 +160,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
             <Button
               onClick={form.handleSubmit(onSubmit)}
               disabled={isSaving}
-              className="flex items-center gap-2"
+              className="flex w-full items-center gap-2 sm:w-auto"
             >
               {isSaving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -365,13 +365,13 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
             <p className="text-muted-foreground mt-1">{t('profile.passport.subtitle')}</p>
           </div>
 
-          <div className="flex bg-muted rounded-lg p-1 self-start">
+          <div className="flex w-full flex-col gap-1 rounded-lg bg-muted p-1 self-start sm:w-auto sm:flex-row sm:gap-0">
             {(['overview', 'passport', 'status'] as const).map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                className={`w-full rounded-md px-4 py-2 text-sm font-medium transition-all sm:w-auto ${
                   activeTab === tab
                     ? 'bg-background text-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
@@ -390,7 +390,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
                 {t('profile.passport.overview_description')}
               </p>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {[
                   { icon: MapPin, label: t('profile.passport.stats.clubs_viewed'), value: backendStatus?.stats.clubsInteracted ?? 0 },
                   { icon: Heart, label: t('profile.passport.stats.favorites'), value: backendStatus?.stats.favoritesCount ?? 0 },

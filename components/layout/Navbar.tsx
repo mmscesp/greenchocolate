@@ -188,7 +188,7 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label={t('nav.mobile.open_menu')}
-            className="fixed inset-x-0 top-0 h-[100dvh] z-40 md:hidden glass-liquid pt-20 px-6 pb-[env(safe-area-inset-bottom,24px)] flex flex-col gap-4 overflow-y-auto overscroll-contain"
+            className="fixed inset-x-0 top-0 z-40 flex h-[100dvh] flex-col gap-4 overflow-y-auto overscroll-contain glass-liquid px-6 pb-[env(safe-area-inset-bottom,24px)] pt-[calc(env(safe-area-inset-top,0px)+6rem)] md:hidden"
           >
             {/* Rich Profile Header & Actions inside Mobile Menu */}
             <div className="pb-4 border-b border-white/10 shrink-0 flex items-center justify-between gap-4">

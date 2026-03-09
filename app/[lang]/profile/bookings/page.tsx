@@ -174,7 +174,7 @@ export default function BookingsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-2xl bg-bg-base border border-white/5">
           <CardContent className="p-6 flex items-center justify-between">
             <div>
@@ -229,13 +229,13 @@ export default function BookingsPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(['all', 'upcoming', 'past'] as const).map((filter) => (
           <button
             key={filter}
             type="button"
             onClick={() => setActiveFilter(filter)}
-            className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
+            className={`basis-full rounded-full px-5 py-2 text-[10px] font-bold uppercase tracking-widest transition-all sm:basis-auto ${
               activeFilter === filter
                 ? 'bg-gold text-black shadow-lg shadow-gold/20'
                 : 'bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10'
@@ -296,9 +296,9 @@ export default function BookingsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <Link href={`/${language}/clubs/${booking.clubSlug}`}>
-                      <Button variant="secondary" size="sm" className="gap-2 rounded-full border-white/10 hover:bg-white/5 hover:text-white uppercase tracking-widest text-[9px] font-bold h-9">
+                  <div className="flex w-full flex-shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                    <Link href={`/${language}/clubs/${booking.clubSlug}`} className="w-full sm:w-auto">
+                      <Button variant="secondary" size="sm" className="h-9 w-full gap-2 rounded-full border-white/10 text-[9px] font-bold uppercase tracking-widest hover:bg-white/5 hover:text-white sm:w-auto">
                         <ExternalLink className="h-3.5 w-3.5" />
                         {t('bookings.view_club')}
                       </Button>
@@ -307,7 +307,7 @@ export default function BookingsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-full uppercase tracking-widest text-[9px] font-bold h-9"
+                        className="h-9 w-full rounded-full text-[9px] font-bold uppercase tracking-widest text-red-500 hover:bg-red-500/10 hover:text-red-400 sm:w-auto"
                         disabled={pendingCancellationId === booking.id}
                         onClick={() => handleCancelBooking(booking.id)}
                       >
