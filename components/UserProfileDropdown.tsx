@@ -6,6 +6,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import {
+  Drawer,
+  DrawerPanelContent,
+} from './ui/drawer';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { getUnreadNotificationCount } from '@/app/actions/notifications';
 import { 
@@ -21,7 +25,6 @@ import {
   PanelTop 
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import { Drawer } from 'vaul';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface UserProfileDropdownProps {
@@ -340,19 +343,17 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
 
       {/* Mobile Swipeable Drawer using Vaul */}
       {variant === 'mobile-menu-row' && (
-        <Drawer.Root open={isOpen} onOpenChange={setIsOpen}>
-          <Drawer.Portal>
-            <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
-            <Drawer.Content className="glass-dropdown flex flex-col rounded-t-[32px] mt-24 max-h-[90vh] fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 outline-none pb-8">
-              <div className="p-4 bg-transparent mx-auto shrink-0 w-full flex items-center justify-center">
-                <div className="w-12 h-1.5 bg-white/20 rounded-full" />
-              </div>
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
-                {renderProfileMenuContent()}
-              </div>
-            </Drawer.Content>
-          </Drawer.Portal>
-        </Drawer.Root>
+        <Drawer open={isOpen} onOpenChange={setIsOpen}>
+          <DrawerPanelContent
+            title={t('profile.nav.title')}
+            description={t('profile.subtitle')}
+            className="glass-dropdown max-h-[90vh] rounded-t-[32px] border-t border-white/10 bg-[#07111b]/95 pb-8"
+          >
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {renderProfileMenuContent()}
+            </div>
+          </DrawerPanelContent>
+        </Drawer>
       )}
     </div>
   );

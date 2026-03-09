@@ -1,44 +1,41 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { LayoutDashboard, 
-Users, 
-Building2, 
-ClipboardList,
-Newspaper,
-CalendarDays,
-BarChart3, 
-FileText,
-Shield,
-Settings,
-LogOut,
-Menu,
-ChevronLeft,
-ChevronRight,
-Home,
-CheckCircle2, } from '@/lib/icons';
+import { useState } from 'react';
+import {
+  DesktopNavigationRail,
+  MobileNavigationRailPanel,
+  type NavigationRailAction,
+  type NavigationRailItem,
+} from '@/components/layout/NavigationRail';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Sheet,
   SheetContent,
-  SheetTrigger,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
+  SheetTrigger,
 } from '@/components/ui/sheet';
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { adminSignOut } from '@/app/actions/admin-auth';
 import { useLanguage } from '@/hooks/useLanguage';
+import {
+  BarChart3,
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  ClipboardList,
+  FileText,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Newspaper,
+  Settings,
+  Users,
+} from '@/lib/icons';
 
 interface AdminSidebarProps {
   className?: string;
-  isCollapsed?: boolean;
-  onClose?: () => void;
-  isMobile?: boolean;
-  onToggle?: () => void;
   adminInfo?: {
     displayName?: string | null;
     email: string;
@@ -47,254 +44,168 @@ interface AdminSidebarProps {
   lang?: string;
 }
 
-const navigation = [
-  { 
-    nameKey: 'admin.nav.dashboard', 
-    href: '/admin', 
-    icon: LayoutDashboard,
-    exact: true 
-  },
-  { 
-    nameKey: 'admin.nav.users', 
-    href: '/admin/users', 
-    icon: Users,
-  },
-  { 
-    nameKey: 'admin.nav.clubs', 
-    href: '/admin/clubs', 
-    icon: Building2,
-  },
-  { 
-    nameKey: 'admin.nav.verification_queue', 
-    href: '/admin/clubs/verification', 
-    icon: CheckCircle2,
-  },
-  { 
-    nameKey: 'admin.nav.membership_requests', 
-    href: '/admin/requests', 
-    icon: ClipboardList,
-  },
-  {
-    nameKey: 'admin.nav.content_articles',
-    href: '/admin/content/articles',
-    icon: Newspaper,
-  },
-  {
-    nameKey: 'admin.nav.content_events',
-    href: '/admin/content/events',
-    icon: CalendarDays,
-  },
-  { 
-    nameKey: 'admin.nav.analytics', 
-    href: '/admin/analytics', 
-    icon: BarChart3,
-  },
-  { 
-    nameKey: 'admin.nav.audit_logs', 
-    href: '/admin/audit-logs', 
-    icon: FileText,
-  },
-  { 
-    nameKey: 'admin.nav.settings', 
-    href: '/admin/settings', 
-    icon: Settings,
-  },
-];
+const isExactMatch = (href: string) => (pathname: string) => pathname === href;
+const isPrefixMatch = (href: string) => (pathname: string) =>
+  pathname === href || pathname.startsWith(`${href}/`);
 
-function AdminSidebarContent({ 
-  className, 
-  isCollapsed = false, 
-  onClose, 
-  isMobile = false,
+interface AdminRailConfigParams {
+  t: (key: string) => string;
+  lang: string;
+  adminInfo?: {
+    displayName?: string | null;
+    email: string;
+    avatarUrl?: string | null;
+  };
+  onSelect?: () => void;
+}
+
+function createAdminRailConfig({
+  t,
+  lang,
+  adminInfo,
+  onSelect,
+}: AdminRailConfigParams): {
+  title: string;
+  description: string;
+  identity: {
+    displayName: string;
+    email: string;
+    avatarUrl?: string | null;
+    badgeText: string;
+  };
+  items: NavigationRailItem[];
+  footerActions: NavigationRailAction[];
+} {
+  const withLocale = (href: string) => `/${lang}${href}`;
+  const clubsHref = withLocale('/admin/clubs');
+  const verificationHref = withLocale('/admin/clubs/verification');
+
+  return {
+    title: t('admin.nav.title'),
+    description: t('admin.dashboard.header.description'),
+    identity: {
+      displayName: adminInfo?.displayName || t('admin.common.admin'),
+      email: adminInfo?.email || 'admin@example.com',
+      avatarUrl: adminInfo?.avatarUrl,
+      badgeText: t('admin.shell.mode'),
+    },
+    items: [
+      {
+        id: 'admin-dashboard',
+        label: t('admin.nav.dashboard'),
+        href: withLocale('/admin'),
+        icon: LayoutDashboard,
+        isActive: isExactMatch(withLocale('/admin')),
+      },
+      {
+        id: 'admin-users',
+        label: t('admin.nav.users'),
+        href: withLocale('/admin/users'),
+        icon: Users,
+        isActive: isPrefixMatch(withLocale('/admin/users')),
+      },
+      {
+        id: 'admin-clubs',
+        label: t('admin.nav.clubs'),
+        href: clubsHref,
+        icon: Building2,
+        isActive: (pathname) =>
+          (pathname === clubsHref || pathname.startsWith(`${clubsHref}/`)) &&
+          !pathname.startsWith(verificationHref),
+      },
+      {
+        id: 'admin-verification',
+        label: t('admin.nav.verification_queue'),
+        href: verificationHref,
+        icon: CheckCircle2,
+        isActive: isPrefixMatch(verificationHref),
+      },
+      {
+        id: 'admin-requests',
+        label: t('admin.nav.membership_requests'),
+        href: withLocale('/admin/requests'),
+        icon: ClipboardList,
+        isActive: isPrefixMatch(withLocale('/admin/requests')),
+      },
+      {
+        id: 'admin-articles',
+        label: t('admin.nav.content_articles'),
+        href: withLocale('/admin/content/articles'),
+        icon: Newspaper,
+        isActive: isPrefixMatch(withLocale('/admin/content/articles')),
+      },
+      {
+        id: 'admin-events',
+        label: t('admin.nav.content_events'),
+        href: withLocale('/admin/content/events'),
+        icon: CalendarDays,
+        isActive: isPrefixMatch(withLocale('/admin/content/events')),
+      },
+      {
+        id: 'admin-analytics',
+        label: t('admin.nav.analytics'),
+        href: withLocale('/admin/analytics'),
+        icon: BarChart3,
+        isActive: isPrefixMatch(withLocale('/admin/analytics')),
+      },
+      {
+        id: 'admin-audit',
+        label: t('admin.nav.audit_logs'),
+        href: withLocale('/admin/audit-logs'),
+        icon: FileText,
+        isActive: isPrefixMatch(withLocale('/admin/audit-logs')),
+      },
+      {
+        id: 'admin-settings',
+        label: t('admin.nav.settings'),
+        href: withLocale('/admin/settings'),
+        icon: Settings,
+        isActive: isPrefixMatch(withLocale('/admin/settings')),
+      },
+    ],
+    footerActions: [
+      {
+        id: 'admin-back',
+        kind: 'link',
+        label: t('nav.back_to_site'),
+        href: `/${lang}`,
+        icon: Home,
+        onSelect,
+      },
+      {
+        id: 'admin-logout',
+        kind: 'form',
+        label: t('nav.logout'),
+        icon: LogOut,
+        tone: 'danger',
+        action: adminSignOut.bind(null, lang),
+        onSelect,
+      },
+    ],
+  };
+}
+
+export function AdminSidebar({
+  className,
   adminInfo,
   lang = 'en',
 }: AdminSidebarProps) {
   const { t } = useLanguage();
-  const pathname = usePathname();
-  const pathnameWithoutLocale = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, '') || '/';
-  
-  const displayName = adminInfo?.displayName || t('admin.common.admin');
-  const email = adminInfo?.email || 'admin@example.com';
-  
-  const showText = !isCollapsed || isMobile;
-  const withLocale = (href: string) => `/${lang}${href}`;
-
-  const signOutWithLang = adminSignOut.bind(null, lang);
+  const railConfig = createAdminRailConfig({ t, lang, adminInfo });
 
   return (
-    <div className={cn("flex flex-col h-full bg-slate-900 text-slate-100", className)}>
-      {/* Header - Only on mobile */}
-      {isMobile && (
-        <div className="flex items-center gap-2 h-16 border-b border-slate-700 bg-slate-800/50 backdrop-blur-md sticky top-0 z-10 px-6">
-          <div className="bg-slate-700 p-1.5 rounded-lg shrink-0">
-            <Shield className="h-6 w-6 text-slate-100" />
-          </div>
-          <span className="text-lg font-bold tracking-tight">{t('admin.login.hero.title')}</span>
-        </div>
-      )}
-
-      {/* Admin Info */}
-      <div className={cn(
-        "border-b border-slate-700 bg-gradient-to-br from-slate-800 to-slate-800/50 transition-all duration-300",
-        isCollapsed && !isMobile ? "p-4" : "p-6"
-      )}>
-        <div className={cn(
-          "flex items-center gap-3 transition-all duration-300",
-          isCollapsed && !isMobile ? "flex-col justify-center text-center gap-1" : ""
-        )}>
-          <Avatar className={cn(
-            "border-2 border-slate-600 shadow-sm transition-all duration-300",
-            isCollapsed && !isMobile ? "h-10 w-10" : "h-12 w-12"
-          )}>
-            <AvatarImage src={adminInfo?.avatarUrl || ''} />
-            <AvatarFallback className="bg-slate-700 text-slate-100 font-semibold">
-              {displayName.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          
-          <AnimatePresence>
-            {showText && (
-              <motion.div 
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: 'auto' }}
-                exit={{ opacity: 0, width: 0 }}
-                className="overflow-hidden whitespace-nowrap"
-              >
-                <h3 className="font-bold truncate leading-none mb-1">{displayName}</h3>
-                <p className="text-xs text-slate-400 truncate">{email}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto py-6 px-3">
-        <nav className="space-y-1.5">
-          {navigation.map((item) => {
-            const isActive = item.exact
-              ? pathnameWithoutLocale === item.href || pathnameWithoutLocale === '/admin'
-              : pathnameWithoutLocale.startsWith(item.href);
-            
-            return (
-              <Link
-                key={item.href}
-                href={withLocale(item.href)}
-                onClick={onClose}
-                title={isCollapsed && !isMobile ? t(item.nameKey) : undefined}
-                className={cn(
-                  "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
-                  isActive
-                    ? "bg-slate-100 text-slate-900 shadow-md"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-slate-100",
-                  isCollapsed && !isMobile ? "justify-center px-2" : ""
-                )}
-              >
-                <item.icon className={cn(
-                  "h-5 w-5 transition-transform duration-200 shrink-0",
-                  isActive ? "scale-110" : "group-hover:scale-110"
-                )} />
-                
-                <AnimatePresence>
-                  {showText && (
-                    <motion.span 
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                      className="flex-1 overflow-hidden whitespace-nowrap"
-                    >
-                      {t(item.nameKey)}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-
-                {isActive && showText && (
-                  <motion.div
-                    layoutId="active-admin-nav-indicator"
-                    className="absolute right-2 h-1.5 w-1.5 rounded-full bg-slate-900"
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Footer */}
-      <div className={cn(
-        "border-t border-slate-700 space-y-2 bg-slate-800/30 transition-all duration-300",
-        isCollapsed && !isMobile ? "p-2" : "p-4"
-      )}>
-        <Link href={`/${lang}`} onClick={onClose} className="block">
-          <Button 
-            variant="ghost" 
-            className={cn(
-              "w-full justify-start gap-3 rounded-xl text-slate-300 hover:text-slate-100 hover:bg-slate-800",
-              isCollapsed && !isMobile ? "justify-center px-0" : ""
-            )} 
-            size="sm"
-          >
-            <Home className="h-4 w-4 shrink-0" />
-            {showText && <span>{t('nav.back_to_site')}</span>}
-          </Button>
-        </Link>
-        <form action={signOutWithLang}>
-          <Button 
-            type="submit"
-            variant="ghost" 
-            className={cn(
-              "w-full justify-start gap-3 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-xl",
-              isCollapsed && !isMobile ? "justify-center px-0" : ""
-            )} 
-            size="sm"
-          >
-            <LogOut className="h-4 w-4 shrink-0" />
-            {showText && <span>{t('nav.logout')}</span>}
-          </Button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-export function AdminSidebar({ 
-  className,
-  isCollapsed = false,
-  onToggle,
-  adminInfo,
-  lang = 'en',
-}: { 
-  className?: string;
-  isCollapsed?: boolean;
-  onToggle?: () => void;
-  adminInfo?: {
-    displayName?: string | null;
-    email: string;
-    avatarUrl?: string | null;
-  };
-  lang?: string;
-}) {
-  return (
-    <aside className={cn(
-      "hidden lg:flex flex-col sticky top-0 h-screen z-30 transition-all duration-300 ease-in-out border-r border-slate-700 shadow-xl",
-      isCollapsed ? "w-20" : "w-64",
-      className
-    )}>
-      <AdminSidebarContent isCollapsed={isCollapsed} adminInfo={adminInfo} lang={lang} />
-      
-      {/* Toggle Button */}
-      {onToggle && (
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          onClick={onToggle}
-          className="absolute -right-3 top-4 h-6 w-6 rounded-full border border-slate-700 bg-slate-800 shadow-md hover:bg-slate-700 z-40 text-slate-300 hover:text-slate-100"
-        >
-          {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
-        </Button>
-      )}
-    </aside>
+    <DesktopNavigationRail
+      railId="admin"
+      variant="admin"
+      title={railConfig.title}
+      identity={railConfig.identity}
+      items={railConfig.items}
+      footerActions={railConfig.footerActions}
+      className={className}
+      stickyClassName="top-24 h-[calc(100dvh-6rem)]"
+      expandedWidth={304}
+      collapsedWidth={88}
+    />
   );
 }
 
@@ -307,6 +218,12 @@ export function AdminMobileNav({
 }) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
+  const railConfig = createAdminRailConfig({
+    t,
+    lang,
+    adminInfo,
+    onSelect: () => setOpen(false),
+  });
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -316,11 +233,20 @@ export function AdminMobileNav({
           <span className="sr-only">{t('admin.nav.toggle_menu')}</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 w-72 border-r-0 shadow-2xl bg-slate-900">
+      <SheetContent side="left" className="w-[88vw] max-w-sm border-r-0 bg-transparent p-4 shadow-none">
         <SheetHeader className="sr-only">
-          <SheetTitle>{t('admin.nav.title')}</SheetTitle>
+          <SheetTitle>{railConfig.title}</SheetTitle>
+          <SheetDescription>{railConfig.description}</SheetDescription>
         </SheetHeader>
-        <AdminSidebarContent onClose={() => setOpen(false)} isMobile={true} adminInfo={adminInfo} lang={lang} />
+        <MobileNavigationRailPanel
+          railId="admin-mobile"
+          variant="admin"
+          title={railConfig.title}
+          identity={railConfig.identity}
+          items={railConfig.items}
+          footerActions={railConfig.footerActions}
+          onItemSelect={() => setOpen(false)}
+        />
       </SheetContent>
     </Sheet>
   );

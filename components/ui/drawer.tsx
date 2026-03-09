@@ -55,6 +55,27 @@ const DrawerContent = React.forwardRef<
 ));
 DrawerContent.displayName = 'DrawerContent';
 
+interface DrawerPanelContentProps
+  extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> {
+  title: React.ReactNode;
+  description?: React.ReactNode;
+  headerClassName?: string;
+}
+
+const DrawerPanelContent = React.forwardRef<
+  React.ElementRef<typeof DrawerPrimitive.Content>,
+  DrawerPanelContentProps
+>(({ title, description, headerClassName, children, ...props }, ref) => (
+  <DrawerContent ref={ref} {...props}>
+    <DrawerHeader className={cn('sr-only', headerClassName)}>
+      <DrawerTitle>{title}</DrawerTitle>
+      {description ? <DrawerDescription>{description}</DrawerDescription> : null}
+    </DrawerHeader>
+    {children}
+  </DrawerContent>
+));
+DrawerPanelContent.displayName = 'DrawerPanelContent';
+
 const DrawerHeader = ({
   className,
   ...props
@@ -111,6 +132,7 @@ export {
   DrawerTrigger,
   DrawerClose,
   DrawerContent,
+  DrawerPanelContent,
   DrawerHeader,
   DrawerFooter,
   DrawerTitle,
