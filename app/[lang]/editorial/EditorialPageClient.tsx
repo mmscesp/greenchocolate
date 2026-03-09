@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { LinkCard } from '@/components/ui/card-26';
 import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from '@/lib/icons';
 
@@ -111,27 +112,21 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
   const standardsItems = [
     {
       key: 'legal',
-      icon: Scale,
-      iconBg: 'bg-brand/10 border-brand/20',
-      iconColor: 'text-brand',
       title: t('editorial.standards.items.legal.title'),
       description: t('editorial.standards.items.legal.description'),
+      imageUrl: '/images/cards/LegalVerified.png',
     },
     {
       key: 'harm_reduction',
-      icon: Shield,
-      iconBg: 'bg-brand/15 border-brand/25',
-      iconColor: 'text-brand-light',
       title: t('editorial.standards.items.harm_reduction.title'),
       description: t('editorial.standards.items.harm_reduction.description'),
+      imageUrl: '/images/cards/HarmReduction.png',
     },
     {
       key: 'updated',
-      icon: Clock,
-      iconBg: 'bg-brand/20 border-brand/30',
-      iconColor: 'text-brand-dark',
       title: t('editorial.standards.items.updated.title'),
       description: t('editorial.standards.items.updated.description'),
+      imageUrl: '/images/cards/UpatedRegularly.png',
     },
   ];
 
@@ -342,24 +337,20 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
 
           <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:gap-10">
             {standardsItems.map((item, idx) => (
-              // [motion]
               <motion.div
                 key={item.key}
                 initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
                 whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.35, delay: idx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
-                className="h-full rounded-2xl border border-brand/15 bg-brand/5 p-6 text-center md:p-7"
+                className="h-full"
               >
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border ${item.iconBg}`}>
-                  <item.icon className={`w-7 h-7 ${item.iconColor}`} />
-                </div>
-                <h3 className="min-h-[3.5rem] line-clamp-2 text-xl font-bold text-white leading-tight mb-3">
-                  {item.title}
-                </h3>
-                <p className="min-h-[3rem] line-clamp-2 text-sm text-zinc-400 leading-relaxed">
-                  {item.description}
-                </p>
+                <LinkCard
+                  title={item.title}
+                  description={item.description}
+                  imageUrl={item.imageUrl}
+                  className="h-full max-w-none"
+                />
               </motion.div>
             ))}
           </div>

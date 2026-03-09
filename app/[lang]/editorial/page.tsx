@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getCategoriesWithCounts, getFeaturedArticles } from '@/app/actions/articles';
 import { Badge } from '@/components/ui/badge';
+import { LinkCard } from '@/components/ui/card-26';
 import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { H1, H2, H3, H4, Eyebrow, Text, Lead } from '@/components/typography';
@@ -61,27 +62,21 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
   const standardsItems = [
     {
       key: 'legal',
-      icon: Scale,
-      iconBg: 'bg-brand/10 border-brand/20',
-      iconColor: 'text-brand',
       title: t('editorial.standards.items.legal.title'),
       description: t('editorial.standards.items.legal.description'),
+      imageUrl: '/images/cards/LegalVerified.png',
     },
     {
       key: 'harm_reduction',
-      icon: Shield,
-      iconBg: 'bg-brand/10 border-brand/20',
-      iconColor: 'text-brand',
       title: t('editorial.standards.items.harm_reduction.title'),
       description: t('editorial.standards.items.harm_reduction.description'),
+      imageUrl: '/images/cards/HarmReduction.png',
     },
     {
       key: 'updated',
-      icon: Clock,
-      iconBg: 'bg-brand/10 border-brand/20',
-      iconColor: 'text-brand',
       title: t('editorial.standards.items.updated.title'),
       description: t('editorial.standards.items.updated.description'),
+      imageUrl: '/images/cards/UpatedRegularly.png',
     },
   ];
 
@@ -216,15 +211,13 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
 
           <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:gap-10">
             {standardsItems.map((item) => (
-              <div key={item.key} className="h-full rounded-2xl border border-brand/15 bg-brand/5 p-6 text-center md:p-7">
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border ${item.iconBg}`}>
-                  <item.icon className={`w-7 h-7 ${item.iconColor}`} />
-                </div>
-                <H4 className="mb-3 min-h-[3.5rem] line-clamp-2 text-white font-serif leading-tight">{item.title}</H4>
-                <Text size="sm" variant="muted" className="min-h-[3rem] line-clamp-2 text-zinc-500 leading-relaxed">
-                  {item.description}
-                </Text>
-              </div>
+              <LinkCard
+                key={item.key}
+                title={item.title}
+                description={item.description}
+                imageUrl={item.imageUrl}
+                className="max-w-none"
+              />
             ))}
           </div>
         </div>

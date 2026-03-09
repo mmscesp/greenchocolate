@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Shield, CheckCircle, Eye, Lock, ArrowRight, Info, Compass, Target } from '@/lib/icons';
+import { Shield, ArrowRight, Compass, Target } from '@/lib/icons';
 import { H1, H2, H3, H4, Text, Lead, Eyebrow } from '@/components/typography';
+import { LinkCard } from '@/components/ui/card-26';
 import { Button } from '@/components/ui/button';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
@@ -40,9 +41,21 @@ export default async function MissionPage({ params }: MissionPageProps) {
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   const missionStandards = [
-    { titleKey: 'mission.standards.legal.title', descriptionKey: 'mission.standards.legal.description', icon: Shield },
-    { titleKey: 'mission.standards.privacy.title', descriptionKey: 'mission.standards.privacy.description', icon: Lock },
-    { titleKey: 'mission.standards.vetting.title', descriptionKey: 'mission.standards.vetting.description', icon: Eye },
+    {
+      titleKey: 'mission.standards.legal.title',
+      descriptionKey: 'mission.standards.legal.description',
+      imageUrl: '/images/cards/verifiedLegalCompliant.png',
+    },
+    {
+      titleKey: 'mission.standards.privacy.title',
+      descriptionKey: 'mission.standards.privacy.description',
+      imageUrl: '/images/cards/lock.png',
+    },
+    {
+      titleKey: 'mission.standards.vetting.title',
+      descriptionKey: 'mission.standards.vetting.description',
+      imageUrl: '/images/cards/onsitevetting.png',
+    },
   ];
 
   return (
@@ -95,16 +108,13 @@ export default async function MissionPage({ params }: MissionPageProps) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {missionStandards.map((item) => (
-                <div key={item.titleKey} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-surface/70 backdrop-blur-sm p-6 md:p-8 hover:border-brand/50 transition-all duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative">
-                    <item.icon className="h-6 w-6 text-brand mb-5 group-hover:scale-110 transition-transform duration-500" />
-                    <H4 size="xs" className="mb-3 text-white font-serif group-hover:text-brand transition-colors">{t(item.titleKey)}</H4>
-                    <Text variant="muted" size="sm" className="text-zinc-400 leading-relaxed">
-                      {t(item.descriptionKey)}
-                    </Text>
-                  </div>
-                </div>
+                <LinkCard
+                  key={item.titleKey}
+                  title={t(item.titleKey)}
+                  description={t(item.descriptionKey)}
+                  imageUrl={item.imageUrl}
+                  className="max-w-none"
+                />
               ))}
             </div>
           </section>
