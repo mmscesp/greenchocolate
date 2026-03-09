@@ -56,7 +56,10 @@ const DrawerContent = React.forwardRef<
 DrawerContent.displayName = 'DrawerContent';
 
 interface DrawerPanelContentProps
-  extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content> {
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>,
+    'title' | 'description'
+  > {
   title: React.ReactNode;
   description?: React.ReactNode;
   headerClassName?: string;

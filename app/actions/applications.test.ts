@@ -31,6 +31,7 @@ vi.mock('@/lib/prisma', () => ({
     },
     profile: {
       findUnique: vi.fn(),
+      update: vi.fn(),
     },
     auditLog: {
       create: vi.fn(),
@@ -95,11 +96,11 @@ import {
 } from '@/app/actions/applications';
 import { buildLeadToken } from '@/lib/security/membership-application';
 
-const mockUser = { id: '550e8400-e29b-41d4-a716-446655440001', email: 'test@example.com' };
+const mockUser = { id: '550e8400-e29b-41d4-a716-446655440001', email: 'ada@example.com' };
 const mockProfile = {
   id: '550e8400-e29b-41d4-a716-446655440002',
   authId: '550e8400-e29b-41d4-a716-446655440001',
-  email: 'test@example.com',
+  email: 'ada@example.com',
   displayName: 'Test User',
   avatarUrl: null,
   role: 'USER',
@@ -108,6 +109,7 @@ const mockProfile = {
 const mockClubId = '550e8400-e29b-41d4-a716-446655440003';
 const mockRequestId = '550e8400-e29b-41d4-a716-446655440004';
 const mockLeadId = '550e8400-e29b-41d4-a716-446655440005';
+const futureLeadExpiry = new Date('2026-03-10T12:00:00.000Z');
 
 const validSubmission = {
   targetClubId: mockClubId,
@@ -135,6 +137,7 @@ describe('Application Actions', () => {
     });
 
     (prisma.profile.findUnique as any).mockResolvedValue(mockProfile);
+    (prisma.profile.update as any).mockResolvedValue(mockProfile);
     (prisma.club.findUnique as any).mockResolvedValue({
       id: mockClubId,
       name: 'Test Club',
@@ -150,7 +153,7 @@ describe('Application Actions', () => {
     (prisma.membershipApplicationLead.create as any).mockResolvedValue({
       id: mockLeadId,
       clubId: mockClubId,
-      expiresAt: new Date('2026-03-09T00:00:00.000Z'),
+      expiresAt: futureLeadExpiry,
     });
     (prisma.membershipApplicationLead.update as any).mockResolvedValue({ id: mockLeadId });
     (prisma.membershipRequest.create as any).mockResolvedValue({
@@ -237,7 +240,7 @@ describe('Application Actions', () => {
       ...validSubmission,
       phone: null,
     });
-    const expiresAt = new Date('2026-03-09T00:00:00.000Z');
+    const expiresAt = futureLeadExpiry;
     const pendingLeadToken = buildLeadToken({
       leadId: mockLeadId,
       payloadHash: EncryptionService.hash(
@@ -305,5 +308,217 @@ describe('Application Actions', () => {
         consumedByProfileId: mockProfile.id,
       }),
     });
+  });
+
+  it('rejects finalizing a guest lead for a different authenticated email', async () => {
+    const expiresAt = futureLeadExpiry;
+    const encryptedPayload = EncryptionService.encryptPayload({
+      ...validSubmission,
+      phone: null,
+    });
+
+    (prisma.profile.findUnique as any).mockResolvedValue({
+      ...mockProfile,
+      email: 'different@example.com',
+    });
+    (prisma.profile.update as any).mockResolvedValue({
+      ...mockProfile,
+      email: 'different@example.com',
+    });
+    (prisma.membershipApplicationLead.findUnique as any).mockResolvedValue({
+      id: mockLeadId,
+      clubId: mockClubId,
+      encryptedPayload,
+      payloadHash: EncryptionService.hash(
+        JSON.stringify({
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          city: 'Barcelona',
+          country: 'Spain',
+          countryCode: 'ES',
+          experience: 'regular',
+          phone: null,
+          message: 'Interested in responsible membership.',
+          ageConfirmed: true,
+          termsConfirmed: true,
+        })
+      ),
+      emailHash: EncryptionService.hash('ada@example.com'),
+      fingerprintHash: EncryptionService.hash('fingerprint'),
+      riskLevel: 'LOW',
+      challengeStatus: 'NOT_REQUIRED',
+      countryCode: 'ES',
+      experience: 'regular',
+      expiresAt,
+      consumedAt: null,
+      verifiedAt: null,
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        isActive: true,
+        isVerified: true,
+        allowsPreRegistration: true,
+      },
+    });
+
+    const pendingLeadToken = buildLeadToken({
+      leadId: mockLeadId,
+      payloadHash: EncryptionService.hash(
+        JSON.stringify({
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          city: 'Barcelona',
+          country: 'Spain',
+          countryCode: 'ES',
+          experience: 'regular',
+          phone: null,
+          message: 'Interested in responsible membership.',
+          ageConfirmed: true,
+          termsConfirmed: true,
+        })
+      ),
+      expiresAt: expiresAt.toISOString(),
+    });
+
+    const result = await finalizeMembershipApplicationLead({ pendingLeadToken });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/sign in with the email used/i);
+    expect(prisma.membershipRequest.create).not.toHaveBeenCalled();
+    expect(prisma.membershipApplicationLead.update).not.toHaveBeenCalled();
+  });
+
+  it('rejects expired guest leads during finalization', async () => {
+    const expiredAt = new Date('2026-03-08T00:00:00.000Z');
+    const pendingLeadToken = buildLeadToken({
+      leadId: mockLeadId,
+      payloadHash: EncryptionService.hash(
+        JSON.stringify({
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          city: 'Barcelona',
+          country: 'Spain',
+          countryCode: 'ES',
+          experience: 'regular',
+          phone: null,
+          message: 'Interested in responsible membership.',
+          ageConfirmed: true,
+          termsConfirmed: true,
+        })
+      ),
+      expiresAt: expiredAt.toISOString(),
+    });
+
+    (prisma.membershipApplicationLead.findUnique as any).mockResolvedValue({
+      id: mockLeadId,
+      clubId: mockClubId,
+      encryptedPayload: EncryptionService.encryptPayload({ ...validSubmission, phone: null }),
+      payloadHash: EncryptionService.hash(
+        JSON.stringify({
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          city: 'Barcelona',
+          country: 'Spain',
+          countryCode: 'ES',
+          experience: 'regular',
+          phone: null,
+          message: 'Interested in responsible membership.',
+          ageConfirmed: true,
+          termsConfirmed: true,
+        })
+      ),
+      emailHash: EncryptionService.hash('ada@example.com'),
+      fingerprintHash: EncryptionService.hash('fingerprint'),
+      riskLevel: 'LOW',
+      challengeStatus: 'NOT_REQUIRED',
+      countryCode: 'ES',
+      experience: 'regular',
+      expiresAt: expiredAt,
+      consumedAt: null,
+      verifiedAt: null,
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        isActive: true,
+        isVerified: true,
+        allowsPreRegistration: true,
+      },
+    });
+
+    const result = await finalizeMembershipApplicationLead({ pendingLeadToken });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Invalid or expired application token');
+    expect(prisma.membershipRequest.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects already consumed guest leads during finalization', async () => {
+    const expiresAt = futureLeadExpiry;
+    const pendingLeadToken = buildLeadToken({
+      leadId: mockLeadId,
+      payloadHash: EncryptionService.hash(
+        JSON.stringify({
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          city: 'Barcelona',
+          country: 'Spain',
+          countryCode: 'ES',
+          experience: 'regular',
+          phone: null,
+          message: 'Interested in responsible membership.',
+          ageConfirmed: true,
+          termsConfirmed: true,
+        })
+      ),
+      expiresAt: expiresAt.toISOString(),
+    });
+
+    (prisma.membershipApplicationLead.findUnique as any).mockResolvedValue({
+      id: mockLeadId,
+      clubId: mockClubId,
+      encryptedPayload: EncryptionService.encryptPayload({ ...validSubmission, phone: null }),
+      payloadHash: EncryptionService.hash(
+        JSON.stringify({
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+          email: 'ada@example.com',
+          city: 'Barcelona',
+          country: 'Spain',
+          countryCode: 'ES',
+          experience: 'regular',
+          phone: null,
+          message: 'Interested in responsible membership.',
+          ageConfirmed: true,
+          termsConfirmed: true,
+        })
+      ),
+      emailHash: EncryptionService.hash('ada@example.com'),
+      fingerprintHash: EncryptionService.hash('fingerprint'),
+      riskLevel: 'LOW',
+      challengeStatus: 'NOT_REQUIRED',
+      countryCode: 'ES',
+      experience: 'regular',
+      expiresAt,
+      consumedAt: new Date('2026-03-09T09:00:00.000Z'),
+      verifiedAt: new Date('2026-03-09T08:30:00.000Z'),
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        isActive: true,
+        isVerified: true,
+        allowsPreRegistration: true,
+      },
+    });
+
+    const result = await finalizeMembershipApplicationLead({ pendingLeadToken });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('Invalid or expired application token');
+    expect(prisma.membershipRequest.create).not.toHaveBeenCalled();
   });
 });

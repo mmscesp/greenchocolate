@@ -6,11 +6,35 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 
-interface LinkCardProps extends React.HTMLAttributes<HTMLElement> {
+type BaseLinkCardProps = {
   title: string;
   description: string;
   imageUrl: string;
-  href?: string;
+};
+
+type MotionIncompatibleDomProps =
+  | 'children'
+  | 'onAnimationStart'
+  | 'onAnimationEnd'
+  | 'onAnimationIteration'
+  | 'onDrag'
+  | 'onDragStart'
+  | 'onDragEnd';
+
+type LinkCardAnchorProps = BaseLinkCardProps &
+  Omit<React.ComponentPropsWithoutRef<'a'>, MotionIncompatibleDomProps> & {
+    href: string;
+  };
+
+type LinkCardArticleProps = BaseLinkCardProps &
+  Omit<React.ComponentPropsWithoutRef<'article'>, MotionIncompatibleDomProps> & {
+    href?: undefined;
+  };
+
+type LinkCardProps = LinkCardAnchorProps | LinkCardArticleProps;
+
+function isLinkCardAnchorProps(props: LinkCardProps): props is LinkCardAnchorProps {
+  return typeof props.href === 'string' && props.href.length > 0;
 }
 
 const cardVariants = {
@@ -26,14 +50,16 @@ const cardVariants = {
   },
 } as const;
 
-const LinkCard = React.forwardRef<HTMLElement, LinkCardProps>(
-  ({ className, title, description, imageUrl, href, ...props }, ref) => {
+const LinkCard = React.forwardRef<HTMLAnchorElement | HTMLElement, LinkCardProps>(
+  (props, ref) => {
+    const { title, description, imageUrl } = props;
     const sharedClassName = cn(
       'group relative flex h-80 w-full flex-col justify-between overflow-hidden rounded-[28px]',
       'border border-white/10 bg-bg-card/80 p-6 text-white shadow-[0_24px_80px_-32px_rgba(0,0,0,0.65)] backdrop-blur-md',
       'transition-colors duration-300 hover:border-brand/40',
-      href && 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base',
-      className
+      props.href &&
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base',
+      props.className
     );
 
     const content = (
@@ -66,22 +92,37 @@ const LinkCard = React.forwardRef<HTMLElement, LinkCardProps>(
       </>
     );
 
-    if (href) {
+    if (isLinkCardAnchorProps(props)) {
+      const {
+        className: _className,
+        title: _title,
+        description: _description,
+        imageUrl: _imageUrl,
+        ...anchorProps
+      } = props;
+
       return (
         <motion.a
           ref={ref as React.Ref<HTMLAnchorElement>}
-          href={href}
           className={sharedClassName}
           variants={cardVariants}
           initial="initial"
           whileHover="hover"
           aria-label={`Link to ${title}`}
-          {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+          {...anchorProps}
         >
           {content}
         </motion.a>
       );
     }
+
+    const {
+      className: _className,
+      title: _title,
+      description: _description,
+      imageUrl: _imageUrl,
+      ...articleProps
+    } = props;
 
     return (
       <motion.article
@@ -91,7 +132,7 @@ const LinkCard = React.forwardRef<HTMLElement, LinkCardProps>(
         initial="initial"
         whileHover="hover"
         aria-label={title}
-        {...props}
+        {...articleProps}
       >
         {content}
       </motion.article>

@@ -1023,6 +1023,26 @@ export async function finalizeMembershipApplicationLead(input: {
     return { success: false, error: 'Club is not available for applications' };
   }
 
+  const profileEmailHash = hashEmail(profile.email);
+  if (lead.emailHash !== profileEmailHash) {
+    await logMembershipSecurityEvent({
+      recordId: lead.id,
+      operation: 'MEMBERSHIP_LEAD_FINALIZE_REJECTED',
+      changedBy: profile.authId,
+      changeData: {
+        clubId: lead.clubId,
+        reason: 'EMAIL_MISMATCH',
+        expectedEmailHash: lead.emailHash,
+        attemptedEmailHash: profileEmailHash,
+      },
+    });
+
+    return {
+      success: false,
+      error: 'Please sign in with the email used for the original application.',
+    };
+  }
+
   const decryptedPayload = EncryptionService.decryptPayload(lead.encryptedPayload);
   const payload = {
     ...decryptedPayload,

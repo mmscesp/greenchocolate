@@ -26,12 +26,13 @@ import { prisma } from '@/lib/prisma';
 import { generateSafetyPass, renewSafetyPass, validateSafetyPass } from '@/app/actions/safety-pass';
 
 describe('Safety Pass Actions', () => {
-  const mockUser = { id: '550e8400-e29b-41d4-a716-446655440001' };
+  const mockUser = { id: '550e8400-e29b-41d4-a716-446655440001', email: 'test@example.com' };
   const mockProfile = {
     id: '550e8400-e29b-41d4-a716-446655440002',
     email: 'test@example.com',
     tier: 'premium',
     isVerified: true,
+    displayName: 'test',
   };
 
   beforeEach(() => {
@@ -43,6 +44,7 @@ describe('Safety Pass Actions', () => {
     });
 
     vi.mocked(prisma.profile.findUnique).mockResolvedValue(mockProfile);
+    vi.mocked(prisma.profile.update).mockResolvedValue(mockProfile);
   });
 
   it('generates and persists safety pass from transaction source of truth', async () => {
@@ -61,9 +63,6 @@ describe('Safety Pass Actions', () => {
           expiresAt,
         }),
       },
-      profile: {
-        update: vi.fn().mockResolvedValue({ id: mockProfile.id }),
-      },
     };
 
     vi.mocked(prisma.$transaction).mockImplementation(async (fn) => {
@@ -77,11 +76,9 @@ describe('Safety Pass Actions', () => {
     expect(result.success).toBe(true);
     expect(result.pass?.status).toBe('ACTIVE');
     expect(result.pass?.tier).toBe('PREMIUM');
-    expect(tx.profile.update).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: mockProfile.id }, data: { isVerified: true } })
-    );
     expect(tx.safetyPass.upsert).toHaveBeenCalled();
     expect(prisma.notification.create).toHaveBeenCalled();
+    expect(prisma.profile.update).not.toHaveBeenCalled();
   });
 
   it('validates active persisted pass by pass number', async () => {

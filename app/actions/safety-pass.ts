@@ -1,7 +1,6 @@
 'use server';
 
 import { randomBytes } from 'crypto';
-import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { getSessionProfile } from '@/lib/session-profile';
 
@@ -74,7 +73,7 @@ function toSafetyPassView(pass: SafetyPassRecord): SafetyPassView {
   };
 }
 
-async function generateUniquePassNumber(tx: Prisma.TransactionClient): Promise<string> {
+async function generateUniquePassNumber(tx: Parameters<typeof prisma.$transaction>[0] extends (arg: infer T) => Promise<unknown> ? T : never): Promise<string> {
   const maxAttempts = 5;
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
@@ -134,11 +133,6 @@ export async function generateSafetyPass(data: {
     });
 
     const passNumber = existingPass?.passNumber ?? (await generateUniquePassNumber(tx));
-
-    await tx.profile.update({
-      where: { id: profile.id },
-      data: { isVerified: true },
-    });
 
     return tx.safetyPass.upsert({
       where: { userId: profile.id },

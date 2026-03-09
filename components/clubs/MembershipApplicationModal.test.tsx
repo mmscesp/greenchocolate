@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import type { ReactNode } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MembershipApplicationModal from '@/components/clubs/MembershipApplicationModal';
@@ -9,12 +9,36 @@ import type { Club } from '@/lib/types';
 const submitMembershipApplicationMock = vi.fn();
 const createMembershipApplicationLeadMock = vi.fn();
 const useAuthMock = vi.fn();
+const pushMock = vi.fn();
+
+function createStorageMock() {
+  const store = new Map<string, string>();
+
+  return {
+    getItem: vi.fn((key: string) => store.get(key) ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      store.set(key, value);
+    }),
+    removeItem: vi.fn((key: string) => {
+      store.delete(key);
+    }),
+    clear: vi.fn(() => {
+      store.clear();
+    }),
+  };
+}
 
 vi.mock('next/image', () => ({
   default: (props: Record<string, unknown>) => {
     const { alt, fill: _fill, ...rest } = props;
     return <img alt={typeof alt === 'string' ? alt : ''} {...rest} />;
   },
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: pushMock,
+  }),
 }));
 
 vi.mock('@/components/ui/button', () => ({
@@ -289,28 +313,37 @@ const club: Club = {
   updatedAt: new Date(),
 };
 
-async function completeRequiredFields() {
-  const user = userEvent.setup();
-
-  await user.type(screen.getByLabelText(/first name/i), 'Ada');
-  await user.type(screen.getByLabelText(/last name/i), 'Lovelace');
-  await user.type(screen.getByLabelText(/^email/i), 'ada@example.com');
-  await user.type(screen.getByLabelText(/^city/i), 'Barcelona');
-
-  await user.selectOptions(screen.getByLabelText(/country/i), 'ES');
-
-  await user.selectOptions(screen.getAllByRole('combobox')[1], 'regular');
-
-    await user.type(screen.getByLabelText(/tell us about yourself/i), 'Interested in responsible membership.');
-  await user.click(screen.getByLabelText(/i am 18\+/i));
-  await user.click(screen.getByLabelText(/i agree to the terms/i));
+function completeRequiredFields() {
+  fireEvent.change(screen.getByLabelText(/first name/i), { target: { value: 'Ada' } });
+  fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: 'Lovelace' } });
+  fireEvent.change(screen.getByLabelText(/^email/i), { target: { value: 'ada@example.com' } });
+  fireEvent.change(screen.getByLabelText(/^city/i), { target: { value: 'Barcelona' } });
+  fireEvent.change(screen.getByLabelText(/country/i), { target: { value: 'ES' } });
+  fireEvent.change(screen.getAllByRole('combobox')[1], { target: { value: 'regular' } });
+  fireEvent.change(screen.getByLabelText(/tell us about yourself/i), {
+    target: { value: 'Interested in responsible membership.' },
+  });
+  fireEvent.click(screen.getByLabelText(/i am 18\+/i));
+  fireEvent.click(screen.getByLabelText(/i agree to the terms/i));
 }
 
 describe('MembershipApplicationModal', () => {
   beforeEach(() => {
     submitMembershipApplicationMock.mockReset();
     createMembershipApplicationLeadMock.mockReset();
-    sessionStorage.clear();
+    pushMock.mockReset();
+
+    const sessionStorageMock = createStorageMock();
+    const localStorageMock = createStorageMock();
+
+    Object.defineProperty(window, 'sessionStorage', {
+      value: sessionStorageMock,
+      configurable: true,
+    });
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      configurable: true,
+    });
   });
 
   it('submits country label and country code for authenticated users', async () => {
@@ -326,12 +359,12 @@ describe('MembershipApplicationModal', () => {
       />
     );
 
-    await completeRequiredFields();
+    completeRequiredFields();
 
     const submitButton = screen.getByRole('button', { name: /submit application/i });
     expect(submitButton).toBeEnabled();
 
-    await userEvent.setup().click(submitButton);
+    fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(submitMembershipApplicationMock).toHaveBeenCalledWith({
@@ -368,8 +401,8 @@ describe('MembershipApplicationModal', () => {
       />
     );
 
-    await completeRequiredFields();
-    await userEvent.setup().click(screen.getByRole('button', { name: /submit application/i }));
+    completeRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: /submit application/i }));
 
     await waitFor(() => {
       expect(createMembershipApplicationLeadMock).toHaveBeenCalledWith({

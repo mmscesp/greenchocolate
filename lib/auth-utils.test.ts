@@ -27,8 +27,8 @@ describe('auth utils', () => {
     expect(getLandingPageByRole('SOMETHING_ELSE', 'en')).toBe('/en');
   });
 
-  it('uses en as the default locale when none is provided', () => {
-    expect(getLandingPageByRole('USER')).toBe('/en');
+  it('uses the configured default locale when none is provided', () => {
+    expect(getLandingPageByRole('USER')).toBe('/es');
   });
 
   it('redirects to the role landing page for roleRedirect', () => {
