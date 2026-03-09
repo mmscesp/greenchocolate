@@ -114,19 +114,19 @@ export default function EditorialPageClient({ lang }: EditorialPageClientProps) 
       key: 'legal',
       title: t('editorial.standards.items.legal.title'),
       description: t('editorial.standards.items.legal.description'),
-      imageUrl: '/images/cards/LegalVerified.png',
+      imageUrl: '/images/cards/LegalVerified.webp',
     },
     {
       key: 'harm_reduction',
       title: t('editorial.standards.items.harm_reduction.title'),
       description: t('editorial.standards.items.harm_reduction.description'),
-      imageUrl: '/images/cards/HarmReduction.png',
+      imageUrl: '/images/cards/HarmReduction.webp',
     },
     {
       key: 'updated',
       title: t('editorial.standards.items.updated.title'),
       description: t('editorial.standards.items.updated.description'),
-      imageUrl: '/images/cards/UpatedRegularly.png',
+      imageUrl: '/images/cards/UpatedRegularly.webp',
     },
   ];
 

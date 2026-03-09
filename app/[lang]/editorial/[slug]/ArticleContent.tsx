@@ -182,7 +182,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               </motion.div>
 
               {/* Content Render */}
-              <div className="prose prose-invert prose-gold max-w-none">
+              <div className="max-w-none border-t border-white/5 pt-10">
                 <ArticleContentRenderer content={article.content} />
               </div>
 

@@ -56,12 +56,12 @@ function parseTable(block: string, key: number, language: string): React.ReactNo
     .filter((row) => row.length > 0);
 
   return (
-    <div key={key} className="my-8 overflow-x-auto rounded-2xl border border-white/10">
+    <div key={key} className="my-10 overflow-x-auto rounded-[1.75rem] border border-white/10 bg-white/[0.03] shadow-[0_18px_60px_rgba(0,0,0,0.2)]">
       <table className="min-w-full border-collapse text-left text-sm text-zinc-200">
-        <thead className="bg-white/5">
+        <thead className="bg-white/[0.06]">
           <tr>
             {header.map((cell, index) => (
-              <th key={index} className="border-b border-white/10 px-4 py-3 font-semibold text-white">
+                <th key={index} className="border-b border-white/10 px-5 py-4 text-[11px] font-bold uppercase tracking-[0.24em] text-white/90">
                 {formatInline(cell, language)}
               </th>
             ))}
@@ -69,9 +69,9 @@ function parseTable(block: string, key: number, language: string): React.ReactNo
         </thead>
         <tbody>
           {rows.map((row, rowIndex) => (
-            <tr key={rowIndex} className="odd:bg-transparent even:bg-white/5">
+            <tr key={rowIndex} className="odd:bg-transparent even:bg-white/[0.04]">
               {row.map((cell, cellIndex) => (
-                <td key={cellIndex} className="border-b border-white/5 px-4 py-3 align-top">
+                <td key={cellIndex} className="border-b border-white/5 px-5 py-4 align-top leading-7">
                   {formatInline(cell, language)}
                 </td>
               ))}
@@ -194,19 +194,19 @@ function parseContent(content: string, language: string): React.ReactNode[] {
 
       if (level === 1) {
         blocks.push(
-          <h2 key={key++} className="mt-12 mb-6 text-2xl font-black tracking-tight text-white">
+          <h2 key={key++} className="mt-14 mb-6 scroll-mt-28 font-serif text-3xl font-black leading-tight tracking-tight text-white md:text-4xl">
             {text}
           </h2>
         );
       } else if (level === 2) {
         blocks.push(
-          <h3 key={key++} className="mt-8 mb-4 text-xl font-bold text-white">
+          <h3 key={key++} className="mt-12 mb-4 scroll-mt-28 border-t border-white/10 pt-8 font-serif text-2xl font-bold leading-tight tracking-tight text-white md:text-[2rem]">
             {text}
           </h3>
         );
       } else {
         blocks.push(
-          <h4 key={key++} className="mt-6 mb-3 text-lg font-semibold text-zinc-200">
+          <h4 key={key++} className="mt-10 mb-3 scroll-mt-28 font-serif text-xl font-bold leading-snug text-white md:text-[1.65rem]">
             {text}
           </h4>
         );
@@ -217,7 +217,7 @@ function parseContent(content: string, language: string): React.ReactNode[] {
     if (lines.every((line) => line.startsWith('> '))) {
       const quote = lines.map((line) => line.replace(/^>\s*/, '')).join(' ');
       blocks.push(
-        <blockquote key={key++} className="my-6 border-l-4 border-green-500 pl-6 py-2 italic text-zinc-400">
+        <blockquote key={key++} className="my-8 rounded-r-3xl border-l-4 border-brand bg-brand/[0.06] px-6 py-5 text-lg italic leading-8 text-zinc-100">
           {formatInline(quote, language)}
         </blockquote>
       );
@@ -226,9 +226,11 @@ function parseContent(content: string, language: string): React.ReactNode[] {
 
     if (lines.every((line) => /^[-*]\s+/.test(line))) {
       blocks.push(
-        <ul key={key++} className="my-6 list-inside list-disc space-y-2 text-zinc-300">
+        <ul key={key++} className="my-8 space-y-3 pl-1 text-[1.02rem] leading-8 text-zinc-200 marker:text-brand">
           {lines.map((line, index) => (
-            <li key={index}>{formatInline(line.replace(/^[-*]\s+/, '').trim(), language)}</li>
+            <li key={index} className="ml-5 list-disc pl-2">
+              {formatInline(line.replace(/^[-*]\s+/, '').trim(), language)}
+            </li>
           ))}
         </ul>
       );
@@ -237,9 +239,11 @@ function parseContent(content: string, language: string): React.ReactNode[] {
 
     if (lines.every((line) => /^\d+\.\s+/.test(line))) {
       blocks.push(
-        <ol key={key++} className="my-6 list-inside list-decimal space-y-2 text-zinc-300">
+        <ol key={key++} className="my-8 space-y-3 pl-1 text-[1.02rem] leading-8 text-zinc-200 marker:font-bold marker:text-brand">
           {lines.map((line, index) => (
-            <li key={index}>{formatInline(line.replace(/^\d+\.\s+/, '').trim(), language)}</li>
+            <li key={index} className="ml-5 list-decimal pl-2">
+              {formatInline(line.replace(/^\d+\.\s+/, '').trim(), language)}
+            </li>
           ))}
         </ol>
       );
@@ -247,8 +251,8 @@ function parseContent(content: string, language: string): React.ReactNode[] {
     }
 
     blocks.push(
-      <p key={key++} className="mb-6 leading-relaxed text-zinc-300">
-        {formatInline(lines.join('\n'), language)}
+      <p key={key++} className="mb-7 text-[1.04rem] leading-8 text-zinc-200 md:text-[1.08rem]">
+        {formatInline(lines.join(' '), language)}
       </p>
     );
   }
@@ -303,12 +307,12 @@ function CalloutBox({ type, title, children, language }: CalloutBoxProps) {
     .filter(Boolean);
 
   return (
-    <div className={`relative my-6 rounded-2xl border p-6 ${config.bg} ${config.border}`}>
+    <div className={`relative my-8 rounded-[1.75rem] border p-6 shadow-[0_16px_50px_rgba(0,0,0,0.18)] ${config.bg} ${config.border}`}>
       <div className="flex items-start gap-3">
         <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${config.iconColor}`} />
         <div>
-          {title && <h4 className={`mb-2 font-bold ${config.titleColor}`}>{title}</h4>}
-          <div className="space-y-2 text-sm leading-relaxed text-zinc-300">
+          {title && <h4 className={`mb-2 font-serif text-lg font-bold ${config.titleColor}`}>{title}</h4>}
+          <div className="space-y-2 text-[0.98rem] leading-7 text-zinc-200">
             {lines.map((line, index) => (
               <p key={index}>{formatInline(line, language)}</p>
             ))}
@@ -326,5 +330,5 @@ interface ArticleContentRendererProps {
 export default function ArticleContentRenderer({ content }: ArticleContentRendererProps) {
   const { language } = useLanguage();
 
-  return <div className="article-content">{parseContent(content, language)}</div>;
+  return <div className="article-content space-y-1">{parseContent(content, language)}</div>;
 }
