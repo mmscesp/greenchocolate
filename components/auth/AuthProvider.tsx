@@ -12,9 +12,13 @@ interface Profile {
   authId: string;
   email: string;
   displayName: string | null;
+  bio?: string | null;
   avatarUrl: string | null;
   role: 'USER' | 'ADMIN' | 'CLUB_ADMIN';
+  tier?: string;
+  isVerified?: boolean;
   hasCompletedOnboarding: boolean;
+  managedClubId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -68,7 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Fetch user profile from our API
   const fetchProfile = async (): Promise<Profile | null> => {
     try {
-      const response = await fetch('/api/profile/me');
+      const response = await fetch('/api/profile/me', {
+        cache: 'no-store',
+      });
       if (response.ok) {
         const data = await response.json();
         return data.profile;

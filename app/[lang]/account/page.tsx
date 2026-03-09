@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getCurrentUserProfile } from '@/app/actions/users';
+import { getCurrentUserProfile, getProfileBackendStatus } from '@/app/actions/users';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { User, 
@@ -36,7 +36,10 @@ export default async function AccountPage({ params }: AccountPageProps) {
 
     return typeof resolvedValue === 'string' ? resolvedValue : key;
   };
-  const userProfile = await getCurrentUserProfile();
+  const [userProfile, backendStatus] = await Promise.all([
+    getCurrentUserProfile(),
+    getProfileBackendStatus(),
+  ]);
 
   const formatText = (key: string, values: Record<string, string | number>) => {
     let message = t(key);
@@ -126,7 +129,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">3</p>
+                <p className="text-3xl font-bold text-primary">{backendStatus?.stats.favoritesCount ?? 0}</p>
                 <p className="text-sm text-muted-foreground">{t('account.stats.saved_clubs')}</p>
               </div>
             </CardContent>
@@ -134,7 +137,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">12</p>
+                <p className="text-3xl font-bold text-primary">{backendStatus?.stats.reviewsWritten ?? 0}</p>
                 <p className="text-sm text-muted-foreground">{t('account.stats.reviews_written')}</p>
               </div>
             </CardContent>
@@ -142,7 +145,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center">
-                <p className="text-3xl font-bold text-primary">2</p>
+                <p className="text-3xl font-bold text-primary">{backendStatus?.stats.pendingRequests ?? 0}</p>
                 <p className="text-sm text-muted-foreground">{t('account.stats.active_requests')}</p>
               </div>
             </CardContent>

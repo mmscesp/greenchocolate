@@ -3,7 +3,7 @@
 import { randomBytes } from 'crypto';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { createClient } from '@/lib/supabase/server';
+import { getSessionProfile } from '@/lib/session-profile';
 
 export type PassTier = 'STANDARD' | 'PREMIUM' | 'ELITE';
 export type PassStatus = 'ACTIVE' | 'EXPIRED' | 'SUSPENDED';
@@ -34,24 +34,17 @@ type SafetyPassRecord = {
 };
 
 async function getCurrentProfile(): Promise<CurrentProfile | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  const profile = await getSessionProfile({ ensure: true });
+  if (!profile) {
     return null;
   }
 
-  return prisma.profile.findUnique({
-    where: { authId: user.id },
-    select: {
-      id: true,
-      email: true,
-      tier: true,
-      isVerified: true,
-    },
-  });
+  return {
+    id: profile.id,
+    email: profile.email,
+    tier: profile.tier,
+    isVerified: profile.isVerified,
+  };
 }
 
 function createPassNumber(): string {

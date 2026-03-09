@@ -54,13 +54,6 @@ interface UserProfilePageContentProps {
   backendStatus: UserProfileBackendStatus | null;
 }
 
-const mockStats = {
-  clubsViewed: 12,
-  favoritesCount: 3,
-  reviewsWritten: 2,
-  memberSince: '2026'
-};
-
 type ProfileFormValues = {
   displayName: string;
   bio?: string;
@@ -87,7 +80,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
   });
 
   const displayName = userProfile?.displayName || userProfile?.email?.split('@')[0] || t('profile.member_fallback');
-  const verificationId = backendStatus?.passport.verificationId || `SMC-2026-${userProfile?.id?.slice(0, 8).toUpperCase() || 'UNKNOWN'}`;
+  const verificationId = backendStatus?.passport.verificationId || `SCM-${userProfile?.id?.slice(0, 8).toUpperCase() || 'UNKNOWN'}`;
 
   if (!userProfile) {
     return (
@@ -399,10 +392,10 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
 
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: MapPin, label: t('profile.passport.stats.clubs_viewed'), value: mockStats.clubsViewed },
-                  { icon: Heart, label: t('profile.passport.stats.favorites'), value: mockStats.favoritesCount },
-                  { icon: Star, label: t('profile.passport.stats.reviews'), value: mockStats.reviewsWritten },
-                  { icon: Calendar, label: t('profile.passport.stats.member_since'), value: mockStats.memberSince },
+                  { icon: MapPin, label: t('profile.passport.stats.clubs_viewed'), value: backendStatus?.stats.clubsInteracted ?? 0 },
+                  { icon: Heart, label: t('profile.passport.stats.favorites'), value: backendStatus?.stats.favoritesCount ?? 0 },
+                  { icon: Star, label: t('profile.passport.stats.reviews'), value: backendStatus?.stats.reviewsWritten ?? 0 },
+                  { icon: Calendar, label: t('profile.passport.stats.member_since'), value: backendStatus?.stats.memberSinceYear ?? new Date(userProfile.createdAt).getFullYear() },
                 ].map((stat, idx) => (
                   <motion.div
                     key={stat.label}

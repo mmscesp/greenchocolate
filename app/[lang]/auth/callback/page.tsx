@@ -11,6 +11,12 @@ import { createClient } from '@/lib/supabase/client';
 import { getLandingPageByRole } from '@/lib/auth-utils';
 import { useLanguage } from '@/hooks/useLanguage';
 
+type CallbackProfileResponse = {
+  profile?: {
+    role?: 'USER' | 'ADMIN' | 'CLUB_ADMIN';
+  };
+};
+
 /**
  * Auth Callback Page
  * Handles email confirmation and OAuth callbacks from Supabase
@@ -47,6 +53,24 @@ export default function AuthCallbackPage() {
     const handleAuthCallback = async () => {
       try {
         const supabase = createClient();
+
+        const resolveLandingPage = async () => {
+          try {
+            const response = await fetch('/api/profile/me', {
+              cache: 'no-store',
+            });
+
+            if (!response.ok) {
+              return localizeLandingPage(getLandingPageByRole('USER', language));
+            }
+
+            const payload = (await response.json()) as CallbackProfileResponse;
+            return localizeLandingPage(getLandingPageByRole(payload.profile?.role || 'USER', language));
+          } catch (error) {
+            console.error('Profile bootstrap lookup failed:', error);
+            return localizeLandingPage(getLandingPageByRole('USER', language));
+          }
+        };
         
         // Get the URL hash which contains the tokens from email confirmation
         const hash = window.location.hash;
@@ -68,15 +92,7 @@ export default function AuthCallbackPage() {
 
             setStatus('success');
             setMessage(t('auth_callback.messages.verify_success'));
-            
-            // Get user profile to determine role-based landing page
-            const { data: profile } = await supabase
-              .from('Profile')
-              .select('role')
-              .eq('authId', session.user.id)
-              .single();
-
-            const landingPage = localizeLandingPage(getLandingPageByRole(profile?.role || 'USER'));
+            const landingPage = await resolveLandingPage();
             
             // Redirect after a short delay
             setTimeout(() => {
@@ -109,12 +125,7 @@ export default function AuthCallbackPage() {
             let landingPage = `/${language}`;
             
             if (session) {
-              const { data: profile } = await supabase
-                .from('Profile')
-                .select('role')
-                .eq('authId', session.user.id)
-                .single();
-              landingPage = localizeLandingPage(getLandingPageByRole(profile?.role || 'USER'));
+              landingPage = await resolveLandingPage();
             }
             
             setTimeout(() => {

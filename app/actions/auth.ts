@@ -11,6 +11,7 @@ import { EncryptionService, type PIIData } from '@/lib/encryption';
 import { z } from 'zod';
 import { getLandingPageByRole } from '@/lib/auth-utils';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
+import { ensureProfileForUser, getSessionProfile, getSessionUser } from '@/lib/session-profile';
 
 const passwordSchema = z
   .string()
@@ -96,18 +97,7 @@ function getSafeRedirectPath(rawRedirect: string | null, role: string): string {
 // ==========================================
 
 async function getCurrentUser() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    return null;
-  }
-
-  const profile = await prisma.profile.findUnique({
-    where: { authId: user.id },
-  });
-
-  return profile;
+  return getSessionProfile();
 }
 
 // ==========================================
@@ -175,50 +165,28 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
 
     const encryptedData = EncryptionService.encrypt(piiData);
 
-    // Upsert profile with encrypted data
-    // Uses atomic upsert to handle race conditions between trigger and app code
-    const maxRetries = 3;
-    let profile;
+    const profile = await ensureProfileForUser(user);
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        profile = await prisma.profile.upsert({
-          where: { authId: user.id },
-          update: {
-            encryptedData,
-            displayName: validated.data.fullName,
-            hasCompletedOnboarding: true,
-          },
-          create: {
-            authId: user.id,
-            email: validated.data.email,
-            encryptedData,
-            displayName: validated.data.fullName,
-            hasCompletedOnboarding: true,
-          },
-        });
-        break;
-      } catch (error) {
-        // If unique constraint violation on last retry, give up
-        if (attempt === maxRetries) {
-          console.error('Profile upsert failed after retries:', error);
-          throw new Error('Failed to create user profile. Please try again.');
-        }
-        // Otherwise retry (race condition between trigger and upsert)
-        await new Promise(resolve => setTimeout(resolve, 100 * attempt));
-      }
+    if (!profile) {
+      throw new Error('Failed to create user profile. Please try again.');
     }
+
+    await prisma.profile.update({
+      where: { id: profile.id },
+      data: {
+        email: validated.data.email.toLowerCase(),
+        encryptedData,
+        displayName: validated.data.fullName,
+        hasCompletedOnboarding: true,
+      },
+    });
 
     // Record consent for GDPR
     // Get the profile ID for the consent record
-    const profileForConsent = await prisma.profile.findUnique({
-      where: { authId: user.id },
-    });
-
-    if (profileForConsent) {
+    if (profile) {
       await prisma.consentRecord.create({
         data: {
-          userId: profileForConsent.id,
+          userId: profile.id,
           purpose: 'registration',
           granted: true,
           version: '1.0',
@@ -316,9 +284,9 @@ export async function login(prevState: ActionState, formData: FormData): Promise
 
     // Update lastActive timestamp and get profile
     if (authData.user) {
-      profile = await prisma.profile.update({
-        where: { authId: authData.user.id },
-        data: { lastActiveAt: new Date() },
+      profile = await getSessionProfile({
+        ensure: true,
+        touchLastActive: true,
       });
 
       await logAuthAuditEvent({
@@ -386,8 +354,7 @@ export async function getCurrentUserAction() {
  * Update Profile Action
  */
 export async function updateProfile(prevState: ActionState, formData: FormData): Promise<ActionState> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getSessionUser();
 
   if (!user) {
     return {

@@ -10,6 +10,7 @@ vi.mock('@/lib/prisma', () => ({
     },
     profile: {
       findUnique: vi.fn(),
+      update: vi.fn(),
     },
   },
 }));
@@ -32,6 +33,20 @@ describe('Notification Actions', () => {
   const mockProfile = {
     id: 'profile-123',
     authId: 'user-123',
+    email: 'test@example.com',
+    displayName: 'Test User',
+    role: 'USER',
+    tier: 'novice',
+    bio: null,
+    avatarUrl: null,
+    isVerified: false,
+    hasCompletedOnboarding: true,
+    lastActiveAt: null,
+    createdAt: new Date('2026-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    managedClubId: null,
+    preferences: null,
+    stats: null,
   };
 
   beforeEach(() => {
@@ -42,6 +57,7 @@ describe('Notification Actions', () => {
       },
     });
     (prisma.profile.findUnique as any).mockResolvedValue(mockProfile);
+    (prisma.profile.update as any).mockResolvedValue(mockProfile);
   });
 
   describe('queueNotification', () => {

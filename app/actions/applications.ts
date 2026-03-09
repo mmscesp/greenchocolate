@@ -6,7 +6,6 @@ import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { EncryptionService } from '@/lib/encryption';
 import { prisma } from '@/lib/prisma';
-import { createClient } from '@/lib/supabase/server';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
 import {
   buildApplicantPayload,
@@ -42,6 +41,7 @@ import {
   sendMembershipStageUpdateEmail,
   sendMembershipSubmissionEmail,
 } from '@/lib/email/membership';
+import { getSessionProfile } from '@/lib/session-profile';
 
 const TRANSACTION_MAX_RETRIES = 3;
 
@@ -189,25 +189,7 @@ const bootstrapSchema = z.object({
 });
 
 async function getCurrentProfile(): Promise<CurrentProfile | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  const profile = await prisma.profile.findUnique({
-    where: { authId: user.id },
-    select: {
-      id: true,
-      authId: true,
-      email: true,
-      displayName: true,
-      avatarUrl: true,
-      role: true,
-      managedClubId: true,
-    },
-  });
+  const profile = await getSessionProfile({ ensure: true });
 
   if (!profile) return null;
 

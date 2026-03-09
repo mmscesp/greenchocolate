@@ -1,8 +1,8 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { createClient } from '@/lib/supabase/server';
 import { Prisma } from '@prisma/client';
+import { getSessionProfile } from '@/lib/session-profile';
 
 export type NotificationType =
   | 'APPLICATION_SUBMITTED'
@@ -31,17 +31,8 @@ export interface NotificationItem {
 }
 
 async function getCurrentProfileId(): Promise<string | null> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  const profile = await prisma.profile.findUnique({
-    where: { authId: user.id },
-    select: { id: true },
-  });
-
-  return profile?.id || null;
+  const profile = await getSessionProfile({ ensure: true });
+  return profile?.id ?? null;
 }
 
 export async function queueNotification(input: NotificationInput): Promise<{
