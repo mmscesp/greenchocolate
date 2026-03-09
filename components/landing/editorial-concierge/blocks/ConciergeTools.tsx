@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { ArrowRight, CheckCircle2, ChevronDown, ClipboardList, Mail, ShieldAlert, Sparkles } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { trackEvent } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { deliverConciergePlan } from '@/app/actions/lead-capture';
 import {
   resolveConciergePlan,
   type CityOptionId,
@@ -41,6 +43,7 @@ type PersistedResultStateInput = Omit<PersistedResultState, 'timestamp'>;
 
 export function ConciergeTools() {
   const { language, t } = useLanguage();
+  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
@@ -211,6 +214,12 @@ export function ConciergeTools() {
     if (!resolvedPlan || !email.trim()) return;
 
     const payload = buildPlanPayload(resolvedPlan, answers as QuizAnswers);
+    const fallbackPath =
+      activeStep?.href ||
+      resolvedPlan.primaryCta.href ||
+      resolvedPlan.steps[0]?.href ||
+      `/${language}/editorial/what-are-cannabis-social-clubs-spain`;
+
     setSubmitStatus('loading');
 
     trackEvent('landing_concierge_plan_submit_attempt', {
@@ -218,13 +227,39 @@ export function ConciergeTools() {
       email_length: email.trim().length,
     });
 
-    await new Promise((resolve) => window.setTimeout(resolve, 900));
+    try {
+      const result = await deliverConciergePlan({
+        email: email.trim(),
+        locale: language,
+        planName: t(resolvedPlan.planNameKey),
+        summary: t(resolvedPlan.summaryKey),
+        primaryHref: fallbackPath,
+        steps: resolvedPlan.steps.map((stepItem) => ({
+          title: t(getStepTranslationKey(stepItem, 'title')),
+          href: stepItem.href,
+        })),
+      });
 
-    setSubmitStatus('success');
-    trackEvent('landing_concierge_plan_submit_success', {
-      ...payload,
-      source: 'landing_concierge_tools',
-    });
+      if (result.deliveryMode === 'direct') {
+        trackEvent('landing_concierge_plan_submit_fallback', {
+          ...payload,
+          source: 'landing_concierge_tools',
+          fallback_path: result.fallbackPath,
+        });
+        router.push(result.fallbackPath);
+        return;
+      }
+
+      setSubmitStatus('success');
+      trackEvent('landing_concierge_plan_submit_success', {
+        ...payload,
+        source: 'landing_concierge_tools',
+        delivery_mode: 'email',
+      });
+    } catch (error) {
+      console.error('Concierge plan delivery failed:', error);
+      router.push(fallbackPath);
+    }
   };
 
   const handlePreviewToggle = (stepItem: ResolvedStep, positionIndex: number) => {

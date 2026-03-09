@@ -80,6 +80,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
   }
 
   const gatedClub = await getClubDetailsWithAccess(clubDetail.id);
+  const hasFullAccess = gatedClub.accessLevel === 'FULL';
   const clubImages = getClubImageGallery(clubDetail.images, clubDetail.citySlug);
   const mediaItems = buildClubMediaItems({
     slug: clubDetail.slug,
@@ -102,10 +103,10 @@ export default async function ClubPage({ params }: ClubPageProps) {
     vibeTags: clubDetail.vibeTags,
     openingHours: clubDetail.openingHours,
     allowsPreRegistration: clubDetail.allowsPreRegistration,
-    coordinates: clubDetail.coordinates,
-    address: gatedClub.accessLevel === 'FULL' ? clubDetail.addressDisplay : undefined,
-    contactEmail: gatedClub.club?.contactEmail || '',
-    phoneNumber: gatedClub.club?.phoneNumber || '',
+    coordinates: hasFullAccess ? clubDetail.coordinates : undefined,
+    address: hasFullAccess ? clubDetail.addressDisplay : undefined,
+    contactEmail: hasFullAccess ? gatedClub.club?.contactEmail || '' : '',
+    phoneNumber: hasFullAccess ? gatedClub.club?.phoneNumber || '' : '',
     website: clubDetail.website || undefined,
     socialMedia: clubDetail.socialMedia || undefined,
     rating: clubDetail.rating || undefined,
@@ -114,7 +115,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     capacity: clubDetail.capacity,
     foundedYear: clubDetail.foundedYear,
     cityId: '',
-    addressDisplay: clubDetail.addressDisplay,
+    addressDisplay: hasFullAccess ? clubDetail.addressDisplay : clubDetail.neighborhood,
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -131,19 +132,23 @@ export default async function ClubPage({ params }: ClubPageProps) {
       addressLocality: club.neighborhood,
       addressCountry: 'ES',
     },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: club.coordinates.lat,
-      longitude: club.coordinates.lng,
-    },
     priceRange: club.priceRange,
-    telephone: club.phoneNumber,
     url: club.website ? `https://${club.website}` : undefined,
-    email: club.contactEmail,
     amenityFeature: club.amenities.map((amenity) => ({
       '@type': 'LocationFeatureSpecification',
       name: amenity,
     })),
+    ...(hasFullAccess && club.coordinates
+      ? {
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: club.coordinates.lat,
+            longitude: club.coordinates.lng,
+          },
+        }
+      : {}),
+    ...(hasFullAccess && club.phoneNumber ? { telephone: club.phoneNumber } : {}),
+    ...(hasFullAccess && club.contactEmail ? { email: club.contactEmail } : {}),
   };
 
   const breadcrumbJsonLd = {

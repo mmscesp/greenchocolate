@@ -2,38 +2,59 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { PREMIUM_SPRING } from '../motion/config';
-import { Check, X, ShieldCheck, Download, ArrowRight, AlertTriangle } from '@/lib/icons';
+import { ShieldCheck, Download, AlertTriangle } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { deliverSafetyKitLead } from '@/app/actions/lead-capture';
 
 export function SafetyKitFunnel() {
   const { t, language } = useLanguage();
+  const router = useRouter();
   
   // States: 'email' -> 'age_gate' -> 'download' | 'rejected'
   const [step, setStep] = useState<'email' | 'age_gate' | 'download' | 'rejected'>('email');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deliveryPath, setDeliveryPath] = useState(`/${language}/editorial/safety-kit-visitors-spain`);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
-    setIsSubmitting(true);
-    // Simulate API call for email submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setStep('age_gate');
-    }, 600);
+
+    setStep('age_gate');
   };
 
-  const handleAgeAnswer = (isAdult: boolean) => {
-    if (isAdult) {
-      setStep('download');
-    } else {
+  const handleAgeAnswer = async (isAdult: boolean) => {
+    if (!isAdult) {
       setStep('rejected');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const result = await deliverSafetyKitLead({
+        email,
+        locale: language,
+        source: 'safety_kit_funnel',
+      });
+
+      if (result.deliveryMode === 'direct') {
+        router.push(result.fallbackPath);
+        return;
+      }
+
+      setDeliveryPath(result.fallbackPath);
+      setStep('download');
+    } catch (error) {
+      console.error('Safety Kit delivery failed:', error);
+      router.push(`/${language}/editorial/safety-kit-visitors-spain`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -95,15 +116,17 @@ export function SafetyKitFunnel() {
                 variant="primary"
                 size="lg"
                 onClick={() => handleAgeAnswer(true)}
+                disabled={isSubmitting}
                 className="flex-1"
               >
-                {t('safety_kit.age_yes')}
+                {isSubmitting ? '...' : t('safety_kit.age_yes')}
               </Button>
               <Button
                 type="button"
                 variant="secondary"
                 size="lg"
                 onClick={() => handleAgeAnswer(false)}
+                disabled={isSubmitting}
                 className="flex-none"
               >
                 {t('safety_kit.age_no')}
@@ -154,13 +177,11 @@ export function SafetyKitFunnel() {
               {t('safety_kit.dl_headline')}
             </h3>
             
-            <Button 
-              variant="primary"
-              size="lg"
-              className="mb-4 w-full"
-            >
-              <Download className="w-4 h-4" />
-              {t('safety_kit.dl_button')}
+            <Button asChild variant="primary" size="lg" className="mb-4 w-full">
+              <Link href={deliveryPath}>
+                <Download className="w-4 h-4" />
+                {t('safety_kit.dl_button')}
+              </Link>
             </Button>
             
             <p className="text-zinc-400 text-xs leading-relaxed mb-6">

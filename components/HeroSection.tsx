@@ -468,7 +468,7 @@ export default function HeroSection() {
                       <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
                     </Button>
                     <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full border-white/20 text-white bg-white/5 hover:bg-white/15 hover:border-white/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                      <Link href={`/${language}/editorial/legal`}>{t('hero.section.cta_secondary')}</Link>
+                      <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`}>{t('hero.section.cta_secondary')}</Link>
                     </Button>
                   </div>
                 </div>
@@ -569,7 +569,7 @@ export default function HeroSection() {
                     <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
                   </Button>
                   <Button asChild size="lg" variant="secondary" className="w-full py-6 text-base font-bold rounded-full border border-white/20 text-white bg-white/5 active:bg-white/10 active:scale-[0.98] transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                    <Link href={`/${language}/editorial/legal`}>{t('hero.section.cta_secondary')}</Link>
+                    <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`}>{t('hero.section.cta_secondary')}</Link>
                   </Button>
                 </div>
               </div>
