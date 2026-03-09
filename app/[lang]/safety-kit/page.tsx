@@ -9,9 +9,31 @@ import { SafetyKitFunnel } from '@/components/landing/editorial-concierge/intera
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
+  const metadataByLocale: Record<string, { title: string; description: string }> = {
+    es: {
+      title: 'El Safety Kit de Espana - Descarga gratis | SocialClubsMaps',
+      description:
+        'Guia gratuita para viajeros que visitan Cannabis Social Clubs en Espana. Limites legales, senales de estafa, etiqueta de primera visita y numeros de emergencia.',
+    },
+    en: {
+      title: 'The Spain Safety Kit - Free Download | SocialClubsMaps',
+      description:
+        'Free guide for travelers visiting Cannabis Social Clubs in Spain. Legal lines, scam red flags, first-visit etiquette, and emergency numbers.',
+    },
+    fr: {
+      title: 'Le Safety Kit pour l Espagne - Telechargement gratuit | SocialClubsMaps',
+      description:
+        'Guide gratuit pour les voyageurs qui visitent des Cannabis Social Clubs en Espagne. Cadre legal, signaux d arnaque, etiquette de premiere visite et numeros d urgence.',
+    },
+    de: {
+      title: 'Das Spanien Safety Kit - Kostenloser Download | SocialClubsMaps',
+      description:
+        'Kostenloser Leitfaden fur Reisende zu Cannabis Social Clubs in Spanien. Rechtliche Grenzen, Betrugswarnzeichen, Erstbesuchs-Etikette und Notfallnummern.',
+    },
+  };
+
   return {
-    title: "The Spain Safety Kit — Free Download | SocialClubsMaps",
-    description: "Free guide for travelers visiting Cannabis Social Clubs in Spain. Legal lines, scam red flags, first-visit etiquette, emergency numbers. Built by locals in Barcelona. Downloaded by 2,500+ travelers."
+    ...(metadataByLocale[lang] ?? metadataByLocale.en),
   };
 }
 
@@ -23,6 +45,11 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const translate = (key: string): unknown => {
+    const directValue = dictionary[key];
+    if (directValue !== undefined) {
+      return directValue;
+    }
+
     const keys = key.split('.');
     let result: unknown = dictionary;
     for (const k of keys) {

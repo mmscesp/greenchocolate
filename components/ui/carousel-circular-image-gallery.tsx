@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import { useLanguage } from '@/hooks/useLanguage';
 
 type MotionPathWindow = Window &
   typeof globalThis & {
@@ -70,6 +71,7 @@ interface ImageGalleryProps {
 }
 
 export function ImageGallery({ images }: ImageGalleryProps) {
+  const { t } = useLanguage()
   const [opened, setOpened] = useState(0)
   const [inPlace, setInPlace] = useState(0)
   const [disabled, setDisabled] = useState(false)
@@ -178,7 +180,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
             className="absolute left-2 top-1/2 z-[101] flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-bg-base/75 text-white shadow-xl backdrop-blur-md transition-all hover:scale-110 hover:border-brand/40 hover:bg-bg-surface disabled:opacity-40 sm:left-3 sm:h-14 sm:w-14 lg:-left-3"
             onClick={prev}
             disabled={disabled}
-            aria-label="Previous Image"
+            aria-label={t('gallery.previous_image')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
           </button>
@@ -186,7 +188,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
             className="absolute right-2 top-1/2 z-[101] flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-bg-base/75 text-white shadow-xl backdrop-blur-md transition-all hover:scale-110 hover:border-brand/40 hover:bg-bg-surface disabled:opacity-40 sm:right-3 sm:h-14 sm:w-14 lg:-right-3"
             onClick={next}
             disabled={disabled}
-            aria-label="Next Image"
+            aria-label={t('gallery.next_image')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
           </button>

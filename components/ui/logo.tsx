@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface LogoProps {
   className?: string;
@@ -29,6 +30,7 @@ export function Logo({
   imageClassName,
   priority = false,
 }: LogoProps) {
+  const { t } = useLanguage();
   const config = sizeConfig[size];
 
   const logoContent = (
@@ -36,7 +38,7 @@ export function Logo({
       <div className={cn('relative shrink-0', config.iconClass)}>
         <Image
           src="/images/SCM_Logo_OG.svg"
-          alt="SocialClubsMaps Logo"
+          alt={t('brand.name')}
           width={config.width}
           height={config.height}
           className={cn('object-contain', imageClassName)}
@@ -78,13 +80,14 @@ export function LogoIcon({
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'mega';
   priority?: boolean;
 }) {
+  const { t } = useLanguage();
   const config = sizeConfig[size];
 
   return (
     <div className={cn('relative shrink-0', config.iconClass, className)}>
       <Image
         src="/images/SCM_Logo_OG.svg"
-        alt="SocialClubsMaps Logo"
+        alt={t('brand.name')}
         width={config.width}
         height={config.height}
         className="object-contain"

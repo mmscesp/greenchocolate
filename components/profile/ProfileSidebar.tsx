@@ -212,6 +212,8 @@ export function ProfileSidebar({
   isCollapsed?: boolean;
   onToggle?: () => void;
 }) {
+  const { t } = useLanguage();
+
   return (
     <aside
       className={cn(
@@ -226,7 +228,7 @@ export function ProfileSidebar({
         <Button
           variant="ghost"
           size="icon"
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={isCollapsed ? t('profile.sidebar.expand') : t('profile.sidebar.collapse')}
           onClick={onToggle}
           className="absolute -right-4 top-8 h-8 w-8 rounded-full border border-white/10 bg-black shadow-xl hover:bg-white hover:text-black z-40 text-zinc-500 transition-all"
         >

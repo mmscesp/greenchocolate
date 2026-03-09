@@ -4,13 +4,11 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ImageGallery, type CircularGalleryImage } from '@/components/ui/carousel-circular-image-gallery';
 import VerificationBadge from '@/components/VerificationBadge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
-import { useAuth } from '@/components/auth/AuthProvider';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { getClubPrimaryMediaImage, type ClubMediaItem, type ClubVideoMediaItem } from '@/lib/club-media';
 import {
@@ -41,8 +39,6 @@ interface ClubProfileContentProps {
 
 export default function ClubProfileContent({ club, mediaItems }: ClubProfileContentProps) {
   const { t, language } = useLanguage();
-  const { user } = useAuth();
-  const router = useRouter();
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -60,7 +56,9 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
       : fallbackImages.map((src, index) => ({
           kind: 'image' as const,
           src,
-          alt: `${club.name} gallery image ${index + 1}`,
+          alt: t('club_profile.gallery_image_alt')
+            .replace('{clubName}', club.name)
+            .replace('{index}', String(index + 1)),
         }));
 
   const primaryStaticImage = getClubPrimaryMediaImage(galleryItems);
@@ -69,7 +67,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const acceptsApplications = club.allowsPreRegistration;
   const primaryActionLabel = acceptsApplications
     ? t('club_profile.apply_for_membership')
-    : 'Applications unavailable';
+    : t('club_profile.apply_unavailable');
   
   // Format images for the new circular GSAP carousel - ONLY IMAGES
   const carouselImages: CircularGalleryImage[] = imagesOnly.map((item, index) => ({
@@ -121,7 +119,14 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
               {videoItem.mp4Fallback && <source src={videoItem.mp4Fallback} type="video/mp4" />}
             </video>
           ) : (
-            <Image src={primaryStaticImage} alt={`${club.name} hero image`} fill priority sizes="100vw" className="object-cover" />
+            <Image
+              src={primaryStaticImage}
+              alt={t('club_profile.hero_image_alt').replace('{clubName}', club.name)}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/45 to-bg-base/15" />
           <div className="absolute inset-0 bg-gradient-to-r from-bg-base/85 via-bg-base/25 to-transparent" />

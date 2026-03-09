@@ -1,7 +1,10 @@
 'use client';
 
+'use client';
+
 import { Shield, Lock, CheckCircle2, AlertTriangle } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface TrustBadgeProps {
   type: 'encrypted' | 'verified' | 'legal' | 'warning';
@@ -10,10 +13,12 @@ interface TrustBadgeProps {
 }
 
 export default function TrustBadge({ type, size = 'md', className }: TrustBadgeProps) {
+  const { t } = useLanguage();
+
   const configs = {
     encrypted: {
       icon: Lock,
-      text: 'AES-256 ENCRYPTED',
+      text: t('badges.encrypted'),
       bg: 'bg-brand/10',
       border: 'border-brand/20',
       text_color: 'text-brand',
@@ -21,7 +26,7 @@ export default function TrustBadge({ type, size = 'md', className }: TrustBadgeP
     },
     verified: {
       icon: CheckCircle2,
-      text: 'VERIFIED CLUB',
+      text: t('badges.verified'),
       bg: 'bg-brand/10',
       border: 'border-brand/20',
       text_color: 'text-brand',
@@ -29,7 +34,7 @@ export default function TrustBadge({ type, size = 'md', className }: TrustBadgeP
     },
     legal: {
       icon: Shield,
-      text: 'LEGAL COMPLIANCE',
+      text: t('badges.legal'),
       bg: 'bg-brand/10',
       border: 'border-brand/20',
       text_color: 'text-brand',
@@ -37,7 +42,7 @@ export default function TrustBadge({ type, size = 'md', className }: TrustBadgeP
     },
     warning: {
       icon: AlertTriangle,
-      text: 'SCAM ALERT',
+      text: t('badges.warning'),
       bg: 'bg-red-500/10',
       border: 'border-red-500/20',
       text_color: 'text-red-500',

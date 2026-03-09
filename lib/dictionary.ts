@@ -1,6 +1,7 @@
 import 'server-only';
 import type { Locale } from './i18n-config';
 import type { Dictionary } from '@/hooks/useLanguage';
+import { dictionaryOverrides } from './dictionary-overrides';
 
 const toDictionary = (value: unknown): Dictionary => value as unknown as Dictionary;
 
@@ -13,5 +14,11 @@ const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
 };
 
 export const getDictionary = async (locale: Locale): Promise<Dictionary> => {
-  return dictionaries[locale]?.() ?? dictionaries.es();
+  const baseDictionary = await (dictionaries[locale]?.() ?? dictionaries.es());
+  const overrides = dictionaryOverrides[locale] ?? {};
+
+  return {
+    ...baseDictionary,
+    ...overrides,
+  };
 };

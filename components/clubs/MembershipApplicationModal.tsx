@@ -155,7 +155,7 @@ export default function MembershipApplicationModal({
           setRequiresChallenge(true);
           setFormState({
             success: false,
-            message: result.error || 'Please complete the verification challenge to continue.',
+            message: result.error || t('club_profile.modal.challenge_required'),
           });
         } else {
           setFormState({
@@ -195,7 +195,7 @@ export default function MembershipApplicationModal({
           setRequiresChallenge(true);
           setFormState({
             success: false,
-            message: result.error || 'Please complete the verification challenge to continue.',
+            message: result.error || t('club_profile.modal.challenge_required'),
           });
         } else {
           setFormState({
@@ -267,7 +267,7 @@ export default function MembershipApplicationModal({
                 <div className="absolute inset-0 z-10 bg-gradient-to-t from-bg-surface via-bg-surface/40 to-transparent" />
                 <Image
                   src={clubImage}
-                  alt={`${club.name} modal header`}
+                  alt={t('club_profile.modal.header_alt').replace('{clubName}', club.name)}
                   fill
                   className="object-cover opacity-40"
                 />

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -12,7 +11,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,7 +29,6 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { updateUserProfile } from '@/app/actions/users';
 import MemberPassport from '@/components/profile/MemberPassport';
 import ApplicationStatusTracker from '@/components/profile/ApplicationStatusTracker';
-import TrustBadge from '@/components/trust/TrustBadge';
 import { Edit3, 
 Save, 
 X, 
@@ -44,13 +41,11 @@ Check,
 Star,
 MapPin,
 Loader2,
-Wallet,
-FileCheck,
-Clock,
-ArrowRight,
-Heart,
-TrendingUp,
-CreditCard } from '@/lib/icons';
+  Wallet,
+  FileCheck,
+  Clock,
+  Heart,
+ } from '@/lib/icons';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -66,20 +61,22 @@ const mockStats = {
   memberSince: '2026'
 };
 
-const profileFormSchema = z.object({
-  displayName: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
-  }),
-  bio: z.string().max(160).optional(),
-});
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type ProfileFormValues = {
+  displayName: string;
+  bio?: string;
+};
 
 export default function UserProfilePageContent({ userProfile, backendStatus }: UserProfilePageContentProps) {
   const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'passport' | 'status'>('overview');
+  const profileFormSchema = z.object({
+    displayName: z.string().min(2, {
+      message: t('profile.validation.display_name_min'),
+    }),
+    bio: z.string().max(160).optional(),
+  });
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -122,7 +119,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
       } else {
         toast.error(result.message || t('profile.update_error'));
       }
-    } catch (error) {
+    } catch {
       toast.error(t('profile.error_generic'));
     } finally {
       setIsSaving(false);

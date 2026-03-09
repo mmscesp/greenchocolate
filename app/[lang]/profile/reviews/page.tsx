@@ -42,56 +42,58 @@ interface Review {
   isEditable: boolean;
 }
 
+const buildMockReviews = (t: (key: string) => string): Review[] => [
+  {
+    id: '1',
+    clubId: '1',
+    clubName: 'Green Harmony Madrid',
+    clubImage: 'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
+    clubNeighborhood: 'Malasana',
+    rating: 5,
+    title: t('reviews.mock.1.title'),
+    content: t('reviews.mock.1.content'),
+    date: '2024-01-15',
+    likes: 12,
+    replies: 3,
+    isEditable: true,
+  },
+  {
+    id: '2',
+    clubId: '2',
+    clubName: 'Cannabis Culture Centro',
+    clubImage: 'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
+    clubNeighborhood: 'Centro',
+    rating: 4,
+    title: t('reviews.mock.2.title'),
+    content: t('reviews.mock.2.content'),
+    date: '2024-01-10',
+    likes: 8,
+    replies: 1,
+    isEditable: true,
+  },
+  {
+    id: '3',
+    clubId: '4',
+    clubName: 'Latina Green Collective',
+    clubImage: 'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
+    clubNeighborhood: 'La Latina',
+    rating: 5,
+    title: t('reviews.mock.3.title'),
+    content: t('reviews.mock.3.content'),
+    date: '2024-01-05',
+    likes: 15,
+    replies: 5,
+    isEditable: true,
+  },
+];
+
 export default function ReviewsPage() {
   const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [ratingFilter, setRatingFilter] = useState<number>(0);
   
   // Mock reviews data
-  const [reviews, setReviews] = useState<Review[]>([
-    {
-      id: '1',
-      clubId: '1',
-      clubName: 'Green Harmony Madrid',
-      clubImage: 'https://images.pexels.com/photos/4113892/pexels-photo-4113892.jpeg',
-      clubNeighborhood: 'Malasaña',
-      rating: 5,
-      title: 'Experiencia increíble en Malasaña',
-      content: 'Un ambiente muy acogedor y relajado. El personal es súper amable y conocedor. Las instalaciones están impecables y la variedad de productos es excelente. Definitivamente volveré.',
-      date: '2024-01-15',
-      likes: 12,
-      replies: 3,
-      isEditable: true
-    },
-    {
-      id: '2',
-      clubId: '2',
-      clubName: 'Cannabis Culture Centro',
-      clubImage: 'https://images.pexels.com/photos/6231900/pexels-photo-6231900.jpeg',
-      clubNeighborhood: 'Centro',
-      rating: 4,
-      title: 'Buen club en el centro',
-      content: 'Ubicación perfecta en el centro de Madrid. El ambiente es más formal pero muy educativo. Los talleres que organizan son muy interesantes.',
-      date: '2024-01-10',
-      likes: 8,
-      replies: 1,
-      isEditable: true
-    },
-    {
-      id: '3',
-      clubId: '4',
-      clubName: 'Latina Green Collective',
-      clubImage: 'https://images.pexels.com/photos/7492875/pexels-photo-7492875.jpeg',
-      clubNeighborhood: 'La Latina',
-      rating: 5,
-      title: 'Ambiente festivo y social',
-      content: 'Me encanta la terraza y los eventos que organizan. Es perfecto para socializar y conocer gente nueva. La música en vivo es un plus.',
-      date: '2024-01-05',
-      likes: 15,
-      replies: 5,
-      isEditable: true
-    }
-  ]);
+  const [reviews, setReviews] = useState<Review[]>(() => buildMockReviews(t));
 
   const filteredReviews = reviews.filter(review => {
     const matchesSearch = !searchQuery || 

@@ -28,7 +28,16 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const article = await getArticleBySlug(slug, lang as 'es' | 'en' | 'fr' | 'de');
 
   if (!article) {
-    return { title: 'Article Not Found' };
+    return {
+      title:
+        lang === 'es'
+          ? 'Articulo no encontrado'
+          : lang === 'fr'
+            ? 'Article introuvable'
+            : lang === 'de'
+              ? 'Artikel nicht gefunden'
+              : 'Article Not Found',
+    };
   }
 
   const canonicalUrl = `https://socialclubsmaps.com/${lang}/editorial/${article.slug}`;

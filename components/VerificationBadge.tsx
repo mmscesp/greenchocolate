@@ -1,5 +1,8 @@
-import { CheckCircle, Shield, Award } from '@/lib/icons';
+'use client';
+
+import { Shield, Award } from '@/lib/icons';
 import { Badge } from './ui/badge';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface VerificationBadgeProps {
   isVerified: boolean;
@@ -14,6 +17,8 @@ export default function VerificationBadge({
   showText = true,
   variant = 'default'
 }: VerificationBadgeProps) {
+  const { t } = useLanguage();
+
   if (!isVerified) return null;
 
   const sizeClasses = {
@@ -38,7 +43,7 @@ export default function VerificationBadge({
       style={{ animationDuration: '6s' }}
     >
       <Icon className={`${iconSizes[size]} animate-pulse`} style={{ animationDuration: '6s' }} />
-      {showText && (variant === 'premium' ? 'Club Premium' : 'Verificado')}
+      {showText && (variant === 'premium' ? t('verification_badge.premium') : t('verification_badge.verified'))}
     </Badge>
   );
 }

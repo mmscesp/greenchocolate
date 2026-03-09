@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Maximize, Volume2, VolumeX } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';

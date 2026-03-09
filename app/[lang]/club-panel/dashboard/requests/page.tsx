@@ -4,26 +4,58 @@ import { getClubApplications } from '@/app/actions/applications';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ClubRequestsPage() {
+const clubPanelRequestsCopy = {
+  en: {
+    title: 'Membership Requests',
+    subtitle:
+      'This queue is now admin-managed. Club accounts can review request status, but approvals and rejections happen from the platform admin portal.',
+    cardTitle: 'Read-only request view',
+    empty: 'No applicant requests are currently visible for this club.',
+  },
+  es: {
+    title: 'Solicitudes de membresia',
+    subtitle:
+      'Esta cola ahora esta gestionada por admins de plataforma. Las cuentas del club pueden revisar el estado, pero las aprobaciones y rechazos se hacen desde el portal admin.',
+    cardTitle: 'Vista de solicitudes en solo lectura',
+    empty: 'Ahora mismo no hay solicitudes visibles para este club.',
+  },
+  fr: {
+    title: 'Demandes d adhesion',
+    subtitle:
+      'Cette file est desormais geree par les admins de la plateforme. Les comptes club peuvent consulter le statut, mais les approbations et rejets se font depuis le portail admin.',
+    cardTitle: 'Vue en lecture seule des demandes',
+    empty: 'Aucune demande visible pour ce club pour le moment.',
+  },
+  de: {
+    title: 'Mitgliedschaftsanfragen',
+    subtitle:
+      'Diese Warteschlange wird jetzt zentral von Plattform-Admins verwaltet. Club-Konten konnen den Status sehen, Freigaben und Ablehnungen laufen aber uber das Admin-Portal.',
+    cardTitle: 'Schreibgeschutzte Anfragenansicht',
+    empty: 'Aktuell sind fur diesen Club keine Anfragen sichtbar.',
+  },
+} as const;
+
+export default async function ClubRequestsPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const copy = clubPanelRequestsCopy[lang as keyof typeof clubPanelRequestsCopy] ?? clubPanelRequestsCopy.en;
   const requests = await getClubApplications();
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Membership Requests</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{copy.title}</h1>
         <p className="mt-2 text-muted-foreground">
-          This queue is now admin-managed. Club accounts can review request status, but approvals and rejections happen
-          from the platform admin portal.
+          {copy.subtitle}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Read-only request view</CardTitle>
+          <CardTitle>{copy.cardTitle}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {requests.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No applicant requests are currently visible for this club.</p>
+            <p className="text-sm text-muted-foreground">{copy.empty}</p>
           ) : (
             requests.map((request) => (
               <div key={request.id} className="rounded-2xl border border-border p-4">

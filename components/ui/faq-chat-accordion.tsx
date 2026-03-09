@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import * as Accordion from '@radix-ui/react-accordion';
 import { Minus, Plus } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface FAQItem {
   id: number;
@@ -22,78 +23,31 @@ interface FaqAccordionProps {
   answerClassName?: string;
 }
 
-const defaultData: FAQItem[] = [
-  {
-    answer: 'A Cannabis Social Club (CSC) is a private, non-profit association in Spain where members can consume cannabis together in a social setting. Unlike Amsterdam coffee shops, CSCs are private membership-only establishments with strict protocols.',
-    icon: '🌿',
-    iconPosition: 'left',
-    id: 1,
-    question: 'What is a Cannabis Social Club?',
-  },
-  {
-    answer: 'Yes, but with specific constraints. CSCs operate in a legal gray area - they are not explicitly legal or illegal. The Spanish Constitutional Court has ruled that personal consumption and private cultivation are constitutional rights, but public consumption remains prohibited.',
-    icon: '⚖️',
-    iconPosition: 'left',
-    id: 2,
-    question: 'Are CSCs Legal in Spain?',
-  },
-  {
-    answer: 'It varies by club. Many Barcelona CSCs require proof of residence (utility bill, rental agreement) alongside ID. Some accept tourists with EU ID or passport. Always bring multiple forms of identification.',
-    icon: '🪪',
-    iconPosition: 'left',
-    id: 3,
-    question: 'Can Tourists Join a CSC?',
-  },
-  {
-    answer: 'Public possession can result in fines ranging from €601 to €30,000, depending on the amount and circumstances. Personal use quantities are typically lower fines. Our downloadable Safety Kit covers exact limits and how to handle encounters.',
-    icon: '🍪',
-    iconPosition: 'left',
-    id: 4,
-    question: 'What Happens in Public?',
-  },
-  {
-    answer: 'Barcelona has a more established scene with 100+ clubs and clearer local regulations. Madrid scene is newer and more fragmented. Each city has different local ordinances.',
-    icon: '🏙️',
-    iconPosition: 'left',
-    id: 5,
-    question: 'Barcelona vs Madrid CSCs?',
-  },
-  {
-    answer: 'Yes. Every club in our directory undergoes a verification process covering legal compliance, safety standards, membership accessibility, and community feedback.',
-    icon: '✅',
-    iconPosition: 'left',
-    id: 6,
-    question: 'Does SocialClubsMaps Verify Clubs?',
-  },
-  {
-    answer: 'Membership fees vary significantly - from €20 for basic access to €100+ annually for premium clubs. Many clubs also require a small purchase per visit (typically €10-25) for cannabis products.',
-    icon: '💰',
-    iconPosition: 'left',
-    id: 7,
-    question: 'How Much Does Membership Cost?',
-  },
-  {
-    answer: 'Typical requirements include: valid ID/passport, minimum age (18-21 depending on club), potentially proof of address, and a one-time membership fee. Some clubs also require a current member referral.',
-    icon: '📋',
-    iconPosition: 'left',
-    id: 8,
-    question: 'What Are the Membership Requirements?',
-  },
-];
-
 export function FaqAccordion({
-  data = defaultData,
+  data,
   className,
-  timestamp = 'Frequently Asked Questions',
+  timestamp,
   questionClassName,
   answerClassName,
 }: FaqAccordionProps) {
+  const { t } = useLanguage();
   const [openItem, setOpenItem] = React.useState<string | null>(null);
+  const resolvedData = data ?? [
+    { id: 1, question: t('faq.1.title'), answer: t('faq.1.content'), icon: '🌿', iconPosition: 'left' as const },
+    { id: 2, question: t('faq.2.title'), answer: t('faq.2.content'), icon: '⚖️', iconPosition: 'left' as const },
+    { id: 3, question: t('faq.3.title'), answer: t('faq.3.content'), icon: '🪪', iconPosition: 'left' as const },
+    { id: 4, question: t('faq.6.title'), answer: t('faq.6.content'), icon: '🍪', iconPosition: 'left' as const },
+    { id: 5, question: t('faq.7.title'), answer: t('faq.7.content'), icon: '🏙️', iconPosition: 'left' as const },
+    { id: 6, question: t('faq.8.title'), answer: t('faq.8.content'), icon: '✅', iconPosition: 'left' as const },
+    { id: 7, question: t('faq.5.title'), answer: t('faq.5.content'), icon: '💰', iconPosition: 'left' as const },
+    { id: 8, question: t('faq.4.title'), answer: t('faq.4.content'), icon: '📋', iconPosition: 'left' as const },
+  ];
+  const resolvedTimestamp = timestamp ?? t('faq.timestamp');
 
   return (
     <div className={cn('', className)}>
-      {timestamp && (
-        <div className='mb-6 text-lg text-muted-foreground'>{timestamp}</div>
+      {resolvedTimestamp && (
+        <div className='mb-6 text-lg text-muted-foreground'>{resolvedTimestamp}</div>
       )}
 
       <Accordion.Root
@@ -102,7 +56,7 @@ export function FaqAccordion({
         value={openItem || ''}
         onValueChange={(value: string | null) => setOpenItem(value)}
       >
-        {data.map((item) => (
+        {resolvedData.map((item) => (
           <Accordion.Item value={item.id.toString()} key={item.id} className='mb-4'>
             <Accordion.Header>
               <Accordion.Trigger className='flex w-full items-center justify-start gap-x-4'>
