@@ -6,6 +6,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
+import { resolveLocale } from '@/lib/auth-urls';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
@@ -54,11 +55,11 @@ async function enforceFailureDelay(startTime: number): Promise<void> {
 export async function adminLogin(prevState: AdminActionState, formData: FormData): Promise<AdminActionState> {
   const failureStartTime = Date.now();
   const supabase = await createClient();
+  const lang = resolveLocale(formData.get('lang') as string | null);
 
   const data = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-    lang: (formData.get('lang') as string) || 'en',
   };
 
   const validated = adminLoginSchema.safeParse(data);
@@ -129,7 +130,7 @@ export async function adminLogin(prevState: AdminActionState, formData: FormData
     });
 
     revalidatePath('/', 'layout');
-    redirect(`/${data.lang}/admin`);
+    redirect(`/${lang}/admin`);
   } catch (error) {
     if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
       throw error;

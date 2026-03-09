@@ -2,308 +2,434 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useMemo, useState } from 'react';
-import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { toast } from 'sonner';
-import { Upload, Image as ImageIcon, MapPin, Loader2 } from '@/lib/icons';
-import { cn } from '@/lib/utils';
+  getCurrentManagedClubProfile,
+  updateCurrentManagedClubProfile,
+  type ManagedClubProfile,
+} from '@/app/actions/clubs';
 import { useLanguage } from '@/hooks/useLanguage';
+import { AlertCircle, Loader2, MapPin, Shield } from '@/lib/icons';
+import { toast } from 'sonner';
 
-// Default values for empty form
-const defaultValues = {
-  name: '',
-  description: '',
-  neighborhood: '',
-  addressDisplay: '',
-  contactEmail: '',
-  phoneNumber: '',
-  capacity: 50,
-  foundedYear: new Date().getFullYear(),
+type ProfileFormState = {
+  name: string;
+  description: string;
+  shortDescription: string;
+  neighborhood: string;
+  addressDisplay: string;
+  contactEmail: string;
+  phoneNumber: string;
+  website: string;
+  capacity: string;
+  foundedYear: string;
 };
 
-const createClubProfileSchema = (t: (key: string) => string) =>
-  z.object({
-    name: z.string().min(2, t('club_panel.profile.validation.name_min')),
-    description: z.string().min(20, t('club_panel.profile.validation.description_min')),
-    neighborhood: z.string().min(2, t('club_panel.profile.validation.neighborhood_required')),
-    addressDisplay: z.string().min(5, t('club_panel.profile.validation.address_required')),
-    contactEmail: z.string().email(t('club_panel.profile.validation.invalid_email')),
-    phoneNumber: z.string().optional(),
-    capacity: z.coerce.number().min(1, t('club_panel.profile.validation.capacity_min')),
-    foundedYear: z.coerce.number()
-      .min(1900, t('club_panel.profile.validation.year_min'))
-      .max(new Date().getFullYear(), t('club_panel.profile.validation.year_max')),
-  });
+const clubProfileCopy = {
+  en: {
+    loading: 'Loading club profile...',
+    noClubTitle: 'No managed club assigned',
+    noClubDescription:
+      'This account is authenticated, but it is not currently linked to a club record. Contact platform support before using the club panel.',
+    saveError: 'Failed to update the club profile. Please review the form and try again.',
+    publicStatus: 'Public status',
+    publicStatusDescription: 'These flags are controlled by platform operations and reflect what members can currently access.',
+    summaryLabel: 'Short summary',
+    summaryPlaceholder: 'A short public summary for cards and search results',
+    websiteLabel: 'Website',
+    mediaTitle: 'Media and publishing',
+    mediaDescription:
+      'Brand assets and publication flags are managed centrally. Use this page for operational profile data that already powers the public listing.',
+    mediaHasAssets: 'Brand assets already exist for this listing.',
+    mediaNoAssets: 'No brand assets are currently attached to this listing.',
+    active: 'Active',
+    inactive: 'Inactive',
+    verified: 'Verified',
+    unverified: 'Unverified',
+    preRegistrationOpen: 'Applications open',
+    preRegistrationClosed: 'Applications closed',
+  },
+  es: {
+    loading: 'Cargando perfil del club...',
+    noClubTitle: 'No hay un club asignado',
+    noClubDescription:
+      'La cuenta está autenticada, pero ahora mismo no está vinculada a un club. Contacta con soporte de plataforma antes de usar el panel.',
+    saveError: 'No se pudo actualizar el perfil del club. Revisa el formulario e inténtalo de nuevo.',
+    publicStatus: 'Estado público',
+    publicStatusDescription:
+      'Estas banderas las gestiona el equipo de plataforma y reflejan lo que los miembros pueden ver ahora mismo.',
+    summaryLabel: 'Resumen corto',
+    summaryPlaceholder: 'Un resumen breve para tarjetas públicas y resultados de búsqueda',
+    websiteLabel: 'Sitio web',
+    mediaTitle: 'Media y publicación',
+    mediaDescription:
+      'Los assets de marca y las banderas de publicación se gestionan de forma centralizada. Usa esta página para los datos operativos que ya alimentan la ficha pública.',
+    mediaHasAssets: 'Ya existen assets de marca para esta ficha.',
+    mediaNoAssets: 'Esta ficha todavía no tiene assets de marca asociados.',
+    active: 'Activo',
+    inactive: 'Inactivo',
+    verified: 'Verificado',
+    unverified: 'Sin verificar',
+    preRegistrationOpen: 'Solicitudes abiertas',
+    preRegistrationClosed: 'Solicitudes cerradas',
+  },
+  fr: {
+    loading: 'Chargement du profil du club...',
+    noClubTitle: 'Aucun club gere assigne',
+    noClubDescription:
+      'Le compte est authentifie, mais il n est pas relie a un club pour le moment. Contactez le support plateforme avant d utiliser ce panneau.',
+    saveError: 'Impossible de mettre a jour le profil du club. Verifiez le formulaire puis reessayez.',
+    publicStatus: 'Statut public',
+    publicStatusDescription:
+      'Ces indicateurs sont geres par l equipe plateforme et refletent ce que les membres peuvent actuellement consulter.',
+    summaryLabel: 'Resume court',
+    summaryPlaceholder: 'Un resume bref pour les cartes publiques et les resultats de recherche',
+    websiteLabel: 'Site web',
+    mediaTitle: 'Media et publication',
+    mediaDescription:
+      'Les assets de marque et les statuts de publication sont geres centralement. Utilisez cette page pour les donnees operationnelles deja exposees publiquement.',
+    mediaHasAssets: 'Des assets de marque existent deja pour cette fiche.',
+    mediaNoAssets: 'Aucun asset de marque n est encore rattache a cette fiche.',
+    active: 'Actif',
+    inactive: 'Inactif',
+    verified: 'Verifie',
+    unverified: 'Non verifie',
+    preRegistrationOpen: 'Demandes ouvertes',
+    preRegistrationClosed: 'Demandes fermees',
+  },
+  de: {
+    loading: 'Clubprofil wird geladen...',
+    noClubTitle: 'Kein verwalteter Club zugewiesen',
+    noClubDescription:
+      'Dieses Konto ist angemeldet, aber aktuell keinem Club-Datensatz zugeordnet. Kontaktiere den Plattform-Support, bevor du das Club-Panel nutzt.',
+    saveError: 'Das Clubprofil konnte nicht aktualisiert werden. Bitte pruefe das Formular und versuche es erneut.',
+    publicStatus: 'Oeffentlicher Status',
+    publicStatusDescription:
+      'Diese Kennzeichen werden vom Plattform-Team gesteuert und zeigen, was Mitglieder derzeit sehen koennen.',
+    summaryLabel: 'Kurzfassung',
+    summaryPlaceholder: 'Eine kurze Zusammenfassung fuer Karten und Suchergebnisse',
+    websiteLabel: 'Website',
+    mediaTitle: 'Medien und Freigabe',
+    mediaDescription:
+      'Markenassets und Freigabestatus werden zentral verwaltet. Diese Seite dient fuer operative Profildaten, die bereits in der oeffentlichen Listing-Ansicht genutzt werden.',
+    mediaHasAssets: 'Fuer dieses Listing sind bereits Markenassets hinterlegt.',
+    mediaNoAssets: 'Diesem Listing sind aktuell keine Markenassets zugeordnet.',
+    active: 'Aktiv',
+    inactive: 'Inaktiv',
+    verified: 'Verifiziert',
+    unverified: 'Nicht verifiziert',
+    preRegistrationOpen: 'Anfragen offen',
+    preRegistrationClosed: 'Anfragen geschlossen',
+  },
+} as const;
 
-type ClubProfileFormValues = z.infer<ReturnType<typeof createClubProfileSchema>>;
+function toFormState(club: ManagedClubProfile): ProfileFormState {
+  return {
+    name: club.name,
+    description: club.description,
+    shortDescription: club.shortDescription ?? '',
+    neighborhood: club.neighborhood,
+    addressDisplay: club.addressDisplay,
+    contactEmail: club.contactEmail,
+    phoneNumber: club.phoneNumber ?? '',
+    website: club.website ?? '',
+    capacity: String(club.capacity),
+    foundedYear: String(club.foundedYear),
+  };
+}
 
 export default function ClubProfilePage() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const copy = clubProfileCopy[language as keyof typeof clubProfileCopy] ?? clubProfileCopy.en;
+  const [club, setClub] = useState<ManagedClubProfile | null>(null);
+  const [formState, setFormState] = useState<ProfileFormState | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [coverImage, setCoverImage] = useState<string | null>(null);
-  const clubProfileSchema = useMemo(() => createClubProfileSchema(t), [t]);
 
-  // Initialize form with default values
-  const form = useForm<ClubProfileFormValues>({
-    resolver: zodResolver(clubProfileSchema),
-    defaultValues: defaultValues,
-  });
+  useEffect(() => {
+    let isMounted = true;
 
-  async function onSubmit(data: ClubProfileFormValues) {
+    const loadClubProfile = async () => {
+      try {
+        const managedClub = await getCurrentManagedClubProfile();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setClub(managedClub);
+        setFormState(managedClub ? toFormState(managedClub) : null);
+      } catch (error) {
+        console.error('Failed to load managed club profile:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadClubProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleFieldChange = (field: keyof ProfileFormState, value: string) => {
+    setFormState((previous) => (previous ? { ...previous, [field]: value } : previous));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!formState) {
+      return;
+    }
+
     setIsSaving(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Form data:', data);
-    toast.success(t('club_panel.profile.toast.updated'));
-    setIsSaving(false);
-  }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCoverImage(reader.result as string);
-        toast.success(t('club_panel.profile.toast.cover_image_updated'));
-      };
-      reader.readAsDataURL(file);
+    try {
+      const result = await updateCurrentManagedClubProfile({
+        ...formState,
+        capacity: Number(formState.capacity),
+        foundedYear: Number(formState.foundedYear),
+      });
+
+      if (!result.success || !result.club) {
+        toast.error(result.message || copy.saveError);
+        return;
+      }
+
+      setClub(result.club);
+      setFormState(toFormState(result.club));
+      toast.success(t('club_panel.profile.toast.updated'));
+    } catch (error) {
+      console.error('Failed to update club profile:', error);
+      toast.error(copy.saveError);
+    } finally {
+      setIsSaving(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[320px] items-center justify-center gap-3 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        <span>{copy.loading}</span>
+      </div>
+    );
+  }
+
+  if (!club || !formState) {
+    return (
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle>{copy.noClubTitle}</CardTitle>
+          <CardDescription>{copy.noClubDescription}</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.profile.title')}</h1>
         <p className="text-muted-foreground">{t('club_panel.profile.subtitle')}</p>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          
-          {/* Media Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('club_panel.profile.media.title')}</CardTitle>
-              <CardDescription>{t('club_panel.profile.media.description')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <FormLabel>{t('club_panel.profile.media.cover_image')}</FormLabel>
-                <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/50 hover:bg-muted/80 transition-colors group cursor-pointer">
-                  {coverImage ? (
-                    <>
-                      <Image
-                        src={coverImage}
-                        alt={t('club_panel.profile.media.cover_alt')}
-                        fill
-                        sizes="100vw"
-                        className="object-cover transition-opacity group-hover:opacity-75"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="bg-background/80 backdrop-blur-sm p-3 rounded-full shadow-lg">
-                          <Upload className="h-6 w-6 text-foreground" />
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                      <ImageIcon className="h-10 w-10 mb-2" />
-                      <span>{t('club_panel.profile.media.upload_cover')}</span>
-                    </div>
-                  )}
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={handleImageUpload} 
-                    className="absolute inset-0 opacity-0 cursor-pointer" 
-                  />
-                </div>
-                <FormDescription>{t('club_panel.profile.media.recommended_size')}</FormDescription>
-              </div>
-            </CardContent>
-          </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-muted-foreground" />
+            {copy.publicStatus}
+          </CardTitle>
+          <CardDescription>{copy.publicStatusDescription}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-3">
+          <Badge variant={club.isVerified ? 'success' : 'secondary'}>
+            {club.isVerified ? copy.verified : copy.unverified}
+          </Badge>
+          <Badge variant={club.isActive ? 'secondary' : 'outline'}>
+            {club.isActive ? copy.active : copy.inactive}
+          </Badge>
+          <Badge variant={club.allowsPreRegistration ? 'secondary' : 'outline'}>
+            {club.allowsPreRegistration ? copy.preRegistrationOpen : copy.preRegistrationClosed}
+          </Badge>
+          <Badge variant="outline">
+            <MapPin className="mr-1 h-3 w-3" />
+            {club.cityName}
+          </Badge>
+        </CardContent>
+      </Card>
 
-          {/* General Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('club_panel.profile.general.title')}</CardTitle>
-              <CardDescription>{t('club_panel.profile.general.description')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('club_panel.profile.general.club_name')}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={t('club_panel.profile.general.club_name_placeholder')} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="foundedYear"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('club_panel.profile.general.founded_year')}</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('club_panel.profile.general.description_label')}</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder={t('club_panel.profile.general.description_placeholder')}
-                        className="min-h-[150px] resize-y" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t('club_panel.profile.general.description_help')}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+      <form className="space-y-8" onSubmit={handleSubmit}>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('club_panel.profile.general.title')}</CardTitle>
+            <CardDescription>{t('club_panel.profile.general.description')}</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="club-name">{t('club_panel.profile.general.club_name')}</Label>
+              <Input
+                id="club-name"
+                value={formState.name}
+                onChange={(event) => handleFieldChange('name', event.target.value)}
+                disabled={isSaving}
+                required
               />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="capacity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('club_panel.profile.general.member_capacity')}</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Location & Contact */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('club_panel.profile.location.title')}</CardTitle>
-              <CardDescription>{t('club_panel.profile.location.description')}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="addressDisplay"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('club_panel.profile.location.address')}</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input className="pl-9" placeholder={t('club_panel.profile.location.address_placeholder')} {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+            <div className="space-y-2">
+              <Label htmlFor="club-founded-year">{t('club_panel.profile.general.founded_year')}</Label>
+              <Input
+                id="club-founded-year"
+                type="number"
+                value={formState.foundedYear}
+                onChange={(event) => handleFieldChange('foundedYear', event.target.value)}
+                disabled={isSaving}
+                min={1900}
+                max={new Date().getFullYear()}
+                required
               />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="neighborhood"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('club_panel.profile.location.neighborhood')}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={t('club_panel.profile.location.neighborhood_placeholder')} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="contactEmail"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('club_panel.profile.location.contact_email')}</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder={t('club_panel.profile.location.contact_email_placeholder')} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('club_panel.profile.location.phone_number')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t('club_panel.profile.location.phone_placeholder')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="club-description">{t('club_panel.profile.general.description_label')}</Label>
+              <Textarea
+                id="club-description"
+                value={formState.description}
+                onChange={(event) => handleFieldChange('description', event.target.value)}
+                disabled={isSaving}
+                rows={6}
+                required
               />
-            </CardContent>
-          </Card>
+            </div>
 
-          <div className="flex items-center justify-end gap-4 sticky bottom-6 bg-background/80 backdrop-blur-md p-4 rounded-xl border shadow-lg z-10">
-            <Button type="button" variant="ghost" onClick={() => form.reset()}>
-              {t('club_panel.profile.discard_changes')}
-            </Button>
-            <Button type="submit" disabled={isSaving} className="min-w-[150px]">
-              {isSaving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('club_panel.profile.saving')}
-                </>
-              ) : (
-                t('common.save_changes')
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="club-short-description">{copy.summaryLabel}</Label>
+              <Textarea
+                id="club-short-description"
+                value={formState.shortDescription}
+                onChange={(event) => handleFieldChange('shortDescription', event.target.value)}
+                disabled={isSaving}
+                rows={3}
+                placeholder={copy.summaryPlaceholder}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="club-capacity">{t('club_panel.profile.general.member_capacity')}</Label>
+              <Input
+                id="club-capacity"
+                type="number"
+                value={formState.capacity}
+                onChange={(event) => handleFieldChange('capacity', event.target.value)}
+                disabled={isSaving}
+                min={1}
+                required
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('club_panel.profile.location.title')}</CardTitle>
+            <CardDescription>{t('club_panel.profile.location.description')}</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="club-address">{t('club_panel.profile.location.address')}</Label>
+              <Input
+                id="club-address"
+                value={formState.addressDisplay}
+                onChange={(event) => handleFieldChange('addressDisplay', event.target.value)}
+                disabled={isSaving}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="club-neighborhood">{t('club_panel.profile.location.neighborhood')}</Label>
+              <Input
+                id="club-neighborhood"
+                value={formState.neighborhood}
+                onChange={(event) => handleFieldChange('neighborhood', event.target.value)}
+                disabled={isSaving}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="club-contact-email">{t('club_panel.profile.location.contact_email')}</Label>
+              <Input
+                id="club-contact-email"
+                type="email"
+                value={formState.contactEmail}
+                onChange={(event) => handleFieldChange('contactEmail', event.target.value)}
+                disabled={isSaving}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="club-phone">{t('club_panel.profile.location.phone_number')}</Label>
+              <Input
+                id="club-phone"
+                value={formState.phoneNumber}
+                onChange={(event) => handleFieldChange('phoneNumber', event.target.value)}
+                disabled={isSaving}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="club-website">{copy.websiteLabel}</Label>
+              <Input
+                id="club-website"
+                type="url"
+                value={formState.website}
+                onChange={(event) => handleFieldChange('website', event.target.value)}
+                disabled={isSaving}
+                placeholder="https://"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-dashed">
+          <CardHeader>
+            <CardTitle>{copy.mediaTitle}</CardTitle>
+            <CardDescription>{copy.mediaDescription}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex items-start gap-3 text-sm text-muted-foreground">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>
+              {club.coverImageUrl || club.logoUrl ? copy.mediaHasAssets : copy.mediaNoAssets}
+            </p>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSaving} className="min-w-40">
+            {isSaving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t('club_panel.profile.saving')}
+              </>
+            ) : (
+              t('common.save_changes')
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -35,6 +35,7 @@ import {
   type ApplicationStage,
   type ApplicationStatus,
 } from '@/lib/application-utils';
+import { resolveLocale } from '@/lib/auth-urls';
 import {
   sendMembershipApprovalEmail,
   sendMembershipRejectionEmail,
@@ -98,15 +99,20 @@ export interface ClubApplicationItem {
   user: {
     id: string;
     displayName: string | null;
-    email: string;
     avatarUrl: string | null;
   };
 }
 
-export interface AdminMembershipQueueItem extends ClubApplicationItem {
+export interface AdminMembershipQueueItem extends Omit<ClubApplicationItem, 'user'> {
   reviewedAt: string | null;
   reviewedBy: string | null;
   rejectionReason: string | null;
+  user: {
+    id: string;
+    displayName: string | null;
+    email: string;
+    avatarUrl: string | null;
+  };
 }
 
 export interface AdminMembershipRequestDetail {
@@ -1562,7 +1568,6 @@ export async function getClubApplications(): Promise<ClubApplicationItem[]> {
     user: {
       id: request.user.id,
       displayName: request.user.displayName,
-      email: request.user.email,
       avatarUrl: request.user.avatarUrl,
     },
   }));
@@ -1899,6 +1904,7 @@ export async function bootstrapInitialAdminProfile(input: {
 }
 
 export async function bootstrapInitialAdminProfileAction(formData: FormData): Promise<void> {
+  const lang = resolveLocale(String(formData.get('lang') || ''));
   const result = await bootstrapInitialAdminProfile({
     email: String(formData.get('email') || ''),
     secret: String(formData.get('secret') || ''),
@@ -1908,5 +1914,5 @@ export async function bootstrapInitialAdminProfileAction(formData: FormData): Pr
     throw new Error(result.message || 'Failed to bootstrap admin');
   }
 
-  redirect('/en/admin/login?bootstrap=success');
+  redirect(`/${lang}/admin/login?bootstrap=success`);
 }

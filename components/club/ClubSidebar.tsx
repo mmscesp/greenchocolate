@@ -40,9 +40,10 @@ interface ClubSidebarProps {
 }
 
 function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile = false }: ClubSidebarProps) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const { user, signOut } = useAuth();
   const pathname = usePathname();
+  const withLocale = (path: string) => `/${language}${path}`;
 
   // Get club display info from metadata
   const clubName = user?.user_metadata?.club_name || t('club_panel.common.club_admin_fallback');
@@ -50,12 +51,12 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
   const clubLogoUrl = user?.user_metadata?.avatar_url; 
   
   const navigation = [
-    { nameKey: 'club_panel.nav.overview', href: '/club-panel/dashboard', icon: LayoutDashboard },
-    { nameKey: 'club_panel.nav.club_profile', href: '/club-panel/dashboard/profile', icon: Store },
-    { nameKey: 'club_panel.nav.membership_requests', href: '/club-panel/dashboard/requests', icon: Users },
-    { nameKey: 'club_panel.nav.events', href: '/club-panel/dashboard/events', icon: Calendar },
-    { nameKey: 'club_panel.nav.analytics', href: '/club-panel/dashboard/analytics', icon: BarChart3 },
-    { nameKey: 'club_panel.nav.settings', href: '/club-panel/dashboard/profile', icon: Settings },
+    { nameKey: 'club_panel.nav.overview', href: withLocale('/club-panel/dashboard'), icon: LayoutDashboard },
+    { nameKey: 'club_panel.nav.club_profile', href: withLocale('/club-panel/dashboard/profile'), icon: Store },
+    { nameKey: 'club_panel.nav.membership_requests', href: withLocale('/club-panel/dashboard/requests'), icon: Users },
+    { nameKey: 'club_panel.nav.events', href: withLocale('/club-panel/dashboard/events'), icon: Calendar },
+    { nameKey: 'club_panel.nav.analytics', href: withLocale('/club-panel/dashboard/analytics'), icon: BarChart3 },
+    { nameKey: 'club_panel.nav.settings', href: withLocale('/club-panel/dashboard/profile'), icon: Settings },
   ];
 
   const showText = !isCollapsed || isMobile;
@@ -112,7 +113,9 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
         <nav className="space-y-1.5">
           {navigation.map((item) => {
             // Check if active (handle nested routes correctly)
-            const isActive = pathname === item.href || (item.href !== '/club-panel/dashboard' && pathname.startsWith(item.href));
+            const isActive =
+              pathname === item.href ||
+              (item.href !== withLocale('/club-panel/dashboard') && pathname.startsWith(item.href));
             
             return (
               <Link
@@ -163,7 +166,7 @@ function ClubSidebarContent({ className, isCollapsed = false, onClose, isMobile 
         "border-t space-y-2 bg-muted/10 transition-all duration-300",
         isCollapsed && !isMobile ? "p-2" : "p-4"
       )}>
-        <Link href="/" onClick={onClose} className="block">
+        <Link href={`/${language}`} onClick={onClose} className="block">
           <Button 
             variant="ghost" 
             className={cn(

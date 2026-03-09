@@ -111,6 +111,7 @@ export default async function AdminBootstrapPage({ params }: AdminBootstrapPageP
           </div>
         ) : (
           <form action={bootstrapInitialAdminProfileAction} className="space-y-5">
+            <input type="hidden" name="lang" value={lang} />
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
                 {copy.email}

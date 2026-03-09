@@ -11,6 +11,7 @@ const clubPanelRequestsCopy = {
       'This queue is now admin-managed. Club accounts can review request status, but approvals and rejections happen from the platform admin portal.',
     cardTitle: 'Read-only request view',
     empty: 'No applicant requests are currently visible for this club.',
+    anonymousApplicant: 'Applicant',
   },
   es: {
     title: 'Solicitudes de membresia',
@@ -18,6 +19,7 @@ const clubPanelRequestsCopy = {
       'Esta cola ahora esta gestionada por admins de plataforma. Las cuentas del club pueden revisar el estado, pero las aprobaciones y rechazos se hacen desde el portal admin.',
     cardTitle: 'Vista de solicitudes en solo lectura',
     empty: 'Ahora mismo no hay solicitudes visibles para este club.',
+    anonymousApplicant: 'Solicitante',
   },
   fr: {
     title: 'Demandes d adhesion',
@@ -25,6 +27,7 @@ const clubPanelRequestsCopy = {
       'Cette file est desormais geree par les admins de la plateforme. Les comptes club peuvent consulter le statut, mais les approbations et rejets se font depuis le portail admin.',
     cardTitle: 'Vue en lecture seule des demandes',
     empty: 'Aucune demande visible pour ce club pour le moment.',
+    anonymousApplicant: 'Candidat',
   },
   de: {
     title: 'Mitgliedschaftsanfragen',
@@ -32,6 +35,7 @@ const clubPanelRequestsCopy = {
       'Diese Warteschlange wird jetzt zentral von Plattform-Admins verwaltet. Club-Konten konnen den Status sehen, Freigaben und Ablehnungen laufen aber uber das Admin-Portal.',
     cardTitle: 'Schreibgeschutzte Anfragenansicht',
     empty: 'Aktuell sind fur diesen Club keine Anfragen sichtbar.',
+    anonymousApplicant: 'Antragsteller',
   },
 } as const;
 
@@ -60,7 +64,7 @@ export default async function ClubRequestsPage({ params }: { params: Promise<{ l
             requests.map((request) => (
               <div key={request.id} className="rounded-2xl border border-border p-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="font-semibold">{request.user.displayName || request.user.email}</p>
+                  <p className="font-semibold">{request.user.displayName || copy.anonymousApplicant}</p>
                   <Badge variant="secondary">{request.status}</Badge>
                   <Badge variant="secondary">{request.stage}</Badge>
                 </div>

@@ -2,279 +2,260 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/hooks/useLanguage';
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatsCard } from '@/components/admin/StatsCard';
-import { BarChart3, 
-Users, 
-TrendingUp, 
-Calendar,
-Eye,
-UserPlus,
-Star,
-MapPin,
-ArrowUpRight,
-ArrowDownRight,
-Clock } from '@/lib/icons';
-import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { getManagedClubPanelOverview } from '@/app/actions/clubs';
+import { useLanguage } from '@/hooks/useLanguage';
+import {
+  BarChart3,
+  Calendar,
+  Heart,
+  Loader2,
+  Shield,
+  Star,
+  Users,
+} from '@/lib/icons';
+
+const clubAnalyticsCopy = {
+  en: {
+    loading: 'Loading analytics...',
+    noClubTitle: 'No managed club assigned',
+    noClubDescription: 'This account is not currently linked to a club profile.',
+    statusTitle: 'Operational summary',
+    statusDescription:
+      'These metrics are sourced from live club, membership, favorites, review, and event records. They are intended for operational QA rather than marketing vanity metrics.',
+    averageRatingFallback: 'No public rating yet',
+    recentRequests: 'Recent requests',
+    recentEvents: 'Recent events',
+    noRecentRequests: 'No membership requests are visible yet.',
+    noRecentEvents: 'No events are linked to this club yet.',
+    favorites: 'Favorites',
+    applicant: 'Applicant',
+    published: 'Published',
+    draft: 'Draft',
+    pendingTrend: 'pending',
+    reviewsTrend: 'public reviews',
+  },
+  es: {
+    loading: 'Cargando analítica...',
+    noClubTitle: 'No hay un club asignado',
+    noClubDescription: 'La cuenta no está vinculada a un perfil de club en este momento.',
+    statusTitle: 'Resumen operativo',
+    statusDescription:
+      'Estas métricas salen de registros reales de club, membresías, favoritos, reseñas y eventos. Están pensadas para QA operativo y no para vanity metrics de marketing.',
+    averageRatingFallback: 'Todavía no hay valoración pública',
+    recentRequests: 'Solicitudes recientes',
+    recentEvents: 'Eventos recientes',
+    noRecentRequests: 'Todavía no hay solicitudes visibles.',
+    noRecentEvents: 'Todavía no hay eventos vinculados a este club.',
+    favorites: 'Favoritos',
+    applicant: 'Solicitante',
+    published: 'Publicado',
+    draft: 'Borrador',
+    pendingTrend: 'pendientes',
+    reviewsTrend: 'reseñas públicas',
+  },
+  fr: {
+    loading: 'Chargement de l analytique...',
+    noClubTitle: 'Aucun club gere assigne',
+    noClubDescription: 'Ce compte n est pas relie a un profil club pour le moment.',
+    statusTitle: 'Resume operationnel',
+    statusDescription:
+      'Ces metriques proviennent des enregistrements reels du club, des demandes, des favoris, des avis et des evenements. Elles servent au suivi operationnel plutot qu a des vanity metrics.',
+    averageRatingFallback: 'Aucune note publique pour le moment',
+    recentRequests: 'Demandes recentes',
+    recentEvents: 'Evenements recents',
+    noRecentRequests: 'Aucune demande visible pour le moment.',
+    noRecentEvents: 'Aucun evenement n est encore lie a ce club.',
+    favorites: 'Favoris',
+    applicant: 'Candidat',
+    published: 'Publie',
+    draft: 'Brouillon',
+    pendingTrend: 'en attente',
+    reviewsTrend: 'avis publics',
+  },
+  de: {
+    loading: 'Analytik wird geladen...',
+    noClubTitle: 'Kein verwalteter Club zugewiesen',
+    noClubDescription: 'Dieses Konto ist aktuell keinem Clubprofil zugeordnet.',
+    statusTitle: 'Operative Zusammenfassung',
+    statusDescription:
+      'Diese Kennzahlen stammen aus Live-Daten zu Club, Anfragen, Favoriten, Bewertungen und Events. Sie dienen der operativen QA und nicht als Marketing-Vanity-Metrik.',
+    averageRatingFallback: 'Noch keine oeffentliche Bewertung',
+    recentRequests: 'Aktuelle Anfragen',
+    recentEvents: 'Aktuelle Events',
+    noRecentRequests: 'Noch keine sichtbaren Mitgliedschaftsanfragen.',
+    noRecentEvents: 'Diesem Club sind noch keine Events zugeordnet.',
+    favorites: 'Favoriten',
+    applicant: 'Antragsteller',
+    published: 'Veroeffentlicht',
+    draft: 'Entwurf',
+    pendingTrend: 'offen',
+    reviewsTrend: 'oeffentliche Bewertungen',
+  },
+} as const;
 
 export default function AnalyticsPage() {
-  const { t } = useLanguage();
-  const [timeRange, setTimeRange] = useState('30d');
+  const { language, t } = useLanguage();
+  const copy = clubAnalyticsCopy[language as keyof typeof clubAnalyticsCopy] ?? clubAnalyticsCopy.en;
+  const [overview, setOverview] = useState<Awaited<ReturnType<typeof getManagedClubPanelOverview>>>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock analytics data
-  const stats = {
-    totalViews: 1247,
-    newMembers: 23,
-    averageRating: 4.8,
-    totalRequests: 45
-  };
+  useEffect(() => {
+    let isMounted = true;
 
-  const monthlyData = [
-    { monthKey: 'club_panel.analytics.months.jan', views: 890, requests: 12 },
-    { monthKey: 'club_panel.analytics.months.feb', views: 1020, requests: 15 },
-    { monthKey: 'club_panel.analytics.months.mar', views: 1150, requests: 18 },
-    { monthKey: 'club_panel.analytics.months.apr', views: 1247, requests: 23 },
-  ];
+    const loadOverview = async () => {
+      try {
+        const result = await getManagedClubPanelOverview();
 
-  const topSources = [
-    { sourceKey: 'club_panel.analytics.sources.direct_search', percentage: 45, visits: 561 },
-    { sourceKey: 'club_panel.analytics.sources.social_media', percentage: 28, visits: 349 },
-    { sourceKey: 'club_panel.analytics.sources.referrals', percentage: 18, visits: 224 },
-    { sourceKey: 'club_panel.analytics.sources.other', percentage: 9, visits: 113 }
-  ];
+        if (!isMounted) {
+          return;
+        }
 
-  const recentActivity = [
-    { type: 'view', messageKey: 'club_panel.analytics.activity.new_profile_visit', timeKey: 'club_panel.analytics.activity_time.2m' },
-    { type: 'request', messageKey: 'club_panel.analytics.activity.new_membership_request', timeKey: 'club_panel.analytics.activity_time.15m' },
-    { type: 'view', messageKey: 'club_panel.analytics.activity.profile_viewed_downtown', timeKey: 'club_panel.analytics.activity_time.1h' },
-    { type: 'request', messageKey: 'club_panel.analytics.activity.request_approved', timeKey: 'club_panel.analytics.activity_time.2h' },
-    { type: 'view', messageKey: 'club_panel.analytics.activity.new_profile_visit', timeKey: 'club_panel.analytics.activity_time.3h' }
-  ];
+        setOverview(result);
+      } catch (error) {
+        console.error('Failed to load club analytics overview:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadOverview();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[320px] items-center justify-center gap-3 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        <span>{copy.loading}</span>
+      </div>
+    );
+  }
+
+  if (!overview) {
+    return (
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle>{copy.noClubTitle}</CardTitle>
+          <CardDescription>{copy.noClubDescription}</CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.analytics.title')}</h1>
-          <p className="text-muted-foreground mt-1">
-            {t('club_panel.analytics.subtitle')}
-          </p>
-        </div>
-        
-        <select
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-          className="px-3 py-2 border rounded-md text-sm bg-background"
-        >
-          <option value="7d">{t('club_panel.analytics.time_range.7d')}</option>
-          <option value="30d">{t('club_panel.analytics.time_range.30d')}</option>
-          <option value="90d">{t('club_panel.analytics.time_range.90d')}</option>
-          <option value="1y">{t('club_panel.analytics.time_range.1y')}</option>
-        </select>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">{t('club_panel.analytics.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('club_panel.analytics.subtitle')}</p>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
         <StatsCard
-          title={t('club_panel.analytics.stats.profile_views')}
-          value={stats.totalViews.toLocaleString()}
-          icon={Eye}
+          title={t('club_panel.analytics.stats.total_requests')}
+          value={overview.stats.totalRequests}
+          icon={Users}
           color="blue"
-          trend={t('club_panel.analytics.stats.profile_views_trend')}
-        />
-        <StatsCard
-          title={t('club_panel.analytics.stats.new_members')}
-          value={stats.newMembers}
-          icon={UserPlus}
-          color="green"
-          trend={t('club_panel.analytics.stats.new_members_trend')}
+          trend={`${overview.stats.pendingRequests} ${copy.pendingTrend}`}
         />
         <StatsCard
           title={t('club_panel.analytics.stats.average_rating')}
-          value={stats.averageRating}
+          value={overview.stats.averageRating ?? copy.averageRatingFallback}
           icon={Star}
           color="orange"
-          trend={t('club_panel.analytics.stats.average_rating_trend')}
+          trend={`${overview.stats.publicReviews} ${copy.reviewsTrend}`}
         />
         <StatsCard
-          title={t('club_panel.analytics.stats.total_requests')}
-          value={stats.totalRequests}
-          icon={Users}
+          title={t('club_panel.events.stats.upcoming_events')}
+          value={overview.stats.upcomingEvents}
+          icon={Calendar}
+          color="green"
+          trend={`${overview.stats.publishedEvents} published`}
+        />
+        <StatsCard
+          title={copy.favorites}
+          value={overview.stats.favoritesCount}
+          icon={Heart}
           color="purple"
-          trend={t('club_panel.analytics.stats.total_requests_trend')}
+          trend={`${overview.club.cityName}`}
         />
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Monthly Trends */}
+      <Card className="border-dashed">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-muted-foreground" />
+            {copy.statusTitle}
+          </CardTitle>
+          <CardDescription>{copy.statusDescription}</CardDescription>
+        </CardHeader>
+      </Card>
+
+      <div className="grid gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-muted-foreground" />
-              {t('club_panel.analytics.monthly_trends.title')}
+              {copy.recentRequests}
             </CardTitle>
-            <CardDescription>{t('club_panel.analytics.monthly_trends.description')}</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {monthlyData.map((data) => (
-                <div key={data.monthKey} className="flex items-center gap-4">
-                  <span className="text-sm font-medium text-muted-foreground w-10">{t(data.monthKey)}</span>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                        <div 
-                          className="bg-primary h-2 rounded-full transition-all duration-500"
-                          style={{ width: `${(data.views / 1300) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-xs text-muted-foreground w-12 text-right">{data.views}</span>
-                    </div>
+          <CardContent className="space-y-4">
+            {overview.recentRequests.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{copy.noRecentRequests}</p>
+            ) : (
+              overview.recentRequests.map((request) => (
+                <div key={request.id} className="rounded-2xl border border-border p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium">{request.applicantName || copy.applicant}</p>
+                    <Badge variant="secondary">{request.status}</Badge>
+                    <Badge variant="outline">{request.currentStage}</Badge>
                   </div>
-                  <Badge variant="secondary" className="text-xs whitespace-nowrap">
-                    {data.requests} {t('club_panel.analytics.monthly_trends.requests_suffix')}
-                  </Badge>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {new Date(request.createdAt).toLocaleString(language)}
+                  </p>
+                  {request.message ? (
+                    <p className="mt-2 text-sm text-muted-foreground">{request.message}</p>
+                  ) : null}
                 </div>
-              ))}
-            </div>
+              ))
+            )}
           </CardContent>
         </Card>
 
-        {/* Traffic Sources */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-muted-foreground" />
-              {t('club_panel.analytics.traffic_sources.title')}
+              <Calendar className="h-5 w-5 text-muted-foreground" />
+              {copy.recentEvents}
             </CardTitle>
-            <CardDescription>{t('club_panel.analytics.traffic_sources.description')}</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {topSources.map((source) => (
-                <div key={source.sourceKey} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{t(source.sourceKey)}</span>
-                    <span className="text-muted-foreground">{source.percentage}%</span>
+          <CardContent className="space-y-4">
+            {overview.upcomingEvents.length === 0 && overview.pastEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{copy.noRecentEvents}</p>
+            ) : (
+              [...overview.upcomingEvents, ...overview.pastEvents].slice(0, 6).map((event) => (
+                <div key={event.id} className="rounded-2xl border border-border p-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium">{event.name}</p>
+                    <Badge variant={event.isPublished ? 'success' : 'secondary'}>
+                      {event.isPublished ? copy.published : copy.draft}
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                      <div 
-                        className={cn(
-                          "h-2 rounded-full transition-all duration-500",
-                          source.percentage > 40 ? "bg-green-500" :
-                          source.percentage > 25 ? "bg-blue-500" :
-                          source.percentage > 15 ? "bg-brand" : "bg-muted-foreground"
-                        )}
-                        style={{ width: `${source.percentage}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-muted-foreground w-14 text-right">
-                      {source.visits}
-                    </span>
-                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {new Date(event.startDate).toLocaleString(language)}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{event.location}</p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('club_panel.analytics.recent_activity.title')}</CardTitle>
-            <CardDescription>{t('club_panel.analytics.recent_activity.description')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div 
-                  key={index} 
-                  className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors"
-                >
-                  <div className={cn(
-                    "p-2 rounded-full shrink-0",
-                    activity.type === 'view' 
-                      ? "bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" 
-                      : "bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400"
-                  )}>
-                    {activity.type === 'view' ? (
-                      <Eye className="h-4 w-4" />
-                    ) : (
-                      <UserPlus className="h-4 w-4" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{t(activity.messageKey)}</p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <Clock className="h-3 w-3" />
-                      {t(activity.timeKey)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Performance Insights */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('club_panel.analytics.insights.title')}</CardTitle>
-            <CardDescription>{t('club_panel.analytics.insights.description')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="p-4 bg-green-50 dark:bg-green-900/10 rounded-lg border border-green-200 dark:border-green-900/20">
-                <div className="flex items-start gap-3">
-                  <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-full shrink-0">
-                    <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-green-800 dark:text-green-400 mb-1">{t('club_panel.analytics.insights.positive_growth.title')}</h4>
-                    <p className="text-sm text-green-700 dark:text-green-500">
-                      {t('club_panel.analytics.insights.positive_growth.body')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-900/20">
-                <div className="flex items-start gap-3">
-                  <div className="bg-blue-100 dark:bg-blue-900/20 p-2 rounded-full shrink-0">
-                    <Eye className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-blue-800 dark:text-blue-400 mb-1">{t('club_panel.analytics.insights.high_visibility.title')}</h4>
-                    <p className="text-sm text-blue-700 dark:text-blue-500">
-                      {t('club_panel.analytics.insights.high_visibility.body')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 bg-brand/10 dark:bg-brand/15 rounded-lg border border-brand/20 dark:border-brand/30">
-                <div className="flex items-start gap-3">
-                  <div className="bg-brand/15 dark:bg-brand/20 p-2 rounded-full shrink-0">
-                    <Star className="h-4 w-4 text-brand dark:text-brand-light" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-brand dark:text-brand-light mb-1">{t('club_panel.analytics.insights.excellent_rating.title')}</h4>
-                    <p className="text-sm text-brand/90 dark:text-brand/90">
-                      {t('club_panel.analytics.insights.excellent_rating.body')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              ))
+            )}
           </CardContent>
         </Card>
       </div>

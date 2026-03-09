@@ -38,15 +38,13 @@ function getLocaleFromPathname(pathname: string): string | null {
 }
 
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({
-    request: { headers: request.headers },
-  });
-
   const { pathname } = request.nextUrl;
 
   // Check if this is an API route - skip locale handling for API
   if (pathname.startsWith('/api')) {
-    return response;
+    return NextResponse.next({
+      request: { headers: request.headers },
+    });
   }
 
   // Check if there is any supported locale in the pathname
@@ -55,18 +53,17 @@ export async function proxy(request: NextRequest) {
   const firstSegment = pathname.split('/')[1] ?? '';
   const hasLocaleLikePrefix = /^[a-z]{2}$/i.test(firstSegment);
 
-  // Normalize unsupported locale-like prefixes (e.g. /it/** -> /es/**)
+  // Let invalid locale prefixes fall through to the App Router so [lang]/layout can 404 them.
   if (pathnameIsMissingLocale && hasLocaleLikePrefix) {
-    const locale = getLocale(request);
-    const strippedPath = pathname.replace(/^\/[a-z]{2}(?=\/|$)/i, '') || '/';
-    const normalizedPath = strippedPath === '/' ? '' : strippedPath;
-    return NextResponse.redirect(new URL(`/${locale}${normalizedPath}`, request.url));
+    return NextResponse.next({
+      request: { headers: request.headers },
+    });
   }
 
   // Redirect if there is no locale (and it's not an API/static route)
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
-    
+
     return NextResponse.redirect(
       new URL(
         `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
@@ -79,9 +76,12 @@ export async function proxy(request: NextRequest) {
     ? pathname.replace(new RegExp(`^/${pathnameLocale}`), '') || '/'
     : pathname;
 
-  if (localizedPathname === '/club-panel' || localizedPathname.startsWith('/club-panel/')) {
-    return NextResponse.redirect(new URL(`/${pathnameLocale}/contact`, request.url));
-  }
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-scm-locale', pathnameLocale);
+
+  let response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -202,3 +202,5 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|mov|ogg)$).*)',
   ],
 };
+
+

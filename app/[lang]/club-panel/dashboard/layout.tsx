@@ -12,7 +12,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
@@ -28,7 +28,10 @@ export default function DashboardLayout({
           <div className="flex items-center gap-4">
             <ClubMobileNav />
             
-            <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href={`/${language}`}
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
               <ArrowLeft className="h-4 w-4" />
               <span className="text-sm font-medium">{t('nav.back_to_site')}</span>
             </Link>

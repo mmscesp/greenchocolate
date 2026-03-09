@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export default function LanguageUpdater() {
   const { language } = useLanguage();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Update the HTML lang attribute when language changes
     document.documentElement.lang = language;
   }, [language]);

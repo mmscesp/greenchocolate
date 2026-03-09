@@ -20,7 +20,8 @@ interface MembershipRequest {
 }
 
 export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const withLocale = (path: string) => `/${language}${path}`;
   const formatText = (key: string, values: Record<string, string | number>) => {
     let message = t(key);
 
@@ -149,7 +150,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
             </div>
 
             <div className="pt-4">
-              <Link href="/club-panel/dashboard/profile">
+              <Link href={withLocale('/club-panel/dashboard/profile')}>
                 <Button className="w-full" variant="secondary">{t('club_dashboard.actions.edit_profile')}</Button>
               </Link>
             </div>
@@ -163,7 +164,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
             <CardDescription>{t('club_dashboard.actions.description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Link href="/club-panel/dashboard/profile" className="block">
+            <Link href={withLocale('/club-panel/dashboard/profile')} className="block">
               <Button variant="secondary" className="w-full justify-start h-auto py-4 px-6">
                 <div className="flex flex-col items-start text-left">
                   <span className="font-semibold">{t('club_dashboard.actions.update_details')}</span>
@@ -172,7 +173,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
               </Button>
             </Link>
             
-            <Link href="/club-panel/dashboard/requests" className="block">
+            <Link href={withLocale('/club-panel/dashboard/requests')} className="block">
               <Button variant="secondary" className="w-full justify-start h-auto py-4 px-6 relative overflow-hidden">
                 <div className="flex flex-col items-start text-left z-10">
                   <span className="font-semibold">{t('club_dashboard.actions.review_requests')}</span>
@@ -186,7 +187,7 @@ export function ClubDashboardClient({ club }: ClubDashboardClientProps) {
               </Button>
             </Link>
             
-            <Link href="/club-panel/dashboard/events" className="block">
+            <Link href={withLocale('/club-panel/dashboard/events')} className="block">
               <Button variant="secondary" className="w-full justify-start h-auto py-4 px-6">
                 <div className="flex flex-col items-start text-left">
                   <span className="font-semibold">{t('club_dashboard.actions.create_event')}</span>

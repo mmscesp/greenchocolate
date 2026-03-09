@@ -6,6 +6,8 @@
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { Prisma } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
+import { i18n } from '@/lib/i18n-config';
 import { z } from 'zod';
 
 // Use any for JSON fields to avoid Prisma 7 type issues
@@ -37,6 +39,49 @@ const coordinatesSchema = z.object({
 
 const socialMediaSchema = z.record(z.string()).nullable();
 const openingHoursSchema = z.record(z.string());
+const optionalTrimmedString = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value) => {
+    if (!value) {
+      return undefined;
+    }
+
+    return value.length > 0 ? value : undefined;
+  });
+
+const optionalUrlSchema = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value) => {
+    if (!value) {
+      return undefined;
+    }
+
+    return value.length > 0 ? value : undefined;
+  })
+  .refine((value) => !value || /^https?:\/\//i.test(value), {
+    message: 'Website URL must start with http:// or https://',
+  });
+
+const managedClubProfileSchema = z.object({
+  name: z.string().trim().min(2, 'Club name must be at least 2 characters').max(120),
+  description: z.string().trim().min(20, 'Description must be at least 20 characters').max(5000),
+  shortDescription: optionalTrimmedString,
+  neighborhood: z.string().trim().min(2, 'Neighborhood is required').max(120),
+  addressDisplay: z.string().trim().min(5, 'Address is required').max(240),
+  contactEmail: z.string().trim().email('Invalid email address'),
+  phoneNumber: optionalTrimmedString,
+  website: optionalUrlSchema,
+  capacity: z.coerce.number().int().min(1, 'Capacity must be at least 1').max(100000),
+  foundedYear: z.coerce
+    .number()
+    .int()
+    .min(1900, 'Founded year must be after 1900')
+    .max(new Date().getFullYear(), 'Founded year cannot be in the future'),
+});
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -81,6 +126,81 @@ async function verifyClubAdminAccess(clubId: string) {
   }
 
   return null;
+}
+
+async function getCurrentManagedClubAccess() {
+  const profile = await getCurrentProfile();
+
+  if (!profile) {
+    return null;
+  }
+
+  const profileWithManagedClub = profile as typeof profile & { managedClubId: string | null };
+  if (!profileWithManagedClub.managedClubId) {
+    return null;
+  }
+
+  return {
+    profile,
+    managedClubId: profileWithManagedClub.managedClubId,
+  };
+}
+
+function toManagedClubProfile(club: {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  shortDescription: string | null;
+  neighborhood: string;
+  addressDisplay: string;
+  contactEmail: string;
+  phoneNumber: string | null;
+  website: string | null;
+  capacity: number;
+  foundedYear: number;
+  logoUrl: string | null;
+  coverImageUrl: string | null;
+  isVerified: boolean;
+  isActive: boolean;
+  allowsPreRegistration: boolean;
+  city: {
+    name: string;
+    slug: string;
+  };
+}): ManagedClubProfile {
+  return {
+    id: club.id,
+    slug: club.slug,
+    name: club.name,
+    description: club.description,
+    shortDescription: club.shortDescription,
+    neighborhood: club.neighborhood,
+    addressDisplay: club.addressDisplay,
+    contactEmail: club.contactEmail,
+    phoneNumber: club.phoneNumber,
+    website: club.website,
+    capacity: club.capacity,
+    foundedYear: club.foundedYear,
+    cityName: club.city.name,
+    citySlug: club.city.slug,
+    logoUrl: club.logoUrl,
+    coverImageUrl: club.coverImageUrl,
+    isVerified: club.isVerified,
+    isActive: club.isActive,
+    allowsPreRegistration: club.allowsPreRegistration,
+  };
+}
+
+function revalidateClubPanelPaths(slug: string) {
+  for (const locale of i18n.locales) {
+    revalidatePath(`/${locale}/club-panel/dashboard`);
+    revalidatePath(`/${locale}/club-panel/dashboard/profile`);
+    revalidatePath(`/${locale}/club-panel/dashboard/events`);
+    revalidatePath(`/${locale}/club-panel/dashboard/analytics`);
+    revalidatePath(`/${locale}/clubs`);
+    revalidatePath(`/${locale}/clubs/${slug}`);
+  }
 }
 
 // ==========================================
@@ -154,6 +274,70 @@ export interface ClubDetail extends ClubCard {
   allowsPreRegistration: boolean;
   capacity: number;
   foundedYear: number;
+}
+
+export interface ManagedClubProfile {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  shortDescription: string | null;
+  neighborhood: string;
+  addressDisplay: string;
+  contactEmail: string;
+  phoneNumber: string | null;
+  website: string | null;
+  capacity: number;
+  foundedYear: number;
+  cityName: string;
+  citySlug: string;
+  logoUrl: string | null;
+  coverImageUrl: string | null;
+  isVerified: boolean;
+  isActive: boolean;
+  allowsPreRegistration: boolean;
+}
+
+export interface ClubPanelEventItem {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  imageUrl: string | null;
+  eventUrl: string | null;
+  isPublished: boolean;
+}
+
+export interface ClubPanelRequestItem {
+  id: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED';
+  createdAt: string;
+  currentStage: string;
+  applicantName: string | null;
+  applicantAvatarUrl: string | null;
+  message: string | null;
+}
+
+export interface ClubPanelOverview {
+  club: ManagedClubProfile;
+  stats: {
+    totalRequests: number;
+    pendingRequests: number;
+    approvedRequests: number;
+    rejectedRequests: number;
+    favoritesCount: number;
+    publicReviews: number;
+    averageRating: number | null;
+    totalEvents: number;
+    upcomingEvents: number;
+    publishedEvents: number;
+  };
+  recentRequests: ClubPanelRequestItem[];
+  upcomingEvents: ClubPanelEventItem[];
+  pastEvents: ClubPanelEventItem[];
 }
 
 // ==========================================
@@ -657,6 +841,216 @@ export async function getClubMembershipRequests(clubId: string) {
   } catch (error) {
     console.error('getClubMembershipRequests error:', error);
     return [];
+  }
+}
+
+export async function getCurrentManagedClubProfile(): Promise<ManagedClubProfile | null> {
+  const access = await getCurrentManagedClubAccess();
+
+  if (!access) {
+    return null;
+  }
+
+  try {
+    const club = await prisma.club.findUnique({
+      where: { id: access.managedClubId },
+      include: {
+        city: {
+          select: { name: true, slug: true },
+        },
+      },
+    });
+
+    if (!club) {
+      return null;
+    }
+
+    return toManagedClubProfile(club);
+  } catch (error) {
+    console.error('getCurrentManagedClubProfile error:', error);
+    return null;
+  }
+}
+
+export async function updateCurrentManagedClubProfile(
+  input: z.input<typeof managedClubProfileSchema>
+): Promise<ClubActionState & { club?: ManagedClubProfile }> {
+  const access = await getCurrentManagedClubAccess();
+
+  if (!access) {
+    return {
+      success: false,
+      message: 'Unauthorized: no managed club found for the current account',
+    };
+  }
+
+  const validated = managedClubProfileSchema.safeParse(input);
+  if (!validated.success) {
+    return {
+      success: false,
+      errors: validated.error.flatten().fieldErrors,
+      message: 'Please fix the errors below',
+    };
+  }
+
+  try {
+    const updatedClub = await prisma.club.update({
+      where: { id: access.managedClubId },
+      data: {
+        name: validated.data.name,
+        description: validated.data.description,
+        shortDescription:
+          validated.data.shortDescription ??
+          (validated.data.description.length > 160
+            ? `${validated.data.description.slice(0, 157)}...`
+            : validated.data.description),
+        neighborhood: validated.data.neighborhood,
+        addressDisplay: validated.data.addressDisplay,
+        contactEmail: validated.data.contactEmail,
+        phoneNumber: validated.data.phoneNumber ?? null,
+        website: validated.data.website ?? null,
+        capacity: validated.data.capacity,
+        foundedYear: validated.data.foundedYear,
+      },
+      include: {
+        city: {
+          select: { name: true, slug: true },
+        },
+      },
+    });
+
+    revalidateClubPanelPaths(updatedClub.slug);
+
+    return {
+      success: true,
+      message: 'Club updated successfully',
+      club: toManagedClubProfile(updatedClub),
+    };
+  } catch (error) {
+    console.error('updateCurrentManagedClubProfile error:', error);
+    return {
+      success: false,
+      message: 'Failed to update club. Please try again.',
+    };
+  }
+}
+
+export async function getManagedClubPanelOverview(): Promise<ClubPanelOverview | null> {
+  const access = await getCurrentManagedClubAccess();
+
+  if (!access) {
+    return null;
+  }
+
+  try {
+    const now = new Date();
+    const [club, requestCounts, recentRequests, events, favoritesCount, reviewStats] = await Promise.all([
+      prisma.club.findUnique({
+        where: { id: access.managedClubId },
+        include: {
+          city: {
+            select: { name: true, slug: true },
+          },
+        },
+      }),
+      prisma.membershipRequest.groupBy({
+        by: ['status'],
+        where: { clubId: access.managedClubId, user: { role: 'USER' } },
+        _count: { _all: true },
+      }),
+      prisma.membershipRequest.findMany({
+        where: { clubId: access.managedClubId, user: { role: 'USER' } },
+        orderBy: { createdAt: 'desc' },
+        take: 8,
+        include: {
+          user: {
+            select: {
+              displayName: true,
+              avatarUrl: true,
+            },
+          },
+        },
+      }),
+      prisma.event.findMany({
+        where: { clubId: access.managedClubId },
+        orderBy: [{ startDate: 'asc' }],
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          description: true,
+          location: true,
+          startDate: true,
+          endDate: true,
+          imageUrl: true,
+          eventUrl: true,
+          isPublished: true,
+        },
+      }),
+      prisma.favorite.count({ where: { clubId: access.managedClubId } }),
+      prisma.review.aggregate({
+        where: { clubId: access.managedClubId, isPublic: true },
+        _avg: { rating: true },
+        _count: { _all: true },
+      }),
+    ]);
+
+    if (!club) {
+      return null;
+    }
+
+    const countsByStatus = requestCounts.reduce<Record<string, number>>((accumulator, item) => {
+      accumulator[item.status] = item._count._all;
+      return accumulator;
+    }, {});
+
+    const eventItems = events.map((event) => ({
+      id: event.id,
+      slug: event.slug,
+      name: event.name,
+      description: event.description,
+      location: event.location,
+      startDate: event.startDate.toISOString(),
+      endDate: event.endDate.toISOString(),
+      imageUrl: event.imageUrl,
+      eventUrl: event.eventUrl,
+      isPublished: event.isPublished,
+    }));
+
+    const totalRequests = Object.values(countsByStatus).reduce((sum, count) => sum + count, 0);
+
+    return {
+      club: toManagedClubProfile(club),
+      stats: {
+        totalRequests,
+        pendingRequests: countsByStatus.PENDING ?? 0,
+        approvedRequests: countsByStatus.APPROVED ?? 0,
+        rejectedRequests: countsByStatus.REJECTED ?? 0,
+        favoritesCount,
+        publicReviews: reviewStats._count._all,
+        averageRating:
+          typeof reviewStats._avg.rating === 'number'
+            ? Math.round(reviewStats._avg.rating * 10) / 10
+            : null,
+        totalEvents: eventItems.length,
+        upcomingEvents: eventItems.filter((event) => new Date(event.endDate) >= now).length,
+        publishedEvents: eventItems.filter((event) => event.isPublished).length,
+      },
+      recentRequests: recentRequests.map((request) => ({
+        id: request.id,
+        status: request.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED',
+        createdAt: request.createdAt.toISOString(),
+        currentStage: request.currentStage,
+        applicantName: request.user.displayName,
+        applicantAvatarUrl: request.user.avatarUrl,
+        message: request.message,
+      })),
+      upcomingEvents: eventItems.filter((event) => new Date(event.endDate) >= now),
+      pastEvents: eventItems.filter((event) => new Date(event.endDate) < now),
+    };
+  } catch (error) {
+    console.error('getManagedClubPanelOverview error:', error);
+    return null;
   }
 }
 
