@@ -1,15 +1,21 @@
-public/images/cities/barcelona-dusk.jpg
-public/images/cities/madrid-night.jpg
-public/images/cities/malaga-harbor.jpg
-public/images/cities/sevilla-oldtown.jpg
-public/images/cities/tenerife-coast.jpg
-public/images/cities/valencia-arts.jpg
+public/images/cities/barcelona-city.webp
+public/images/cities/madrid-city.webp
+public/images/cities/tenerife-city.webp
+public/images/cities/valencia-city.webp
 
-public/images/editorial/bcn-vs-ams.jpg
-public/images/editorial/club-interior-warm.jpg
-public/images/editorial/first-time-bcn.jpg
-public/images/editorial/legal-brief.jpg
-public/images/editorial/safety-kit-hero.jpg
+public/images/editorial/barcelo-gothic-quarter.webp
+public/images/editorial/barcelona-gaudi-house.webp
+public/images/editorial/barcelona-parc-guel.webp
+public/images/editorial/barcelona-plaza-espana.webp
+public/images/editorial/barcelona-vs-amsterdam.webp
+public/images/editorial/brownies.webp
+public/images/editorial/first-aid-help.webp
+public/images/editorial/lost-tourist.webp
+public/images/editorial/safety-kit.webp
+public/images/editorial/scam-alert.webp
+public/images/editorial/spain-legal-flags.webp
+public/images/editorial/spain-travel-guide.webp
+public/images/editorial/spain-vintage.webp
 public/images/fallbacks/club-default.jpg
 public/images/fallbacks/event-default.jpg
 

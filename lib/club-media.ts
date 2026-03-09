@@ -193,6 +193,16 @@ export function buildClubMediaItems(params: {
     return configured;
   }
 
+  if (params.slug.toLowerCase().includes('cozy')) {
+    return [
+      {
+        kind: 'image',
+        src: '/images/clubs/club-311/gallery-lounge.webp',
+        alt: `${params.name} cozy lounge area`,
+      },
+    ];
+  }
+
   return getClubImageGallery(params.images, params.citySlug).map((src, index) => ({
     kind: 'image' as const,
     src,

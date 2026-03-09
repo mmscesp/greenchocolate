@@ -6,14 +6,14 @@ const CITY_IMAGE_BY_SLUG = {
 } as const;
 
 const CATEGORY_IMAGE_BY_SLUG = {
-  legal: '/images/editorial/legal-brief.jpg',
-  etiquette: '/images/editorial/first-time-bcn.jpg',
-  culture: '/images/editorial/bcn-vs-ams.jpg',
-  'harm-reduction': '/images/editorial/safety-kit-hero.jpg',
+  legal: '/images/editorial/spain-legal-flags.webp',
+  etiquette: '/images/editorial/lost-tourist.webp',
+  culture: '/images/editorial/barcelona-vs-amsterdam.webp',
+  'harm-reduction': '/images/editorial/safety-kit.webp',
 } as const;
 
 const DEFAULT_CITY_IMAGE = CITY_IMAGE_BY_SLUG.barcelona;
-const DEFAULT_EDITORIAL_IMAGE = '/images/editorial/club-interior-warm.jpg';
+const DEFAULT_EDITORIAL_IMAGE = '/images/editorial/barcelona-gaudi-house.webp';
 const DEFAULT_CLUB_IMAGE = '/images/fallbacks/club-default.jpg';
 const DEFAULT_EVENT_IMAGE = '/images/fallbacks/event-default.jpg';
 

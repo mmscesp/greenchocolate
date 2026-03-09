@@ -69,7 +69,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       slug: 'what-are-cannabis-social-clubs-spain',
       category: 'culture',
       citySlug: 'barcelona',
-      image: '/images/editorial/club-interior-warm.jpg',
+      image: '/images/editorial/barcelona-gaudi-house.webp',
     },
     {
       id: '2',
@@ -80,7 +80,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       slug: 'safety-kit-visitors-spain',
       category: 'harm-reduction',
       citySlug: 'barcelona',
-      image: '/images/editorial/safety-kit-hero.jpg',
+      image: '/images/editorial/safety-kit.webp',
     },
     {
       id: '3',
@@ -91,7 +91,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       slug: 'barcelona-vs-amsterdam-cannabis',
       category: 'culture',
       citySlug: 'barcelona',
-      image: '/images/editorial/bcn-vs-ams.jpg',
+      image: '/images/editorial/barcelona-vs-amsterdam.webp',
     },
     {
       id: '4',
@@ -102,7 +102,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
       slug: 'first-time-barcelona-cannabis-club',
       category: 'etiquette',
       citySlug: 'barcelona',
-      image: '/images/editorial/first-time-bcn.jpg',
+      image: '/images/editorial/barcelo-gothic-quarter.webp',
     },
   ];
 
