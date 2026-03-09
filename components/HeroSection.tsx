@@ -170,47 +170,101 @@ export default function HeroSection() {
       const mm = gsap.matchMedia();
       const { act2 } = HERO_CONFIG;
       const reducedMotion = prefersReducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      /* ============================================================ */
-      /*  LIVING GLASS (Mouse tracking internal parallax)              */
-      /* ============================================================ */
-      const contentContainer = contentBlockRef.current;
-      let xTo: gsap.QuickToFunc | null = null;
-      let yTo: gsap.QuickToFunc | null = null;
 
-      if (contentContainer && !reducedMotion && !isConstrainedDevice) {
-        // Target the inner content layer for movement
-        const innerContent = contentContainer.querySelector('.relative.z-30');
-        if (innerContent) {
-          xTo = gsap.quickTo(innerContent, 'x', { duration: 0.6, ease: 'power3' });
-          yTo = gsap.quickTo(innerContent, 'y', { duration: 0.6, ease: 'power3' });
+      mm.add('(min-width: 768px)', () => {
+        if (!desktopContainerRef.current) return;
 
-          const handleMouseMove = (e: MouseEvent) => {
-            const rect = contentContainer.getBoundingClientRect();
-            // Calculate mouse position relative to center of the card (-1 to 1)
-            const x = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
-            const y = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
-            // Move opposite to mouse by a few pixels
-            xTo?.(x * -12);
-            yTo?.(y * -12);
-          };
-          const handleMouseLeave = () => {
-            xTo?.(0);
-            yTo?.(0);
-          };
+        if (reducedMotion) {
+          gsap.set(headlineWrapRef.current, { opacity: 1, y: act2.headline.y, scale: act2.headline.scale });
+          gsap.set('.h1-line', { opacity: 1, y: 0 });
+          gsap.set('.h1-underline-path', { strokeDashoffset: 0 });
+          gsap.set(contentBlockRef.current, { opacity: 1, y: act2.contentBlock.y, scale: act2.contentBlock.scale });
+          gsap.set(vignetteRef.current, { opacity: act2.vignette.opacity });
+          gsap.set(imageSharpRef.current, { clearProps: 'transform' });
+          if (imageBlurRef.current) {
+            gsap.set(imageBlurRef.current, { opacity: 0, clearProps: 'transform' });
+          }
+          return;
+        }
 
-          contentContainer.addEventListener('mousemove', handleMouseMove);
-          contentContainer.addEventListener('mouseleave', handleMouseLeave);
+        const imageTargets = [imageSharpRef.current, imageBlurRef.current].filter(
+          (target): target is HTMLDivElement => target !== null
+        );
+        const blurOpacity = isConstrainedDevice ? 0.12 : act2.blur.opacity;
+        const vignetteOpacity = isConstrainedDevice ? 0.72 : act2.vignette.opacity;
 
-          // Clean up listeners on revert
-          mm.add('(min-width: 768px)', () => {
-            return () => {
-              contentContainer.removeEventListener('mousemove', handleMouseMove);
-              contentContainer.removeEventListener('mouseleave', handleMouseLeave);
-            };
+        // Initial drone altitude (zoomed in, pushed slightly down)
+        gsap.set(imageTargets, { scale: HERO_CONFIG.focal.initialZoom, y: '2%', transformOrigin: 'center 40%' });
+        if (imageBlurRef.current) {
+          gsap.set(imageBlurRef.current, { opacity: 0 });
+        }
+        gsap.set(vignetteRef.current, { opacity: 0 });
+
+        if (!isConstrainedDevice) {
+          // The infinite hovering wind effect
+          gsap.to(droneWrapRef.current, {
+            y: '1.2vh',
+            rotation: 0.15,
+            duration: 5.5,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+          });
+        } else {
+          gsap.to(droneWrapRef.current, {
+            y: '0.35vh',
+            duration: 1.2,
+            ease: 'power2.out',
           });
         }
-      }
 
+        // ACT 1 INITIAL STATE: Text center, card hidden way down
+        gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1, transformOrigin: 'center center' });
+        gsap.set(contentBlockRef.current, { opacity: 0, y: '30vh', scale: 0.95, transformOrigin: 'center center' });
+
+        // Stagger Title load-in with Blur-to-Focus reveal
+        const h1Lines = gsap.utils.toArray('.h1-line', headlineWrapRef.current) as HTMLElement[];
+        gsap.fromTo(
+          h1Lines,
+          { y: 40, opacity: 0, filter: 'blur(10px)' },
+          { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1.2, stagger: 0.15, ease: 'expo.out', delay: 0.3 }
+        );
+
+        // Native GSAP Underline Draw Animation
+        gsap.to('.h1-underline-path', {
+          strokeDashoffset: 0,
+          duration: 1.5,
+          ease: 'power2.inOut',
+          delay: 0.9,
+        });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: desktopContainerRef.current,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1.2,
+            snap: { snapTo: 'labels', duration: { min: 0.3, max: 0.6 }, delay: 0.1, ease: 'power3.inOut' },
+          },
+        });
+        tl.addLabel('act1', 0);
+        // Cinematic Arc: Pull back (scale down) AND fly upwards (y: '0%') simultaneously
+        tl.to(imageTargets, { scale: HERO_CONFIG.focal.finalScale, y: '0%', ease: 'power3.inOut', duration: 1 }, 0);
+        if (imageBlurRef.current) {
+          tl.to(imageBlurRef.current, { opacity: blurOpacity, ease: 'power3.inOut', duration: 1 }, 0);
+        }
+        tl.to(vignetteRef.current, { opacity: vignetteOpacity, ease: 'power3.inOut', duration: 1 }, 0);
+
+        // Pushes headline gently up to sit below the pill navbar
+        tl.to(headlineWrapRef.current, { scale: act2.headline.scale, y: act2.headline.y, ease: 'power3.inOut', duration: 1 }, 0);
+
+        // Pulls card up to form a cohesive optical center with the headline
+        tl.to(contentBlockRef.current, { opacity: 1, y: act2.contentBlock.y, scale: act2.contentBlock.scale, ease: 'power3.inOut', duration: 1 }, 0);
+        tl.addLabel('act2', 1);
+      });
+
+      /* ============================================================ */
+      /*  MOBILE — Native scroll with elegant entrance                 */
       /* ============================================================ */
       /*  DESKTOP — Cinematic 2-Act Timeline                           */
       /* ============================================================ */
@@ -260,8 +314,6 @@ export default function HeroSection() {
         }
 
         // ACT 1 INITIAL STATE: Text center, card hidden way down
-
-        // ACT 1 INITIAL STATE: Text center, card hidden way down
         gsap.set(headlineWrapRef.current, { opacity: 1, y: 0, scale: 1, transformOrigin: 'center center' });
         gsap.set(contentBlockRef.current, { opacity: 0, y: '30vh', scale: 0.95, transformOrigin: 'center center' });
 
@@ -289,9 +341,9 @@ export default function HeroSection() {
             snap: { snapTo: 'labels', duration: { min: 0.3, max: 0.6 }, delay: 0.1, ease: 'power3.inOut' },
           },
         });
-
         tl.addLabel('act1', 0);
-        tl.to(imageTargets, { scale: HERO_CONFIG.focal.finalScale, ease: 'power3.inOut', duration: 1 }, 0);
+        // Cinematic Arc: Pull back (scale down) AND fly upwards (y: '0%') simultaneously
+        tl.to(imageTargets, { scale: HERO_CONFIG.focal.finalScale, y: '0%', ease: 'power3.inOut', duration: 1 }, 0);
         if (imageBlurRef.current) {
           tl.to(imageBlurRef.current, { opacity: blurOpacity, ease: 'power3.inOut', duration: 1 }, 0);
         }
