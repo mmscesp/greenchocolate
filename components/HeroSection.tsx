@@ -25,13 +25,15 @@ const HERO_CONFIG = {
     finalScale: 1.0,
   },
   /*
-    RECALCULATED: Much wider spread to guarantee breathing room.
-    Headline scales down more and moves higher.
-    Card moves lower.
+    RECALCULATED (APPLE 2026): The "Optical Plinth" Balance.
+    We must clear the spatial height of the massive typography + card.
+    Headline steps back and anchors high (-17vh) into the sky.
+    Action Module anchors low (24vh) acting as a weighted base.
+    Result: Perfect ~15vh breathing room in the center, zero overlap.
   */
   act2: {
-    headline: { scale: 0.85, y: '-16vh' },
-    contentBlock: { y: '20vh', scale: 1 },
+    headline: { scale: 0.84, y: '-17vh' },
+    contentBlock: { y: '24vh', scale: 1 },
     vignette: { opacity: 0.85 },
     blur: { opacity: 0.22 },
   },
@@ -575,20 +577,19 @@ export default function HeroSection() {
             <div ref={headlineWrapRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[90vw] text-center will-change-transform">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[150%] bg-black/40 blur-[80px] rounded-[100%] pointer-events-none z-0 [transform:translateZ(0)]" />
 
-              {/* Reduced gap to md:gap-4 to stop vertical overflow, kept tight cinematic feel */}
-              <h1 className="relative z-10 flex flex-col items-center justify-center gap-3 md:gap-4 font-black font-serif tracking-tight text-[clamp(2.2rem,4.5vw,4.5rem)] drop-shadow-2xl">
-                <span className="h1-line text-white text-balance leading-none opacity-0 will-change-[transform,opacity]">
+              {/* Tighter tracking, better line-height, optical gaps */}
+              <h1 className="relative z-10 flex flex-col items-center justify-center gap-4 md:gap-5 font-black font-serif tracking-[-0.03em] text-[clamp(2.2rem,4.5vw,4.5rem)] drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+                <span className="h1-line text-white text-balance leading-[1.05] opacity-0 will-change-[transform,opacity]">
                   {t('hero.section.headline.line_1')}
                 </span>
-                <span className="h1-line text-white/80 text-balance leading-none opacity-0 will-change-[transform,opacity]">
+                <span className="h1-line text-white/95 text-balance leading-[1.05] opacity-0 will-change-[transform,opacity]">
                   {t('hero.section.headline.line_2')}
                 </span>
 
-                <span className="h1-line text-gold text-balance leading-none opacity-0 will-change-[transform,opacity] relative inline-block">
+                <span className="h1-line text-brand text-balance leading-[1.05] opacity-0 will-change-[transform,opacity] relative inline-block">
                   <span className="relative z-10">{t('hero.section.headline.line_3')}</span>
 
-                  {/* Underline pulled slightly tighter to text to avoid bottom clipping */}
-                  <svg className="absolute -bottom-2 md:-bottom-3 left-0 w-full h-[10px] md:h-[16px] text-gold opacity-80 overflow-visible" viewBox="0 0 300 20" preserveAspectRatio="none">
+                  <svg className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-[10px] md:h-[14px] text-brand opacity-90 overflow-visible" viewBox="0 0 300 20" preserveAspectRatio="none">
                     <path
                       d="M 0,10 Q 75,0 150,10 Q 225,20 300,10"
                       stroke="currentColor"
@@ -606,10 +607,10 @@ export default function HeroSection() {
             </div>
 
             {/* — Dark Liquid Glass Content Block — */}
-            <div ref={contentBlockRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[42rem] px-4 flex flex-col items-center gap-6 opacity-0 will-change-[transform,opacity,scale]">
-              {/* Compacted paddings (p-6 md:p-8) & gap to reduce vertical bloat */}
+            <div ref={contentBlockRef} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[38rem] px-4 flex flex-col items-center gap-5 opacity-0 will-change-[transform,opacity,scale]">
+              {/* Card - slimmer, precision padding */}
               <div
-                className="relative w-full overflow-hidden rounded-[2.5rem] p-6 md:p-8 flex flex-col items-center gap-6 pointer-events-auto transition-all duration-700 hover:scale-[1.01]"
+                className="relative w-full overflow-hidden rounded-[2.25rem] px-8 py-8 md:px-10 md:py-9 flex flex-col items-center gap-7 pointer-events-auto transition-all duration-700 hover:scale-[1.01]"
                 style={{ boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.2)' }}
               >
                 <div
@@ -618,26 +619,27 @@ export default function HeroSection() {
                 />
                 <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'rgba(10, 10, 10, 0.45)' }} />
                 <div
-                  className="absolute inset-0 z-20 pointer-events-none rounded-[2.5rem]"
+                  className="absolute inset-0 z-20 pointer-events-none rounded-[2.25rem]"
                   style={{ boxShadow: 'inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px var(--glass-highlight)' }}
                 />
 
                 <div className="relative z-30 flex flex-col items-center gap-6 w-full">
-                  <p className="text-base md:text-lg text-white/95 leading-relaxed text-center text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  <p className="text-[1.05rem] text-white/95 leading-[1.6] text-center text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     {t('hero.section.body')}
                   </p>
-                  <div className="flex flex-col sm:flex-row justify-center items-center gap-4 w-full">
-                    <Button asChild size="lg" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full bg-brand text-bg-base hover:bg-brand-dark hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_hsl(var(--brand)/0.3)]">
+                  <div className="flex justify-center items-center gap-4 w-full">
+                    <Button asChild size="lg" className="px-8 py-6 md:py-5 text-[0.95rem] font-bold rounded-full bg-brand text-bg-base hover:bg-brand-dark hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[0_4px_20px_hsl(var(--brand)/0.3)]">
                       <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
                     </Button>
-                    <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto px-10 py-6 text-base font-bold rounded-full border-white/20 text-white bg-white/5 hover:bg-white/15 hover:border-white/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                    <Button asChild size="lg" variant="secondary" className="px-8 py-6 md:py-5 text-[0.95rem] font-bold rounded-full border-white/20 text-white bg-white/5 hover:bg-white/15 hover:border-white/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
                       <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`}>{t('hero.section.cta_secondary')}</Link>
                     </Button>
                   </div>
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-full flex items-center shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-all duration-500 hover:scale-[1.02] group">
+              {/* Pill - acting as the plinth */}
+              <div className="relative overflow-hidden rounded-full flex items-center shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-all duration-500 hover:scale-[1.02] group pointer-events-auto">
                 <div
                   className={`absolute inset-0 z-0 pointer-events-none ${shouldUseGlassDistortion ? 'md:[filter:url(#glass-distortion)]' : ''} [transform:translateZ(0)]`}
                   style={{ backdropFilter: `blur(${isConstrainedDevice ? 5 : 8}px)`, isolation: 'isolate' }}
@@ -648,9 +650,9 @@ export default function HeroSection() {
                   style={{ boxShadow: 'inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 var(--glass-highlight)' }}
                 />
                 <div className="relative z-30 flex items-center gap-3 px-6 py-2.5">
-                  <span className="text-xs text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
+                  <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                  <span className="text-sm font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                  <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
                 </div>
               </div>
             </div>
