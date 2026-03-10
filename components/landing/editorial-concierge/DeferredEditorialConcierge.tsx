@@ -14,12 +14,41 @@ const EditorialConciergeFlow = dynamic(
 );
 
 export default function DeferredEditorialConcierge() {
+  const [canHydrate, setCanHydrate] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const enableHydration = () => {
+      setCanHydrate((current) => (current ? current : true));
+    };
+
+    const handleScrollIntent = () => {
+      if (window.scrollY > Math.max(120, window.innerHeight * 0.12)) {
+        enableHydration();
+      }
+    };
+
+    const handlePointerIntent = () => {
+      enableHydration();
+    };
+
+    window.addEventListener('scroll', handleScrollIntent, { passive: true });
+    window.addEventListener('wheel', handlePointerIntent, { passive: true, once: true });
+    window.addEventListener('touchstart', handlePointerIntent, { passive: true, once: true });
+
+    handleScrollIntent();
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollIntent);
+      window.removeEventListener('wheel', handlePointerIntent);
+      window.removeEventListener('touchstart', handlePointerIntent);
+    };
+  }, []);
+
+  useEffect(() => {
     const sentinel = sentinelRef.current;
-    if (!sentinel || shouldRender) return;
+    if (!canHydrate || !sentinel || shouldRender) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -32,7 +61,7 @@ export default function DeferredEditorialConcierge() {
       },
       {
         root: null,
-        rootMargin: '600px 0px',
+        rootMargin: '80px 0px',
         threshold: 0.01,
       }
     );
@@ -42,7 +71,7 @@ export default function DeferredEditorialConcierge() {
     return () => {
       observer.disconnect();
     };
-  }, [shouldRender]);
+  }, [canHydrate, shouldRender]);
 
   return (
     <div ref={sentinelRef}>
@@ -51,7 +80,7 @@ export default function DeferredEditorialConcierge() {
           <EditorialConciergeFlow />
         </AtmosphericCanvas>
       ) : (
-        <div className="min-h-[40vh]" aria-hidden="true" />
+        <div className="min-h-[28vh] md:min-h-[40vh]" aria-hidden="true" />
       )}
     </div>
   );

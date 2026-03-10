@@ -45,19 +45,20 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   const initialPathnameRef = useRef(pathname);
 
   useEffect(() => {
-    // Accessibility check: disable smooth scroll for users who prefer reduced motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
-    // Register ScrollTrigger early
     gsap.registerPlugin(ScrollTrigger);
 
     const initialPathname = initialPathnameRef.current ?? window.location.pathname;
     const isConstrainedDevice = isConstrainedDeviceRuntime();
     const isHomePath = isLocalizedHomePath(initialPathname);
+    const intentEvents: Array<keyof WindowEventMap> = ['wheel', 'touchstart', 'pointerdown', 'keydown', 'scroll'];
 
     let idleId: number | null = null;
     let timeoutId: number | null = null;
+    let heroReady = !isHomePath;
+    let userIntentReady = !isHomePath;
 
     const handleResize = () => {
       ScrollTrigger.refresh();
@@ -114,17 +115,33 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       }
     };
 
-    const handleHeroReady = () => {
+    const maybeInitializeLenis = () => {
+      if (initializedRef.current) return;
+      if (!heroReady || !userIntentReady) return;
       initializeLenis();
     };
 
-    if (isConstrainedDevice && isHomePath) {
-      window.addEventListener('scm:hero-visual-ready', handleHeroReady, { once: true });
+    const markUserIntentReady = () => {
+      userIntentReady = true;
+      maybeInitializeLenis();
+    };
 
+    const handleHeroReady = () => {
+      heroReady = true;
+      maybeInitializeLenis();
+    };
+
+    if (isHomePath) {
+      window.addEventListener('scm:hero-visual-ready', handleHeroReady, { once: true });
+      intentEvents.forEach((eventName) => {
+        window.addEventListener(eventName, markUserIntentReady, { passive: true, once: true });
+      });
+
+      const fallbackDelay = isConstrainedDevice ? 1400 : 900;
       if (typeof window.requestIdleCallback === 'function') {
-        idleId = window.requestIdleCallback(() => initializeLenis(), { timeout: 1200 });
+        idleId = window.requestIdleCallback(markUserIntentReady, { timeout: fallbackDelay });
       } else {
-        timeoutId = window.setTimeout(() => initializeLenis(), 1200);
+        timeoutId = window.setTimeout(markUserIntentReady, fallbackDelay);
       }
     } else {
       initializeLenis();
@@ -137,6 +154,9 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       clearDeferredStart();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('scm:hero-visual-ready', handleHeroReady);
+      intentEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, markUserIntentReady);
+      });
 
       lenisRef.current?.destroy();
       lenisRef.current = null;
