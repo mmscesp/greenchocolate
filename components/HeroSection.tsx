@@ -49,49 +49,49 @@ type MobileHeroTypographyPreset = {
 
 const MOBILE_HERO_TYPOGRAPHY = {
   en: {
-    headlineWrap: 'max-w-[21.75rem] px-1',
-    headline: 'gap-2.5 text-[clamp(2rem,8.4vw,2.95rem)] leading-[0.95] tracking-[-0.055em]',
-    line1: 'whitespace-nowrap max-[359px]:whitespace-normal',
-    line2: 'mx-auto max-w-[11.4em] text-[0.88em] leading-[1.02] text-balance',
-    line3: 'whitespace-nowrap max-[359px]:whitespace-normal text-[0.92em]',
-    underline: 'left-1/2 -bottom-1.5 h-[11px] w-[92%] -translate-x-1/2',
-    body: 'max-w-[19.5rem] text-[0.92rem] leading-[1.5]',
+    headlineWrap: 'max-w-[22rem] px-1',
+    headline: 'gap-5 text-[clamp(1.9rem,7.95vw,2.78rem)] leading-[1.08] tracking-[-0.04em]',
+    line1: 'whitespace-nowrap max-[347px]:whitespace-normal leading-[1.08]',
+    line2: 'mx-auto max-w-[11.8em] text-[0.89em] leading-[1.12] text-balance',
+    line3: 'whitespace-nowrap max-[347px]:whitespace-normal text-[0.91em] leading-[1.08]',
+    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[90%] -translate-x-1/2',
+    body: 'max-w-[17.75rem] text-[0.9rem] leading-[1.5]',
   },
   es: {
-    headlineWrap: 'max-w-[22.25rem] px-1',
-    headline: 'gap-2.5 text-[clamp(1.95rem,8.5vw,2.95rem)] leading-[0.96] tracking-[-0.05em]',
-    line1: 'whitespace-nowrap max-[359px]:whitespace-normal',
-    line2: 'mx-auto max-w-[11.8em] text-[0.9em] leading-[1.03] text-balance',
-    line3: 'whitespace-nowrap max-[359px]:whitespace-normal text-[0.92em]',
-    underline: 'left-1/2 -bottom-1.5 h-[11px] w-[91%] -translate-x-1/2',
-    body: 'max-w-[19.75rem] text-[0.93rem] leading-[1.5]',
+    headlineWrap: 'max-w-[22.5rem] px-1',
+    headline: 'gap-5 text-[clamp(1.88rem,8.05vw,2.8rem)] leading-[1.08] tracking-[-0.04em]',
+    line1: 'whitespace-nowrap max-[347px]:whitespace-normal leading-[1.08]',
+    line2: 'mx-auto max-w-[11.9em] text-[0.9em] leading-[1.12] text-balance',
+    line3: 'whitespace-nowrap max-[347px]:whitespace-normal text-[0.91em] leading-[1.08]',
+    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[90%] -translate-x-1/2',
+    body: 'max-w-[18rem] text-[0.9rem] leading-[1.5]',
   },
   fr: {
-    headlineWrap: 'max-w-[20.75rem] px-1',
-    headline: 'gap-2.5 text-[clamp(1.8rem,7.9vw,2.65rem)] leading-[0.98] tracking-[-0.045em]',
-    line1: 'mx-auto max-w-[11.5em] text-balance',
-    line2: 'mx-auto max-w-[12.2em] text-[0.9em] leading-[1.04] text-balance',
-    line3: 'mx-auto max-w-[10.8em] text-[0.9em] leading-[1.02] text-balance',
-    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[88%] -translate-x-1/2',
-    body: 'max-w-[19.25rem] text-[0.91rem] leading-[1.52]',
+    headlineWrap: 'max-w-[21.5rem] px-1',
+    headline: 'gap-5 text-[clamp(1.76rem,7.6vw,2.55rem)] leading-[1.08] tracking-[-0.035em]',
+    line1: 'mx-auto max-w-[11.5em] leading-[1.08] text-balance',
+    line2: 'mx-auto max-w-[12.2em] text-[0.9em] leading-[1.12] text-balance',
+    line3: 'mx-auto max-w-[10.8em] text-[0.89em] leading-[1.08] text-balance',
+    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[87%] -translate-x-1/2',
+    body: 'max-w-[17.9rem] text-[0.89rem] leading-[1.5]',
   },
   de: {
-    headlineWrap: 'max-w-[20.5rem] px-1',
-    headline: 'gap-2.5 text-[clamp(1.82rem,8vw,2.7rem)] leading-[0.98] tracking-[-0.045em]',
-    line1: 'mx-auto max-w-[11.3em] text-balance',
-    line2: 'mx-auto max-w-[12em] text-[0.9em] leading-[1.04] text-balance',
-    line3: 'mx-auto max-w-[10.5em] text-[0.9em] leading-[1.02] text-balance',
-    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[88%] -translate-x-1/2',
-    body: 'max-w-[19.25rem] text-[0.91rem] leading-[1.52]',
+    headlineWrap: 'max-w-[21.5rem] px-1',
+    headline: 'gap-5 text-[clamp(1.78rem,7.7vw,2.58rem)] leading-[1.08] tracking-[-0.035em]',
+    line1: 'mx-auto max-w-[11.3em] leading-[1.08] text-balance',
+    line2: 'mx-auto max-w-[12em] text-[0.9em] leading-[1.12] text-balance',
+    line3: 'mx-auto max-w-[10.5em] text-[0.89em] leading-[1.08] text-balance',
+    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[87%] -translate-x-1/2',
+    body: 'max-w-[17.9rem] text-[0.89rem] leading-[1.5]',
   },
   default: {
-    headlineWrap: 'max-w-[20.5rem] px-1',
-    headline: 'gap-2.5 text-[clamp(1.82rem,8vw,2.7rem)] leading-[0.98] tracking-[-0.045em]',
-    line1: 'mx-auto max-w-[11.3em] text-balance',
-    line2: 'mx-auto max-w-[12em] text-[0.9em] leading-[1.04] text-balance',
-    line3: 'mx-auto max-w-[10.5em] text-[0.9em] leading-[1.02] text-balance',
-    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[88%] -translate-x-1/2',
-    body: 'max-w-[19.25rem] text-[0.91rem] leading-[1.52]',
+    headlineWrap: 'max-w-[21.5rem] px-1',
+    headline: 'gap-5 text-[clamp(1.78rem,7.7vw,2.58rem)] leading-[1.08] tracking-[-0.035em]',
+    line1: 'mx-auto max-w-[11.3em] leading-[1.08] text-balance',
+    line2: 'mx-auto max-w-[12em] text-[0.9em] leading-[1.12] text-balance',
+    line3: 'mx-auto max-w-[10.5em] text-[0.89em] leading-[1.08] text-balance',
+    underline: 'left-1/2 -bottom-1.5 h-[10px] w-[87%] -translate-x-1/2',
+    body: 'max-w-[17.9rem] text-[0.89rem] leading-[1.5]',
   },
 } satisfies Record<string, MobileHeroTypographyPreset>;
 
@@ -674,30 +674,31 @@ export default function HeroSection() {
               quality={74}
               sizes="(max-width: 767px) 100vw, 0px"
               priority
-              className="object-cover object-[center_35%]"
+              className="object-cover object-[center_38%]"
               onLoad={handleImageLoad}
               onError={handleImageError}
             />
           </div>
           <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-          <div className="absolute top-0 inset-x-0 h-[45vh] bg-gradient-to-b from-black/90 via-black/40 to-transparent pointer-events-none" />
-          <div className="absolute bottom-0 inset-x-0 h-[70vh] bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-[35vh] bg-gradient-to-b from-black/90 via-black/30 to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 inset-x-0 h-[65vh] bg-gradient-to-t from-black/95 via-black/60 to-transparent pointer-events-none" />
         </div>
 
         <div
           ref={mobileContentRef}
-          className="relative z-10 grid min-h-[100dvh] grid-rows-[auto_minmax(clamp(5.5rem,16vh,9rem),1fr)_auto_auto] px-3 pt-28 pb-7"
+          className="relative z-10 flex flex-col min-h-[100dvh] px-4 pt-[16vh] pb-[6vh]"
         >
+          {/* Mind: Top Anchor */}
           <div data-mobile-hero-item className={`mx-auto flex w-full flex-col items-center text-center ${mobileHeroTypography.headlineWrap}`}>
-            <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[74%] h-[18vh] bg-black/50 blur-[60px] rounded-[100%] pointer-events-none -z-10 [transform:translateZ(0)]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[120%] bg-black/40 blur-[56px] rounded-[100%] pointer-events-none -z-10 [transform:translateZ(0)]" />
 
-            <h1 className={`flex w-full flex-col items-center font-black font-serif text-white drop-shadow-lg ${mobileHeroTypography.headline}`}>
-              <span className={`leading-[0.98] ${mobileHeroTypography.line1}`}>{t('hero.section.headline.line_1')}</span>
-              <span className={`text-white/90 ${mobileHeroTypography.line2}`}>{t('hero.section.headline.line_2')}</span>
+            <h1 className={`flex w-full flex-col items-center font-black font-serif text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] ${mobileHeroTypography.headline}`}>
+              <span className={`${mobileHeroTypography.line1}`}>{t('hero.section.headline.line_1')}</span>
+              <span className={`text-white/95 ${mobileHeroTypography.line2}`}>{t('hero.section.headline.line_2')}</span>
 
               <span className={`relative inline-block text-brand ${mobileHeroTypography.line3}`}>
                 <span className="relative z-10">{t('hero.section.headline.line_3')}</span>
-                <svg className={`absolute text-brand opacity-80 overflow-visible ${mobileHeroTypography.underline}`} viewBox="0 0 300 20" preserveAspectRatio="none">
+                <svg className={`absolute text-brand opacity-90 overflow-visible ${mobileHeroTypography.underline}`} viewBox="0 0 300 20" preserveAspectRatio="none">
                   <path
                     d="M 0,10 Q 75,0 150,10 Q 225,20 300,10"
                     stroke="currentColor"
@@ -714,46 +715,50 @@ export default function HeroSection() {
             </h1>
           </div>
 
-          <div aria-hidden="true" className="min-h-[clamp(5.5rem,16vh,9rem)]" />
-
-          <div data-mobile-hero-item className="w-full self-end">
-            <div
-              className="relative flex w-full flex-col items-center gap-5 overflow-hidden rounded-[2rem] p-5"
-              style={{ boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.2)' }}
-            >
-              <div className="absolute inset-0 z-0 pointer-events-none [transform:translateZ(0)]" style={{ backdropFilter: `blur(${isConstrainedDevice ? 14 : 24}px)` }} />
-              <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'rgba(10, 10, 10, 0.45)' }} />
+          {/* Thumbs: Bottom Anchor Action Module (Card + Pill) */}
+          <div className="mt-auto w-full max-w-[26rem] mx-auto flex flex-col items-center gap-5 pt-10">
+            
+            {/* Card */}
+            <div data-mobile-hero-item className="w-full">
               <div
-                className="absolute inset-0 z-20 pointer-events-none rounded-[2rem]"
-                style={{ boxShadow: 'inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px var(--glass-highlight)' }}
-              />
+                className="relative flex w-full flex-col items-center gap-5 overflow-hidden rounded-[2.25rem] p-6"
+                style={{ boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.2)' }}
+              >
+                <div className="absolute inset-0 z-0 pointer-events-none [transform:translateZ(0)]" style={{ backdropFilter: `blur(${isConstrainedDevice ? 14 : 24}px)` }} />
+                <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'rgba(10, 10, 10, 0.45)' }} />
+                <div
+                  className="absolute inset-0 z-20 pointer-events-none rounded-[2.25rem]"
+                  style={{ boxShadow: 'inset 2px 2px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 1px var(--glass-highlight)' }}
+                />
 
-              <div className="relative z-30 flex w-full flex-col items-center gap-5">
-                <p className={`text-center text-white/95 text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${mobileHeroTypography.body}`}>{t('hero.section.body')}</p>
-                <div className="w-full flex flex-col gap-3">
-                  <Button asChild size="lg" className="w-full py-6 text-base font-bold rounded-full bg-brand text-bg-base hover:bg-brand-dark active:scale-[0.98] transition-all shadow-[0_4px_20px_hsl(var(--brand)/0.25)]">
-                    <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
-                  </Button>
-                  <Button asChild size="lg" variant="secondary" className="w-full py-6 text-base font-bold rounded-full border border-white/20 text-white bg-white/5 active:bg-white/10 active:scale-[0.98] transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                    <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`}>{t('hero.section.cta_secondary')}</Link>
-                  </Button>
+                <div className="relative z-30 flex w-full flex-col items-center gap-5">
+                  <p className={`text-center text-white/95 text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${mobileHeroTypography.body}`}>{t('hero.section.body')}</p>
+                  <div className="w-full flex flex-col gap-3">
+                    <Button asChild size="lg" className="w-full py-6 text-[0.95rem] font-bold rounded-full bg-brand text-bg-base hover:bg-brand-dark active:scale-[0.98] transition-all shadow-[0_4px_20px_hsl(var(--brand)/0.25)]">
+                      <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
+                    </Button>
+                    <Button asChild size="lg" variant="secondary" className="w-full py-6 text-[0.95rem] font-bold rounded-full border border-white/20 text-white bg-white/5 active:bg-white/10 active:scale-[0.98] transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                      <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`}>{t('hero.section.cta_secondary')}</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div data-mobile-hero-item className="mt-4 flex justify-center">
-            <div className="relative flex items-center overflow-hidden rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
-              <div className="absolute inset-0 z-0 pointer-events-none [transform:translateZ(0)]" style={{ backdropFilter: `blur(${isConstrainedDevice ? 10 : 16}px)` }} />
-              <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'rgba(10, 10, 10, 0.55)' }} />
-              <div
-                className="absolute inset-0 z-20 pointer-events-none rounded-full"
-                style={{ boxShadow: 'inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 var(--glass-highlight)' }}
-              />
-              <div className="relative z-30 flex items-center gap-2.5 px-5 py-2">
-                <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
-                <span className="w-1 h-1 rounded-full bg-white/20" />
-                <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+            {/* Pill */}
+            <div data-mobile-hero-item className="flex justify-center">
+              <div className="relative flex items-center overflow-hidden rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
+                <div className="absolute inset-0 z-0 pointer-events-none [transform:translateZ(0)]" style={{ backdropFilter: `blur(${isConstrainedDevice ? 10 : 16}px)` }} />
+                <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'rgba(10, 10, 10, 0.55)' }} />
+                <div
+                  className="absolute inset-0 z-20 pointer-events-none rounded-full"
+                  style={{ boxShadow: 'inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 var(--glass-highlight)' }}
+                />
+                <div className="relative z-30 flex items-center gap-2.5 px-5 py-2.5">
+                  <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                  <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -762,10 +767,6 @@ export default function HeroSection() {
     </section>
   );
 }
-
-
-
-
 
 
 
