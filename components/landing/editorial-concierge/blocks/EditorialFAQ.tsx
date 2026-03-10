@@ -39,17 +39,17 @@ export function EditorialFAQ() {
   ];
 
   return (
-    <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 border-t border-white/5">
-      <div className="max-w-3xl mx-auto">
+    <section className="border-t border-white/5 bg-bg-base px-4 py-20 sm:px-5 sm:py-24 md:px-8 md:py-32">
+      <div className="mx-auto w-full max-w-3xl">
         {/* [motion] */}
         <motion.div
-          className="mb-16 md:mb-20 text-center"
+          className="mb-14 text-center sm:mb-16 md:mb-20"
           initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
           whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
         >
-          <h2 className="text-3xl md:text-5xl font-black font-serif text-white tracking-tight">
+          <h2 className="font-serif text-3xl font-black tracking-tight text-white sm:text-4xl md:text-5xl">
             {t('landing.editorial_faq.title')}
           </h2>
         </motion.div>
@@ -74,9 +74,7 @@ export function EditorialFAQ() {
         />
 
         {/* [motion] */}
-        <div
-          className="space-y-4"
-        >
+        <div className="space-y-3 sm:space-y-4">
           {faqs.map((faq, i) => (
             <motion.div
               key={i}
@@ -84,20 +82,20 @@ export function EditorialFAQ() {
               whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.35, delay: i * 0.03, ease: [0.25, 0.1, 0.25, 1] }}
-              className="group bg-bg-surface rounded-2xl border border-white/5 overflow-hidden transition-colors hover:border-white/10"
+              className="group overflow-hidden rounded-[1.5rem] border border-white/5 bg-bg-surface transition-colors hover:border-white/10 sm:rounded-2xl"
             >
               <Button
                 type="button"
                 variant="ghost"
                 size="lg"
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="h-auto w-full justify-between gap-4 p-6 text-left md:p-8"
+                className="!h-auto !min-h-[5.75rem] w-full items-start justify-between gap-3 !overflow-visible p-5 text-left !text-clip !whitespace-normal sm:gap-4 sm:p-6 md:p-8"
                 aria-expanded={openIndex === i}
               >
-                <h4 className="text-lg md:text-xl font-bold text-white pr-8">
+                <h4 className="min-w-0 flex-1 text-pretty break-words pr-2 text-lg font-bold leading-tight text-white sm:pr-4 md:text-xl">
                   {faq.q}
                 </h4>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border transition-all duration-300 ${openIndex === i ? 'bg-brand border-brand text-bg-base rotate-45' : 'border-white/10 text-zinc-500'}`}>
+                <div className={`mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 sm:size-10 ${openIndex === i ? 'rotate-45 border-brand bg-brand text-bg-base' : 'border-white/10 text-zinc-500'}`}>
                   <Plus className="w-4 h-4" />
                 </div>
               </Button>
@@ -106,7 +104,7 @@ export function EditorialFAQ() {
                 className={`grid transition-all duration-300 ease-in-out ${openIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
               >
                 <div className="overflow-hidden">
-                  <p className="px-6 md:px-8 pb-6 md:pb-8 text-zinc-400 leading-relaxed text-base md:text-lg">
+                  <p className="px-5 pb-5 text-[15px] leading-7 text-zinc-400 sm:px-6 sm:pb-6 sm:text-base md:px-8 md:pb-8 md:text-lg">
                     {faq.a}
                   </p>
                 </div>
