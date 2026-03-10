@@ -47,7 +47,7 @@ export function CommunityRoadmap() {
   ] as const;
 
   return (
-    <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 border-t border-white/5 overflow-hidden">
+    <section className="relative isolate z-10 bg-bg-base py-24 md:py-32 px-4 md:px-8 border-t border-white/5 overflow-hidden">
       <div className="max-w-7xl mx-auto">
         {/* [motion] */}
         <motion.div

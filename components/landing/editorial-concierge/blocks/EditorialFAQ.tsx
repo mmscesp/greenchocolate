@@ -39,7 +39,7 @@ export function EditorialFAQ() {
   ];
 
   return (
-    <section className="border-t border-white/5 bg-bg-base px-4 py-20 sm:px-5 sm:py-24 md:px-8 md:py-32">
+    <section className="relative isolate z-10 border-t border-white/5 bg-bg-base px-4 py-20 sm:px-5 sm:py-24 md:px-8 md:py-32">
       <div className="mx-auto w-full max-w-3xl">
         {/* [motion] */}
         <motion.div
