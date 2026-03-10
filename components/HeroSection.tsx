@@ -15,8 +15,8 @@ if (typeof window !== 'undefined') {
 }
 
 const HERO_ASSETS = {
-  desktop: '/images/hero/barcelona-skyline-desktop.webp',
-  mobile: '/images/hero/barcelona-skyline-mobile.webp',
+  desktop: '/images/hero/barcelona-skyline.webp',
+  mobile: '/images/hero/barcelona-skyline.webp',
 } as const;
 
 const HERO_CONFIG = {
