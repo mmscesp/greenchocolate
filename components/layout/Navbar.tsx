@@ -120,7 +120,7 @@ export default function Navbar() {
               imageClassName="drop-shadow-[0_1px_4px_rgba(0,0,0,0.25)]"
               priority
             />
-            <Link href={localizedHomePath} className="flex items-center">
+            <Link href={localizedHomePath} className="hidden xl:flex items-center shrink-0">
               <span className="text-xl font-bold tracking-tight transition-all duration-300 text-white">
                 {t('brand.name')}
               </span>
@@ -129,14 +129,14 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className={cn(
-            'hidden md:flex items-center rounded-full px-2 py-1 mx-4 transition-all duration-300',
+            'hidden lg:flex min-w-0 items-center rounded-full px-2 py-1 mx-2 xl:mx-4 transition-all duration-300',
             isScrolled ? 'bg-white/5' : 'bg-transparent'
           )}>
-            <MainNavigation tone="light" />
+            <MainNavigation tone="light" isScrolled={isScrolled} />
           </div>
 
           {/* Desktop Actions Section */}
-          <div className={cn('hidden md:flex items-center gap-3')}>
+          <div className={cn('hidden lg:flex shrink-0 items-center gap-2 xl:gap-3')}>
             <LanguageSelector />
             <UserProfileDropdown />
             <motion.div
@@ -147,7 +147,7 @@ export default function Navbar() {
             >
               <Link
                 href={withLocale('/safety-kit')}
-                className="inline-block px-5 py-2 text-sm font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
+                className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-brand px-3 py-2 text-xs font-bold text-black shadow-sm transition-colors hover:bg-brand-dark xl:px-5 xl:text-sm"
               >
                 {t('nav.get_safety_kit')}
               </Link>
@@ -155,7 +155,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Actions Section */}
-          <div className="flex md:hidden items-center gap-1">
+          <div className="flex lg:hidden items-center gap-1">
             {/* [motion] */}
             <motion.button
               whileHover={shouldReduceMotion ? undefined : { rotate: 5, scale: 1.1 }}

@@ -115,14 +115,6 @@ export default function Footer() {
                   {t('footer.new.learn.how_clubs_work')}
                 </Link>
               </li>
-              <li>
-                <Link 
-                  href={withLocale('/help')} 
-                  className="text-sm text-zinc-400 hover:text-white transition-colors"
-                >
-                  {t('footer.new.learn.faq')}
-                </Link>
-              </li>
             </ul>
           </div>
 

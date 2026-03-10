@@ -100,6 +100,17 @@ const config: Config = {
           from: { backgroundPosition: '50% 50%, 50% 50%' },
           to: { backgroundPosition: '350% 50%, 350% 50%' },
         },
+        sheen: {
+          '0%': { transform: 'translateX(-150%) skewX(-20deg)' },
+          '10%': { transform: 'translateX(250%) skewX(-20deg)' },
+          '100%': { transform: 'translateX(250%) skewX(-20deg)' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        aurora: 'aurora 60s linear infinite',
+        sheen: 'sheen 8s ease-in-out infinite',
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { Mail } from '@/lib/icons';
+import { EditorialFAQ } from '@/components/landing/editorial-concierge/blocks/EditorialFAQ';
+import { FeaturedVault } from '@/components/landing/editorial-concierge/blocks/FeaturedVault';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 
@@ -74,6 +76,9 @@ export default async function ContactPage({ params }: ContactPageProps) {
           .
         </div>
       </div>
+
+      <FeaturedVault />
+      <EditorialFAQ />
     </div>
   );
 }

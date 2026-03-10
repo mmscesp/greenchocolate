@@ -257,16 +257,16 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
   );
 
   const renderDesktopTrigger = () => (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => setIsOpen(!isOpen)}
-      className={cn(
-        'flex h-10 items-center gap-2 pl-1 pr-3 rounded-full border transition-all group',
-        useLightTone
-          ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-          : 'bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20'
-      )}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'flex h-10 max-w-[11rem] items-center gap-2 rounded-full border pl-1 pr-3 transition-all group xl:max-w-[13rem]',
+          useLightTone
+            ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+            : 'bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20'
+        )}
     >
       <div className={cn('w-8 h-8 rounded-full overflow-hidden border', useLightTone ? 'border-white/20' : 'border-black/15')}>
         {user.user_metadata?.avatar_url ? (
@@ -283,7 +283,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
           </div>
         )}
       </div>
-      <span className={cn('hidden sm:inline font-medium text-sm', useLightTone ? 'text-white group-hover:text-white' : 'text-slate-900 group-hover:text-slate-950')}>
+      <span className={cn('hidden max-w-[6.5rem] truncate sm:inline xl:max-w-[8rem] font-medium text-sm', useLightTone ? 'text-white group-hover:text-white' : 'text-slate-900 group-hover:text-slate-950')}>
         {displayName.split(' ')[0]}
       </span>
       <ChevronDown className={cn('h-3 w-3 transition-transform duration-300', useLightTone ? 'text-white/40' : 'text-slate-500', isOpen && 'rotate-180')} />

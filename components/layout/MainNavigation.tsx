@@ -80,9 +80,10 @@ export const desktopTrailingItems: DesktopPrimaryItem[] = [
 
 interface MainNavigationProps {
   tone?: 'light' | 'dark';
+  isScrolled?: boolean;
 }
 
-export default function MainNavigation({ tone = 'light' }: MainNavigationProps) {
+export default function MainNavigation({ tone = 'light', isScrolled = false }: MainNavigationProps) {
   const { t, language } = useLanguage();
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
@@ -94,9 +95,16 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
   const triggerClassName = tone === 'light'
     ? 'bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5 text-white hover:text-white transition-colors'
     : 'bg-transparent hover:bg-black/5 data-[state=open]:bg-black/5 text-slate-800 hover:text-slate-900 transition-colors';
+  const dropdownViewportClassName = isScrolled
+    ? 'overflow-hidden rounded-[1.5rem] border border-white/12 bg-[#040b12]/[0.985] shadow-[0_28px_70px_rgba(0,0,0,0.62)] backdrop-blur-[40px]'
+    : 'overflow-hidden rounded-[1.5rem] border border-white/12 bg-[#07131c]/84 shadow-[0_22px_54px_rgba(0,0,0,0.42)] backdrop-blur-2xl';
+  const dropdownPanelClassName = isScrolled
+    ? 'mt-2 grid w-[min(92vw,20rem)] gap-3 rounded-[1.35rem] bg-[#061018]/[0.985] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:w-[24rem] md:w-[min(26rem,calc(100vw-2rem))] lg:w-[31rem] animate-in fade-in zoom-in-95 duration-200'
+    : 'mt-2 grid w-[min(92vw,20rem)] gap-3 bg-transparent p-4 sm:w-[24rem] md:w-[min(26rem,calc(100vw-2rem))] lg:w-[31rem] animate-in fade-in zoom-in-95 duration-200';
+  const disabledItemClassName = isScrolled ? 'cursor-not-allowed bg-white/8' : 'cursor-not-allowed bg-white/5';
 
   return (
-    <NavigationMenu viewportClassName="bg-transparent border-none shadow-none">
+    <NavigationMenu viewportClassName={dropdownViewportClassName}>
       <NavigationMenuList>
         {desktopPrimaryItems.map(({ href, labelKey, Icon }) => (
           <NavigationMenuItem key={href}>
@@ -133,7 +141,7 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
             {t('nav.cities')}
           </NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="mt-2 grid w-[min(92vw,20rem)] gap-3 p-4 sm:w-[24rem] md:w-[min(26rem,calc(100vw-2rem))] lg:w-[31rem] glass-dropdown animate-in fade-in zoom-in-95 duration-200">
+            <ul className={dropdownPanelClassName}>
               {desktopExploreItems.map(({ href, titleKey, descriptionKey, comingSoon, Icon }) => {
                 const itemTitle = t(titleKey);
 
@@ -143,7 +151,7 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
                       <div
                         className={cn(
                           'block select-none space-y-1 rounded-lg p-3 leading-none opacity-80',
-                          'cursor-not-allowed bg-white/5'
+                          disabledItemClassName
                         )}
                         aria-disabled="true"
                       >

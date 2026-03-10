@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getCategoriesWithCounts, getFeaturedArticles } from '@/app/actions/articles';
+import { CommunityRoadmap } from '@/components/landing/editorial-concierge/blocks/CommunityRoadmap';
+import { EditorialFAQ } from '@/components/landing/editorial-concierge/blocks/EditorialFAQ';
 import { Badge } from '@/components/ui/badge';
 import { LinkCard } from '@/components/ui/card-26';
 import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from '@/lib/icons';
@@ -222,6 +224,9 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
           </div>
         </div>
       </section>
+
+      <CommunityRoadmap />
+      <EditorialFAQ />
     </div>
   );
 }

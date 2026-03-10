@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Shield, ArrowRight, Compass, Target } from '@/lib/icons';
 import { H1, H2, H3, H4, Text, Lead, Eyebrow } from '@/components/typography';
+import { FeaturedVault } from '@/components/landing/editorial-concierge/blocks/FeaturedVault';
 import { LinkCard } from '@/components/ui/card-26';
 import { Button } from '@/components/ui/button';
 import { getDictionary } from '@/lib/dictionary';
@@ -118,6 +119,8 @@ export default async function MissionPage({ params }: MissionPageProps) {
               ))}
             </div>
           </section>
+
+          <FeaturedVault />
 
           {/* Core Values / The Standard Section */}
           <section id="verification-standard" className="relative overflow-hidden rounded-3xl border border-white/10 bg-bg-card/80 p-6 md:p-12 lg:p-16 backdrop-blur-md shadow-2xl">
