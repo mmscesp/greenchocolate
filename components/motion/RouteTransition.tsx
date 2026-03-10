@@ -19,7 +19,7 @@ export default function RouteTransition({ children }: RouteTransitionProps) {
       {/* [motion] */}
       <motion.div
         key={pathname}
-        initial={transition.initial}
+        initial={false}
         animate={transition.animate}
         exit={transition.exit}
         transition={transition.transition}

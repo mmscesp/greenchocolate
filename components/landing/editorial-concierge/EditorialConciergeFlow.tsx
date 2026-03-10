@@ -41,6 +41,16 @@ const LANDING_EXPERIMENT_CONTEXT = {
 const ONRAMP_EXPERIMENT_ID = 'landing_onramp_copy_v1';
 const ONRAMP_EXPERIMENT_ARMS = ['control', 'benefit'] as const;
 
+function scheduleIdleTask(callback: () => void, timeout: number) {
+  if (typeof window.requestIdleCallback === 'function') {
+    const id = window.requestIdleCallback(callback, { timeout });
+    return () => window.cancelIdleCallback?.(id);
+  }
+
+  const timeoutId = window.setTimeout(callback, timeout);
+  return () => window.clearTimeout(timeoutId);
+}
+
 export default function EditorialConciergeFlow() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [onrampAssignment, setOnrampAssignment] = useState<{ arm: string; source: 'query' | 'storage' | 'random' }>({
@@ -49,7 +59,7 @@ export default function EditorialConciergeFlow() {
   });
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
+    const cancelIdleTask = scheduleIdleTask(() => {
       setOnrampAssignment(
         resolveExperimentArm({
           experimentId: ONRAMP_EXPERIMENT_ID,
@@ -57,11 +67,9 @@ export default function EditorialConciergeFlow() {
           searchParams: new URLSearchParams(window.location.search),
         })
       );
-    }, 0);
+    }, 800);
 
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
+    return cancelIdleTask;
   }, []);
 
   useEffect(() => {
@@ -95,29 +103,34 @@ export default function EditorialConciergeFlow() {
     if (!root) return;
 
     const seen = new Set<string>();
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          const section = entry.target.getAttribute('data-landing-section');
-          if (!section || seen.has(section)) continue;
-          seen.add(section);
-          trackEvent('landing_section_view', {
-            section,
-            visibility_ratio: Number(entry.intersectionRatio.toFixed(2)),
-          });
-        }
-      },
-      {
-        threshold: [0.2, 0.5],
-      }
-    );
+    let observer: IntersectionObserver | null = null;
 
-    const nodes = root.querySelectorAll<HTMLElement>('[data-landing-section]');
-    nodes.forEach((node) => observer.observe(node));
+    const cancelIdleTask = scheduleIdleTask(() => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const section = entry.target.getAttribute('data-landing-section');
+            if (!section || seen.has(section)) continue;
+            seen.add(section);
+            trackEvent('landing_section_view', {
+              section,
+              visibility_ratio: Number(entry.intersectionRatio.toFixed(2)),
+            });
+          }
+        },
+        {
+          threshold: [0.2, 0.5],
+        }
+      );
+
+      const nodes = root.querySelectorAll<HTMLElement>('[data-landing-section]');
+      nodes.forEach((node) => observer?.observe(node));
+    }, 1200);
 
     return () => {
-      observer.disconnect();
+      cancelIdleTask();
+      observer?.disconnect();
     };
   }, []);
 
@@ -154,11 +167,14 @@ export default function EditorialConciergeFlow() {
       onScroll();
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
-    updateDepth();
+    const cancelIdleTask = scheduleIdleTask(() => {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize, { passive: true });
+      updateDepth();
+    }, 1400);
 
     return () => {
+      cancelIdleTask();
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       if (frameId !== null) {
