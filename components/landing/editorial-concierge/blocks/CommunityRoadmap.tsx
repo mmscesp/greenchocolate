@@ -74,7 +74,7 @@ export function CommunityRoadmap() {
               whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.4, delay: idx * 0.04, ease: [0.25, 0.1, 0.25, 1] }}
-              className="group relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-2xl bg-bg-surface border border-white/10"
+              className="group relative aspect-[5/4] sm:aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-2xl bg-bg-surface border border-white/10"
             >
               <Image
                 src={getCityImage(city.slug)}
@@ -85,11 +85,11 @@ export function CommunityRoadmap() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/55 to-transparent opacity-95" />
 
-              <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
+              <div className="absolute inset-0 p-5 sm:p-6 md:p-10 flex flex-col justify-end">
                 <div className="transform transition-transform duration-500 group-hover:-translate-y-2">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-3xl md:text-4xl font-black text-white tracking-tight">{city.name}</h3>
-                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border ${city.active ? 'bg-brand text-bg-base border-brand' : 'bg-transparent text-zinc-500 border-zinc-700'}`}>
+                  <div className="mb-2 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 className="min-w-0 text-3xl md:text-4xl font-black text-white tracking-tight">{city.name}</h3>
+                    <span className={`shrink-0 rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-widest backdrop-blur-sm ${city.active ? 'bg-brand text-bg-base border-brand' : 'bg-bg-base/55 text-zinc-100 border-zinc-300/40'}`}>
                       {city.status}
                     </span>
                   </div>
@@ -108,11 +108,7 @@ export function CommunityRoadmap() {
                       {t('landing.community_roadmap.explore_prefix')} {city.name}
                       <ArrowRight className="w-4 h-4" />
                     </Link>
-                  ) : (
-                    <span className="inline-flex items-center gap-2 font-bold uppercase tracking-widest text-xs text-zinc-600" aria-disabled="true">
-                      {t('landing.community_roadmap.coming_soon')}
-                    </span>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </motion.div>
