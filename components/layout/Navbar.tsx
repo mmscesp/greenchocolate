@@ -106,7 +106,7 @@ export default function Navbar() {
           'fixed inset-x-0 mx-auto z-50 transition-all duration-500',
           isScrolled
             ? 'top-4 glass-liquid rounded-full px-6 py-2'
-            : 'top-0 w-full px-4 md:px-8 py-3 md:py-4 bg-transparent border-transparent'
+            : 'top-0 w-full px-4 md:px-8 py-2 md:py-4 bg-transparent border-transparent'
         )}
       >
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
@@ -120,8 +120,8 @@ export default function Navbar() {
               imageClassName="drop-shadow-[0_1px_4px_rgba(0,0,0,0.25)]"
               priority
             />
-            <Link href={localizedHomePath} className="hidden xl:flex items-center shrink-0">
-              <span className="text-xl font-bold tracking-tight transition-all duration-300 text-white">
+            <Link href={localizedHomePath} className="flex items-center shrink-0 ml-0.5 sm:ml-1">
+              <span className="text-lg sm:text-xl md:text-2xl xl:text-3xl font-serif font-bold tracking-tight transition-all duration-300 text-[#a8a555]">
                 {t('brand.name')}
               </span>
             </Link>
