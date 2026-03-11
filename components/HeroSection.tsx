@@ -452,7 +452,7 @@ export default function HeroSection() {
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-full flex items-center shadow-[0_8px_20px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:scale-[1.02] group pointer-events-auto">
+              <div className="relative overflow-hidden rounded-full flex items-center shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
                 <div
                   className={`absolute inset-0 z-0 pointer-events-none ${shouldUseGlassDistortion ? 'md:[filter:url(#glass-distortion)]' : ''} [transform:translateZ(0)]`}
                   style={{ backdropFilter: `blur(${Math.max(4, desktopGlassBlur - 2)}px)`, isolation: 'isolate' }}
@@ -463,9 +463,9 @@ export default function HeroSection() {
                   style={{ boxShadow: 'inset 1px 1px 1px 0 rgba(255, 255, 255, 0.2), inset -1px -1px 1px 0 var(--glass-highlight)' }}
                 />
                 <div className="relative z-30 flex items-center gap-3 px-6 py-2.5">
-                  <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
+                  <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.pill_label')}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                  <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                  <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.pill_value')}</span>
                 </div>
               </div>
             </div>
@@ -551,9 +551,9 @@ export default function HeroSection() {
                   style={{ boxShadow: 'inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 var(--glass-highlight)' }}
                 />
                 <div className="relative z-30 flex items-center gap-2.5 px-5 py-2.5">
-                  <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.covering_label')}</span>
+                  <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.pill_label')}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                  <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.covering_cities')}</span>
+                  <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.pill_value')}</span>
                 </div>
               </div>
             </div>
