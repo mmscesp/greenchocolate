@@ -109,7 +109,7 @@ const mockProfile = {
 const mockClubId = '550e8400-e29b-41d4-a716-446655440003';
 const mockRequestId = '550e8400-e29b-41d4-a716-446655440004';
 const mockLeadId = '550e8400-e29b-41d4-a716-446655440005';
-const futureLeadExpiry = new Date('2026-03-10T12:00:00.000Z');
+const futureLeadExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
 const validSubmission = {
   targetClubId: mockClubId,
