@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp } from '@/lib/icons';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -127,9 +128,17 @@ export default function HeroSection() {
   const headlineWrapRef = useRef<HTMLDivElement>(null);
   const contentBlockRef = useRef<HTMLDivElement>(null);
   const vignetteRef = useRef<HTMLDivElement>(null);
+  const desktopScrollCueRef = useRef<HTMLDivElement>(null);
+  const desktopRailTopLineRef = useRef<HTMLSpanElement>(null);
+  const desktopRailNodeRef = useRef<HTMLSpanElement>(null);
+  const desktopRailBottomLineRef = useRef<HTMLSpanElement>(null);
+  const desktopRailUpIconRef = useRef<HTMLSpanElement>(null);
+  const desktopRailDownIconRef = useRef<HTMLSpanElement>(null);
   const mobileContainerRef = useRef<HTMLDivElement>(null);
   const mobileMediaRef = useRef<HTMLDivElement>(null);
   const mobileContentRef = useRef<HTMLDivElement>(null);
+  const mobileScrollCueRef = useRef<HTMLDivElement>(null);
+  const mobileScrollIconRef = useRef<HTMLSpanElement>(null);
 
   const buildAnalyticsPayload = useCallback(
     () => ({
@@ -185,9 +194,26 @@ export default function HeroSection() {
     () => {
       const mm = gsap.matchMedia();
       const reduceMotion = prefersReducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const desktopRailTravel = 40;
+      const desktopRailTopInitial = 10;
+      const desktopRailBottomTopInitial = 20;
+      const desktopRailBottomHeightInitial = 52;
+      const desktopRailReducedY = 24;
 
       mm.add('(min-width: 768px)', () => {
-        if (!desktopContainerRef.current || !desktopMediaRef.current || !headlineWrapRef.current || !contentBlockRef.current || !vignetteRef.current) {
+        if (
+          !desktopContainerRef.current ||
+          !desktopMediaRef.current ||
+          !headlineWrapRef.current ||
+          !contentBlockRef.current ||
+          !vignetteRef.current ||
+          !desktopScrollCueRef.current ||
+          !desktopRailTopLineRef.current ||
+          !desktopRailNodeRef.current ||
+          !desktopRailBottomLineRef.current ||
+          !desktopRailUpIconRef.current ||
+          !desktopRailDownIconRef.current
+        ) {
           return;
         }
 
@@ -209,6 +235,18 @@ export default function HeroSection() {
           scale: HERO_CONFIG.desktop.initialContentScale,
           transformOrigin: 'center center',
         });
+        gsap.set(desktopScrollCueRef.current, {
+          autoAlpha: reduceMotion ? 0.56 : 0,
+          y: reduceMotion ? 0 : 10,
+        });
+        gsap.set(desktopRailNodeRef.current, { y: reduceMotion ? desktopRailReducedY : 0 });
+        gsap.set(desktopRailTopLineRef.current, { height: reduceMotion ? desktopRailTopInitial + desktopRailReducedY : desktopRailTopInitial });
+        gsap.set(desktopRailBottomLineRef.current, {
+          y: reduceMotion ? desktopRailReducedY : 0,
+          height: reduceMotion ? desktopRailBottomHeightInitial - desktopRailReducedY : desktopRailBottomHeightInitial,
+        });
+        gsap.set(desktopRailUpIconRef.current, { autoAlpha: reduceMotion ? 0.3 : 0.62, scale: 1 });
+        gsap.set(desktopRailDownIconRef.current, { autoAlpha: reduceMotion ? 0.52 : 0.34, scale: 1 });
 
         if (reduceMotion) {
           gsap.set(contentBlockRef.current, {
@@ -238,6 +276,13 @@ export default function HeroSection() {
           ease: 'power2.out',
           delay: 0.2,
         });
+        gsap.to(desktopScrollCueRef.current, {
+          autoAlpha: 0.88,
+          y: 0,
+          duration: 0.85,
+          ease: 'power2.out',
+          delay: 0.7,
+        });
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -248,6 +293,64 @@ export default function HeroSection() {
           },
         });
 
+        tl.to(
+          desktopRailNodeRef.current,
+          {
+            y: desktopRailTravel,
+            ease: 'none',
+            duration: 1,
+          },
+          0
+        );
+        tl.to(
+          desktopRailTopLineRef.current,
+          {
+            height: desktopRailTopInitial + desktopRailTravel,
+            ease: 'none',
+            duration: 1,
+          },
+          0
+        );
+        tl.to(
+          desktopRailBottomLineRef.current,
+          {
+            y: desktopRailTravel,
+            height: desktopRailBottomHeightInitial - desktopRailTravel,
+            ease: 'none',
+            duration: 1,
+          },
+          0
+        );
+        tl.to(
+          desktopRailUpIconRef.current,
+          {
+            autoAlpha: 0.16,
+            scale: 0.96,
+            ease: 'power2.out',
+            duration: 0.45,
+          },
+          0.12
+        );
+        tl.to(
+          desktopRailDownIconRef.current,
+          {
+            autoAlpha: 0.92,
+            scale: 1.08,
+            ease: 'power2.out',
+            duration: 0.45,
+          },
+          0.45
+        );
+        tl.to(
+          desktopScrollCueRef.current,
+          {
+            autoAlpha: 0,
+            y: 10,
+            ease: 'power2.out',
+            duration: 0.36,
+          },
+          0.64
+        );
         tl.to(
           desktopMediaRef.current,
           {
@@ -291,7 +394,7 @@ export default function HeroSection() {
       });
 
       mm.add('(max-width: 767px)', () => {
-        if (!mobileContainerRef.current || !mobileMediaRef.current || !mobileContentRef.current) {
+        if (!mobileContainerRef.current || !mobileMediaRef.current || !mobileContentRef.current || !mobileScrollCueRef.current || !mobileScrollIconRef.current) {
           return;
         }
 
@@ -299,10 +402,13 @@ export default function HeroSection() {
         const underlinePaths = gsap.utils.toArray('.h1-underline-path', mobileContainerRef.current) as SVGPathElement[];
         const startScale = isConstrainedDevice ? 1.02 : HERO_CONFIG.mobile.initialScale;
         const endScale = isConstrainedDevice ? 1.05 : HERO_CONFIG.mobile.finalScale;
+        let iconPulseTween: gsap.core.Tween | undefined;
 
         if (reduceMotion) {
           gsap.set(mobileMediaRef.current, { clearProps: 'transform' });
           gsap.set(underlinePaths, { strokeDashoffset: 0 });
+          gsap.set(mobileScrollCueRef.current, { autoAlpha: 0.66, y: 0 });
+          gsap.set(mobileScrollIconRef.current, { y: 0 });
           return;
         }
 
@@ -336,6 +442,39 @@ export default function HeroSection() {
           ease: 'power2.out',
           delay: 0.2,
         });
+        gsap.fromTo(
+          mobileScrollCueRef.current,
+          { autoAlpha: 0, y: 10 },
+          {
+            autoAlpha: 0.74,
+            y: 0,
+            duration: 0.75,
+            delay: 0.45,
+            ease: 'power2.out',
+          }
+        );
+        iconPulseTween = gsap.to(mobileScrollIconRef.current, {
+          y: 4,
+          duration: 0.9,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        });
+        gsap.to(mobileScrollCueRef.current, {
+          autoAlpha: 0,
+          y: 8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: mobileContainerRef.current,
+            start: 'top top',
+            end: '+=120',
+            scrub: true,
+          },
+        });
+
+        return () => {
+          iconPulseTween?.kill();
+        };
       });
 
       return () => mm.revert();
@@ -351,6 +490,7 @@ export default function HeroSection() {
   const desktopGlassBlur = isConstrainedDevice ? 6 : 10;
   const mobileGlassBlur = isConstrainedDevice ? 10 : 18;
   const mobileHeroTypography = MOBILE_HERO_TYPOGRAPHY[language] ?? MOBILE_HERO_TYPOGRAPHY.default;
+  const scrollHint = t('hero.section.scroll_hint');
 
   return (
     <section ref={rootRef} className="relative w-full bg-bg-base" style={{ contain: 'layout style' }}>
@@ -417,6 +557,29 @@ export default function HeroSection() {
                   </svg>
                 </span>
               </h1>
+            </div>
+
+            <div
+              ref={desktopScrollCueRef}
+              className="absolute right-6 top-1/2 z-[4] hidden -translate-y-1/2 select-none pointer-events-none lg:flex xl:right-10 will-change-[transform,opacity]"
+            >
+              <span className="sr-only">{scrollHint}</span>
+              <div className="flex flex-col items-center gap-2 text-white/45" aria-hidden="true">
+                <span ref={desktopRailUpIconRef} className="flex h-4 w-4 items-center justify-center">
+                  <ChevronUp className="h-3.5 w-3.5" />
+                </span>
+                <div className="relative h-[4.5rem] w-4">
+                  <span ref={desktopRailTopLineRef} className="absolute left-1/2 top-0 w-px -translate-x-1/2 bg-white/22" />
+                  <span
+                    ref={desktopRailNodeRef}
+                    className="absolute left-1/2 top-[0.625rem] h-2.5 w-2.5 -translate-x-1/2 rounded-full border border-brand-light/70 bg-brand shadow-[0_0_14px_hsl(var(--brand)/0.4)]"
+                  />
+                  <span ref={desktopRailBottomLineRef} className="absolute left-1/2 top-[1.25rem] w-px -translate-x-1/2 bg-white/12" />
+                </div>
+                <span ref={desktopRailDownIconRef} className="flex h-4 w-4 items-center justify-center">
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </span>
+              </div>
             </div>
 
             <div
@@ -515,7 +678,7 @@ export default function HeroSection() {
             </h1>
           </div>
 
-          <div className="mt-auto w-full max-w-[26rem] mx-auto flex flex-col items-center gap-5 pt-10">
+          <div className="mt-auto w-full max-w-[26rem] mx-auto flex flex-col items-center gap-4 pt-8">
             <div data-mobile-hero-item className="w-full">
               <div
                 className="relative flex w-full flex-col items-center gap-5 overflow-hidden rounded-[2.25rem] p-6"
@@ -555,6 +718,16 @@ export default function HeroSection() {
                   <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
                   <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.pill_value')}</span>
                 </div>
+              </div>
+            </div>
+
+            <div ref={mobileScrollCueRef} className="w-full flex justify-center pt-1 will-change-[transform,opacity] pointer-events-none select-none">
+              <span className="sr-only">{scrollHint}</span>
+              <div className="flex flex-col items-center gap-2 text-white/44" aria-hidden="true">
+                <span className="h-4 w-px bg-white/16" />
+                <span ref={mobileScrollIconRef} className="flex h-4 w-4 items-center justify-center text-brand-light/78">
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </span>
               </div>
             </div>
           </div>
