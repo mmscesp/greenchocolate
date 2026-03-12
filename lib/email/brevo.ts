@@ -3,17 +3,39 @@ type BrevoRecipient = {
   name?: string | null;
 };
 
-export type BrevoEmailInput = {
+type BrevoReplyTo = {
+  email: string;
+  name?: string | null;
+};
+
+type BrevoEmailBaseInput = {
   to: BrevoRecipient[];
+  replyTo?: BrevoReplyTo | null;
+  tags?: string[];
+  headers?: Record<string, string>;
+};
+
+type BrevoContentEmailInput = BrevoEmailBaseInput & {
   subject: string;
   htmlContent: string;
   textContent?: string;
 };
 
+type BrevoTemplateEmailInput = BrevoEmailBaseInput & {
+  templateId: number;
+  params?: Record<string, unknown>;
+  subject?: string;
+  htmlContent?: string;
+  textContent?: string;
+};
+
+export type BrevoEmailInput = BrevoContentEmailInput | BrevoTemplateEmailInput;
+
 export type BrevoSendResult = {
   success: boolean;
   skipped?: boolean;
   error?: string;
+  messageId?: string;
 };
 
 export async function sendBrevoEmail(input: BrevoEmailInput): Promise<BrevoSendResult> {
@@ -40,13 +62,32 @@ export async function sendBrevoEmail(input: BrevoEmailInput): Promise<BrevoSendR
         email: env.BREVO_SENDER_EMAIL,
         name: env.BREVO_SENDER_NAME || 'SocialClubsMaps',
       },
+      ...(input.replyTo
+        ? {
+            replyTo: {
+              email: input.replyTo.email,
+              ...(input.replyTo.name ? { name: input.replyTo.name } : {}),
+            },
+          }
+        : env.BREVO_REPLY_TO_EMAIL
+          ? {
+              replyTo: {
+                email: env.BREVO_REPLY_TO_EMAIL,
+                ...(env.BREVO_REPLY_TO_NAME ? { name: env.BREVO_REPLY_TO_NAME } : {}),
+              },
+            }
+          : {}),
       to: input.to.map((recipient) => ({
         email: recipient.email,
         ...(recipient.name ? { name: recipient.name } : {}),
       })),
-      subject: input.subject,
-      htmlContent: input.htmlContent,
-      ...(input.textContent ? { textContent: input.textContent } : {}),
+      ...('templateId' in input ? { templateId: input.templateId } : {}),
+      ...('params' in input && input.params ? { params: input.params } : {}),
+      ...('subject' in input && input.subject ? { subject: input.subject } : {}),
+      ...('htmlContent' in input && input.htmlContent ? { htmlContent: input.htmlContent } : {}),
+      ...('textContent' in input && input.textContent ? { textContent: input.textContent } : {}),
+      ...(input.tags && input.tags.length > 0 ? { tags: input.tags } : {}),
+      ...(input.headers && Object.keys(input.headers).length > 0 ? { headers: input.headers } : {}),
     }),
   });
 
@@ -58,5 +99,10 @@ export async function sendBrevoEmail(input: BrevoEmailInput): Promise<BrevoSendR
     };
   }
 
-  return { success: true };
+  const payload = (await response.json().catch(() => null)) as { messageId?: string } | null;
+
+  return {
+    success: true,
+    messageId: payload?.messageId,
+  };
 }

@@ -12,6 +12,7 @@ vi.mock('@/lib/prisma', () => ({
       findMany: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      count: vi.fn(),
     },
     membershipApplicationLead: {
       findFirst: vi.fn(),
@@ -27,6 +28,9 @@ vi.mock('@/lib/prisma', () => ({
       create: vi.fn(),
     },
     notification: {
+      create: vi.fn(),
+    },
+    membershipRequestNote: {
       create: vi.fn(),
     },
     profile: {
@@ -63,6 +67,12 @@ vi.mock('@/lib/env', () => ({
     BREVO_API_KEY: undefined,
     BREVO_SENDER_EMAIL: undefined,
     BREVO_SENDER_NAME: undefined,
+    BREVO_REPLY_TO_EMAIL: undefined,
+    BREVO_REPLY_TO_NAME: undefined,
+    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_EN: 101,
+    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_ES: 102,
+    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_FR: 103,
+    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_DE: 104,
     TURNSTILE_SECRET_KEY: undefined,
     SERVER_ACTION_ALLOWED_ORIGINS: undefined,
     MEMBERSHIP_GUEST_SOFT_LIMIT: 3,
@@ -77,7 +87,14 @@ vi.mock('@/lib/env', () => ({
 
 vi.mock('@/lib/email/membership', () => ({
   sendMembershipSubmissionEmail: vi.fn().mockResolvedValue({ success: true }),
-  sendMembershipApprovalEmail: vi.fn().mockResolvedValue({ success: true }),
+  sendMembershipApprovalEmail: vi.fn().mockResolvedValue({
+    success: true,
+    locale: 'en',
+    templateId: 101,
+    fallbackUsed: false,
+    requestsUrl: 'https://example.com/en/profile/requests',
+    messageId: 'brevo-message-1',
+  }),
   sendMembershipRejectionEmail: vi.fn().mockResolvedValue({ success: true }),
   sendMembershipStageUpdateEmail: vi.fn().mockResolvedValue({ success: true }),
 }));
@@ -90,11 +107,15 @@ import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
 import { EncryptionService } from '@/lib/encryption';
 import {
+  approveMembershipRequest,
   createMembershipApplicationLead,
   finalizeMembershipApplicationLead,
+  rejectMembershipRequest,
   submitMembershipApplication,
 } from '@/app/actions/applications';
 import { buildLeadToken } from '@/lib/security/membership-application';
+import { logAdminAuditEvent } from '@/lib/security/admin-audit';
+import { sendMembershipApprovalEmail } from '@/lib/email/membership';
 
 const mockUser = { id: '550e8400-e29b-41d4-a716-446655440001', email: 'ada@example.com' };
 const mockProfile = {
@@ -106,6 +127,15 @@ const mockProfile = {
   role: 'USER',
   managedClubId: null,
 };
+const mockAdminProfile = {
+  id: '550e8400-e29b-41d4-a716-446655440099',
+  authId: '550e8400-e29b-41d4-a716-446655440001',
+  email: 'ada@example.com',
+  displayName: 'Admin User',
+  avatarUrl: null,
+  role: 'ADMIN',
+  managedClubId: null,
+};
 const mockClubId = '550e8400-e29b-41d4-a716-446655440003';
 const mockRequestId = '550e8400-e29b-41d4-a716-446655440004';
 const mockLeadId = '550e8400-e29b-41d4-a716-446655440005';
@@ -113,6 +143,7 @@ const futureLeadExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
 const validSubmission = {
   targetClubId: mockClubId,
+  locale: 'en' as const,
   firstName: 'Ada',
   lastName: 'Lovelace',
   email: 'ada@example.com',
@@ -202,6 +233,7 @@ describe('Application Actions', () => {
     expect(createCall.data.message).toBe(validSubmission.message);
     expect(createCall.data.encryptedPayload).toEqual(expect.any(String));
     expect(createCall.data.snapshotMeta).toMatchObject({
+      locale: 'en',
       countryCode: 'ES',
       experience: 'regular',
       riskLevel: 'LOW',
@@ -222,6 +254,10 @@ describe('Application Actions', () => {
     expect(createCall.data.countryCode).toBe('ES');
     expect(createCall.data.experience).toBe('regular');
     expect(createCall.data.encryptedPayload).toEqual(expect.any(String));
+    expect(createCall.data.payloadMeta).toMatchObject({
+      locale: 'en',
+      source: 'lead',
+    });
   });
 
   it('requires a challenge after the guest soft limit', async () => {
@@ -302,6 +338,11 @@ describe('Application Actions', () => {
 
     expect(result.success).toBe(true);
     expect(prisma.membershipRequest.create).toHaveBeenCalled();
+    const createCall = (prisma.membershipRequest.create as any).mock.calls[0][0];
+    expect(createCall.data.snapshotMeta).toMatchObject({
+      locale: 'en',
+      source: 'lead',
+    });
     expect(prisma.membershipApplicationLead.update).toHaveBeenCalledWith({
       where: { id: mockLeadId },
       data: expect.objectContaining({
@@ -520,5 +561,239 @@ describe('Application Actions', () => {
     expect(result.success).toBe(false);
     expect(result.error).toBe('Invalid or expired application token');
     expect(prisma.membershipRequest.create).not.toHaveBeenCalled();
+  });
+
+  it('approves a pending membership request, creates a notification, and sends Brevo approval email', async () => {
+    (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
+    (prisma.membershipRequest.findUnique as any).mockResolvedValue({
+      id: mockRequestId,
+      userId: mockProfile.id,
+      status: 'PENDING',
+      currentStage: 'INTAKE',
+      snapshotMeta: {
+        locale: 'es',
+      },
+      user: {
+        id: mockProfile.id,
+        role: 'USER',
+        email: mockProfile.email,
+        displayName: mockProfile.displayName,
+      },
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        slug: 'test-club',
+        contactEmail: 'club@example.com',
+        neighborhood: 'Gracia',
+      },
+    });
+
+    const result = await approveMembershipRequest(mockRequestId, 'Bring your ID');
+
+    expect(result.success).toBe(true);
+    expect(prisma.membershipRequest.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: mockRequestId },
+        data: expect.objectContaining({
+          status: 'APPROVED',
+          currentStage: 'FINAL_APPROVAL',
+          reviewedBy: mockAdminProfile.id,
+          appointmentNotes: 'Bring your ID',
+          rejectionReason: null,
+        }),
+      })
+    );
+    expect(prisma.notification.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        userId: mockProfile.id,
+        type: 'APPLICATION_APPROVED',
+      }),
+    });
+    expect(sendMembershipApprovalEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        applicantEmail: mockProfile.email,
+        locale: 'es',
+        decisionNote: 'Bring your ID',
+      })
+    );
+    expect(logAdminAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operation: 'MEMBERSHIP_EMAIL_SENT',
+        recordId: mockRequestId,
+      })
+    );
+  });
+
+  it('keeps approval committed when Brevo is skipped', async () => {
+    (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
+    vi.mocked(sendMembershipApprovalEmail).mockResolvedValueOnce({
+      success: false,
+      skipped: true,
+      error: 'Membership approval Brevo template is not configured.',
+      locale: 'fr',
+      templateId: 101,
+      fallbackUsed: true,
+      requestsUrl: 'https://example.com/en/profile/requests',
+    });
+    (prisma.membershipRequest.findUnique as any).mockResolvedValue({
+      id: mockRequestId,
+      userId: mockProfile.id,
+      status: 'PENDING',
+      currentStage: 'INTAKE',
+      snapshotMeta: {
+        locale: 'fr',
+      },
+      user: {
+        id: mockProfile.id,
+        role: 'USER',
+        email: mockProfile.email,
+        displayName: mockProfile.displayName,
+      },
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        slug: 'test-club',
+        contactEmail: 'club@example.com',
+        neighborhood: 'Gracia',
+      },
+    });
+
+    const result = await approveMembershipRequest(mockRequestId, undefined);
+
+    expect(result.success).toBe(true);
+    expect(prisma.membershipRequest.update).toHaveBeenCalled();
+    expect(logAdminAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operation: 'MEMBERSHIP_EMAIL_SKIPPED',
+        recordId: mockRequestId,
+      })
+    );
+  });
+
+  it('keeps approval committed when Brevo fails', async () => {
+    (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
+    vi.mocked(sendMembershipApprovalEmail).mockResolvedValueOnce({
+      success: false,
+      error: 'Brevo error 500',
+      locale: 'de',
+      templateId: 104,
+      fallbackUsed: false,
+      requestsUrl: 'https://example.com/de/profile/requests',
+    });
+    (prisma.membershipRequest.findUnique as any).mockResolvedValue({
+      id: mockRequestId,
+      userId: mockProfile.id,
+      status: 'PENDING',
+      currentStage: 'INTAKE',
+      snapshotMeta: {
+        locale: 'de',
+      },
+      user: {
+        id: mockProfile.id,
+        role: 'USER',
+        email: mockProfile.email,
+        displayName: mockProfile.displayName,
+      },
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        slug: 'test-club',
+        contactEmail: 'club@example.com',
+        neighborhood: 'Gracia',
+      },
+    });
+
+    const result = await approveMembershipRequest(mockRequestId, undefined);
+
+    expect(result.success).toBe(true);
+    expect(prisma.membershipRequest.update).toHaveBeenCalled();
+    expect(logAdminAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operation: 'MEMBERSHIP_EMAIL_FAILED',
+        recordId: mockRequestId,
+      })
+    );
+  });
+
+  it('rejects a pending membership request without sending email', async () => {
+    (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
+    (prisma.membershipRequest.findUnique as any).mockResolvedValue({
+      id: mockRequestId,
+      userId: mockProfile.id,
+      status: 'PENDING',
+      currentStage: 'INTAKE',
+      snapshotMeta: {
+        locale: 'en',
+      },
+      user: {
+        id: mockProfile.id,
+        role: 'USER',
+        email: mockProfile.email,
+        displayName: mockProfile.displayName,
+      },
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        slug: 'test-club',
+        contactEmail: 'club@example.com',
+        neighborhood: 'Gracia',
+      },
+    });
+
+    const result = await rejectMembershipRequest(mockRequestId, 'Insufficient information');
+
+    expect(result.success).toBe(true);
+    expect(prisma.membershipRequest.update).toHaveBeenCalledWith({
+      where: { id: mockRequestId },
+      data: expect.objectContaining({
+        status: 'REJECTED',
+        currentStage: 'FINAL_APPROVAL',
+        rejectionReason: 'Insufficient information',
+      }),
+    });
+    expect(prisma.notification.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        userId: mockProfile.id,
+        type: 'APPLICATION_REJECTED',
+      }),
+    });
+    expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
+  });
+
+  it('blocks repeated decisions on an already approved request', async () => {
+    (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
+    (prisma.membershipRequest.findUnique as any).mockResolvedValue({
+      id: mockRequestId,
+      userId: mockProfile.id,
+      status: 'APPROVED',
+      currentStage: 'FINAL_APPROVAL',
+      snapshotMeta: {
+        locale: 'en',
+      },
+      user: {
+        id: mockProfile.id,
+        role: 'USER',
+        email: mockProfile.email,
+        displayName: mockProfile.displayName,
+      },
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        slug: 'test-club',
+        contactEmail: 'club@example.com',
+        neighborhood: 'Gracia',
+      },
+    });
+
+    const approvalResult = await approveMembershipRequest(mockRequestId, undefined);
+    const rejectionResult = await rejectMembershipRequest(mockRequestId, 'Too late');
+
+    expect(approvalResult.success).toBe(false);
+    expect(approvalResult.error).toMatch(/already been approved/i);
+    expect(rejectionResult.success).toBe(false);
+    expect(rejectionResult.error).toMatch(/already been approved/i);
+    expect(prisma.membershipRequest.update).not.toHaveBeenCalled();
+    expect(prisma.notification.create).not.toHaveBeenCalled();
+    expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
   });
 });

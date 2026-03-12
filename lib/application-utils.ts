@@ -12,9 +12,8 @@ export function mapRequestStatus(
 ): ApplicationStatus {
   if (status === 'APPROVED') return 'APPROVED';
   if (status === 'REJECTED') return 'REJECTED';
-  if (status === 'SCHEDULED') return 'BACKGROUND_CHECK';
-  if (currentStage === 'BACKGROUND_CHECK') return 'BACKGROUND_CHECK';
-  if (currentStage === 'INTAKE') return 'SUBMITTED';
+  if (status === 'SCHEDULED') return 'UNDER_REVIEW';
+  if (currentStage === 'INTAKE') return 'UNDER_REVIEW';
   return 'UNDER_REVIEW';
 }
 

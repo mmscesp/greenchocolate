@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { z } from 'zod';
 import { EncryptionService } from '@/lib/encryption';
 import { getServerEnv, publicEnv } from '@/lib/env';
+import { i18n, type Locale } from '@/lib/i18n-config';
 
 export const MEMBERSHIP_EXPERIENCE_VALUES = [
   'curious',
@@ -38,6 +39,7 @@ const optionalNormalizedString = (max: number) =>
 export const membershipApplicationInputSchema = z
   .object({
     targetClubId: z.string().uuid(),
+    locale: z.enum(i18n.locales),
     firstName: normalizedString(1, 80),
     lastName: normalizedString(1, 80),
     email: z.string().trim().email().max(320).transform((value) => value.toLowerCase()),
@@ -233,6 +235,7 @@ export function buildApplicantPayload(input: MembershipApplicationInput, authori
 
 export function buildRequestMeta(input: {
   source: 'direct' | 'lead';
+  locale: Locale;
   countryCode: string;
   experience: string;
   riskLevel: RiskLevel;
@@ -243,6 +246,7 @@ export function buildRequestMeta(input: {
 }): Record<string, unknown> {
   return {
     source: input.source,
+    locale: input.locale,
     countryCode: input.countryCode,
     experience: input.experience,
     riskLevel: input.riskLevel,

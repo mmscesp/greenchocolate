@@ -36,10 +36,9 @@ import {
   type ApplicationStatus,
 } from '@/lib/application-utils';
 import { resolveLocale } from '@/lib/auth-urls';
+import { isLocale, type Locale } from '@/lib/i18n-config';
 import {
   sendMembershipApprovalEmail,
-  sendMembershipRejectionEmail,
-  sendMembershipStageUpdateEmail,
   sendMembershipSubmissionEmail,
 } from '@/lib/email/membership';
 import { getSessionProfile } from '@/lib/session-profile';
@@ -87,8 +86,7 @@ export type ActionState = {
 
 export interface ClubApplicationItem {
   id: string;
-  status: ApplicationStatus;
-  stage: ApplicationStage;
+  status: RequestStatus;
   createdAt: string;
   message: string | null;
   club: {
@@ -118,7 +116,6 @@ export interface AdminMembershipQueueItem extends Omit<ClubApplicationItem, 'use
 export interface AdminMembershipRequestDetail {
   id: string;
   status: RequestStatus;
-  applicationStatus: ApplicationStatus;
   currentStage: ApplicationStage;
   createdAt: string;
   reviewedAt: string | null;
@@ -172,15 +169,27 @@ const finalizeLeadSchema = z
   })
   .strict();
 
-const requestStageSchema = z.object({
+const approveSchema = z.object({
   requestId: z.string().uuid(),
-  toStage: z.enum(['DOCUMENT_VERIFICATION', 'BACKGROUND_CHECK', 'FINAL_APPROVAL']),
-  notes: z.string().max(1000).optional(),
+  note: z
+    .string()
+    .trim()
+    .max(1000)
+    .optional()
+    .or(z.literal(''))
+    .transform((value) => {
+      if (typeof value !== 'string') {
+        return undefined;
+      }
+
+      const trimmed = value.trim();
+      return trimmed.length > 0 ? trimmed : undefined;
+    }),
 });
 
 const rejectSchema = z.object({
   requestId: z.string().uuid(),
-  reason: z.string().min(1).max(1000),
+  reason: z.string().trim().min(1).max(1000),
 });
 
 const noteSchema = z.object({
@@ -255,11 +264,6 @@ function estimateCompletion(status: ApplicationStatus, submittedAt: Date): Date 
     return estimate;
   }
 
-  if (status === 'BACKGROUND_CHECK') {
-    estimate.setDate(estimate.getDate() + 4);
-    return estimate;
-  }
-
   return undefined;
 }
 
@@ -268,21 +272,6 @@ function getApplicationStatusFromRequest(
   currentStage?: string | null
 ): ApplicationStatus {
   return mapRequestStatus(status, currentStage);
-}
-
-function getRequestStageLabel(stage: ApplicationStage): string {
-  switch (stage) {
-    case 'INTAKE':
-      return 'intake';
-    case 'DOCUMENT_VERIFICATION':
-      return 'document verification';
-    case 'BACKGROUND_CHECK':
-      return 'background check';
-    case 'FINAL_APPROVAL':
-      return 'final approval';
-    default:
-      return String(stage).toLowerCase().replaceAll('_', ' ');
-  }
 }
 
 async function attemptMembershipEmail(task: () => Promise<{ success: boolean; skipped?: boolean; error?: string }>) {
@@ -319,6 +308,40 @@ async function getMembershipRequestForDecision(requestId: string) {
       },
     },
   });
+}
+
+function getJsonRecord(value: Prisma.JsonValue | null | undefined): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return {};
+  }
+
+  return value as Record<string, unknown>;
+}
+
+function resolveMembershipRequestLocale(
+  ...metadataSources: Array<Prisma.JsonValue | null | undefined>
+): Locale {
+  for (const source of metadataSources) {
+    const locale = getJsonRecord(source)['locale'];
+
+    if (typeof locale === 'string' && isLocale(locale)) {
+      return locale;
+    }
+  }
+
+  return 'en';
+}
+
+function getDecisionError(status: RequestStatus): string {
+  if (status === 'APPROVED') {
+    return 'Application has already been approved.';
+  }
+
+  if (status === 'REJECTED') {
+    return 'Application has already been rejected.';
+  }
+
+  return 'Only pending applications can be decided.';
 }
 
 async function createStageHistory(
@@ -676,6 +699,7 @@ export async function submitMembershipApplication(
     const encryptedPayload = EncryptionService.encryptPayload(applicationPayload);
     const snapshotMeta = buildRequestMeta({
       source: 'direct',
+      locale: validated.data.locale,
       countryCode: validated.data.countryCode,
       experience: validated.data.experience,
       riskLevel,
@@ -888,6 +912,7 @@ export async function createMembershipApplicationLead(
         encryptedPayload: EncryptionService.encryptPayload(applicationPayload),
         payloadMeta: buildRequestMeta({
           source: 'lead',
+          locale: validated.data.locale,
           countryCode: validated.data.countryCode,
           experience: validated.data.experience,
           riskLevel,
@@ -918,6 +943,7 @@ export async function createMembershipApplicationLead(
         verifiedAt: challengePassed ? new Date() : existingLead.verifiedAt,
         payloadMeta: buildRequestMeta({
           source: 'lead',
+          locale: validated.data.locale,
           countryCode: validated.data.countryCode,
           experience: validated.data.experience,
           riskLevel,
@@ -1065,6 +1091,7 @@ export async function finalizeMembershipApplicationLead(input: {
         encryptedPayload: EncryptionService.encryptPayload(payload),
         snapshotMeta: buildRequestMeta({
           source: 'lead',
+          locale: resolveMembershipRequestLocale(lead.payloadMeta),
           countryCode: typeof payload['countryCode'] === 'string' ? payload['countryCode'] : lead.countryCode || 'UN',
           experience: typeof payload['experience'] === 'string' ? payload['experience'] : lead.experience || 'curious',
           riskLevel: (lead.riskLevel as RiskLevel) || 'LOW',
@@ -1185,14 +1212,12 @@ export async function getApplicationStatus(userId: string): Promise<{
     notes: entry.notes || undefined,
   }));
 
-  const stageIndex: Record<ApplicationStage, number> = {
-    INTAKE: 1,
-    DOCUMENT_VERIFICATION: 2,
-    BACKGROUND_CHECK: 3,
-    FINAL_APPROVAL: 4,
-  };
-
-  const progressPercentage = Math.round((stageIndex[currentStage] / 4) * 100);
+  const progressPercentage =
+    status === 'APPROVED' || status === 'REJECTED'
+      ? 100
+      : status === 'UNDER_REVIEW' || status === 'SUBMITTED'
+        ? 60
+        : 0;
 
   return {
     application: {
@@ -1204,7 +1229,12 @@ export async function getApplicationStatus(userId: string): Promise<{
     },
     stageHistory,
     progressPercentage,
-    nextSteps: status === 'APPROVED' ? ['Access granted to member content'] : ['Wait for admin review'],
+    nextSteps:
+      status === 'APPROVED'
+        ? ['Access granted to member content']
+        : status === 'REJECTED'
+          ? ['Review the decision note in your notifications center']
+          : ['Wait for admin review'],
   };
 }
 
@@ -1277,18 +1307,17 @@ export async function cancelMembershipRequest(requestId: string): Promise<Action
   return { success: true, message: 'Request cancelled successfully' };
 }
 
-export async function advanceApplicationStage(
+export async function approveMembershipRequest(
   requestId: string,
-  toStage: ApplicationStage,
-  notes?: string
-): Promise<{ success: boolean; newStage?: ApplicationStage; error?: string }> {
+  note?: string
+): Promise<{ success: boolean; error?: string }> {
   const profile = await getCurrentProfile();
 
   if (!profile || profile.role !== 'ADMIN') {
     return { success: false, error: 'Unauthorized' };
   }
 
-  const validated = requestStageSchema.safeParse({ requestId, toStage, notes });
+  const validated = approveSchema.safeParse({ requestId, note });
   if (!validated.success) {
     return { success: false, error: validated.error.errors[0]?.message || 'Invalid input' };
   }
@@ -1299,35 +1328,39 @@ export async function advanceApplicationStage(
     return { success: false, error: 'Application not found' };
   }
 
-  const currentStage = normalizeApplicationStage(request.currentStage, request.status as RequestStatus);
-  const nextStatus: RequestStatus = validated.data.toStage === 'FINAL_APPROVAL' ? 'APPROVED' : 'PENDING';
+  if ((request.status as RequestStatus) !== 'PENDING') {
+    return { success: false, error: getDecisionError(request.status as RequestStatus) };
+  }
 
-  await prisma.$transaction(async (tx) => {
+  const currentStage = normalizeApplicationStage(request.currentStage, request.status as RequestStatus);
+  const reviewedAt = new Date();
+  const locale = resolveMembershipRequestLocale(request.snapshotMeta);
+
+  await runSerializableTransactionWithRetry(async (tx) => {
     await tx.membershipRequest.update({
       where: { id: request.id },
       data: {
-        status: nextStatus,
-        currentStage: validated.data.toStage,
-        reviewedAt: new Date(),
+        status: 'APPROVED',
+        currentStage: 'FINAL_APPROVAL',
+        reviewedAt,
         reviewedBy: profile.id,
-        appointmentNotes: validated.data.notes,
+        rejectionReason: null,
+        appointmentNotes: validated.data.note ?? null,
       },
     });
 
-    await createStageHistory(tx, request.id, currentStage, validated.data.toStage, profile.id, validated.data.notes);
+    await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.note);
 
     await tx.notification.create({
       data: {
         userId: request.userId,
-        type: nextStatus === 'APPROVED' ? 'APPLICATION_APPROVED' : 'APPLICATION_STAGE_CHANGED',
-        title: nextStatus === 'APPROVED' ? 'Application approved' : 'Application stage updated',
-        message:
-          nextStatus === 'APPROVED'
-            ? 'Your membership application has been approved.'
-            : `Your application moved to ${getRequestStageLabel(validated.data.toStage)}.`,
+        type: 'APPLICATION_APPROVED',
+        title: 'Application approved',
+        message: 'Your membership application has been approved.',
         data: {
           applicationId: request.id,
-          stage: validated.data.toStage,
+          clubId: request.club.id,
+          status: 'APPROVED',
         } as Prisma.InputJsonValue,
       },
     });
@@ -1335,59 +1368,55 @@ export async function advanceApplicationStage(
 
   await logAdminAuditEvent({
     tableName: 'MembershipRequest',
-    operation: nextStatus === 'APPROVED' ? 'ADMIN_APPROVE_MEMBERSHIP_REQUEST' : 'ADMIN_ADVANCE_MEMBERSHIP_STAGE',
+    operation: 'ADMIN_APPROVE_MEMBERSHIP_REQUEST',
     changedBy: profile.authId,
     recordId: request.id,
     changeData: {
       fromStage: currentStage,
-      toStage: validated.data.toStage,
-      status: nextStatus,
-      notes: validated.data.notes || null,
+      toStage: 'FINAL_APPROVAL',
+      status: 'APPROVED',
+      note: validated.data.note ?? null,
+      locale,
       applicantEmail: request.user.email,
       clubName: request.club.name,
     },
   });
 
-  const emailResult = await attemptMembershipEmail(() =>
-    nextStatus === 'APPROVED'
-      ? sendMembershipApprovalEmail({
-          applicantEmail: request.user.email,
-          applicantName: request.user.displayName,
-          clubName: request.club.name,
-          requestId: request.id,
-          notes: validated.data.notes,
-        })
-      : sendMembershipStageUpdateEmail(
-          {
-            applicantEmail: request.user.email,
-            applicantName: request.user.displayName,
-            clubName: request.club.name,
-            requestId: request.id,
-            notes: validated.data.notes,
-          },
-          getRequestStageLabel(validated.data.toStage)
-        )
-  );
+  const emailResult = await sendMembershipApprovalEmail({
+    applicantEmail: request.user.email,
+    applicantName: request.user.displayName,
+    clubName: request.club.name,
+    requestId: request.id,
+    locale,
+    decisionNote: validated.data.note,
+  });
 
-  if (!emailResult.success && !emailResult.skipped) {
-    await logAdminAuditEvent({
-      tableName: 'MembershipRequest',
-      operation: 'MEMBERSHIP_EMAIL_FAILED',
-      changedBy: profile.authId,
-      recordId: request.id,
-      changeData: {
-        stage: validated.data.toStage,
-        error: emailResult.error || 'Unknown email error',
-      },
-    });
-  }
+  await logAdminAuditEvent({
+    tableName: 'MembershipRequest',
+    operation: emailResult.success
+      ? 'MEMBERSHIP_EMAIL_SENT'
+      : emailResult.skipped
+        ? 'MEMBERSHIP_EMAIL_SKIPPED'
+        : 'MEMBERSHIP_EMAIL_FAILED',
+    changedBy: profile.authId,
+    recordId: request.id,
+    changeData: {
+      provider: 'BREVO',
+      locale: emailResult.locale,
+      templateId: emailResult.templateId ?? null,
+      fallbackUsed: emailResult.fallbackUsed,
+      messageId: emailResult.messageId ?? null,
+      requestsUrl: emailResult.requestsUrl,
+      error: emailResult.success ? null : emailResult.error || 'Unknown email error',
+    },
+  });
 
   revalidatePath('/');
 
-  return { success: true, newStage: validated.data.toStage };
+  return { success: true };
 }
 
-export async function rejectApplication(
+export async function rejectMembershipRequest(
   requestId: string,
   reason: string
 ): Promise<{ success: boolean; error?: string }> {
@@ -1408,29 +1437,37 @@ export async function rejectApplication(
     return { success: false, error: 'Application not found' };
   }
 
-  const currentStage = normalizeApplicationStage(request.currentStage, request.status as RequestStatus);
+  if ((request.status as RequestStatus) !== 'PENDING') {
+    return { success: false, error: getDecisionError(request.status as RequestStatus) };
+  }
 
-  await prisma.$transaction(async (tx) => {
+  const currentStage = normalizeApplicationStage(request.currentStage, request.status as RequestStatus);
+  const reviewedAt = new Date();
+
+  await runSerializableTransactionWithRetry(async (tx) => {
     await tx.membershipRequest.update({
       where: { id: requestId },
       data: {
         status: 'REJECTED',
-        reviewedAt: new Date(),
+        currentStage: 'FINAL_APPROVAL',
+        reviewedAt,
         reviewedBy: profile.id,
         rejectionReason: validated.data.reason,
       },
     });
 
-    await createStageHistory(tx, request.id, currentStage, currentStage, profile.id, validated.data.reason);
+    await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.reason);
 
     await tx.notification.create({
       data: {
         userId: request.userId,
         type: 'APPLICATION_REJECTED',
         title: 'Application rejected',
-        message: 'Your membership application was rejected. Please review notes and contact support if needed.',
+        message: 'Your membership application was rejected. Review the note in your notifications center if needed.',
         data: {
           applicationId: request.id,
+          clubId: request.club.id,
+          status: 'REJECTED',
           reason: validated.data.reason,
         } as Prisma.InputJsonValue,
       },
@@ -1443,35 +1480,14 @@ export async function rejectApplication(
     changedBy: profile.authId,
     recordId: request.id,
     changeData: {
-      stage: currentStage,
+      fromStage: currentStage,
+      toStage: 'FINAL_APPROVAL',
+      status: 'REJECTED',
       reason: validated.data.reason,
       applicantEmail: request.user.email,
       clubName: request.club.name,
     },
   });
-
-  const emailResult = await attemptMembershipEmail(() =>
-    sendMembershipRejectionEmail({
-      applicantEmail: request.user.email,
-      applicantName: request.user.displayName,
-      clubName: request.club.name,
-      requestId: request.id,
-      notes: validated.data.reason,
-    })
-  );
-
-  if (!emailResult.success && !emailResult.skipped) {
-    await logAdminAuditEvent({
-      tableName: 'MembershipRequest',
-      operation: 'MEMBERSHIP_EMAIL_FAILED',
-      changedBy: profile.authId,
-      recordId: request.id,
-      changeData: {
-        stage: currentStage,
-        error: emailResult.error || 'Unknown email error',
-      },
-    });
-  }
 
   revalidatePath('/');
 
@@ -1560,8 +1576,7 @@ export async function getClubApplications(): Promise<ClubApplicationItem[]> {
 
   return requests.map((request) => ({
     id: request.id,
-    status: getApplicationStatusFromRequest(request.status as RequestStatus, request.currentStage),
-    stage: normalizeApplicationStage(request.currentStage, request.status as RequestStatus),
+    status: request.status as RequestStatus,
     createdAt: request.createdAt.toISOString(),
     message: request.message,
     club: request.club,
@@ -1632,8 +1647,7 @@ export async function getAdminMembershipQueue(input: {
   return {
     items: items.map((request) => ({
       id: request.id,
-      status: getApplicationStatusFromRequest(request.status as RequestStatus, request.currentStage),
-      stage: normalizeApplicationStage(request.currentStage, request.status as RequestStatus),
+      status: request.status as RequestStatus,
       createdAt: request.createdAt.toISOString(),
       message: request.message,
       reviewedAt: request.reviewedAt?.toISOString() || null,
@@ -1707,7 +1721,6 @@ export async function getAdminMembershipRequestDetail(requestId: string): Promis
   return {
     id: request.id,
     status: request.status as RequestStatus,
-    applicationStatus: getApplicationStatusFromRequest(request.status as RequestStatus, request.currentStage),
     currentStage: normalizeApplicationStage(request.currentStage, request.status as RequestStatus),
     createdAt: request.createdAt.toISOString(),
     reviewedAt: request.reviewedAt?.toISOString() || null,
@@ -1761,21 +1774,20 @@ export async function addAdminMembershipNoteAction(formData: FormData): Promise<
   }
 }
 
-export async function advanceApplicationStageAction(formData: FormData): Promise<void> {
-  const parsed = requestStageSchema.safeParse({
+export async function approveMembershipRequestAction(formData: FormData): Promise<void> {
+  const parsed = approveSchema.safeParse({
     requestId: formData.get('requestId'),
-    toStage: formData.get('toStage'),
-    notes: formData.get('notes') || undefined,
+    note: formData.get('note') || undefined,
   });
   const returnPath = String(formData.get('returnPath') || '');
 
   if (!parsed.success) {
-    throw new Error(parsed.error.errors[0]?.message || 'Invalid stage update');
+    throw new Error(parsed.error.errors[0]?.message || 'Invalid approval');
   }
 
-  const result = await advanceApplicationStage(parsed.data.requestId, parsed.data.toStage, parsed.data.notes);
+  const result = await approveMembershipRequest(parsed.data.requestId, parsed.data.note);
   if (!result.success) {
-    throw new Error(result.error || 'Failed to update stage');
+    throw new Error(result.error || 'Failed to approve application');
   }
 
   if (returnPath) {
@@ -1783,7 +1795,7 @@ export async function advanceApplicationStageAction(formData: FormData): Promise
   }
 }
 
-export async function rejectApplicationAction(formData: FormData): Promise<void> {
+export async function rejectMembershipRequestAction(formData: FormData): Promise<void> {
   const parsed = rejectSchema.safeParse({
     requestId: formData.get('requestId'),
     reason: formData.get('reason'),
@@ -1794,7 +1806,7 @@ export async function rejectApplicationAction(formData: FormData): Promise<void>
     throw new Error(parsed.error.errors[0]?.message || 'Invalid rejection');
   }
 
-  const result = await rejectApplication(parsed.data.requestId, parsed.data.reason);
+  const result = await rejectMembershipRequest(parsed.data.requestId, parsed.data.reason);
   if (!result.success) {
     throw new Error(result.error || 'Failed to reject application');
   }

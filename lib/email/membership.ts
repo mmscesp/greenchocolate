@@ -1,4 +1,6 @@
-import { sendBrevoEmail } from '@/lib/email/brevo';
+import { sendBrevoEmail, type BrevoSendResult } from '@/lib/email/brevo';
+import { getServerEnv, publicEnv } from '@/lib/env';
+import { isLocale, type Locale } from '@/lib/i18n-config';
 
 type MembershipEmailContext = {
   applicantEmail: string;
@@ -6,6 +8,22 @@ type MembershipEmailContext = {
   clubName: string;
   requestId: string;
   notes?: string | null;
+};
+
+type MembershipApprovalEmailContext = {
+  applicantEmail: string;
+  applicantName?: string | null;
+  clubName: string;
+  requestId: string;
+  locale?: string | null;
+  decisionNote?: string | null;
+};
+
+export type MembershipApprovalEmailResult = BrevoSendResult & {
+  locale: Locale;
+  templateId?: number;
+  fallbackUsed: boolean;
+  requestsUrl: string;
 };
 
 function wrapHtml(title: string, body: string, requestId: string): string {
@@ -48,6 +66,37 @@ async function sendMembershipEmail(
   });
 }
 
+function resolveMembershipApprovalTemplate(requestLocale?: string | null): {
+  locale: Locale;
+  templateId?: number;
+  fallbackUsed: boolean;
+} {
+  const env = getServerEnv();
+  const locale = requestLocale && isLocale(requestLocale) ? requestLocale : 'en';
+  const englishTemplateId = env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_EN;
+
+  const localizedTemplateId =
+    locale === 'es'
+      ? env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_ES
+      : locale === 'fr'
+        ? env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_FR
+        : locale === 'de'
+          ? env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_DE
+          : englishTemplateId;
+
+  return {
+    locale,
+    templateId: localizedTemplateId ?? englishTemplateId,
+    fallbackUsed: locale !== 'en' && !localizedTemplateId,
+  };
+}
+
+function getMembershipRequestsUrl(locale: Locale): string {
+  const appUrl = publicEnv.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '');
+  const path = `/${locale}/profile/requests`;
+  return appUrl ? `${appUrl}${path}` : path;
+}
+
 export async function sendMembershipSubmissionEmail(context: MembershipEmailContext) {
   return sendMembershipEmail(
     context,
@@ -72,15 +121,51 @@ export async function sendMembershipStageUpdateEmail(
   );
 }
 
-export async function sendMembershipApprovalEmail(context: MembershipEmailContext) {
-  return sendMembershipEmail(
-    context,
-    'Application approved',
-    `Your membership request for ${context.clubName} was approved`,
-    `<p>Your request for <strong>${context.clubName}</strong> has been approved by our team.</p>
-     ${notesBlock(context.notes)}
-     <p>We will now handle the manual handoff with the club and follow up with next steps separately if needed.</p>`
-  );
+export async function sendMembershipApprovalEmail(
+  context: MembershipApprovalEmailContext
+): Promise<MembershipApprovalEmailResult> {
+  const { locale, templateId, fallbackUsed } = resolveMembershipApprovalTemplate(context.locale);
+  const requestsUrl = getMembershipRequestsUrl(locale);
+
+  if (!templateId) {
+    return {
+      success: false,
+      skipped: true,
+      error: 'Membership approval Brevo template is not configured.',
+      locale,
+      fallbackUsed,
+      requestsUrl,
+    };
+  }
+
+  const result = await sendBrevoEmail({
+    to: [
+      {
+        email: context.applicantEmail,
+        name: context.applicantName || undefined,
+      },
+    ],
+    templateId,
+    params: {
+      applicantName: context.applicantName || context.applicantEmail,
+      clubName: context.clubName,
+      requestId: context.requestId,
+      decisionNote: context.decisionNote || '',
+      requestsUrl,
+    },
+    tags: ['membership_approved'],
+  }).catch((error) => ({
+    success: false,
+    error: error instanceof Error ? error.message : 'Unknown email error',
+  }));
+
+  return {
+    ...result,
+    locale,
+    templateId,
+    fallbackUsed,
+    requestsUrl,
+  };
 }
 
 export async function sendMembershipRejectionEmail(context: MembershipEmailContext) {

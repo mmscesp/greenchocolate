@@ -25,6 +25,7 @@ import {
 } from '@/app/actions/applications';
 import { ConciergeLabel } from '@/components/landing/editorial-concierge/typography/ConciergeLabel';
 import { getCountryOptions } from '@/lib/countries';
+import type { Locale } from '@/lib/i18n-config';
 import { MembershipApplicationChallenge } from '@/components/security/MembershipApplicationChallenge';
 
 interface MembershipApplicationModalProps {
@@ -125,6 +126,7 @@ export default function MembershipApplicationModal({
 
       const submission = {
         targetClubId: club.id,
+        locale: language as Locale,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,

@@ -1,9 +1,9 @@
 import {
   addAdminMembershipNoteAction,
-  advanceApplicationStageAction,
+  approveMembershipRequestAction,
   getAdminMembershipQueue,
   getAdminMembershipRequestDetail,
-  rejectApplicationAction,
+  rejectMembershipRequestAction,
 } from '@/app/actions/applications';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,21 +45,21 @@ const adminRequestsCopy = {
     noEligibilityAnswers: 'No extra eligibility answers captured.',
     riskSignals: 'Risk signals',
     noRiskSignals: 'No structured risk metadata captured.',
-    advanceStage: 'Advance stage / approve',
-    advancePlaceholder: 'Optional internal/admin-facing notes included in the applicant update.',
-    saveDecision: 'Save stage decision',
+    approveTitle: 'Approve request',
+    approvePlaceholder: 'Optional note included in the approval email and visible in the notifications timeline.',
+    approveButton: 'Approve request',
     rejectTitle: 'Reject application',
-    rejectPlaceholder: 'Required rejection reason sent to the applicant.',
+    rejectPlaceholder: 'Required rejection reason shown in the in-app notification.',
     rejectButton: 'Reject request',
     internalNote: 'Internal note',
     internalPlaceholder: 'Add a note for the admin team. This is not emailed automatically.',
     addNote: 'Add note',
-    stageHistory: 'Stage history',
+    reviewedAt: 'Reviewed at',
+    rejectionReason: 'Rejection reason',
+    decisionNote: 'Decision note',
+    pendingDecision: 'This request is pending review.',
     internalNotes: 'Internal notes',
     noNotes: 'No notes yet.',
-    stageDocumentVerification: 'Document verification',
-    stageBackgroundCheck: 'Background check',
-    stageFinalApproval: 'Final approval',
   },
   es: {
     title: 'Solicitudes de membresia',
@@ -85,21 +85,21 @@ const adminRequestsCopy = {
     noEligibilityAnswers: 'No se capturaron respuestas adicionales de elegibilidad.',
     riskSignals: 'Senales de riesgo',
     noRiskSignals: 'No se capturaron metadatos estructurados de riesgo.',
-    advanceStage: 'Avanzar etapa / aprobar',
-    advancePlaceholder: 'Notas internas opcionales incluidas en la actualizacion enviada al solicitante.',
-    saveDecision: 'Guardar decision de etapa',
+    approveTitle: 'Aprobar solicitud',
+    approvePlaceholder: 'Nota opcional incluida en el email de aprobacion y visible en la cronologia de notificaciones.',
+    approveButton: 'Aprobar solicitud',
     rejectTitle: 'Rechazar solicitud',
-    rejectPlaceholder: 'Motivo obligatorio enviado al solicitante.',
+    rejectPlaceholder: 'Motivo obligatorio mostrado en la notificacion interna.',
     rejectButton: 'Rechazar solicitud',
     internalNote: 'Nota interna',
     internalPlaceholder: 'Anade una nota para el equipo admin. No se envia por correo automaticamente.',
     addNote: 'Anadir nota',
-    stageHistory: 'Historial de etapas',
+    reviewedAt: 'Revisada el',
+    rejectionReason: 'Motivo del rechazo',
+    decisionNote: 'Nota de decision',
+    pendingDecision: 'Esta solicitud sigue pendiente de revision.',
     internalNotes: 'Notas internas',
     noNotes: 'Aun no hay notas.',
-    stageDocumentVerification: 'Verificacion documental',
-    stageBackgroundCheck: 'Revision de antecedentes',
-    stageFinalApproval: 'Aprobacion final',
   },
   fr: {
     title: 'Demandes d adhesion',
@@ -125,21 +125,21 @@ const adminRequestsCopy = {
     noEligibilityAnswers: 'Aucune reponse supplementaire d eligibilite n a ete enregistree.',
     riskSignals: 'Signaux de risque',
     noRiskSignals: 'Aucune metadonnee structuree de risque n a ete capturee.',
-    advanceStage: 'Avancer l etape / approuver',
-    advancePlaceholder: 'Notes internes facultatives incluses dans la mise a jour envoyee au candidat.',
-    saveDecision: 'Enregistrer la decision',
+    approveTitle: 'Approuver la demande',
+    approvePlaceholder: 'Note facultative incluse dans l email d approbation et visible dans les notifications.',
+    approveButton: 'Approuver la demande',
     rejectTitle: 'Rejeter la demande',
-    rejectPlaceholder: 'Motif obligatoire envoye au candidat.',
+    rejectPlaceholder: 'Motif obligatoire affiche dans la notification interne.',
     rejectButton: 'Rejeter la demande',
     internalNote: 'Note interne',
     internalPlaceholder: 'Ajoutez une note pour l equipe admin. Elle n est pas envoyee automatiquement par email.',
     addNote: 'Ajouter la note',
-    stageHistory: 'Historique des etapes',
+    reviewedAt: 'Examinee le',
+    rejectionReason: 'Motif du rejet',
+    decisionNote: 'Note de decision',
+    pendingDecision: 'Cette demande est toujours en attente de revision.',
     internalNotes: 'Notes internes',
     noNotes: 'Pas encore de notes.',
-    stageDocumentVerification: 'Verification des documents',
-    stageBackgroundCheck: 'Verification des antecedents',
-    stageFinalApproval: 'Approbation finale',
   },
   de: {
     title: 'Mitgliedschaftsanfragen',
@@ -165,21 +165,21 @@ const adminRequestsCopy = {
     noEligibilityAnswers: 'Es wurden keine zusatzlichen Eignungsantworten erfasst.',
     riskSignals: 'Risikohinweise',
     noRiskSignals: 'Es wurden keine strukturierten Risikometadaten erfasst.',
-    advanceStage: 'Stufe vorziehen / genehmigen',
-    advancePlaceholder: 'Optionale interne Hinweise, die in das Bewerber-Update aufgenommen werden.',
-    saveDecision: 'Stufenentscheidung speichern',
+    approveTitle: 'Anfrage genehmigen',
+    approvePlaceholder: 'Optionale Notiz, die in der Freigabe-Mail und im Benachrichtigungsverlauf erscheint.',
+    approveButton: 'Anfrage genehmigen',
     rejectTitle: 'Anfrage ablehnen',
-    rejectPlaceholder: 'Pflichtgrund, der an den Bewerber gesendet wird.',
+    rejectPlaceholder: 'Pflichtgrund, der in der In-App-Benachrichtigung erscheint.',
     rejectButton: 'Anfrage ablehnen',
     internalNote: 'Interne Notiz',
     internalPlaceholder: 'Fuge eine Notiz fur das Admin-Team hinzu. Sie wird nicht automatisch per E-Mail gesendet.',
     addNote: 'Notiz hinzufugen',
-    stageHistory: 'Stufenverlauf',
+    reviewedAt: 'Gepruft am',
+    rejectionReason: 'Ablehnungsgrund',
+    decisionNote: 'Entscheidungsnotiz',
+    pendingDecision: 'Diese Anfrage wartet noch auf eine Entscheidung.',
     internalNotes: 'Interne Notizen',
     noNotes: 'Noch keine Notizen.',
-    stageDocumentVerification: 'Dokumentenprufung',
-    stageBackgroundCheck: 'Hintergrundprufung',
-    stageFinalApproval: 'Endgultige Freigabe',
   },
 } as const;
 
@@ -206,14 +206,6 @@ function getStatusLabel(status: string, copy: (typeof adminRequestsCopy)[keyof t
   if (status === 'PENDING') return copy.pending;
 
   return status;
-}
-
-function getStageLabel(stage: string, copy: (typeof adminRequestsCopy)[keyof typeof adminRequestsCopy]) {
-  if (stage === 'DOCUMENT_VERIFICATION') return copy.stageDocumentVerification;
-  if (stage === 'BACKGROUND_CHECK') return copy.stageBackgroundCheck;
-  if (stage === 'FINAL_APPROVAL') return copy.stageFinalApproval;
-
-  return stage;
 }
 
 export default async function AdminRequestsPage({
@@ -333,7 +325,6 @@ export default async function AdminRequestsPage({
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-semibold">{item.user.displayName || item.user.email}</p>
                       <Badge variant={badgeVariant(item.status)}>{getStatusLabel(item.status, copy)}</Badge>
-                      <Badge variant="secondary">{getStageLabel(item.stage, copy)}</Badge>
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">
                       {item.club.name} · {new Date(item.createdAt).toLocaleString()}
@@ -361,10 +352,9 @@ export default async function AdminRequestsPage({
                   <p className="text-lg font-semibold">{selectedRequest.user.displayName || selectedRequest.user.email}</p>
                   <p className="text-sm text-muted-foreground">{selectedRequest.user.email}</p>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant={badgeVariant(selectedRequest.applicationStatus)}>
-                      {getStatusLabel(selectedRequest.applicationStatus, copy)}
+                    <Badge variant={badgeVariant(selectedRequest.status)}>
+                      {getStatusLabel(selectedRequest.status, copy)}
                     </Badge>
-                    <Badge variant="secondary">{getStageLabel(selectedRequest.currentStage, copy)}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {copy.clubLabel}: {selectedRequest.club.name} · {selectedRequest.club.neighborhood}
@@ -412,42 +402,60 @@ export default async function AdminRequestsPage({
                 </div>
 
                 <div className="grid gap-4">
-                  <form action={advanceApplicationStageAction} className="space-y-3 rounded-2xl border border-border p-4">
-                    <input type="hidden" name="requestId" value={selectedRequest.id} />
-                    <input type="hidden" name="returnPath" value={returnPath} />
-                    <p className="text-sm font-semibold">{copy.advanceStage}</p>
-                    <select name="toStage" defaultValue={selectedRequest.currentStage} className="w-full rounded-xl border border-border px-4 py-2">
-                      <option value="DOCUMENT_VERIFICATION">{copy.stageDocumentVerification}</option>
-                      <option value="BACKGROUND_CHECK">{copy.stageBackgroundCheck}</option>
-                      <option value="FINAL_APPROVAL">{copy.stageFinalApproval}</option>
-                    </select>
-                    <textarea
-                      name="notes"
-                      rows={3}
-                      placeholder={copy.advancePlaceholder}
-                      className="w-full rounded-xl border border-border px-4 py-3"
-                      defaultValue={selectedRequest.appointmentNotes || ''}
-                    />
-                    <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">
-                      {copy.saveDecision}
-                    </button>
-                  </form>
+                  {selectedRequest.status === 'PENDING' ? (
+                    <>
+                      <form action={approveMembershipRequestAction} className="space-y-3 rounded-2xl border border-border p-4">
+                        <input type="hidden" name="requestId" value={selectedRequest.id} />
+                        <input type="hidden" name="returnPath" value={returnPath} />
+                        <p className="text-sm font-semibold">{copy.approveTitle}</p>
+                        <textarea
+                          name="note"
+                          rows={3}
+                          placeholder={copy.approvePlaceholder}
+                          className="w-full rounded-xl border border-border px-4 py-3"
+                          defaultValue={selectedRequest.appointmentNotes || ''}
+                        />
+                        <button type="submit" className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white">
+                          {copy.approveButton}
+                        </button>
+                      </form>
 
-                  <form action={rejectApplicationAction} className="space-y-3 rounded-2xl border border-red-200 p-4">
-                    <input type="hidden" name="requestId" value={selectedRequest.id} />
-                    <input type="hidden" name="returnPath" value={returnPath} />
-                    <p className="text-sm font-semibold text-red-900">{copy.rejectTitle}</p>
-                    <textarea
-                      name="reason"
-                      rows={3}
-                      required
-                      placeholder={copy.rejectPlaceholder}
-                      className="w-full rounded-xl border border-red-200 px-4 py-3"
-                    />
-                    <button type="submit" className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white">
-                      {copy.rejectButton}
-                    </button>
-                  </form>
+                      <form action={rejectMembershipRequestAction} className="space-y-3 rounded-2xl border border-red-200 p-4">
+                        <input type="hidden" name="requestId" value={selectedRequest.id} />
+                        <input type="hidden" name="returnPath" value={returnPath} />
+                        <p className="text-sm font-semibold text-red-900">{copy.rejectTitle}</p>
+                        <textarea
+                          name="reason"
+                          rows={3}
+                          required
+                          placeholder={copy.rejectPlaceholder}
+                          className="w-full rounded-xl border border-red-200 px-4 py-3"
+                        />
+                        <button type="submit" className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white">
+                          {copy.rejectButton}
+                        </button>
+                      </form>
+                    </>
+                  ) : (
+                    <div className="space-y-2 rounded-2xl border border-border p-4">
+                      <p className="text-sm font-semibold">{copy.reviewedAt}</p>
+                      <p className="text-sm text-slate-700">
+                        {selectedRequest.reviewedAt ? new Date(selectedRequest.reviewedAt).toLocaleString() : copy.pendingDecision}
+                      </p>
+                      {selectedRequest.appointmentNotes ? (
+                        <>
+                          <p className="text-sm font-semibold">{copy.decisionNote}</p>
+                          <p className="text-sm text-slate-700">{selectedRequest.appointmentNotes}</p>
+                        </>
+                      ) : null}
+                      {selectedRequest.rejectionReason ? (
+                        <>
+                          <p className="text-sm font-semibold text-red-900">{copy.rejectionReason}</p>
+                          <p className="text-sm text-red-800">{selectedRequest.rejectionReason}</p>
+                        </>
+                      ) : null}
+                    </div>
+                  )}
 
                   <form action={addAdminMembershipNoteAction} className="space-y-3 rounded-2xl border border-border p-4">
                     <input type="hidden" name="requestId" value={selectedRequest.id} />
@@ -466,35 +474,20 @@ export default async function AdminRequestsPage({
                   </form>
                 </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-semibold">{copy.stageHistory}</p>
-                    <div className="mt-2 space-y-2">
-                      {selectedRequest.stageHistory.map((entry) => (
-                        <div key={entry.id} className="rounded-xl border border-border p-3 text-sm">
-                          <p className="font-medium">{getStageLabel(entry.stage, copy)}</p>
-                          <p className="text-muted-foreground">{entry.changedAt.toLocaleString()}</p>
-                          {entry.notes ? <p className="mt-1 text-slate-700">{entry.notes}</p> : null}
+                <div>
+                  <p className="text-sm font-semibold">{copy.internalNotes}</p>
+                  <div className="mt-2 space-y-2">
+                    {selectedRequest.notes.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">{copy.noNotes}</p>
+                    ) : (
+                      selectedRequest.notes.map((note) => (
+                        <div key={note.id} className="rounded-xl border border-border p-3 text-sm">
+                          <p className="font-medium">{note.authorName}</p>
+                          <p className="text-muted-foreground">{new Date(note.createdAt).toLocaleString()}</p>
+                          <p className="mt-1 text-slate-700">{note.body}</p>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-semibold">{copy.internalNotes}</p>
-                    <div className="mt-2 space-y-2">
-                      {selectedRequest.notes.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">{copy.noNotes}</p>
-                      ) : (
-                        selectedRequest.notes.map((note) => (
-                          <div key={note.id} className="rounded-xl border border-border p-3 text-sm">
-                            <p className="font-medium">{note.authorName}</p>
-                            <p className="text-muted-foreground">{new Date(note.createdAt).toLocaleString()}</p>
-                            <p className="mt-1 text-slate-700">{note.body}</p>
-                          </div>
-                        ))
-                      )}
-                    </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </>

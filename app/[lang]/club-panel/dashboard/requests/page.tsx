@@ -66,7 +66,6 @@ export default async function ClubRequestsPage({ params }: { params: Promise<{ l
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="font-semibold">{request.user.displayName || copy.anonymousApplicant}</p>
                   <Badge variant="secondary">{request.status}</Badge>
-                  <Badge variant="secondary">{request.stage}</Badge>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {request.club.name} · {new Date(request.createdAt).toLocaleString()}
