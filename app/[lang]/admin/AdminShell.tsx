@@ -20,12 +20,12 @@ export default function AdminShell({ children, lang, adminInfo }: AdminShellProp
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-24 text-slate-100">
+    <div className="min-h-screen bg-slate-950 pt-4 lg:pt-6 text-slate-100">
       <div className="mx-auto flex w-full max-w-[1680px] items-start gap-4 px-4 pb-8 lg:gap-8 lg:px-6 xl:px-8">
         <AdminSidebar adminInfo={adminInfo} lang={lang} />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-24 z-20 flex h-16 items-center justify-between rounded-[24px] border border-slate-800 bg-slate-900/95 px-4 backdrop-blur-sm lg:px-6">
+          <header className="sticky top-4 lg:top-6 z-20 flex h-16 items-center justify-between rounded-[24px] border border-slate-800 bg-slate-900/95 px-4 backdrop-blur-sm lg:px-6">
             <div className="flex items-center gap-4">
               <AdminMobileNav adminInfo={adminInfo} lang={lang} />
 

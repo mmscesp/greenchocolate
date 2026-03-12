@@ -202,7 +202,7 @@ export function AdminSidebar({
       items={railConfig.items}
       footerActions={railConfig.footerActions}
       className={className}
-      stickyClassName="top-24 h-[calc(100dvh-6rem)]"
+      stickyClassName="top-4 lg:top-6 h-[calc(100dvh-3rem)] lg:h-[calc(100dvh-3.5rem)]"
       expandedWidth={304}
       collapsedWidth={88}
     />

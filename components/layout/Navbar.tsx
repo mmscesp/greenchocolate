@@ -11,6 +11,7 @@ import { Logo } from '@/components/ui/logo';
 import { cn } from '@/lib/utils';
 import { Menu, X } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
+import { isLocale } from '@/lib/i18n-config';
 
 export default function Navbar() {
   const { t, language } = useLanguage();
@@ -23,6 +24,18 @@ export default function Navbar() {
   const closeMobileMenu = () => setMobileMenuOpen(false);
   const withLocale = (path: string) => `/${language}${path}`;
   const localizedHomePath = `/${language}`;
+
+  // Dashboard route check to conditionally hide navbar
+  const segments = (pathname || '/').split('/');
+  const firstSegment = segments[1] ?? '';
+  const normalizedPathname = isLocale(firstSegment)
+    ? `/${segments.slice(2).join('/')}`.replace(/\/+$/, '') || '/'
+    : pathname || '/';
+  
+  const isDashboardRoute =
+    normalizedPathname.startsWith('/profile') ||
+    normalizedPathname.startsWith('/club-panel') ||
+    normalizedPathname.startsWith('/admin');
 
   useEffect(() => {
     let frameId: number | null = null;
@@ -88,6 +101,10 @@ export default function Navbar() {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [mobileMenuOpen]);
+
+  if (isDashboardRoute) {
+    return null;
+  }
 
   return (
     <>
