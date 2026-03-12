@@ -71,7 +71,6 @@ function createAdminRailConfig({
     displayName: string;
     email: string;
     avatarUrl?: string | null;
-    badgeText: string;
   };
   items: NavigationRailItem[];
   footerActions: NavigationRailAction[];
@@ -87,7 +86,6 @@ function createAdminRailConfig({
       displayName: adminInfo?.displayName || t('admin.common.admin'),
       email: adminInfo?.email || 'admin@example.com',
       avatarUrl: adminInfo?.avatarUrl,
-      badgeText: t('admin.shell.mode'),
     },
     items: [
       {
@@ -164,14 +162,6 @@ function createAdminRailConfig({
       },
     ],
     footerActions: [
-      {
-        id: 'admin-back',
-        kind: 'link',
-        label: t('nav.back_to_site'),
-        href: `/${lang}`,
-        icon: Home,
-        onSelect,
-      },
       {
         id: 'admin-logout',
         kind: 'form',
