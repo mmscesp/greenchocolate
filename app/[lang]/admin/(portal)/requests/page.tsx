@@ -490,6 +490,23 @@ export default async function AdminRequestsPage({
                     )}
                   </div>
                 </div>
+
+                <div>
+                  <p className="text-sm font-semibold">Stage history</p>
+                  <div className="mt-2 space-y-2">
+                    {selectedRequest.stageHistory.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No stage history has been recorded yet.</p>
+                    ) : (
+                      selectedRequest.stageHistory.map((entry) => (
+                        <div key={entry.id} className="rounded-xl border border-border p-3 text-sm">
+                          <p className="font-medium">{entry.stage}</p>
+                          <p className="text-muted-foreground">{new Date(entry.changedAt).toLocaleString()}</p>
+                          {entry.notes ? <p className="mt-1 text-slate-700">{entry.notes}</p> : null}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
               </>
             )}
           </CardContent>

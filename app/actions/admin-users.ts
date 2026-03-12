@@ -1,10 +1,16 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getAdminSessionProfile } from '@/lib/security/admin-guard';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
+import {
+  getSafeAdminReturnPath,
+  revalidateAdminPortalPaths,
+  withAdminActionStatus,
+} from '@/lib/security/admin-portal';
 
 const usersFilterSchema = z.object({
   query: z.string().optional(),
@@ -15,7 +21,7 @@ const usersFilterSchema = z.object({
 
 const updateRoleSchema = z.object({
   userId: z.string().min(1),
-  role: z.enum(['USER', 'CLUB_ADMIN', 'ADMIN']),
+  role: z.enum(['USER', 'ADMIN']),
 });
 
 const updateVerificationSchema = z.object({
@@ -34,6 +40,13 @@ export async function getAdminUsers(rawInput: AdminUsersFilterInput = {}) {
       page: 1,
       pageSize: 20,
       totalPages: 0,
+      summary: {
+        admins: 0,
+        clubAdmins: 0,
+        members: 0,
+        verified: 0,
+        activeLast30Days: 0,
+      },
     };
   }
 
@@ -55,8 +68,10 @@ export async function getAdminUsers(rawInput: AdminUsersFilterInput = {}) {
   };
 
   const skip = (input.page - 1) * input.pageSize;
+  const activeCutoff = new Date();
+  activeCutoff.setDate(activeCutoff.getDate() - 30);
 
-  const [users, total] = await Promise.all([
+  const [users, total, roleDistribution, verifiedTotal, activeLast30Days] = await Promise.all([
     prisma.profile.findMany({
       where: whereClause,
       orderBy: { createdAt: 'desc' },
@@ -77,7 +92,30 @@ export async function getAdminUsers(rawInput: AdminUsersFilterInput = {}) {
       },
     }),
     prisma.profile.count({ where: whereClause }),
+    prisma.profile.groupBy({
+      by: ['role'],
+      _count: {
+        _all: true,
+      },
+    }),
+    prisma.profile.count({
+      where: {
+        isVerified: true,
+      },
+    }),
+    prisma.profile.count({
+      where: {
+        lastActiveAt: {
+          gte: activeCutoff,
+        },
+      },
+    }),
   ]);
+
+  const admins = roleDistribution.find((entry) => entry.role === 'ADMIN')?._count._all ?? 0;
+  const clubAdmins =
+    roleDistribution.find((entry) => entry.role === 'CLUB_ADMIN')?._count._all ?? 0;
+  const members = roleDistribution.find((entry) => entry.role === 'USER')?._count._all ?? 0;
 
   return {
     users,
@@ -85,6 +123,13 @@ export async function getAdminUsers(rawInput: AdminUsersFilterInput = {}) {
     page: input.page,
     pageSize: input.pageSize,
     totalPages: Math.ceil(total / input.pageSize),
+    summary: {
+      admins,
+      clubAdmins,
+      members,
+      verified: verifiedTotal,
+      activeLast30Days,
+    },
   };
 }
 
@@ -157,12 +202,49 @@ export async function getAdminUserById(userId: string) {
           },
         },
       },
+      safetyPass: {
+        select: {
+          passNumber: true,
+          tier: true,
+          status: true,
+          issuedAt: true,
+          expiresAt: true,
+          renewedAt: true,
+          revokedAt: true,
+        },
+      },
+      bookings: {
+        take: 10,
+        orderBy: { scheduledFor: 'desc' },
+        select: {
+          id: true,
+          type: true,
+          status: true,
+          scheduledFor: true,
+          guestCount: true,
+          createdAt: true,
+          club: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          event: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
       _count: {
         select: {
           membershipRequests: true,
           reviews: true,
           favorites: true,
           notifications: true,
+          bookings: true,
         },
       },
     },
@@ -188,7 +270,9 @@ export async function getAdminUserById(userId: string) {
 
 export async function updateUserRole(formData: FormData): Promise<void> {
   const admin = await getAdminSessionProfile();
+  const returnPath = getSafeAdminReturnPath(formData.get('returnPath'), '/en/admin/users');
   if (!admin) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Admin session is required.'));
     return;
   }
 
@@ -198,10 +282,18 @@ export async function updateUserRole(formData: FormData): Promise<void> {
   });
 
   if (!parsed.success) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Invalid role update request.'));
     return;
   }
 
   if (parsed.data.userId === admin.id) {
+    redirect(
+      withAdminActionStatus(
+        returnPath,
+        'error',
+        'Your own platform-admin role cannot be edited from this screen.'
+      )
+    );
     return;
   }
 
@@ -211,12 +303,33 @@ export async function updateUserRole(formData: FormData): Promise<void> {
   });
 
   if (!previous) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'User record was not found.'));
     return;
   }
 
-  await prisma.profile.update({
-    where: { id: parsed.data.userId },
-    data: { role: parsed.data.role },
+  if (previous.role === parsed.data.role) {
+    redirect(withAdminActionStatus(returnPath, 'success', 'Role already matched the selected value.'));
+    return;
+  }
+
+  if (previous.role === 'ADMIN' && parsed.data.role !== 'ADMIN') {
+    const adminCount = await prisma.profile.count({
+      where: { role: 'ADMIN' },
+    });
+
+    if (adminCount <= 1) {
+      redirect(withAdminActionStatus(returnPath, 'error', 'The final remaining platform admin cannot be demoted.'));
+      return;
+    }
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT set_config('app.allow_role_change', 'on', true)`;
+
+    await tx.profile.update({
+      where: { id: parsed.data.userId },
+      data: { role: parsed.data.role },
+    });
   });
 
   await logAdminAuditEvent({
@@ -232,11 +345,15 @@ export async function updateUserRole(formData: FormData): Promise<void> {
   });
 
   revalidatePath('/');
+  revalidateAdminPortalPaths(['/users', `/users/${parsed.data.userId}`, '']);
+  redirect(withAdminActionStatus(returnPath, 'success', `Role updated for ${previous.email}.`));
 }
 
 export async function updateUserVerification(formData: FormData): Promise<void> {
   const admin = await getAdminSessionProfile();
+  const returnPath = getSafeAdminReturnPath(formData.get('returnPath'), '/en/admin/users');
   if (!admin) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Admin session is required.'));
     return;
   }
 
@@ -246,6 +363,7 @@ export async function updateUserVerification(formData: FormData): Promise<void> 
   });
 
   if (!parsed.success) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Invalid verification update request.'));
     return;
   }
 
@@ -255,6 +373,7 @@ export async function updateUserVerification(formData: FormData): Promise<void> 
   });
 
   if (!previous) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'User record was not found.'));
     return;
   }
 
@@ -276,4 +395,14 @@ export async function updateUserVerification(formData: FormData): Promise<void> 
   });
 
   revalidatePath('/');
+  revalidateAdminPortalPaths(['/users', `/users/${parsed.data.userId}`, '']);
+  redirect(
+    withAdminActionStatus(
+      returnPath,
+      'success',
+      parsed.data.isVerified
+        ? `Marked ${previous.email} as verified.`
+        : `Marked ${previous.email} as unverified.`
+    )
+  );
 }

@@ -3,38 +3,55 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Mail, Star, ClipboardList, Heart } from '@/lib/icons';
+import { AdminActionNotice } from '@/components/admin/AdminActionNotice';
+import { ArrowLeft, Mail, Star, ClipboardList, Heart, Shield, CalendarDays } from '@/lib/icons';
 import { getAdminUserById, updateUserRole, updateUserVerification } from '@/app/actions/admin-users';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { getAdminSessionProfile } from '@/lib/security/admin-guard';
 
 interface UserDetailPageProps {
   params: Promise<{ lang: string; id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function AdminUserDetailPage({ params }: UserDetailPageProps) {
+function getString(value: string | string[] | undefined, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
+}
+
+export default async function AdminUserDetailPage({ params, searchParams }: UserDetailPageProps) {
   const { lang, id } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
-  const user = await getAdminUserById(id);
+  const query = await searchParams;
+  const status = getString(query.status);
+  const message = getString(query.message);
+  const [user, admin] = await Promise.all([
+    getAdminUserById(id),
+    getAdminSessionProfile(),
+  ]);
 
   if (!user) {
     notFound();
   }
+  const isCurrentAdmin = user.id === admin?.id;
 
   type MembershipRequestRow = (typeof user.membershipRequests)[number];
   type ReviewRow = (typeof user.reviews)[number];
   type FavoriteRow = (typeof user.favorites)[number];
+  type BookingRow = (typeof user.bookings)[number];
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <AdminActionNotice status={status} message={message} />
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{t('admin.users.details.title')}</h1>
           <p className="text-muted-foreground mt-1">{t('admin.users.details.subtitle')}</p>
         </div>
         <Link href={`/${lang}/admin/users`}>
-          <Button variant="secondary">
+          <Button variant="secondary" className="w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('admin.users.details.back_to_users')}
           </Button>
@@ -52,6 +69,7 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
         <CardContent className="space-y-4">
           <div className="flex gap-2 flex-wrap">
             <Badge variant="secondary">{user.role.replace('_', ' ')}</Badge>
+            {isCurrentAdmin ? <Badge variant="outline">Current admin session</Badge> : null}
             <Badge variant={user.isVerified ? 'default' : 'secondary'}>
               {user.isVerified ? t('admin.common.verified') : t('admin.common.unverified')}
             </Badge>
@@ -59,32 +77,92 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
           </div>
 
           <div className="flex flex-wrap gap-3 pt-2">
-            <form action={updateUserVerification}>
-              <input type="hidden" name="userId" value={user.id} />
-              <input type="hidden" name="isVerified" value={String(!user.isVerified)} />
-              <Button type="submit" variant="secondary">
-                {user.isVerified ? t('admin.users.set_unverified') : t('admin.users.set_verified')}
-              </Button>
-            </form>
+            {isCurrentAdmin ? (
+              <Badge variant="outline" className="px-3 py-2">
+                Verification changes are locked on the active admin session
+              </Badge>
+            ) : (
+              <form action={updateUserVerification}>
+                <input type="hidden" name="userId" value={user.id} />
+                <input type="hidden" name="isVerified" value={String(!user.isVerified)} />
+                <input type="hidden" name="returnPath" value={`/${lang}/admin/users/${user.id}`} />
+                <Button type="submit" variant="secondary">
+                  {user.isVerified ? t('admin.users.set_unverified') : t('admin.users.set_verified')}
+                </Button>
+              </form>
+            )}
 
-            <form action={updateUserRole} className="flex gap-2">
-              <input type="hidden" name="userId" value={user.id} />
-              <select
-                name="role"
-                defaultValue={user.role}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                <option value="USER">{t('admin.users.roles.user')}</option>
-                <option value="CLUB_ADMIN">{t('admin.users.roles.club_admin')}</option>
-                <option value="ADMIN">{t('admin.users.roles.admin')}</option>
-              </select>
-              <Button type="submit">{t('admin.users.update_role')}</Button>
-            </form>
+            {user.role === 'CLUB_ADMIN' ? (
+              <Badge variant="outline" className="px-3 py-2">Club admin workflow ships in a later release</Badge>
+            ) : isCurrentAdmin ? (
+              <Badge variant="outline" className="px-3 py-2">Role changes are locked on the active admin session</Badge>
+            ) : (
+              <form action={updateUserRole} className="flex gap-2">
+                <input type="hidden" name="userId" value={user.id} />
+                <input type="hidden" name="returnPath" value={`/${lang}/admin/users/${user.id}`} />
+                <select
+                  name="role"
+                  defaultValue={user.role}
+                  className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="USER">{t('admin.users.roles.user')}</option>
+                  <option value="ADMIN">{t('admin.users.roles.admin')}</option>
+                </select>
+                <Button type="submit">{t('admin.users.update_role')}</Button>
+              </form>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-600">
+            Club-admin assignment is intentionally excluded from this release. Use this surface for member verification and platform-admin promotion only.
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Joined</p>
+              <p className="mt-1 text-sm font-medium">{new Date(user.createdAt).toLocaleString()}</p>
+            </div>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Last active</p>
+              <p className="mt-1 text-sm font-medium">
+                {user.lastActiveAt ? new Date(user.lastActiveAt).toLocaleString() : 'No recent activity recorded'}
+              </p>
+            </div>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notifications</p>
+              <p className="mt-1 text-sm font-medium">{user._count.notifications}</p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Shield className="h-4 w-4" />
+              Safety Pass
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            {user.safetyPass ? (
+              <>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant={user.safetyPass.status === 'ACTIVE' ? 'default' : 'secondary'}>
+                    {user.safetyPass.status}
+                  </Badge>
+                  <Badge variant="secondary">{user.safetyPass.tier}</Badge>
+                </div>
+                <p><span className="font-medium">Pass:</span> {user.safetyPass.passNumber}</p>
+                <p><span className="font-medium">Issued:</span> {new Date(user.safetyPass.issuedAt).toLocaleDateString()}</p>
+                <p><span className="font-medium">Expires:</span> {new Date(user.safetyPass.expiresAt).toLocaleDateString()}</p>
+              </>
+            ) : (
+              <p className="text-muted-foreground">No safety pass has been issued for this user.</p>
+            )}
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -142,6 +220,32 @@ export default async function AdminUserDetailPage({ params }: UserDetailPageProp
                 <div key={favorite.id} className="text-sm border rounded-md p-2">
                   <div className="font-medium">{favorite.club.name}</div>
                   <div className="text-muted-foreground">{favorite.club.isVerified ? t('admin.users.verified_club') : t('admin.users.unverified_club')}</div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <CalendarDays className="h-4 w-4" />
+              Bookings ({user._count.bookings})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {user.bookings.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No bookings recorded for this user.</p>
+            ) : (
+              user.bookings.map((booking: BookingRow) => (
+                <div key={booking.id} className="text-sm border rounded-md p-2">
+                  <div className="font-medium">{booking.club.name}</div>
+                  <div className="text-muted-foreground">
+                    {booking.type} · {booking.status} · {new Date(booking.scheduledFor).toLocaleDateString()}
+                  </div>
+                  {booking.event?.name ? (
+                    <div className="text-muted-foreground">{booking.event.name}</div>
+                  ) : null}
                 </div>
               ))
             )}

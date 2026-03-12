@@ -13,21 +13,57 @@ export default async function AdminPage({ params }: AdminPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
+  const now = new Date();
+  const next14Days = new Date(now);
+  next14Days.setDate(next14Days.getDate() + 14);
 
   const [
     totalUsers,
     totalClubs,
+    verifiedClubs,
+    activeClubs,
     pendingVerifications,
     pendingRequests,
+    publishedEvents,
+    activeSafetyPasses,
+    expiringSafetyPasses,
+    pendingBookings,
+    upcomingBookings,
     recentUsers,
     recentRequests,
     clubStats,
     userRoleDistribution,
+    recentAuditEvents,
   ] = await Promise.all([
     prisma.profile.count(),
     prisma.club.count(),
+    prisma.club.count({ where: { isVerified: true } }),
+    prisma.club.count({ where: { isActive: true } }),
     prisma.club.count({ where: { isVerified: false } }),
     prisma.membershipRequest.count({ where: { status: 'PENDING' } }),
+    prisma.event.count({ where: { isPublished: true } }),
+    prisma.safetyPass.count({
+      where: {
+        status: 'ACTIVE',
+        expiresAt: { gt: now },
+      },
+    }),
+    prisma.safetyPass.count({
+      where: {
+        status: 'ACTIVE',
+        expiresAt: {
+          gt: now,
+          lte: next14Days,
+        },
+      },
+    }),
+    prisma.booking.count({ where: { status: 'PENDING' } }),
+    prisma.booking.count({
+      where: {
+        scheduledFor: { gte: now },
+        status: { in: ['PENDING', 'CONFIRMED'] },
+      },
+    }),
     prisma.profile.findMany({
       take: 5,
       orderBy: { createdAt: 'desc' },
@@ -67,6 +103,17 @@ export default async function AdminPage({ params }: AdminPageProps) {
       by: ['role'],
       _count: true,
     }),
+    prisma.auditLog.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        tableName: true,
+        operation: true,
+        changedBy: true,
+        createdAt: true,
+      },
+    }),
   ]);
 
   type ClubStatRow = (typeof clubStats)[number];
@@ -78,6 +125,21 @@ export default async function AdminPage({ params }: AdminPageProps) {
     where: { id: { in: cityIds } },
     select: { id: true, name: true },
   });
+  const auditActorIds = Array.from(new Set(recentAuditEvents.map((event) => event.changedBy)));
+  const auditActors = auditActorIds.length
+    ? await prisma.profile.findMany({
+        where: {
+          authId: {
+            in: auditActorIds,
+          },
+        },
+        select: {
+          authId: true,
+          email: true,
+          displayName: true,
+        },
+      })
+    : [];
 
   const clubStatsByCity = clubStats
     .map((stat: ClubStatRow) => ({
@@ -93,8 +155,15 @@ export default async function AdminPage({ params }: AdminPageProps) {
       data={{
         totalUsers,
         totalClubs,
+        verifiedClubs,
+        activeClubs,
         pendingVerifications,
         pendingRequests,
+        publishedEvents,
+        activeSafetyPasses,
+        expiringSafetyPasses,
+        pendingBookings,
+        upcomingBookings,
         recentUsers,
         recentRequests,
         clubStatsByCity,
@@ -102,6 +171,14 @@ export default async function AdminPage({ params }: AdminPageProps) {
           role: entry.role,
           count: entry._count,
         })),
+        recentAuditEvents: recentAuditEvents.map((event) => {
+          const actor = auditActors.find((profile) => profile.authId === event.changedBy);
+
+          return {
+            ...event,
+            actorLabel: actor?.displayName || actor?.email || event.changedBy,
+          };
+        }),
       }}
     />
   );

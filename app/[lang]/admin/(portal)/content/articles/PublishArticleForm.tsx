@@ -156,6 +156,10 @@ export default function PublishArticleForm() {
             />
           </div>
 
+          <div className="text-xs text-muted-foreground">
+            Final path preview: <span className="font-medium text-foreground">/{slugify(slug || suggestedSlug || title || 'article-slug')}</span>
+          </div>
+
           <Textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} placeholder={t('admin.content.articles.publish.placeholders.seo_excerpt')} required minLength={20} maxLength={350} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -194,7 +198,10 @@ export default function PublishArticleForm() {
         </form>
 
         {response && (
-          <div className="mt-4 border rounded-md p-3 text-sm">
+          <div
+            aria-live="polite"
+            className={`mt-4 rounded-md border p-3 text-sm ${response.success ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50'}`}
+          >
             <div className="font-medium mb-2">{t('admin.content.articles.publish.result_title')}</div>
             {response.success ? (
               <div className="space-y-1">

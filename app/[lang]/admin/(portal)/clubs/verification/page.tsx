@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { AdminActionNotice } from '@/components/admin/AdminActionNotice';
 import { CheckCircle2 } from '@/lib/icons';
 import { getPendingClubVerifications, updateClubFlags } from '@/app/actions/admin-clubs';
 import { getDictionary } from '@/lib/dictionary';
@@ -9,12 +10,20 @@ import type { Locale } from '@/lib/i18n-config';
 
 interface VerificationPageProps {
   params: Promise<{ lang: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function ClubVerificationPage({ params }: VerificationPageProps) {
+function getString(value: string | string[] | undefined, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
+}
+
+export default async function ClubVerificationPage({ params, searchParams }: VerificationPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
+  const query = await searchParams;
+  const status = getString(query.status);
+  const message = getString(query.message);
   const pendingClubs = await getPendingClubVerifications();
   type PendingClubRow = (typeof pendingClubs)[number];
 
@@ -24,6 +33,8 @@ export default async function ClubVerificationPage({ params }: VerificationPageP
         <h1 className="text-3xl font-bold tracking-tight">{t('admin.clubs.verification_queue.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('admin.clubs.verification_queue.subtitle')}</p>
       </div>
+
+      <AdminActionNotice status={status} message={message} />
 
       {pendingClubs.length === 0 ? (
         <Card>
@@ -61,11 +72,13 @@ export default async function ClubVerificationPage({ params }: VerificationPageP
                   <form action={updateClubFlags}>
                     <input type="hidden" name="clubId" value={club.id} />
                     <input type="hidden" name="isVerified" value="true" />
+                    <input type="hidden" name="returnPath" value={`/${lang}/admin/clubs/verification`} />
                     <Button type="submit" size="sm">{t('admin.common.approve')}</Button>
                   </form>
                   <form action={updateClubFlags}>
                     <input type="hidden" name="clubId" value={club.id} />
                     <input type="hidden" name="isActive" value="false" />
+                    <input type="hidden" name="returnPath" value={`/${lang}/admin/clubs/verification`} />
                     <Button type="submit" size="sm" variant="destructive">{t('admin.common.reject')}</Button>
                   </form>
                 </div>

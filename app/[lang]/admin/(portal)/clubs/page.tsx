@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { AdminActionNotice } from '@/components/admin/AdminActionNotice';
 import { Search, Building2, ChevronLeft, ChevronRight } from '@/lib/icons';
 import { getAdminClubs, updateClubFlags } from '@/app/actions/admin-clubs';
 import { getDictionary } from '@/lib/dictionary';
@@ -27,8 +29,14 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
   const verification = getString(query.verification, 'ALL') as 'ALL' | 'VERIFIED' | 'PENDING';
   const activity = getString(query.activity, 'ALL') as 'ALL' | 'ACTIVE' | 'INACTIVE';
   const page = Number(getString(query.page, '1')) || 1;
+  const status = getString(query.status);
+  const message = getString(query.message);
 
-  const data = await getAdminClubs({ query: q, verification, activity, page, pageSize: 20 });
+  const [data, totalPendingVerification, totalInactive] = await Promise.all([
+    getAdminClubs({ query: q, verification, activity, page, pageSize: 20 }),
+    prisma.club.count({ where: { isVerified: false } }),
+    prisma.club.count({ where: { isActive: false } }),
+  ]);
   type ClubRow = (typeof data.clubs)[number];
 
   const buildUrl = (nextPage: number) => {
@@ -45,6 +53,29 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t('admin.clubs.title')}</h1>
         <p className="text-muted-foreground mt-1">{t('admin.clubs.subtitle')}</p>
+      </div>
+
+      <AdminActionNotice status={status} message={message} />
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Total clubs</p>
+            <p className="text-3xl font-bold">{data.total}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Pending verification</p>
+            <p className="text-3xl font-bold">{totalPendingVerification}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Inactive clubs</p>
+            <p className="text-3xl font-bold">{totalInactive}</p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -96,6 +127,7 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
                     <div className="min-w-0">
                       <div className="font-medium text-lg truncate">{club.name}</div>
                       <div className="text-sm text-muted-foreground truncate">/{club.slug} · {club.city.name}</div>
+                      <div className="text-sm text-muted-foreground truncate">{club.contactEmail}</div>
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <Badge variant={club.isVerified ? 'default' : 'secondary'}>
                           {club.isVerified ? t('admin.common.verified') : t('admin.clubs.pending_verification')}
@@ -105,18 +137,21 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
                         </Badge>
                         <Badge variant="secondary">{club._count.membershipRequests} {t('admin.common.requests')}</Badge>
                         <Badge variant="secondary">{club.admins.length} {t('admin.common.admins')}</Badge>
+                        <Badge variant="secondary">{club._count.events} events</Badge>
+                        <Badge variant="secondary">{club._count.reviews} reviews</Badge>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 items-center">
+                    <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
                       <Link href={`/${lang}/admin/clubs/${club.id}`}>
-                        <Button variant="secondary" size="sm">{t('admin.common.details')}</Button>
+                        <Button variant="secondary" size="sm" className="w-full sm:w-auto">{t('admin.common.details')}</Button>
                       </Link>
 
                       <form action={updateClubFlags}>
                         <input type="hidden" name="clubId" value={club.id} />
                         <input type="hidden" name="isVerified" value={String(!club.isVerified)} />
-                        <Button type="submit" size="sm" variant="secondary">
+                        <input type="hidden" name="returnPath" value={buildUrl(data.page)} />
+                        <Button type="submit" size="sm" variant="secondary" className="w-full sm:w-auto">
                           {club.isVerified ? t('admin.clubs.unverify') : t('admin.clubs.verify')}
                         </Button>
                       </form>
@@ -124,7 +159,8 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
                       <form action={updateClubFlags}>
                         <input type="hidden" name="clubId" value={club.id} />
                         <input type="hidden" name="isActive" value={String(!club.isActive)} />
-                        <Button type="submit" size="sm" variant="secondary">
+                        <input type="hidden" name="returnPath" value={buildUrl(data.page)} />
+                        <Button type="submit" size="sm" variant="secondary" className="w-full sm:w-auto">
                           {club.isActive ? t('admin.clubs.deactivate') : t('admin.clubs.activate')}
                         </Button>
                       </form>
@@ -135,20 +171,34 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <Button asChild variant="secondary" size="sm" disabled={data.page <= 1}>
-              <Link href={buildUrl(Math.max(1, data.page - 1))}>
+          <div className="mt-6 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+            {data.page <= 1 ? (
+              <Button variant="secondary" size="sm" disabled>
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 {t('admin.common.previous')}
-              </Link>
-            </Button>
-            <span className="text-sm text-muted-foreground">{t('admin.common.page')} {data.page} {t('admin.common.of')} {Math.max(1, data.totalPages)}</span>
-            <Button asChild variant="secondary" size="sm" disabled={data.page >= data.totalPages}>
-              <Link href={buildUrl(Math.min(data.totalPages || 1, data.page + 1))}>
+              </Button>
+            ) : (
+              <Button asChild variant="secondary" size="sm">
+                <Link href={buildUrl(Math.max(1, data.page - 1))}>
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  {t('admin.common.previous')}
+                </Link>
+              </Button>
+            )}
+            <span className="text-center text-sm text-muted-foreground">{t('admin.common.page')} {data.page} {t('admin.common.of')} {Math.max(1, data.totalPages)}</span>
+            {data.page >= data.totalPages ? (
+              <Button variant="secondary" size="sm" disabled>
                 {t('admin.common.next')}
                 <ChevronRight className="h-4 w-4 ml-1" />
-              </Link>
-            </Button>
+              </Button>
+            ) : (
+              <Button asChild variant="secondary" size="sm">
+                <Link href={buildUrl(Math.min(data.totalPages || 1, data.page + 1))}>
+                  {t('admin.common.next')}
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -1,10 +1,16 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getAdminSessionProfile } from '@/lib/security/admin-guard';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
+import {
+  getSafeAdminReturnPath,
+  revalidateAdminPortalPaths,
+  withAdminActionStatus,
+} from '@/lib/security/admin-portal';
 
 const clubsFilterSchema = z.object({
   query: z.string().optional(),
@@ -214,7 +220,9 @@ export async function getAdminClubById(clubId: string) {
 
 export async function updateClubFlags(formData: FormData): Promise<void> {
   const admin = await getAdminSessionProfile();
+  const returnPath = getSafeAdminReturnPath(formData.get('returnPath'), '/en/admin/clubs');
   if (!admin) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Admin session is required.'));
     return;
   }
 
@@ -228,10 +236,12 @@ export async function updateClubFlags(formData: FormData): Promise<void> {
   });
 
   if (!parsed.success) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Invalid club update request.'));
     return;
   }
 
   if (parsed.data.isVerified === undefined && parsed.data.isActive === undefined) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'No club changes were submitted.'));
     return;
   }
 
@@ -246,6 +256,7 @@ export async function updateClubFlags(formData: FormData): Promise<void> {
   });
 
   if (!previous) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Club record was not found.'));
     return;
   }
 
@@ -280,4 +291,6 @@ export async function updateClubFlags(formData: FormData): Promise<void> {
   });
 
   revalidatePath('/');
+  revalidateAdminPortalPaths(['/clubs', `/clubs/${previous.id}`, '/clubs/verification', '']);
+  redirect(withAdminActionStatus(returnPath, 'success', `Updated trust flags for ${previous.name}.`));
 }
