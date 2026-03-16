@@ -2063,5 +2063,13 @@
   "expert_byline.reviewed_by": "Reviewed by",
   "expert_byline.last_updated": "Last Updated",
   "club_panel.events.form.remove_image_aria": "Remove image",
-  "contact.email": "hello@socialclubsmaps.com"
+  "contact.email": "hello@socialclubsmaps.com",
+  "account.operator_support.title": "Club operator support",
+  "account.operator_support.description": "Club onboarding and application operations are handled directly by SocialClubsMaps right now. Use contact to coordinate support, onboarding, or request questions.",
+  "account.operator_support.cta": "Contact operator support",
+  "contact.operator_support.title": "Club operators",
+  "contact.operator_support.description": "Club onboarding, application operations, and operator support are currently handled directly by SocialClubsMaps. Reach out here and we will route the request.",
+  "landing.featured_vault.newsletter.success": "Check your inbox for the guide pack and next verified updates.",
+  "auth.common.show_password": "Show password",
+  "auth.common.hide_password": "Hide password"
 }

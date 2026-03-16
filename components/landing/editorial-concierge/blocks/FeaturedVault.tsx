@@ -22,13 +22,6 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success'>('idle');
 
-  const newsletterSuccessCopy = {
-    en: 'Check your inbox for the guide pack and next verified updates.',
-    es: 'Revisa tu email para ver la guia y las proximas actualizaciones verificadas.',
-    fr: 'Verifiez votre email pour recevoir le pack de guides et les prochaines mises a jour verifiees.',
-    de: 'Pruf dein Postfach fur das Guide-Paket und die nachsten verifizierten Updates.',
-  } as const;
-
   const handleNewsletterSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!newsletterEmail.trim()) return;
@@ -222,7 +215,7 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
           </div>
           {newsletterStatus === 'success' ? (
             <div className="w-full md:w-auto rounded-lg border border-brand/30 bg-brand/10 px-4 py-3 text-sm font-medium text-brand">
-              {newsletterSuccessCopy[language as keyof typeof newsletterSuccessCopy] ?? newsletterSuccessCopy.en}
+              {t('landing.featured_vault.newsletter.success')}
             </div>
           ) : (
             <form className="flex w-full md:w-auto gap-2" onSubmit={handleNewsletterSubmit}>
