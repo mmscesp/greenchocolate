@@ -13,7 +13,6 @@ import { LogoIcon } from '@/components/ui/logo';
 import { Mail, Lock, Loader2, Eye, EyeOff } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { FcGoogle } from 'react-icons/fc';
-import { FaApple } from 'react-icons/fa';
 
 export default function LoginForm() {
   const { language, t } = useLanguage();
@@ -21,7 +20,6 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '';
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isAppleLoading, setIsAppleLoading] = useState(false);
   
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -31,9 +29,8 @@ export default function LoginForm() {
     message: '',
   });
 
-  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
-    if (provider === 'google') setIsGoogleLoading(true);
-    else setIsAppleLoading(true);
+  const handleOAuthSignIn = async (provider: 'google') => {
+    setIsGoogleLoading(true);
 
     try {
       const result = await signInWithOAuth(provider, language, redirectUrl || null);
@@ -44,7 +41,6 @@ export default function LoginForm() {
       console.error('OAuth error:', error);
     } finally {
       setIsGoogleLoading(false);
-      setIsAppleLoading(false);
     }
   };
 
@@ -66,7 +62,7 @@ export default function LoginForm() {
           size="lg"
           className="w-full"
           onClick={() => handleOAuthSignIn('google')}
-          disabled={isGoogleLoading || isAppleLoading}
+          disabled={isGoogleLoading}
         >
           {isGoogleLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -74,22 +70,6 @@ export default function LoginForm() {
             <FcGoogle className="h-5 w-5" />
           )}
           {t('auth.login.continue_google')}
-        </Button>
-        
-        <Button
-          type="button"
-          variant="secondary"
-          size="lg"
-          className="w-full"
-          onClick={() => handleOAuthSignIn('apple')}
-          disabled={isGoogleLoading || isAppleLoading}
-        >
-          {isAppleLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            <FaApple className="h-5 w-5" />
-          )}
-          {t('auth.login.continue_apple')}
         </Button>
       </div>
 

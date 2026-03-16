@@ -1,10 +1,16 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { getAdminSessionProfile } from '@/lib/security/admin-guard';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
 import { getArticles } from '@/app/actions/articles';
+import {
+  getSafeAdminReturnPath,
+  revalidateAdminPortalPaths,
+  withAdminActionStatus,
+} from '@/lib/security/admin-portal';
 
 export async function getAdminArticleIndex() {
   const admin = await getAdminSessionProfile();
@@ -31,7 +37,7 @@ export async function getAdminEventsIndex() {
     return [];
   }
 
-  return prisma.event.findMany({
+  const events = await prisma.event.findMany({
     orderBy: { startDate: 'desc' },
     take: 100,
     include: {
@@ -49,11 +55,26 @@ export async function getAdminEventsIndex() {
       },
     },
   });
+
+  await logAdminAuditEvent({
+    tableName: 'Event',
+    operation: 'ADMIN_LIST_EVENTS',
+    changedBy: admin.authId,
+    recordId: 'index',
+    changeData: { count: events.length },
+  });
+
+  return events;
 }
 
 export async function toggleEventPublication(formData: FormData): Promise<void> {
   const admin = await getAdminSessionProfile();
+  const returnPath = getSafeAdminReturnPath(
+    formData.get('returnPath'),
+    '/en/admin/content/events'
+  );
   if (!admin) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Admin session is required.'));
     return;
   }
 
@@ -61,6 +82,7 @@ export async function toggleEventPublication(formData: FormData): Promise<void> 
   const nextPublished = String(formData.get('nextPublished')) === 'true';
 
   if (!eventId) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Event identifier is missing.'));
     return;
   }
 
@@ -70,6 +92,7 @@ export async function toggleEventPublication(formData: FormData): Promise<void> 
   });
 
   if (!previous) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Event record was not found.'));
     return;
   }
 
@@ -91,4 +114,14 @@ export async function toggleEventPublication(formData: FormData): Promise<void> 
   });
 
   revalidatePath('/');
+  revalidateAdminPortalPaths(['/content/events', '', '/analytics']);
+  redirect(
+    withAdminActionStatus(
+      returnPath,
+      'success',
+      nextPublished
+        ? `Published ${previous.name}.`
+        : `Moved ${previous.name} back to draft.`
+    )
+  );
 }

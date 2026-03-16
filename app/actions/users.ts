@@ -45,7 +45,6 @@ export type ProfileApplicationStatus =
   | 'draft'
   | 'submitted'
   | 'reviewing'
-  | 'background_check'
   | 'approved'
   | 'rejected';
 
@@ -238,9 +237,9 @@ function toProfileApplicationStatus(
 
   if (normalized === 'APPROVED') return 'approved';
   if (normalized === 'REJECTED') return 'rejected';
-  if (normalized === 'BACKGROUND_CHECK') return 'background_check';
-  if (normalized === 'SUBMITTED') return 'submitted';
-  if (normalized === 'UNDER_REVIEW') return 'reviewing';
+  if (normalized === 'SUBMITTED' || normalized === 'UNDER_REVIEW' || normalized === 'BACKGROUND_CHECK') {
+    return 'reviewing';
+  }
   return 'draft';
 }
 
@@ -249,11 +248,6 @@ function estimateCompletion(status: ProfileApplicationStatus, submittedAt: Date)
 
   if (status === 'submitted' || status === 'reviewing') {
     estimate.setDate(estimate.getDate() + 10);
-    return estimate;
-  }
-
-  if (status === 'background_check') {
-    estimate.setDate(estimate.getDate() + 4);
     return estimate;
   }
 

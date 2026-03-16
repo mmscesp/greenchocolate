@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CheckCircle2, Clock, FileSearch, Shield, UserCheck, AlertCircle } from '@/lib/icons';
+import { CheckCircle2, Clock, FileSearch, Shield, AlertCircle } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/hooks/useLanguage';
 
-type ApplicationStatus = 'draft' | 'submitted' | 'reviewing' | 'background_check' | 'approved' | 'rejected';
+type ApplicationStatus = 'draft' | 'submitted' | 'reviewing' | 'approved' | 'rejected';
 
 interface ApplicationStatusTrackerProps {
   status: ApplicationStatus;
@@ -33,12 +33,6 @@ const stages: Stage[] = [
     labelKey: 'application_status.stages.reviewing.label',
     descriptionKey: 'application_status.stages.reviewing.description',
     icon: Shield
-  },
-  {
-    id: 'background_check',
-    labelKey: 'application_status.stages.background_check.label',
-    descriptionKey: 'application_status.stages.background_check.description',
-    icon: UserCheck
   },
   {
     id: 'approved',

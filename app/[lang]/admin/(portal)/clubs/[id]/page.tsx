@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { AdminActionNotice } from '@/components/admin/AdminActionNotice';
 import { ArrowLeft, Building2, Users, Calendar, ClipboardList } from '@/lib/icons';
 import { getAdminClubById, updateClubFlags } from '@/app/actions/admin-clubs';
 import { getDictionary } from '@/lib/dictionary';
@@ -10,12 +11,20 @@ import type { Locale } from '@/lib/i18n-config';
 
 interface ClubDetailPageProps {
   params: Promise<{ lang: string; id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function AdminClubDetailPage({ params }: ClubDetailPageProps) {
+function getString(value: string | string[] | undefined, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
+}
+
+export default async function AdminClubDetailPage({ params, searchParams }: ClubDetailPageProps) {
   const { lang, id } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
+  const query = await searchParams;
+  const status = getString(query.status);
+  const message = getString(query.message);
   const club = await getAdminClubById(id);
 
   if (!club) {
@@ -28,13 +37,15 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <AdminActionNotice status={status} message={message} />
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{t('admin.clubs.details.title')}</h1>
           <p className="text-muted-foreground mt-1">{t('admin.clubs.details.subtitle')}</p>
         </div>
         <Link href={`/${lang}/admin/clubs`}>
-          <Button variant="secondary">
+          <Button variant="secondary" className="w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('admin.clubs.details.back_to_clubs')}
           </Button>
@@ -60,10 +71,26 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
 
           <p className="text-sm text-muted-foreground">{club.description}</p>
 
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Contact</p>
+              <p className="mt-1 text-sm font-medium">{club.contactEmail}</p>
+            </div>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Requests</p>
+              <p className="mt-1 text-sm font-medium">{club._count.membershipRequests}</p>
+            </div>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Reviews / favorites</p>
+              <p className="mt-1 text-sm font-medium">{club._count.reviews} / {club._count.favorites}</p>
+            </div>
+          </div>
+
           <div className="flex flex-wrap gap-3 pt-2">
             <form action={updateClubFlags}>
               <input type="hidden" name="clubId" value={club.id} />
               <input type="hidden" name="isVerified" value={String(!club.isVerified)} />
+              <input type="hidden" name="returnPath" value={`/${lang}/admin/clubs/${club.id}`} />
               <Button type="submit" variant="secondary">
                 {club.isVerified ? t('admin.clubs.unverify_club') : t('admin.clubs.verify_club')}
               </Button>
@@ -72,6 +99,7 @@ export default async function AdminClubDetailPage({ params }: ClubDetailPageProp
             <form action={updateClubFlags}>
               <input type="hidden" name="clubId" value={club.id} />
               <input type="hidden" name="isActive" value={String(!club.isActive)} />
+              <input type="hidden" name="returnPath" value={`/${lang}/admin/clubs/${club.id}`} />
               <Button type="submit" variant="secondary">
                 {club.isActive ? t('admin.clubs.deactivate_club') : t('admin.clubs.activate_club')}
               </Button>

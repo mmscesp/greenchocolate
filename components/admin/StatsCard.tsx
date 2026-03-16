@@ -39,18 +39,18 @@ export function StatsCard({ title, value, icon: Icon, trend, color = 'default', 
 
   return (
     <Card className={cn("hover:shadow-md transition-shadow", className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+      <CardHeader className="flex items-start justify-between gap-3 space-y-0 pb-2 sm:flex-row sm:items-center">
+        <CardTitle className="pr-2 text-sm font-medium leading-snug text-muted-foreground">
           {title}
         </CardTitle>
-        <div className={cn("p-2 rounded-full", styles.bg, styles.text)}>
+        <div className={cn("rounded-full p-2", styles.bg, styles.text)}>
           <Icon className="h-4 w-4" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="break-words text-2xl font-bold">{value}</div>
         {trend && (
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             {trend}
           </p>
         )}

@@ -14,7 +14,6 @@ import { Building, Mail, Lock, MapPin, Phone, ArrowLeft, CheckCircle, AlertCircl
 import { clubSignUp } from '@/app/actions/club-auth';
 import { signInWithOAuth } from '@/app/actions/auth';
 import { FcGoogle } from 'react-icons/fc';
-import { FaApple } from 'react-icons/fa';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ClubSignupPage() {
@@ -33,7 +32,6 @@ export default function ClubSignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [clientError, setClientError] = useState<string | null>(null);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isAppleLoading, setIsAppleLoading] = useState(false);
   
   // Form state for multi-step form
   const [formData, setFormData] = useState({
@@ -72,9 +70,8 @@ export default function ClubSignupPage() {
     setStep(2);
   };
 
-  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
-    if (provider === 'google') setIsGoogleLoading(true);
-    else setIsAppleLoading(true);
+  const handleOAuthSignIn = async (provider: 'google') => {
+    setIsGoogleLoading(true);
 
     try {
       const result = await signInWithOAuth(provider, language, `/${language}/club-panel/dashboard`);
@@ -85,7 +82,6 @@ export default function ClubSignupPage() {
       console.error('OAuth error:', error);
     } finally {
       setIsGoogleLoading(false);
-      setIsAppleLoading(false);
     }
   };
 
@@ -160,7 +156,7 @@ export default function ClubSignupPage() {
               variant="secondary"
               className="w-full flex items-center justify-center gap-3 h-11"
               onClick={() => handleOAuthSignIn('google')}
-              disabled={isGoogleLoading || isAppleLoading}
+              disabled={isGoogleLoading}
             >
               {isGoogleLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -168,21 +164,6 @@ export default function ClubSignupPage() {
                 <FcGoogle className="h-4 w-4" />
               )}
               {t('auth.register.continue_google')}
-            </Button>
-            
-            <Button
-              type="button"
-              variant="secondary"
-              className="w-full flex items-center justify-center gap-3 h-11"
-              onClick={() => handleOAuthSignIn('apple')}
-              disabled={isGoogleLoading || isAppleLoading}
-            >
-              {isAppleLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <FaApple className="h-4 w-4" />
-              )}
-              {t('auth.register.continue_apple')}
             </Button>
           </div>
 

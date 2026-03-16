@@ -12,10 +12,11 @@ export default function ConditionalFooter() {
     ? `/${segments.slice(2).join('/')}`.replace(/\/+$/, '') || '/'
     : pathname || '/';
   
-  // Hide footer on profile and club-panel dashboard pages
+  // Hide footer on profile, club-panel, and admin dashboard pages
   const isDashboardRoute =
     normalizedPathname.startsWith('/profile') ||
-    normalizedPathname.startsWith('/club-panel');
+    normalizedPathname.startsWith('/club-panel') ||
+    normalizedPathname.startsWith('/admin');
   
   if (isDashboardRoute) {
     return null;

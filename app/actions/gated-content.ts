@@ -30,7 +30,8 @@ function inferAccessLevel(hasApprovedMembership: boolean, isVerified: boolean): 
 
 export async function checkContentAccess(
   userId: string,
-  contentType: ContentType
+  contentType: ContentType,
+  clubId?: string
 ): Promise<{
   hasAccess: boolean;
   accessLevel: AccessLevel;
@@ -54,6 +55,7 @@ export async function checkContentAccess(
   const membership = await prisma.membershipRequest.findFirst({
     where: {
       userId,
+      ...(clubId ? { clubId } : {}),
       status: 'APPROVED',
     },
     orderBy: { reviewedAt: 'desc' },
@@ -141,7 +143,7 @@ export async function getClubDetailsWithAccess(
     };
   }
 
-  const access = await checkContentAccess(targetUserId, 'CONTACT_INFO');
+  const access = await checkContentAccess(targetUserId, 'CONTACT_INFO', club.id);
 
   if (access.accessLevel === 'FULL') {
     return {

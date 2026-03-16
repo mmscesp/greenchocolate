@@ -40,6 +40,12 @@ const LANDING_EXPERIMENT_CONTEXT = {
 
 const ONRAMP_EXPERIMENT_ID = 'landing_onramp_copy_v1';
 const ONRAMP_EXPERIMENT_ARMS = ['control', 'benefit'] as const;
+const DEFERRED_SECTION_START_INDEX = 2;
+
+const INTRINSIC_SECTION_STYLE: React.CSSProperties = {
+  contentVisibility: 'auto',
+  containIntrinsicSize: '1200px',
+};
 
 function scheduleIdleTask(callback: () => void, timeout: number) {
   if (typeof window.requestIdleCallback === 'function') {
@@ -185,41 +191,28 @@ export default function EditorialConciergeFlow() {
 
   return (
     <div ref={containerRef} className="relative font-sans antialiased bg-bg-base text-zinc-900 selection:bg-brand selection:text-black">
-      {/* Section 2: Trust Strip (The Marquee) */}
-      <section data-landing-section={SECTION_KEYS[0]}><TrustStrip /></section>
-      
-      {/* Section 3: Reality Check (Three Mistakes) */}
-      <section data-landing-section={SECTION_KEYS[1]}><RealityCheck /></section>
-      
-      {/* Section 4: Who We Are (The Three Pillars) */}
-      <section data-landing-section={SECTION_KEYS[2]}><WhoWeAre /></section>
-      
-      {/* Section 5: Content Showcase (Featured Vault) */}
-      <section data-landing-section={SECTION_KEYS[3]}><FeaturedVault /></section>
-      
-      {/* Section 6: Interactive Tool (Concierge Tools / Quiz) */}
-      <section data-landing-section={SECTION_KEYS[4]}><ConciergeTools /></section>
-      
-      {/* Section 7: Directory Teaser (Verification Standard) */}
-      <section data-landing-section={SECTION_KEYS[5]}><VerificationStandard /></section>
-      
-      {/* Section 8: Newsletter Drop (The Climax) */}
-      <section data-landing-section={SECTION_KEYS[6]}><NewsletterDrop /></section>
-      
-      {/* Section 9: City Previews (Community Roadmap Repurposed) */}
-      <section data-landing-section={SECTION_KEYS[7]}><CommunityRoadmap /></section>
-      
-      {/* Section 10: Events Bar (Knowledge Router Repurposed) */}
-      <section data-landing-section={SECTION_KEYS[8]}><KnowledgeRouter /></section>
-      
-      {/* Section 11: The Manifesto (Beginners Onramp Repurposed) */}
-      <section data-landing-section={SECTION_KEYS[9]}><BeginnersOnramp /></section>
-      
-      {/* Section 12: Editorial FAQ */}
-      <section data-landing-section={SECTION_KEYS[10]}><EditorialFAQ /></section>
-      
-      {/* Section 13: Final Mic Drop */}
-      <section data-landing-section={SECTION_KEYS[11]}><FinalMicDrop /></section>
+      {[
+        <TrustStrip key={SECTION_KEYS[0]} />,
+        <RealityCheck key={SECTION_KEYS[1]} />,
+        <WhoWeAre key={SECTION_KEYS[2]} />,
+        <FeaturedVault key={SECTION_KEYS[3]} />,
+        <ConciergeTools key={SECTION_KEYS[4]} />,
+        <VerificationStandard key={SECTION_KEYS[5]} />,
+        <NewsletterDrop key={SECTION_KEYS[6]} />,
+        <CommunityRoadmap key={SECTION_KEYS[7]} />,
+        <KnowledgeRouter key={SECTION_KEYS[8]} />,
+        <BeginnersOnramp key={SECTION_KEYS[9]} />,
+        <EditorialFAQ key={SECTION_KEYS[10]} />,
+        <FinalMicDrop key={SECTION_KEYS[11]} />,
+      ].map((component, index) => (
+        <section
+          key={SECTION_KEYS[index]}
+          data-landing-section={SECTION_KEYS[index]}
+          style={index >= DEFERRED_SECTION_START_INDEX ? INTRINSIC_SECTION_STYLE : undefined}
+        >
+          {component}
+        </section>
+      ))}
     </div>
   );
 }
