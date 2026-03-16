@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import HeroSection from '@/components/HeroSection';
 import SmoothScroll from '@/components/SmoothScroll';
-import DeferredEditorialConcierge from '@/components/landing/editorial-concierge/DeferredEditorialConcierge';
+import EditorialConciergeShell from '@/components/landing/editorial-concierge/EditorialConciergeShell';
 
 const OG_LOCALE_BY_LANG: Record<string, string> = {
   es: 'es_ES',
@@ -53,7 +53,7 @@ export default async function HomePage() {
     <SmoothScroll>
       <div className="relative min-h-screen">
         <HeroSection />
-        <DeferredEditorialConcierge />
+        <EditorialConciergeShell />
       </div>
     </SmoothScroll>
   );
