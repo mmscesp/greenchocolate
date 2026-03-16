@@ -263,7 +263,7 @@ export default function MembershipApplicationModal({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
           >
-            <div className="h-full overflow-y-auto no-scrollbar pb-10 sm:pb-0">
+            <div className="h-full overflow-y-auto pb-24 sm:pb-0">
               {/* Header */}
               <div className="relative h-40 overflow-hidden bg-bg-base shrink-0">
                 <div className="absolute inset-0 z-10 bg-gradient-to-t from-bg-surface via-bg-surface/40 to-transparent" />
@@ -524,7 +524,7 @@ export default function MembershipApplicationModal({
                   )}
 
                   {/* Submit Buttons */}
-                  <div className="flex flex-col gap-3 pt-4">
+                  <div className="sticky bottom-0 -mx-5 mt-2 flex flex-col gap-3 border-t border-white/10 bg-bg-surface/95 px-5 pb-4 pt-4 backdrop-blur sm:static sm:mx-0 sm:mt-0 sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0">
                     <Button
                       type="submit"
                       variant="primary"
