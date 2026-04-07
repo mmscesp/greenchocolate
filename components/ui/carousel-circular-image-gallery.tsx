@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import Image from "next/image"
 import { useLanguage } from '@/hooks/useLanguage';
 
 type MotionPathWindow = Window &
@@ -107,7 +108,7 @@ export function ImageGallery({ images }: ImageGalleryProps) {
 
   const onClick = (index: number) => {
     if (!disabled && index !== opened) {
-      setDisabled(true)
+      setDisabled(gsapReady)
       setOpened(index)
     }
   }
@@ -119,23 +120,23 @@ export function ImageGallery({ images }: ImageGalleryProps) {
 
   const next = useCallback(() => {
     if (images.length <= 1) return
-    setDisabled(true)
+    setDisabled(gsapReady)
     setOpened((currentOpened) => {
       let nextIndex = currentOpened + 1
       if (nextIndex >= images.length) nextIndex = 0
       return nextIndex
     })
-  }, [images.length])
+  }, [gsapReady, images.length])
 
   const prev = useCallback(() => {
     if (images.length <= 1) return
-    setDisabled(true)
+    setDisabled(gsapReady)
     setOpened((currentOpened) => {
       let prevIndex = currentOpened - 1
       if (prevIndex < 0) prevIndex = images.length - 1
       return prevIndex
     })
-  }, [images.length])
+  }, [gsapReady, images.length])
 
   useEffect(() => {
     if (!gsapReady || images.length <= 1) return
@@ -151,6 +152,15 @@ export function ImageGallery({ images }: ImageGalleryProps) {
   return (
     <div className="relative flex w-full items-center justify-center py-6 sm:py-8">
       <div className="relative aspect-square w-full max-w-[min(88vw,640px)] overflow-hidden rounded-[2rem] border border-white/5 bg-bg-surface/70 shadow-2xl sm:max-w-[min(82vw,720px)]">
+        {!gsapReady && (
+          <Image
+            src={images[opened]?.url ?? images[0]?.url}
+            alt={images[opened]?.title ?? images[0]?.title ?? 'Club gallery image'}
+            fill
+            sizes="(max-width: 768px) 88vw, 720px"
+            className="absolute inset-0 object-cover"
+          />
+        )}
         {gsapReady &&
           images.map((image, i) => (
             <div

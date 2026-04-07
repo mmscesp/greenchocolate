@@ -5,6 +5,7 @@ import { Club } from '@/lib/types';
 import GatedContent from '@/components/clubs/GatedContent';
 import { MapPin, Phone, Mail, Globe } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
+import { toAbsoluteHttpUrl } from '@/lib/url';
 
 interface Props {
   club: Club;
@@ -13,6 +14,7 @@ interface Props {
 
 export default function ClubContactSection({ club, isVerified }: Props) {
   const { t } = useLanguage();
+  const websiteUrl = club.website ? toAbsoluteHttpUrl(club.website) : undefined;
 
   if (!isVerified) {
     return (
@@ -62,14 +64,14 @@ export default function ClubContactSection({ club, isVerified }: Props) {
           </div>
         </div>
 
-        {club.website && (
+        {websiteUrl && (
           <div className="flex items-center gap-4">
             <div className="p-2.5 bg-white/5 rounded-xl shrink-0 border border-white/5">
               <Globe className="h-5 w-5 text-gold" />
             </div>
              <div>
               <span className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{t('clubs.contact.website')}</span>
-              <a href={`https://${club.website}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gold hover:text-gold-dark transition-colors font-bold underline decoration-gold/20 underline-offset-4">
+              <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-gold hover:text-gold-dark transition-colors font-bold underline decoration-gold/20 underline-offset-4">
                 {club.website}
               </a>
             </div>

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ImageGallery, type CircularGalleryImage } from '@/components/ui/carousel-circular-image-gallery';
 import VerificationBadge from '@/components/VerificationBadge';
@@ -11,6 +11,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { getClubPrimaryMediaImage, type ClubMediaItem, type ClubVideoMediaItem } from '@/lib/club-media';
+import { toAbsoluteHttpUrl } from '@/lib/url';
 import {
   Lock,
   Star,
@@ -40,14 +41,7 @@ interface ClubProfileContentProps {
 export default function ClubProfileContent({ club, mediaItems }: ClubProfileContentProps) {
   const { t, language } = useLanguage();
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.play().catch(e => console.log('Autoplay blocked', e));
-    }
-  }, []);
+  const websiteUrl = club.website ? toAbsoluteHttpUrl(club.website) : undefined;
 
   const fallbackImages = getClubImageGallery(club.images);
   const galleryItems =
@@ -107,7 +101,6 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
         <div className="absolute inset-0">
           {videoItem ? (
             <video
-              ref={videoRef}
               poster={videoItem.poster}
               autoPlay
               muted
@@ -350,8 +343,13 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                   {t('club_profile.get_in_touch')}
                 </ConciergeLabel>
                 <div className="flex flex-wrap items-center justify-center gap-6">
-                  {club.website && (
-                    <a href={`https://${club.website}`} className="group flex items-center gap-2 text-zinc-400 transition-colors hover:text-brand">
+                  {websiteUrl && (
+                    <a
+                      href={websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-2 text-zinc-400 transition-colors hover:text-brand"
+                    >
                       <Globe className="h-3.5 w-3.5" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">{t('club_profile.website')}</span>
                     </a>

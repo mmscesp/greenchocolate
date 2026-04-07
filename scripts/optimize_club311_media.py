@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from subprocess import run
 import re
+import os
 
 from PIL import Image, ImageOps
 import imageio_ffmpeg
@@ -30,10 +31,14 @@ AUTO_IMAGE_QUALITY = 76
 # Skip auto-added source photos that are perceptually near-identical to a kept photo.
 AUTO_DEDUPE_DHASH_THRESHOLD = 1
 
-VIDEO_SOURCE = SOURCE_DIR / 'IMG_4511.MP4'
 VIDEO_WEBM = OUTPUT_DIR / 'club-tour.webm'
 VIDEO_MP4 = OUTPUT_DIR / 'club-tour.mp4'
 VIDEO_POSTER = OUTPUT_DIR / 'poster.webp'
+VIDEO_SOURCE_ENV = 'CLUB311_VIDEO_SOURCE'
+VIDEO_SOURCE_CANDIDATES = [
+    SOURCE_DIR / 'IMG_4511.MP4',
+    ROOT / 'public' / 'images' / 'clubs' / 'club-311' / 'club-tour-source.mp4',
+]
 
 
 def optimize_image(source_name: str, target_name: str, max_width: int, quality: int) -> None:
@@ -122,10 +127,33 @@ def run_ffmpeg(args: list[str]) -> None:
         raise SystemExit(completed.returncode)
 
 
-def optimize_video() -> None:
+def resolve_video_source() -> Path:
+    env_source = os.environ.get(VIDEO_SOURCE_ENV, '').strip()
+    if env_source:
+        candidate = Path(env_source).expanduser()
+        if candidate.exists():
+            return candidate
+        raise SystemExit(
+            f'Video source from {VIDEO_SOURCE_ENV} does not exist: {candidate}'
+        )
+
+    for candidate in VIDEO_SOURCE_CANDIDATES:
+        if candidate.exists():
+            return candidate
+
+    candidate_list = '\n'.join(f'- {path}' for path in VIDEO_SOURCE_CANDIDATES)
+    raise SystemExit(
+        'Missing video source for Club 311 optimization.\n'
+        f'Set {VIDEO_SOURCE_ENV} to a file path, or provide one of:\n{candidate_list}'
+    )
+
+
+def optimize_video(video_source: Path) -> None:
     run_ffmpeg([
         '-y',
-        '-i', str(VIDEO_SOURCE),
+        '-i', str(video_source),
+        '-map', '0:v:0',
+        '-map', '0:a:0?',
         '-vf', "scale='min(720,iw)':-2",
         '-c:v', 'libvpx-vp9',
         '-b:v', '0',
@@ -133,26 +161,33 @@ def optimize_video() -> None:
         '-row-mt', '1',
         '-deadline', 'good',
         '-cpu-used', '4',
-        '-an',
+        '-c:a', 'libopus',
+        '-b:a', '96k',
+        '-ac', '2',
         str(VIDEO_WEBM),
     ])
 
     run_ffmpeg([
         '-y',
-        '-i', str(VIDEO_SOURCE),
+        '-i', str(video_source),
+        '-map', '0:v:0',
+        '-map', '0:a:0?',
         '-vf', "scale='min(720,iw)':-2",
         '-c:v', 'libx264',
         '-preset', 'slow',
         '-crf', '32',
+        '-pix_fmt', 'yuv420p',
+        '-c:a', 'aac',
+        '-b:a', '128k',
+        '-ac', '2',
         '-movflags', '+faststart',
-        '-an',
         str(VIDEO_MP4),
     ])
 
     run_ffmpeg([
         '-y',
         '-ss', '00:00:02',
-        '-i', str(VIDEO_SOURCE),
+        '-i', str(video_source),
         '-frames:v', '1',
         '-vf', "scale='min(1400,iw)':-2",
         str(VIDEO_POSTER),
@@ -160,20 +195,24 @@ def optimize_video() -> None:
 
 
 def main() -> None:
-    if not SOURCE_DIR.exists():
-        raise SystemExit(f'Missing source directory: {SOURCE_DIR}')
-
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    full_image_specs, skipped_sources = build_full_image_specs()
+    if SOURCE_DIR.exists():
+        full_image_specs, skipped_sources = build_full_image_specs()
 
-    for source_name, target_name, max_width, quality in full_image_specs:
-        optimize_image(source_name, target_name, max_width, quality)
+        for source_name, target_name, max_width, quality in full_image_specs:
+            optimize_image(source_name, target_name, max_width, quality)
+    else:
+        full_image_specs = []
+        skipped_sources = []
+        print(f'Skipping image optimization, source directory not found: {SOURCE_DIR}')
 
-    optimize_video()
+    video_source = resolve_video_source()
+    optimize_video(video_source)
 
     total_size = sum(path.stat().st_size for path in OUTPUT_DIR.glob('*') if path.is_file())
     print(f'Optimized assets written to {OUTPUT_DIR}')
+    print(f'Video source: {video_source}')
     print(f'Image assets optimized: {len(full_image_specs)}')
     print(f'Auto-deduped sources skipped: {len(skipped_sources)}')
     print(f'Total output size: {total_size / (1024 * 1024):.2f} MB')

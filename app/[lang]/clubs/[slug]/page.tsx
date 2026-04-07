@@ -9,6 +9,7 @@ import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
+import { toAbsoluteHttpUrl } from '@/lib/url';
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -133,7 +134,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
       addressCountry: 'ES',
     },
     priceRange: club.priceRange,
-    url: club.website ? `https://${club.website}` : undefined,
+    url: club.website ? toAbsoluteHttpUrl(club.website) : undefined,
     amenityFeature: club.amenities.map((amenity) => ({
       '@type': 'LocationFeatureSpecification',
       name: amenity,
