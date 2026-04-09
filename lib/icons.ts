@@ -67,3 +67,5 @@ export { SpeakerHighIcon as Volume2 } from '@phosphor-icons/react/ssr';
 export { SpeakerSlashIcon as VolumeX } from '@phosphor-icons/react/ssr';
 export { PlayIcon as Play } from '@phosphor-icons/react/ssr';
 export { PauseIcon as Pause } from '@phosphor-icons/react/ssr';
+export { LockKeyIcon as LockKey } from '@phosphor-icons/react/ssr';
+export { LockOpenIcon as LockOpen } from '@phosphor-icons/react/ssr';
