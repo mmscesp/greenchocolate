@@ -1,19 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Logo, LogoIcon } from '@/components/ui/logo';
+import { LogoIcon } from '@/components/ui/logo';
 import { Lock, ArrowLeft, AlertCircle, CheckCircle, Loader2, Eye, EyeOff } from '@/lib/icons';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { createClient } from '@/lib/supabase/client';
+import { getPasswordPolicyChecks, isPasswordPolicySatisfied } from '@/lib/auth-password-policy';
 import { useLanguage } from '@/hooks/useLanguage';
 
+const SESSION_POLL_INTERVAL_MS = 150;
+const SESSION_POLL_TIMEOUT_MS = 4000;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export default function ResetPasswordPage() {
-  const router = useRouter();
   const { language, t } = useLanguage();
   const withLocale = (path: string) => `/${language}${path}`;
   const [password, setPassword] = useState('');
@@ -23,9 +29,23 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isValidating, setIsValidating] = useState(true);
-  const { updatePassword, session } = useAuth();
+  const supabase = useMemo(() => createClient(), []);
+
+  const passwordRequirements = getPasswordPolicyChecks(password).map((check) => ({
+    met: check.met,
+    text:
+      check.key === 'minLength'
+        ? t('auth.register.password_rules.min_length')
+        : check.key === 'uppercase'
+        ? t('auth.register.password_rules.uppercase')
+        : check.key === 'number'
+        ? t('auth.register.password_rules.number')
+        : t('auth.register.password_rules.special'),
+  }));
 
   useEffect(() => {
+    let cancelled = false;
+
     const clearAuthHash = () => {
       if (!window.location.hash) {
         return;
@@ -35,30 +55,80 @@ export default function ResetPasswordPage() {
       window.history.replaceState({}, document.title, cleanUrl);
     };
 
-    const checkSession = async () => {
-      if (!session) {
-        const hash = window.location.hash;
-        if (hash && hash.includes('access_token')) {
-          clearAuthHash();
-          setIsValidating(false);
-        } else {
-          setError(t('auth.reset.errors.invalid_session'));
+    const waitForRecoverySession = async () => {
+      const start = Date.now();
+
+      while (Date.now() - start < SESSION_POLL_TIMEOUT_MS) {
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          return { session: null, error: sessionError };
         }
-      } else {
-        clearAuthHash();
-        setIsValidating(false);
+
+        if (session) {
+          return { session, error: null };
+        }
+
+        await sleep(SESSION_POLL_INTERVAL_MS);
       }
+
+      return { session: null, error: null };
     };
 
-    checkSession();
-  }, [session, t]);
+    const bootstrapRecovery = async () => {
+      const hasRecoveryToken = window.location.hash.includes('access_token');
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session) {
+        clearAuthHash();
+        if (!cancelled) {
+          setIsValidating(false);
+        }
+        return;
+      }
+
+      if (!hasRecoveryToken) {
+        if (!cancelled) {
+          setError(t('auth.reset.errors.invalid_session'));
+          setIsValidating(false);
+        }
+        return;
+      }
+
+      const { session: recoveredSession, error: recoveryError } = await waitForRecoverySession();
+      clearAuthHash();
+
+      if (cancelled) {
+        return;
+      }
+
+      if (recoveryError || !recoveredSession) {
+        setError(t('auth.reset.errors.invalid_session'));
+        setIsValidating(false);
+        return;
+      }
+
+      setIsValidating(false);
+    };
+
+    void bootstrapRecovery();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (password.length < 8) {
-      setError(t('auth.reset.errors.min_length'));
+    if (!isPasswordPolicySatisfied(password)) {
+      setError(t('auth.register.errors.password_requirements'));
       return;
     }
 
@@ -70,13 +140,16 @@ export default function ResetPasswordPage() {
     setLoading(true);
 
     try {
-      const { error } = await updatePassword(password);
+      const { error: updateError } = await supabase.auth.updateUser({
+        password,
+      });
 
-      if (error) {
-        setError(error.message);
-      } else {
-        setSuccess(true);
+      if (updateError) {
+        setError(updateError.message);
+        return;
       }
+
+      setSuccess(true);
     } catch (err) {
       setError(t('auth.reset.errors.unexpected'));
       console.error('Update password error:', err);
@@ -183,7 +256,16 @@ export default function ResetPasswordPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">{t('auth.reset.minimum_characters')}</p>
+              <div className="space-y-1 text-xs text-gray-500 mt-2">
+                {passwordRequirements.map((requirement) => (
+                  <p
+                    key={requirement.text}
+                    className={requirement.met ? 'text-green-600' : 'text-gray-500'}
+                  >
+                    {requirement.text}
+                  </p>
+                ))}
+              </div>
             </div>
 
             <div>
@@ -203,9 +285,9 @@ export default function ResetPasswordPage() {
               />
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-green-600 hover:bg-green-700 text-white" 
+            <Button
+              type="submit"
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
               disabled={loading}
             >
               {loading ? (

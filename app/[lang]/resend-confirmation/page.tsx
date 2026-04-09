@@ -2,28 +2,22 @@
 
 import { useActionState, useState } from 'react';
 import Link from 'next/link';
+import { resendConfirmationEmail } from '@/app/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
-import { Logo, LogoIcon } from '@/components/ui/logo';
+import { LogoIcon } from '@/components/ui/logo';
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from '@/lib/icons';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { buildLocalizedAuthPath } from '@/lib/auth-urls';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export default function ResendConfirmationPage() {
   const [email, setEmail] = useState('');
-  const { resendEmailConfirmation } = useAuth();
   const { language, t } = useLanguage();
-  const withLocale = (path: string) => `/${language}${path}`;
-  
-  const [state, formAction, isPending] = useActionState(async () => {
-    const { error } = await resendEmailConfirmation(email, language);
-    return {
-      success: !error,
-      message: error?.message || '',
-    };
-  }, {
+  const loginPath = buildLocalizedAuthPath(language, '/account/login');
+
+  const [state, formAction, isPending] = useActionState(resendConfirmationEmail, {
     success: false,
     message: '',
   });
@@ -42,7 +36,7 @@ export default function ResendConfirmationPage() {
             {t('auth.resend.success.prefix')} <strong>{email}</strong>. {t('auth.resend.success.suffix')}
           </p>
           <div className="space-y-3">
-            <Link href={withLocale('/account/login')} className="block">
+            <Link href={loginPath} className="block">
               <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
                 {t('auth.resend.go_to_sign_in')}
               </Button>
@@ -61,7 +55,7 @@ export default function ResendConfirmationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">
       <div className="w-full max-w-md">
-        <Link href={withLocale('/account/login')} className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
+        <Link href={loginPath} className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           <span>{t('auth.forgot.back')}</span>
         </Link>
@@ -90,6 +84,7 @@ export default function ResendConfirmationPage() {
           )}
 
           <form action={formAction} className="space-y-6">
+            <input type="hidden" name="lang" value={language} />
             <div>
               <Label htmlFor="email" className="flex items-center gap-2 mb-2">
                 <Mail className="h-4 w-4 text-gray-500" />
@@ -97,6 +92,7 @@ export default function ResendConfirmationPage() {
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder={t('auth.placeholders.email')}
                 value={email}
@@ -126,7 +122,7 @@ export default function ResendConfirmationPage() {
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               {t('auth.resend.already_verified')} {' '}
-              <Link href={withLocale('/account/login')} className="text-green-600 hover:text-green-700 font-medium">
+              <Link href={loginPath} className="text-green-600 hover:text-green-700 font-medium">
                 {t('auth.login.submit')}
               </Link>
             </p>

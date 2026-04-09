@@ -26,6 +26,14 @@ function appendRedirectParam(path: string, redirect: string | null | undefined):
   return `${url.pathname}${url.search}`;
 }
 
+export function buildLocalizedAuthPath(
+  lang: string | null | undefined,
+  path: string,
+  redirect: string | null | undefined = null
+): string {
+  return appendRedirectParam(buildLocalizedPath(lang, path), redirect);
+}
+
 export function resolveLocale(value: string | null | undefined): Locale {
   return value && isLocale(value) ? value : i18n.defaultLocale;
 }
@@ -82,7 +90,7 @@ export function getAuthCallbackPath(
   lang: string | null | undefined,
   redirect: string | null | undefined = null
 ): string {
-  return appendRedirectParam(buildLocalizedPath(lang, '/auth/callback'), redirect);
+  return buildLocalizedAuthPath(lang, '/auth/callback', redirect);
 }
 
 export function getResetPasswordPath(lang: string | null | undefined): string {

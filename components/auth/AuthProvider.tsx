@@ -1,16 +1,16 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, useCallback, type ReactNode } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { createClient as createSupabaseClient, type User, type Session } from '@supabase/supabase-js';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import {
   getAuthCallbackUrl,
   getLocalizedHomePath,
-  getResetPasswordUrl,
   resolveLocale,
 } from '@/lib/auth-urls';
+import { passwordSchema } from '@/lib/auth-password-policy';
 
 // Types for the auth context
 interface Profile {
@@ -44,14 +44,8 @@ interface AuthContextType {
     redirectPath?: string | null
   ) => Promise<{ error: Error | null, needsEmailConfirmation?: boolean }>;
   signOut: () => Promise<void>;
-  resetPassword: (email: string, lang: string) => Promise<{ error: Error | null }>;
   updatePassword: (newPassword: string) => Promise<{ error: Error | null }>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: Error | null }>;
-  resendEmailConfirmation: (
-    email: string,
-    lang: string,
-    redirectPath?: string | null
-  ) => Promise<{ error: Error | null }>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -87,6 +81,28 @@ function getCurrentLocale() {
   return resolveLocale(window.location.pathname.split('/')[1] ?? null);
 }
 
+function buildFallbackUser(profile: Profile): User {
+  return {
+    id: profile.authId,
+    aud: 'authenticated',
+    role: 'authenticated',
+    email: profile.email,
+    email_confirmed_at: profile.createdAt,
+    phone: '',
+    confirmed_at: profile.createdAt,
+    last_sign_in_at: profile.updatedAt,
+    app_metadata: {},
+    user_metadata: {
+      full_name: profile.displayName ?? undefined,
+      role: profile.role,
+    },
+    identities: [],
+    created_at: profile.createdAt,
+    updated_at: profile.updatedAt,
+    is_anonymous: false,
+  } as User;
+}
+
 async function logAuthEvent(operation: string, status: 'success' | 'failed', metadata?: Record<string, unknown>) {
   try {
     await fetch('/api/auth/audit', {
@@ -107,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   // Fetch user profile from our API
@@ -124,6 +141,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     return null;
   };
+
+  const syncProfileFromServer = useCallback(async () => {
+    const userProfile = await fetchProfile();
+
+    if (userProfile) {
+      setProfile(userProfile);
+      setUser((currentUser) => currentUser ?? buildFallbackUser(userProfile));
+      return;
+    }
+
+    const {
+      data: { session: refreshedSession },
+    } = await supabase.auth.getSession();
+
+    setSession(refreshedSession);
+    setUser(refreshedSession?.user ?? null);
+
+    if (!refreshedSession?.user) {
+      setProfile(null);
+    }
+  }, [supabase]);
 
   // Initialize auth state
   useEffect(() => {
@@ -191,6 +229,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       subscription.unsubscribe();
     };
   }, [supabase]);
+
+  useEffect(() => {
+    void syncProfileFromServer();
+  }, [pathname, syncProfileFromServer]);
+
+  useEffect(() => {
+    const handleVisibilityOrFocus = () => {
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
+
+      void syncProfileFromServer();
+    };
+
+    window.addEventListener('focus', handleVisibilityOrFocus);
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleVisibilityOrFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+    };
+  }, [syncProfileFromServer]);
 
   // Sign in with email and password
   const signIn = async (email: string, password: string): Promise<{ error: Error | null }> => {
@@ -276,33 +336,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Reset password (send email)
-  const resetPassword = async (email: string, lang: string): Promise<{ error: Error | null }> => {
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: getResetPasswordUrl(lang, window.location.origin),
-      });
-
-      if (error) {
-        toast.error(error.message);
-        await logAuthEvent('RESET_PASSWORD_CLIENT', 'failed');
-        return { error: new Error(error.message) };
-      }
-
-      toast.success('Password reset email sent');
-      await logAuthEvent('RESET_PASSWORD_CLIENT', 'success');
-      return { error: null };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error sending email';
-      toast.error(message);
-      await logAuthEvent('RESET_PASSWORD_CLIENT', 'failed');
-      return { error: new Error(message) };
-    }
-  };
-
   // Update password (after reset)
   const updatePassword = async (newPassword: string): Promise<{ error: Error | null }> => {
     try {
+      const validation = passwordSchema.safeParse(newPassword);
+      if (!validation.success) {
+        const message = validation.error.errors[0]?.message || 'Password does not meet security requirements';
+        toast.error(message);
+        await logAuthEvent('UPDATE_PASSWORD_CLIENT', 'failed', { reason: 'policy_validation' });
+        return { error: new Error(message) };
+      }
+
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
@@ -331,6 +375,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       if (!user?.email) {
         return { error: new Error('You must be signed in to change your password') };
+      }
+
+      const validation = passwordSchema.safeParse(newPassword);
+      if (!validation.success) {
+        const message = validation.error.errors[0]?.message || 'Password does not meet security requirements';
+        toast.error(message);
+        await logAuthEvent('CHANGE_PASSWORD_CLIENT', 'failed', { reason: 'policy_validation' });
+        return { error: new Error(message) };
       }
 
       const verificationClient = createSupabaseVerificationClient();
@@ -368,35 +420,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Resend email confirmation
-  const resendEmailConfirmation = async (
-    email: string,
-    lang: string,
-    redirectPath?: string | null
-  ): Promise<{ error: Error | null }> => {
-    try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email,
-        options: {
-          emailRedirectTo: getAuthCallbackUrl(lang, redirectPath, window.location.origin),
-        },
-      });
-
-      if (error) {
-        toast.error(error.message);
-        return { error: new Error(error.message) };
-      }
-
-      toast.success('Verification email sent');
-      return { error: null };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error sending email';
-      toast.error(message);
-      return { error: new Error(message) };
-    }
-  };
-
   // Refresh profile data
   const refreshProfile = async () => {
     if (user) {
@@ -413,10 +436,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn,
     signUp,
     signOut,
-    resetPassword,
     updatePassword,
     changePassword,
-    resendEmailConfirmation,
     refreshProfile,
   };
 

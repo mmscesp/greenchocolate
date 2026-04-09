@@ -7,15 +7,11 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { getAuthCallbackUrl, getSafeRedirectPath, resolveLocale } from '@/lib/auth-urls';
 import { prisma } from '@/lib/prisma';
+import { passwordSchema } from '@/lib/auth-password-policy';
 import { EncryptionService } from '@/lib/encryption';
+import { isAuthRateLimited } from '@/lib/security/auth-rate-limit';
+import { logAuthAuditEvent } from '@/lib/security/auth-audit';
 import type { ActionState } from './auth';
-
-const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character');
 
 const clubSignUpSchema = z.object({
   clubName: z.string().min(2, 'Club name must be at least 2 characters'),
@@ -25,6 +21,9 @@ const clubSignUpSchema = z.object({
   phone: z.string().min(5, 'Phone number is required'),
   description: z.string().min(20, 'Description must be at least 20 characters'),
 });
+
+const CLUB_SIGN_UP_RATE_LIMIT_WINDOW_MINUTES = 15;
+const CLUB_SIGN_UP_RATE_LIMIT_MAX_ATTEMPTS = 3;
 
 function generateSlug(name: string): string {
   return name
@@ -67,10 +66,11 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
   const supabase = await createClient();
   const lang = resolveLocale(formData.get('lang') as string | null);
   const redirectPath = getSafeRedirectPath('/club-panel/dashboard', lang);
+  const normalizedEmail = String(formData.get('email') ?? '').trim().toLowerCase();
 
   const data = {
     clubName: String(formData.get('clubName') ?? ''),
-    email: String(formData.get('email') ?? ''),
+    email: normalizedEmail,
     password: String(formData.get('password') ?? ''),
     address: String(formData.get('address') ?? ''),
     phone: String(formData.get('phone') ?? ''),
@@ -84,6 +84,28 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
       success: false,
       errors: validated.error.flatten().fieldErrors,
       message: 'Please fix the errors below',
+    };
+  }
+
+  const signUpRateLimited = await isAuthRateLimited({
+    operation: 'CLUB_SIGN_UP',
+    recordId: normalizedEmail,
+    maxAttempts: CLUB_SIGN_UP_RATE_LIMIT_MAX_ATTEMPTS,
+    windowMinutes: CLUB_SIGN_UP_RATE_LIMIT_WINDOW_MINUTES,
+    status: 'failed',
+  });
+
+  if (signUpRateLimited) {
+    await logAuthAuditEvent({
+      operation: 'CLUB_SIGN_UP_RATE_LIMITED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed' },
+    });
+
+    return {
+      success: false,
+      message: 'Too many club signup attempts. Please try again later.',
     };
   }
 
@@ -105,9 +127,15 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
     const signUpError = signUpResult.error;
 
     if (signUpError || !user) {
+      await logAuthAuditEvent({
+        operation: 'CLUB_SIGN_UP',
+        changedBy: 'anonymous',
+        recordId: normalizedEmail,
+        changeData: { status: 'failed', reason: signUpError?.message ?? 'unknown' },
+      });
       return {
         success: false,
-        message: signUpError?.message || 'Signup failed. Please try again.',
+        message: 'Unable to create club account. Please try again.',
       };
     }
 
@@ -129,6 +157,12 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
     });
 
     if (!defaultCity) {
+      await logAuthAuditEvent({
+        operation: 'CLUB_SIGN_UP',
+        changedBy: user.id,
+        recordId: user.id,
+        changeData: { status: 'failed', reason: 'missing_default_city' },
+      });
       return {
         success: false,
         message: 'Club signup is temporarily unavailable. Please try again later.',
@@ -220,15 +254,34 @@ export async function clubSignUp(_prevState: ActionState, formData: FormData): P
     } = await supabase.auth.getSession();
 
     if (!session) {
+      await logAuthAuditEvent({
+        operation: 'CLUB_SIGN_UP',
+        changedBy: user.id,
+        recordId: user.id,
+        changeData: { status: 'success', emailConfirmationRequired: true },
+      });
       return {
         success: true,
         message: 'Please check your email to confirm your account. Your club registration will be reviewed by our team.',
       };
     }
 
+    await logAuthAuditEvent({
+      operation: 'CLUB_SIGN_UP',
+      changedBy: user.id,
+      recordId: user.id,
+      changeData: { status: 'success', emailConfirmationRequired: false },
+    });
+
     redirect(redirectPath);
   } catch (error) {
     console.error('Club signup error:', error);
+    await logAuthAuditEvent({
+      operation: 'CLUB_SIGN_UP',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed', reason: 'exception' },
+    });
     return {
       success: false,
       message: 'An unexpected error occurred. Please try again.',

@@ -13,19 +13,14 @@ import { getLandingPageByRole } from '@/lib/auth-utils';
 import {
   getAuthCallbackUrl,
   getLocalizedHomePath,
+  getResetPasswordUrl,
   getSafeRedirectPath as getSafeLocalizedRedirectPath,
   resolveLocale,
 } from '@/lib/auth-urls';
+import { passwordSchema } from '@/lib/auth-password-policy';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
 import { isAuthRateLimited } from '@/lib/security/auth-rate-limit';
 import { ensureProfileForUser, getSessionProfile, getSessionUser } from '@/lib/session-profile';
-
-const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character');
 
 // ==========================================
 // ZOD SCHEMAS
@@ -46,6 +41,12 @@ const signUpSchema = z.object({
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
+});
+
+const emailRequestSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  lang: z.string().optional(),
+  redirect: z.string().optional(),
 });
 
 const updateProfileSchema = z.object({
@@ -70,6 +71,12 @@ export type OAuthProvider = 'google' | 'apple';
 const AUTH_FAILURE_MIN_DELAY_MS = 600;
 const LOGIN_RATE_LIMIT_WINDOW_MINUTES = 15;
 const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = 5;
+const SIGN_UP_RATE_LIMIT_WINDOW_MINUTES = 15;
+const SIGN_UP_RATE_LIMIT_MAX_ATTEMPTS = 5;
+const PASSWORD_RESET_RATE_LIMIT_WINDOW_MINUTES = 15;
+const PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS = 3;
+const RESEND_CONFIRMATION_RATE_LIMIT_WINDOW_MINUTES = 15;
+const RESEND_CONFIRMATION_RATE_LIMIT_MAX_ATTEMPTS = 3;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -105,11 +112,12 @@ async function getCurrentUser() {
 export async function signUp(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
   const lang = resolveLocale(formData.get('lang') as string | null);
+  const normalizedEmail = String(formData.get('email') ?? '').trim().toLowerCase();
   const redirectPath = getSafeRedirectPath(formData.get('redirect') as string | null, 'USER', lang);
 
   // Extract form data
   const data = {
-    email: formData.get('email') as string,
+    email: normalizedEmail,
     password: formData.get('password') as string,
     fullName: formData.get('fullName') as string,
     phone: formData.get('phone') as string || undefined,
@@ -126,6 +134,28 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
       success: false,
       errors: validated.error.flatten().fieldErrors,
       message: 'Please fix the errors below',
+    };
+  }
+
+  const signUpRateLimited = await isAuthRateLimited({
+    operation: 'SIGN_UP',
+    recordId: normalizedEmail,
+    maxAttempts: SIGN_UP_RATE_LIMIT_MAX_ATTEMPTS,
+    windowMinutes: SIGN_UP_RATE_LIMIT_WINDOW_MINUTES,
+    status: 'failed',
+  });
+
+  if (signUpRateLimited) {
+    await logAuthAuditEvent({
+      operation: 'SIGN_UP_RATE_LIMITED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed' },
+    });
+
+    return {
+      success: false,
+      message: 'Too many signup attempts. Please try again later.',
     };
   }
 
@@ -149,12 +179,12 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
       await logAuthAuditEvent({
         operation: 'SIGN_UP',
         changedBy: 'anonymous',
-        recordId: validated.data.email,
+        recordId: normalizedEmail,
         changeData: { status: 'failed', reason: error?.message ?? 'unknown' },
       });
       return {
         success: false,
-        message: error?.message || 'Signup failed. Please try again.',
+        message: 'Unable to create account. Please try again.',
       };
     }
 
@@ -271,6 +301,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
     recordId: normalizedEmail,
     maxAttempts: LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
     windowMinutes: LOGIN_RATE_LIMIT_WINDOW_MINUTES,
+    status: 'failed',
   });
 
   if (loginRateLimited) {
@@ -353,9 +384,9 @@ export async function login(prevState: ActionState, formData: FormData): Promise
 /**
  * User Signout Action
  */
-export async function signOut() {
+export async function signOut(langInput?: string | null) {
   const supabase = await createClient();
-  const lang = resolveLocale(null);
+  const lang = resolveLocale(langInput);
   const { data: { user } } = await supabase.auth.getUser();
   await supabase.auth.signOut();
 
@@ -473,6 +504,179 @@ export async function signInWithOAuth(
 
   // Return the URL to redirect to
   return { success: true, data: data.url };
+}
+
+export async function requestPasswordReset(
+  prevState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const supabase = await createClient();
+  const lang = resolveLocale(formData.get('lang') as string | null);
+  const validated = emailRequestSchema.safeParse({
+    email: String(formData.get('email') ?? '').trim().toLowerCase(),
+    lang,
+  });
+
+  if (!validated.success) {
+    return {
+      success: false,
+      errors: validated.error.flatten().fieldErrors,
+      message: 'Please fix the errors below',
+    };
+  }
+
+  const normalizedEmail = validated.data.email;
+  const rateLimited = await isAuthRateLimited({
+    operation: 'PASSWORD_RESET_REQUEST',
+    recordId: normalizedEmail,
+    maxAttempts: PASSWORD_RESET_RATE_LIMIT_MAX_ATTEMPTS,
+    windowMinutes: PASSWORD_RESET_RATE_LIMIT_WINDOW_MINUTES,
+  });
+
+  if (rateLimited) {
+    await logAuthAuditEvent({
+      operation: 'PASSWORD_RESET_REQUEST_RATE_LIMITED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed' },
+    });
+
+    return {
+      success: false,
+      message: 'Too many reset requests. Please try again later.',
+    };
+  }
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+      redirectTo: getResetPasswordUrl(lang),
+    });
+
+    await logAuthAuditEvent({
+      operation: 'PASSWORD_RESET_REQUEST',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: {
+        status: error ? 'failed' : 'success',
+        reason: error?.message ?? null,
+      },
+    });
+
+    if (error) {
+      return {
+        success: false,
+        message: 'Unable to send reset email right now. Please try again later.',
+      };
+    }
+
+    return {
+      success: true,
+      message: 'If an account exists for that email, a reset link has been sent.',
+    };
+  } catch (error) {
+    console.error('Password reset request error:', error);
+    await logAuthAuditEvent({
+      operation: 'PASSWORD_RESET_REQUEST',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed', reason: 'exception' },
+    });
+    return {
+      success: false,
+      message: 'Unable to send reset email right now. Please try again later.',
+    };
+  }
+}
+
+export async function resendConfirmationEmail(
+  prevState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const supabase = await createClient();
+  const lang = resolveLocale(formData.get('lang') as string | null);
+  const validated = emailRequestSchema.safeParse({
+    email: String(formData.get('email') ?? '').trim().toLowerCase(),
+    lang,
+    redirect: String(formData.get('redirect') ?? ''),
+  });
+
+  if (!validated.success) {
+    return {
+      success: false,
+      errors: validated.error.flatten().fieldErrors,
+      message: 'Please fix the errors below',
+    };
+  }
+
+  const normalizedEmail = validated.data.email;
+  const redirectPath = validated.data.redirect
+    ? getSafeLocalizedRedirectPath(validated.data.redirect, lang)
+    : null;
+
+  const rateLimited = await isAuthRateLimited({
+    operation: 'RESEND_CONFIRMATION_REQUEST',
+    recordId: normalizedEmail,
+    maxAttempts: RESEND_CONFIRMATION_RATE_LIMIT_MAX_ATTEMPTS,
+    windowMinutes: RESEND_CONFIRMATION_RATE_LIMIT_WINDOW_MINUTES,
+  });
+
+  if (rateLimited) {
+    await logAuthAuditEvent({
+      operation: 'RESEND_CONFIRMATION_RATE_LIMITED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed' },
+    });
+
+    return {
+      success: false,
+      message: 'Too many confirmation requests. Please try again later.',
+    };
+  }
+
+  try {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: normalizedEmail,
+      options: {
+        emailRedirectTo: getAuthCallbackUrl(lang, redirectPath),
+      },
+    });
+
+    await logAuthAuditEvent({
+      operation: 'RESEND_CONFIRMATION_REQUEST',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: {
+        status: error ? 'failed' : 'success',
+        reason: error?.message ?? null,
+      },
+    });
+
+    if (error) {
+      return {
+        success: false,
+        message: 'Unable to resend confirmation right now. Please try again later.',
+      };
+    }
+
+    return {
+      success: true,
+      message: 'If an account exists and still needs confirmation, we have sent a new email.',
+    };
+  } catch (error) {
+    console.error('Resend confirmation error:', error);
+    await logAuthAuditEvent({
+      operation: 'RESEND_CONFIRMATION_REQUEST',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed', reason: 'exception' },
+    });
+    return {
+      success: false,
+      message: 'Unable to resend confirmation right now. Please try again later.',
+    };
+  }
 }
 
 /**

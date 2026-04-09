@@ -4,6 +4,8 @@ import { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { signUp, signInWithOAuth } from '@/app/actions/auth';
+import { getPasswordPolicyChecks } from '@/lib/auth-password-policy';
+import { buildLocalizedAuthPath } from '@/lib/auth-urls';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,15 +31,21 @@ export default function RegisterForm() {
     message: '',
   });
 
-  const passwordRequirements = [
-    { met: password.length >= 8, text: t('auth.register.password_rules.min_length') },
-    { met: /[A-Z]/.test(password), text: t('auth.register.password_rules.uppercase') },
-    { met: /[0-9]/.test(password), text: t('auth.register.password_rules.number') },
-    { met: /[!@#$%^&*(),.?":{}|<>]/.test(password), text: t('auth.register.password_rules.special') },
-  ];
+  const passwordRequirements = getPasswordPolicyChecks(password).map((check) => ({
+    met: check.met,
+    text:
+      check.key === 'minLength'
+        ? t('auth.register.password_rules.min_length')
+        : check.key === 'uppercase'
+        ? t('auth.register.password_rules.uppercase')
+        : check.key === 'number'
+        ? t('auth.register.password_rules.number')
+        : t('auth.register.password_rules.special'),
+  }));
 
   const allRequirementsMet = passwordRequirements.every(req => req.met);
   const passwordsMatch = password === confirmPassword && confirmPassword !== '';
+  const loginPath = buildLocalizedAuthPath(language, '/account/login', redirectUrl);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -102,7 +110,7 @@ export default function RegisterForm() {
         </p>
         <p className="text-sm text-muted-foreground">
           {t('auth.register.check_email.already_verified')}{' '}
-          <Link href={`/${language}/account/login`} className="text-primary hover:underline font-medium">
+          <Link href={loginPath} className="text-primary hover:underline font-medium">
             {t('auth.login.submit')}
           </Link>
         </p>
@@ -319,7 +327,7 @@ export default function RegisterForm() {
 
         <div className="text-center text-sm text-muted-foreground">
           {t('auth.register.has_account')}{' '}
-          <Link href={`/${language}/account/login`} className="text-primary hover:underline font-medium">
+          <Link href={loginPath} className="text-primary hover:underline font-medium">
             {t('auth.login.submit')}
           </Link>
         </div>

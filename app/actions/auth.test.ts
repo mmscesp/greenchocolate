@@ -14,6 +14,8 @@ vi.mock('@/lib/supabase/server', () => ({
     auth: {
       signUp: vi.fn(),
       signInWithPassword: vi.fn(),
+      resetPasswordForEmail: vi.fn(),
+      resend: vi.fn(),
       getUser: vi.fn(),
       getSession: vi.fn(),
       signOut: vi.fn(),
@@ -51,7 +53,7 @@ vi.mock('@/lib/encryption', () => ({
 }));
 
 // Import after mocks
-import { signUp, login } from './auth';
+import { signUp, login, requestPasswordReset, resendConfirmationEmail } from './auth';
 import { prisma } from '@/lib/prisma';
 
 describe('Auth Actions - Smoke Tests', () => {
@@ -169,6 +171,32 @@ describe('Auth Actions - Smoke Tests', () => {
       expect(result).toHaveProperty('message');
       expect(result).toHaveProperty('errors');
       expect(typeof result.success).toBe('boolean');
+    });
+  });
+
+  describe('requestPasswordReset', () => {
+    it('should validate email format', async () => {
+      const formData = new FormData();
+      formData.append('email', 'invalid-email');
+      formData.append('lang', 'en');
+
+      const result = await requestPasswordReset({ success: false }, formData);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toBeDefined();
+    });
+  });
+
+  describe('resendConfirmationEmail', () => {
+    it('should validate email format', async () => {
+      const formData = new FormData();
+      formData.append('email', 'invalid-email');
+      formData.append('lang', 'en');
+
+      const result = await resendConfirmationEmail({ success: false }, formData);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toBeDefined();
     });
   });
 });

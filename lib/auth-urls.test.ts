@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildLocalizedAuthPath,
   buildLocalizedPath,
   getAuthCallbackPath,
   getResetPasswordPath,
@@ -32,5 +33,12 @@ describe('auth URL helpers', () => {
 
   it('localizes root paths', () => {
     expect(buildLocalizedPath('en', '/')).toBe('/en');
+  });
+
+  it('builds localized auth paths while preserving safe redirects', () => {
+    expect(buildLocalizedAuthPath('es', '/account/login', '/club-panel/dashboard')).toBe(
+      '/es/account/login?redirect=%2Fclub-panel%2Fdashboard'
+    );
+    expect(buildLocalizedAuthPath('es', '/account/login', 'https://evil.test')).toBe('/es/account/login');
   });
 });

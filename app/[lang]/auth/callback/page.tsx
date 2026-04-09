@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { type SupabaseClient } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Logo, LogoIcon } from '@/components/ui/logo';
+import { LogoIcon } from '@/components/ui/logo';
 import { Loader2, CheckCircle, AlertCircle } from '@/lib/icons';
 import { createClient } from '@/lib/supabase/client';
 import { getLandingPageByRole } from '@/lib/auth-utils';
@@ -18,18 +19,86 @@ type CallbackProfileResponse = {
   };
 };
 
-/**
- * Auth Callback Page
- * Handles email confirmation and OAuth callbacks from Supabase
- */
+type CallbackStatus = 'verifying' | 'success' | 'error';
+
+const SESSION_POLL_INTERVAL_MS = 150;
+const SESSION_POLL_TIMEOUT_MS = 4000;
+const PROFILE_RETRY_INTERVAL_MS = 200;
+const PROFILE_RETRY_ATTEMPTS = 5;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForSession(
+  supabase: SupabaseClient,
+  timeoutMs = SESSION_POLL_TIMEOUT_MS
+) {
+  const start = Date.now();
+
+  while (Date.now() - start < timeoutMs) {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    if (error) {
+      return { session: null, error };
+    }
+
+    if (session) {
+      return { session, error: null };
+    }
+
+    await sleep(SESSION_POLL_INTERVAL_MS);
+  }
+
+  return { session: null, error: null };
+}
+
+async function resolveLandingPage(
+  language: string,
+  requestedRedirect: string | null
+): Promise<string> {
+  if (requestedRedirect) {
+    return getSafeRedirectPath(requestedRedirect, language, getLandingPageByRole('USER', language));
+  }
+
+  for (let attempt = 0; attempt < PROFILE_RETRY_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch('/api/profile/me', {
+        cache: 'no-store',
+      });
+
+      if (response.ok) {
+        const payload = (await response.json()) as CallbackProfileResponse;
+        return getSafeRedirectPath(
+          null,
+          language,
+          getLandingPageByRole(payload.profile?.role || 'USER', language)
+        );
+      }
+    } catch (error) {
+      console.error('Profile bootstrap lookup failed:', error);
+    }
+
+    await sleep(PROFILE_RETRY_INTERVAL_MS);
+  }
+
+  return getSafeRedirectPath(null, language, getLandingPageByRole('USER', language));
+}
+
 export default function AuthCallbackPage() {
   const router = useRouter();
   const { language, t } = useLanguage();
   const withLocale = (path: string) => `/${language}${path}`;
-  const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+  const [status, setStatus] = useState<CallbackStatus>('verifying');
   const [message, setMessage] = useState('');
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
+    let isCancelled = false;
+
     const clearAuthHash = () => {
       if (!window.location.hash) {
         return;
@@ -39,105 +108,112 @@ export default function AuthCallbackPage() {
       window.history.replaceState({}, document.title, cleanUrl);
     };
 
+    const completeWithError = (nextMessage: string) => {
+      if (isCancelled) {
+        return;
+      }
+
+      setStatus('error');
+      setMessage(nextMessage);
+    };
+
+    const completeWithSuccess = async (requestedRedirect: string | null) => {
+      const landingPage = await resolveLandingPage(language, requestedRedirect);
+
+      if (isCancelled) {
+        return;
+      }
+
+      setStatus('success');
+      setMessage(t('auth_callback.messages.oauth_success'));
+
+      window.setTimeout(() => {
+        router.push(landingPage);
+        router.refresh();
+      }, 1200);
+    };
+
     const handleAuthCallback = async () => {
       try {
-        const supabase = createClient();
         const searchParams = new URLSearchParams(window.location.search);
         const requestedRedirect = searchParams.get('redirect');
+        const code = searchParams.get('code');
+        const hasHashToken = window.location.hash.includes('access_token');
 
-        const resolveLandingPage = async () => {
-          if (requestedRedirect) {
-            return getSafeRedirectPath(requestedRedirect, language, getLandingPageByRole('USER', language));
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+          if (error) {
+            console.error('OAuth callback error:', error);
+            completeWithError(t('auth_callback.messages.oauth_failed'));
+            return;
           }
 
-          try {
-            const response = await fetch('/api/profile/me', {
-              cache: 'no-store',
-            });
+          const { session, error: sessionError } = await waitForSession(supabase);
 
-            if (!response.ok) {
-              return getSafeRedirectPath(null, language, getLandingPageByRole('USER', language));
-            }
-
-            const payload = (await response.json()) as CallbackProfileResponse;
-            return getSafeRedirectPath(null, language, getLandingPageByRole(payload.profile?.role || 'USER', language));
-          } catch (error) {
-            console.error('Profile bootstrap lookup failed:', error);
-            return getSafeRedirectPath(null, language, getLandingPageByRole('USER', language));
+          if (sessionError) {
+            console.error('OAuth session recovery error:', sessionError);
+            completeWithError(t('auth_callback.messages.oauth_failed'));
+            return;
           }
-        };
-        
-        // Get the URL hash which contains the tokens from email confirmation
-        const hash = window.location.hash;
-        
-        if (hash && hash.includes('access_token')) {
-          // Email confirmation flow - tokens are in hash
-          // Supabase automatically handles the token exchange
-          const { data: { session }, error } = await supabase.auth.getSession();
+
+          if (!session) {
+            completeWithError(t('auth.reset.errors.invalid_session'));
+            return;
+          }
+
           clearAuthHash();
-          
-            if (error) {
-              console.error('Auth callback error:', error);
-              setStatus('error');
-              setMessage(t('auth_callback.messages.verify_failed'));
-              return;
-            }
-            
-            if (session) {
-
-            setStatus('success');
-            setMessage(t('auth_callback.messages.verify_success'));
-            const landingPage = await resolveLandingPage();
-            
-            // Redirect after a short delay
-            setTimeout(() => {
-              router.push(landingPage);
-              router.refresh();
-            }, 2000);
-          }
-
-        } else {
-          // Check if there's a code parameter (PKCE flow for OAuth)
-          const code = searchParams.get('code');
-          
-          if (code) {
-            // OAuth callback with code - exchange for session
-            const { error } = await supabase.auth.exchangeCodeForSession(code);
-            
-            if (error) {
-              console.error('OAuth callback error:', error);
-              setStatus('error');
-              setMessage(t('auth_callback.messages.oauth_failed'));
-              return;
-            }
-            
-            setStatus('success');
-            setMessage(t('auth_callback.messages.oauth_success'));
-            
-            // Get session to find user profile
-            const { data: { session } } = await supabase.auth.getSession();
-            let landingPage = `/${language}`;
-            
-            if (session) {
-              landingPage = await resolveLandingPage();
-            }
-            
-            setTimeout(() => {
-              router.push(landingPage);
-              router.refresh();
-            }, 1500);
-          }
-
+          await completeWithSuccess(requestedRedirect);
+          return;
         }
+
+        if (hasHashToken) {
+          const { session, error } = await waitForSession(supabase);
+          clearAuthHash();
+
+          if (error) {
+            console.error('Email confirmation callback error:', error);
+            completeWithError(t('auth_callback.messages.verify_failed'));
+            return;
+          }
+
+          if (!session) {
+            completeWithError(t('auth.reset.errors.invalid_session'));
+            return;
+          }
+
+          if (isCancelled) {
+            return;
+          }
+
+          setStatus('success');
+          setMessage(t('auth_callback.messages.verify_success'));
+
+          const landingPage = await resolveLandingPage(language, requestedRedirect);
+          if (isCancelled) {
+            return;
+          }
+
+          window.setTimeout(() => {
+            router.push(landingPage);
+            router.refresh();
+          }, 1500);
+          return;
+        }
+
+        completeWithError(t('auth_callback.messages.unexpected_error'));
       } catch (error) {
         console.error('Callback processing error:', error);
-        setStatus('error');
-        setMessage(t('auth_callback.messages.unexpected_error'));
+        completeWithError(t('auth_callback.messages.unexpected_error'));
       }
     };
 
-    handleAuthCallback();
-  }, [language, router, t]);
+    void handleAuthCallback();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [language, router, supabase, t]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center p-4 pt-16 md:pt-20">

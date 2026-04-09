@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 import { login, signInWithOAuth } from '@/app/actions/auth';
+import { buildLocalizedAuthPath } from '@/lib/auth-urls';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { LogoIcon } from '@/components/ui/logo';
 import { Mail, Lock, Loader2, Eye, EyeOff } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -22,12 +22,14 @@ export default function LoginForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   
   const [state, formAction, isPending] = useActionState(login, {
     success: false,
     message: '',
   });
+
+  const registerPath = buildLocalizedAuthPath(language, '/account/register', redirectUrl);
+  const forgotPasswordPath = buildLocalizedAuthPath(language, '/forgot-password', redirectUrl);
 
   const handleOAuthSignIn = async (provider: 'google') => {
     setIsGoogleLoading(true);
@@ -89,9 +91,6 @@ export default function LoginForm() {
         {/* Hidden redirect field */}
         <input type="hidden" name="redirect" value={redirectUrl} />
         
-        {/* Hidden remember me field */}
-        <input type="hidden" name="rememberMe" value={rememberMe ? 'true' : 'false'} />
-
         {state?.message && !state?.success && (
           // [motion]
           <motion.div
@@ -131,7 +130,7 @@ export default function LoginForm() {
           <div className="flex items-center justify-between">
             <Label htmlFor="password">{t('form.password')}</Label>
               <Link
-              href={`/${language}/forgot-password`}
+              href={forgotPasswordPath}
               className="text-sm text-primary hover:underline"
             >
               {t('auth.login.forgot_password')}
@@ -164,21 +163,6 @@ export default function LoginForm() {
           )}
         </div>
 
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="rememberMe" 
-            checked={rememberMe}
-            onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-            disabled={isPending}
-          />
-          <Label 
-            htmlFor="rememberMe" 
-            className="text-sm text-muted-foreground cursor-pointer"
-          >
-            {t('auth.login.remember_me')}
-          </Label>
-        </div>
-
         <Button
           type="submit"
           variant="primary"
@@ -198,7 +182,7 @@ export default function LoginForm() {
 
         <div className="text-center text-sm text-muted-foreground">
           {t('auth.login.no_account')}{' '}
-          <Link href={`/${language}/account/register`} className="text-primary hover:underline font-medium">
+          <Link href={registerPath} className="text-primary hover:underline font-medium">
             {t('auth.login.create_account')}
           </Link>
         </div>

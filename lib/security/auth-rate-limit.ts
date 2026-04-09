@@ -7,6 +7,7 @@ type AuthRateLimitInput = {
   recordId: string;
   maxAttempts: number;
   windowMinutes: number;
+  status?: 'failed' | 'success';
 };
 
 function getWindowStart(windowMinutes: number): Date {
@@ -25,6 +26,14 @@ export async function isAuthRateLimited(input: AuthRateLimitInput): Promise<bool
       tableName: 'Auth',
       operation: input.operation,
       recordId: input.recordId,
+      ...(input.status
+        ? {
+            changeData: {
+              path: ['status'],
+              equals: input.status,
+            },
+          }
+        : {}),
       createdAt: {
         gte: getWindowStart(input.windowMinutes),
       },

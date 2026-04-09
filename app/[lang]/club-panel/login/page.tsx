@@ -8,11 +8,11 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { Logo, LogoIcon } from '@/components/ui/logo';
 import { Mail, Lock, ArrowLeft, AlertCircle, Loader2, Eye, EyeOff } from '@/lib/icons';
 import { login, signInWithOAuth } from '@/app/actions/auth';
+import { buildLocalizedAuthPath } from '@/lib/auth-urls';
 import { FcGoogle } from 'react-icons/fc';
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -23,12 +23,14 @@ function ClubLoginForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   
   const [state, formAction, isPending] = useActionState(login, {
     success: false,
     message: '',
   });
+
+  const forgotPasswordPath = buildLocalizedAuthPath(language, '/forgot-password', redirectTo);
+  const clubSignupPath = buildLocalizedAuthPath(language, '/club-panel/signup', redirectTo);
 
   const handleOAuthSignIn = async (provider: 'google') => {
     setIsGoogleLoading(true);
@@ -88,9 +90,6 @@ function ClubLoginForm() {
         {/* Hidden redirect field */}
         <input type="hidden" name="redirect" value={redirectTo} />
         
-        {/* Hidden remember me field */}
-        <input type="hidden" name="rememberMe" value={rememberMe ? 'true' : 'false'} />
-
         <div>
           <Label htmlFor="email" className="flex items-center gap-2 mb-2">
             <Mail className="h-4 w-4 text-gray-500" />
@@ -139,20 +138,9 @@ function ClubLoginForm() {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Checkbox 
-              id="rememberMe" 
-              checked={rememberMe}
-              onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-              disabled={isPending}
-            />
-            <Label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
-              {t('auth.login.remember_me')}
-            </Label>
-          </div>
+        <div className="flex items-center justify-end">
           <Link
-            href={`/${language}/forgot-password`}
+            href={forgotPasswordPath}
             className="text-sm text-green-600 hover:text-green-700"
           >
             {t('auth.login.forgot_password')}
@@ -178,7 +166,7 @@ function ClubLoginForm() {
       <div className="mt-6 text-center">
         <p className="text-gray-600">
           {t('auth.login.no_account')}{' '}
-          <Link href={`/${language}/club-panel/signup`} className="text-green-600 hover:text-green-700 font-medium">
+          <Link href={clubSignupPath} className="text-green-600 hover:text-green-700 font-medium">
             {t('club_panel.login.register_club_link')}
           </Link>
         </p>

@@ -82,6 +82,7 @@ export async function adminLogin(prevState: AdminActionState, formData: FormData
     recordId: normalizedEmail,
     maxAttempts: ADMIN_LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
     windowMinutes: ADMIN_LOGIN_RATE_LIMIT_WINDOW_MINUTES,
+    status: 'failed',
   });
 
   if (adminLoginRateLimited) {

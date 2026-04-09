@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import {
@@ -41,7 +40,6 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const previousBodyOverflowRef = useRef<string | null>(null);
   const { user, profile, signOut, loading: authLoading } = useAuth();
-  const router = useRouter();
   const withLocale = (path: string) => `/${language}${path}`;
   const useLightTone = variant === 'mobile-menu-row' ? true : tone === 'light';
 
@@ -94,8 +92,6 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
     setIsOpen(false);
     if (onMobileClose) onMobileClose();
     await signOut();
-    router.push(`/${language}`);
-    router.refresh();
   };
 
   const handleLinkClick = () => {
