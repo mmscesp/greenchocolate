@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { deliverConciergePlan } from '@/app/actions/lead-capture';
 import { cn } from '@/lib/utils';
+import { SectionEyebrow } from './SectionEyebrow';
 import {
   resolveConciergePlan,
   type CityOptionId,
@@ -241,10 +242,12 @@ export function ConciergeTools() {
       <div className="relative z-10 w-full max-w-6xl mx-auto px-4 md:px-8 flex flex-col">
         
         <div className="mx-auto mb-8 max-w-2xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-brand">
-            <Sparkles className="h-3.5 w-3.5" />
-            {t('landing.concierge_tools.eyebrow')}
-          </div>
+          <SectionEyebrow className="mb-4">
+            <span className="inline-flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              {t('landing.concierge_tools.eyebrow')}
+            </span>
+          </SectionEyebrow>
           <h2 className="mb-3 text-3xl font-black tracking-tight text-foreground md:text-5xl">
             {t('landing.concierge_tools.title')}
           </h2>

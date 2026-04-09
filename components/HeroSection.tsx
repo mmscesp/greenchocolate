@@ -705,15 +705,15 @@ export default function HeroSection() {
               </div>
             </div>
 
-            <div data-mobile-hero-item className="flex justify-center">
-              <div className="relative flex items-center overflow-hidden rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
+            <div data-mobile-hero-item className="flex w-full justify-center">
+              <div className="relative mx-auto flex max-w-full items-center overflow-hidden rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.5)]">
                 <div className="absolute inset-0 z-0 pointer-events-none [transform:translateZ(0)]" style={{ backdropFilter: `blur(${Math.max(8, mobileGlassBlur - 4)}px)` }} />
                 <div className="absolute inset-0 z-10 pointer-events-none" style={{ background: 'rgba(10, 10, 10, 0.55)' }} />
                 <div
                   className="absolute inset-0 z-20 pointer-events-none rounded-full"
                   style={{ boxShadow: 'inset 1px 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 1px 0 var(--glass-highlight)' }}
                 />
-                <div className="relative z-30 flex items-center gap-2.5 px-5 py-2.5">
+                <div className="relative z-30 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 px-5 py-2.5 text-center">
                   <span className="text-[11px] text-white/80 uppercase tracking-[0.1em] font-bold drop-shadow-md">{t('hero.section.pill_label')}</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
                   <span className="text-[13px] font-bold text-brand-light tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{t('hero.section.pill_value')}</span>

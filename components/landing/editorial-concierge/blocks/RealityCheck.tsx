@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
+import { SectionEyebrow } from './SectionEyebrow';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -52,11 +53,7 @@ export function RealityCheck() {
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Small badge above title */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 text-brand text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase mb-8 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
-              Reality Check
-            </div>
+            <SectionEyebrow className="mb-8">Reality Check</SectionEyebrow>
             
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black font-serif text-white tracking-tight mb-6 leading-[1.15]">
               {t('landing.reality_check.title')}

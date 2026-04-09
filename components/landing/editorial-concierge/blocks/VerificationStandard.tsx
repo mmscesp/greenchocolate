@@ -7,6 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { ArrowRight } from '@/lib/icons';
 import ClubCard from '@/components/ClubCard';
 import { getClubBySlug, type ClubDetail } from '@/app/actions/clubs';
+import { SectionEyebrow } from './SectionEyebrow';
 
 export function VerificationStandard() {
   const { language, t } = useLanguage();
@@ -45,12 +46,11 @@ export function VerificationStandard() {
             className="flex flex-col justify-between h-full w-full max-w-xl"
           >
             <div>
-              <div className="flex items-center gap-4 mb-6 md:mb-8">
-                <div className="h-[1px] w-8 bg-brand" />
-                <span className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase text-brand">
+              <SectionEyebrow align="left" className="mb-6 md:mb-8">
+                <span>
                   {t('landing.verification.what_we_verify') || "The Standard"}
                 </span>
-              </div>
+              </SectionEyebrow>
               
               <h2 className="text-4xl md:text-5xl lg:text-[3.5rem] font-black font-serif text-white tracking-tight leading-[1.05] mb-6">
                 {t('landing.verification_standard.title')}

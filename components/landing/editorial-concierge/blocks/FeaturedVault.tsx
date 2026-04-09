@@ -7,6 +7,7 @@ import { ArrowRight, BookOpen } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { type ArticleCard } from '@/app/actions/articles';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
+import { SectionEyebrow } from './SectionEyebrow';
 
 interface FeaturedVaultProps {
   articles?: ArticleCard[];
@@ -93,14 +94,12 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="flex items-center gap-4 mb-6">
-            <div className="h-[1px] w-8 md:w-12 bg-brand/50" />
-            <div className="inline-flex items-center gap-2 text-brand text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase">
+          <SectionEyebrow className="mb-6">
+            <span className="inline-flex items-center gap-2">
               <BookOpen className="w-3.5 h-3.5" />
               The Vault
-            </div>
-            <div className="h-[1px] w-8 md:w-12 bg-brand/50" />
-          </div>
+            </span>
+          </SectionEyebrow>
           
           <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-black font-serif text-white tracking-tight leading-[1.05] mb-6 max-w-3xl">
             {t('landing.featured_vault.title')}
