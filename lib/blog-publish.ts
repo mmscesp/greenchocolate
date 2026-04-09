@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-const CONTENT_ROOT = path.join(process.cwd(), 'data/content');
+const CONTENT_ROOT = path.join(process.cwd(), 'data', 'content');
 
 const CATEGORY_PATH_MAP: Record<string, string> = {
   legal: 'legal',
@@ -125,8 +125,13 @@ function buildContentPath(input: PublishArticleInput): string {
   return `data/content/${categoryPath}/${input.slug}.mdx`;
 }
 
-async function publishLocally(filePath: string, content: string): Promise<PublishArticleResult> {
-  const absolutePath = path.join(process.cwd(), filePath);
+function getLocalContentAbsolutePath(input: PublishArticleInput): string {
+  const categoryPath = CATEGORY_PATH_MAP[input.category];
+  return path.join(CONTENT_ROOT, categoryPath, `${input.slug}.mdx`);
+}
+
+async function publishLocally(input: PublishArticleInput, filePath: string, content: string): Promise<PublishArticleResult> {
+  const absolutePath = getLocalContentAbsolutePath(input);
   const directory = path.dirname(absolutePath);
   let previousContent: string | null = null;
 
@@ -138,7 +143,7 @@ async function publishLocally(filePath: string, content: string): Promise<Publis
 
   let backupPath: string | undefined;
   if (previousContent !== null) {
-    const historyDir = path.join(process.cwd(), 'data/content/.history', path.basename(filePath, '.mdx'));
+    const historyDir = path.join(CONTENT_ROOT, '.history', path.basename(filePath, '.mdx'));
     await fs.mkdir(historyDir, { recursive: true });
     const stamp = new Date().toISOString().replace(/[:.]/g, '-');
     const backupFile = `${stamp}.mdx`;
@@ -255,7 +260,7 @@ export async function publishArticleArtifact(input: PublishArticleInput): Promis
   const mode = getPublishMode();
 
   if (mode === 'local') {
-    return publishLocally(filePath, content);
+    return publishLocally(input, filePath, content);
   }
 
   return publishToGitHub(filePath, content);
