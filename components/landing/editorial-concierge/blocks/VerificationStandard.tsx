@@ -1,53 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
 import { CheckCircle2, ArrowRight } from '@/lib/icons';
-import { deliverEditorialDigestLead } from '@/app/actions/lead-capture';
 
 export function VerificationStandard() {
   const { language, t } = useLanguage();
-  const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    const fallbackPath = `/${language}/clubs`;
-    setIsSubmitting(true);
-
-    try {
-      const result = await deliverEditorialDigestLead({
-        email: email.trim(),
-        locale: language,
-        primaryHref: fallbackPath,
-        primaryLabel: t('landing.verification_standard.view_full_directory'),
-        source: 'verification_standard',
-      });
-
-      if (result.deliveryMode === 'direct') {
-        setIsSubmitting(false);
-        router.push(result.fallbackPath);
-        return;
-      }
-
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error('Verification standard signup failed:', error);
-      setIsSubmitting(false);
-      router.push(fallbackPath);
-      return;
-    }
-
-    setIsSubmitting(false);
-  };
+  const verificationChecks = [
+    t('landing.verification.list.verify.1'),
+    t('landing.verification.list.verify.2'),
+    t('landing.verification.list.verify.3'),
+    t('landing.verification.list.verify.4'),
+  ];
 
   return (
     <section className="bg-bg-base py-24 md:py-32 px-4 md:px-8 overflow-hidden relative">
@@ -100,7 +67,7 @@ export function VerificationStandard() {
             </Link>
           </motion.div>
 
-          {/* Coming Next Card */}
+          {/* Verification Framework Card */}
           <motion.div
             initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
             whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
@@ -111,36 +78,32 @@ export function VerificationStandard() {
             className="bg-bg-surface border-2 border-dashed border-white/10 rounded-2xl p-6 md:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--brand)/0.08),transparent)] pointer-events-none" />
-            <div className="relative z-10 w-full">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-brand mb-2">{t('landing.verification_standard.next_verified')}</p>
-              <p className="text-xl font-bold text-white mb-8">{t('landing.verification_standard.next_week')}</p>
-              
-              {isSubmitted ? (
-                <div className="p-4 bg-brand/10 border border-brand/30 rounded-lg text-brand text-sm font-bold">
-                  {t('landing.verification_standard.subscribe_success')}
-                </div>
-              ) : (
-                <form onSubmit={handleSubscribe} className="flex flex-col gap-3 w-full">
-                  <input
-                    type="email"
-                    name="email"
-                    autoComplete="email"
-                    placeholder={t('landing.verification_standard.email_placeholder')}
-                    required
-                    disabled={isSubmitting}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full px-4 py-3 bg-brand hover:bg-brand-dark text-bg-base font-bold rounded-lg text-sm transition-colors border border-brand/40"
-                  >
-                    {isSubmitting ? '...' : t('landing.verification_standard.notify_me')}
-                  </button>
-                </form>
-              )}
+            <div className="relative z-10 w-full text-left">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-brand mb-2">
+                {t('landing.verification.what_we_verify')}
+              </p>
+              <h3 className="text-2xl font-bold text-white mb-4">{t('landing.verification.title')}</h3>
+              <p className="text-sm text-zinc-300 leading-relaxed mb-6">
+                {t('landing.verification.description_line_1')} {t('landing.verification.description_line_2')}
+              </p>
+
+              <div className="space-y-3">
+                {verificationChecks.map((item) => (
+                  <div key={item} className="flex items-start gap-3">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                    <p className="text-sm font-medium leading-relaxed text-zinc-200">{item}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 border-t border-white/10 pt-6">
+                <Link
+                  href={`/${language}/clubs`}
+                  className="inline-flex items-center gap-2 text-sm font-bold text-white transition-colors hover:text-brand"
+                >
+                  {t('landing.verification_standard.view_full_directory')} <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>

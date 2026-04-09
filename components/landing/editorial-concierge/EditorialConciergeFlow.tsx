@@ -1,45 +1,31 @@
 'use client';
 
 import React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { TrustStrip } from './blocks/TrustStrip';
 import { RealityCheck } from './blocks/RealityCheck';
-import { WhoWeAre } from './blocks/WhoWeAre';
-import { FeaturedVault } from './blocks/FeaturedVault';
 import { ConciergeTools } from './blocks/ConciergeTools';
 import { VerificationStandard } from './blocks/VerificationStandard';
-import { NewsletterDrop } from './blocks/NewsletterDrop';
-import { CommunityRoadmap } from './blocks/CommunityRoadmap';
-import { KnowledgeRouter } from './blocks/KnowledgeRouter';
-import { BeginnersOnramp } from './blocks/BeginnersOnramp';
+import { FeaturedVault } from './blocks/FeaturedVault';
 import { EditorialFAQ } from './blocks/EditorialFAQ';
 import { FinalMicDrop } from './blocks/FinalMicDrop';
 import { clearAnalyticsContext, setAnalyticsContext, trackEvent } from '@/lib/analytics';
-import { resolveExperimentArm } from '@/lib/experiments';
 
 const SECTION_KEYS = [
   'trust_strip',
   'reality_check',
-  'who_we_are',
-  'featured_vault',
   'concierge_tools',
   'verification_standard',
-  'newsletter_drop',
-  'community_roadmap',
-  'knowledge_router',
-  'beginners_onramp',
+  'featured_vault',
   'editorial_faq',
   'final_mic_drop',
 ] as const;
 
 const LANDING_EXPERIMENT_CONTEXT = {
-  variant_id: 'editorial_concierge_v1',
-  section_version: '2026-02-24',
-  copy_version: 'trust_first_v2',
+  variant_id: 'editorial_concierge_v2',
+  section_version: '2026-04-09',
+  copy_version: 'clarity_first_v1',
 } as const;
-
-const ONRAMP_EXPERIMENT_ID = 'landing_onramp_copy_v1';
-const ONRAMP_EXPERIMENT_ARMS = ['control', 'benefit'] as const;
 const DEFERRED_SECTION_START_INDEX = 2;
 
 const INTRINSIC_SECTION_STYLE: React.CSSProperties = {
@@ -59,50 +45,14 @@ function scheduleIdleTask(callback: () => void, timeout: number) {
 
 export default function EditorialConciergeFlow() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [onrampAssignment, setOnrampAssignment] = useState<{ arm: string; source: 'query' | 'storage' | 'random' }>({
-    arm: ONRAMP_EXPERIMENT_ARMS[0],
-    source: 'random',
-  });
 
   useEffect(() => {
-    const cancelIdleTask = scheduleIdleTask(() => {
-      setOnrampAssignment(
-        resolveExperimentArm({
-          experimentId: ONRAMP_EXPERIMENT_ID,
-          allowedArms: ONRAMP_EXPERIMENT_ARMS,
-          searchParams: new URLSearchParams(window.location.search),
-        })
-      );
-    }, 800);
-
-    return cancelIdleTask;
-  }, []);
-
-  useEffect(() => {
-    setAnalyticsContext({
-      ...LANDING_EXPERIMENT_CONTEXT,
-      experiment_id: ONRAMP_EXPERIMENT_ID,
-      arm_id: onrampAssignment.arm,
-      arm_source: onrampAssignment.source,
-    });
-
-    trackEvent('experiment_exposure', {
-      experiment_id: ONRAMP_EXPERIMENT_ID,
-      arm_id: onrampAssignment.arm,
-      arm_source: onrampAssignment.source,
-    });
+    setAnalyticsContext(LANDING_EXPERIMENT_CONTEXT);
 
     return () => {
-      clearAnalyticsContext([
-        'variant_id',
-        'section_version',
-        'copy_version',
-        'experiment_id',
-        'arm_id',
-        'arm_source',
-      ]);
+      clearAnalyticsContext(['variant_id', 'section_version', 'copy_version']);
     };
-  }, [onrampAssignment.arm, onrampAssignment.source]);
+  }, []);
 
   useEffect(() => {
     const root = containerRef.current;
@@ -194,16 +144,11 @@ export default function EditorialConciergeFlow() {
       {[
         <TrustStrip key={SECTION_KEYS[0]} />,
         <RealityCheck key={SECTION_KEYS[1]} />,
-        <WhoWeAre key={SECTION_KEYS[2]} />,
-        <FeaturedVault key={SECTION_KEYS[3]} />,
-        <ConciergeTools key={SECTION_KEYS[4]} />,
-        <VerificationStandard key={SECTION_KEYS[5]} />,
-        <NewsletterDrop key={SECTION_KEYS[6]} />,
-        <CommunityRoadmap key={SECTION_KEYS[7]} />,
-        <KnowledgeRouter key={SECTION_KEYS[8]} />,
-        <BeginnersOnramp key={SECTION_KEYS[9]} />,
-        <EditorialFAQ key={SECTION_KEYS[10]} />,
-        <FinalMicDrop key={SECTION_KEYS[11]} />,
+        <ConciergeTools key={SECTION_KEYS[2]} />,
+        <VerificationStandard key={SECTION_KEYS[3]} />,
+        <FeaturedVault key={SECTION_KEYS[4]} />,
+        <EditorialFAQ key={SECTION_KEYS[5]} />,
+        <FinalMicDrop key={SECTION_KEYS[6]} />,
       ].map((component, index) => (
         <section
           key={SECTION_KEYS[index]}
