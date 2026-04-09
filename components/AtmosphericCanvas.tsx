@@ -3,7 +3,6 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { AuroraBackground } from '@/components/ui/aurora-background';
 
 interface AtmosphericCanvasProps {
   className?: string;
@@ -21,8 +20,6 @@ export function AtmosphericCanvas({ className, children, fixed = false }: Atmosp
         className
       )}
     >
-      <AuroraBackground className="opacity-90" showRadialGradient />
-
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
