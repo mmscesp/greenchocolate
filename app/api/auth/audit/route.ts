@@ -12,6 +12,12 @@ const allowedOperations = [
   'OAUTH_START',
   'ADMIN_LOGIN',
   'ADMIN_SIGN_OUT',
+  'SIGN_IN_CLIENT',
+  'SIGN_UP_CLIENT',
+  'SIGN_OUT_CLIENT',
+  'RESET_PASSWORD_CLIENT',
+  'UPDATE_PASSWORD_CLIENT',
+  'CHANGE_PASSWORD_CLIENT',
 ] as const;
 
 const primitiveMetadataSchema = z.union([

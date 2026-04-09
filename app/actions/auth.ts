@@ -17,6 +17,7 @@ import {
   resolveLocale,
 } from '@/lib/auth-urls';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
+import { isAuthRateLimited } from '@/lib/security/auth-rate-limit';
 import { ensureProfileForUser, getSessionProfile, getSessionUser } from '@/lib/session-profile';
 
 const passwordSchema = z
@@ -67,6 +68,8 @@ export type ActionState = {
 export type OAuthProvider = 'google' | 'apple';
 
 const AUTH_FAILURE_MIN_DELAY_MS = 600;
+const LOGIN_RATE_LIMIT_WINDOW_MINUTES = 15;
+const LOGIN_RATE_LIMIT_MAX_ATTEMPTS = 5;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -262,10 +265,32 @@ export async function login(prevState: ActionState, formData: FormData): Promise
     };
   }
 
+  const normalizedEmail = validated.data.email.trim().toLowerCase();
+  const loginRateLimited = await isAuthRateLimited({
+    operation: 'LOGIN',
+    recordId: normalizedEmail,
+    maxAttempts: LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
+    windowMinutes: LOGIN_RATE_LIMIT_WINDOW_MINUTES,
+  });
+
+  if (loginRateLimited) {
+    await enforceFailureDelay(failureStartTime);
+    await logAuthAuditEvent({
+      operation: 'LOGIN_RATE_LIMITED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed' },
+    });
+    return {
+      success: false,
+      message: 'Too many login attempts. Please try again later.',
+    };
+  }
+
   let profile;
   try {
     const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: validated.data.email,
+      email: normalizedEmail,
       password: validated.data.password,
     });
 
@@ -274,7 +299,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
       await logAuthAuditEvent({
         operation: 'LOGIN',
         changedBy: 'anonymous',
-        recordId: validated.data.email,
+        recordId: normalizedEmail,
         changeData: { status: 'failed' },
       });
       return {
@@ -305,7 +330,7 @@ export async function login(prevState: ActionState, formData: FormData): Promise
     await logAuthAuditEvent({
       operation: 'LOGIN',
       changedBy: 'anonymous',
-      recordId: validated.data.email,
+      recordId: normalizedEmail,
       changeData: { status: 'failed', reason: 'exception' },
     });
     return {

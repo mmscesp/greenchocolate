@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import { getServerEnv } from '@/lib/env';
 import { bootstrapInitialAdminProfileAction } from '@/app/actions/applications';
@@ -76,6 +77,13 @@ const bootstrapCopy = {
     submit: 'Admin-Profil erstellen',
   },
 } as const;
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminBootstrapPage({ params }: AdminBootstrapPageProps) {
   const { lang } = await params;

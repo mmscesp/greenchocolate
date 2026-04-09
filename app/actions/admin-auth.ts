@@ -6,6 +6,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
+import { isAuthRateLimited } from '@/lib/security/auth-rate-limit';
 import { resolveLocale } from '@/lib/auth-urls';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
@@ -31,6 +32,8 @@ export type AdminActionState = {
 };
 
 const AUTH_FAILURE_MIN_DELAY_MS = 800; // Longer delay for admin
+const ADMIN_LOGIN_RATE_LIMIT_WINDOW_MINUTES = 15;
+const ADMIN_LOGIN_RATE_LIMIT_MAX_ATTEMPTS = 5;
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -73,10 +76,32 @@ export async function adminLogin(prevState: AdminActionState, formData: FormData
     };
   }
 
+  const normalizedEmail = validated.data.email.trim().toLowerCase();
+  const adminLoginRateLimited = await isAuthRateLimited({
+    operation: 'ADMIN_LOGIN',
+    recordId: normalizedEmail,
+    maxAttempts: ADMIN_LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
+    windowMinutes: ADMIN_LOGIN_RATE_LIMIT_WINDOW_MINUTES,
+  });
+
+  if (adminLoginRateLimited) {
+    await enforceFailureDelay(failureStartTime);
+    await logAuthAuditEvent({
+      operation: 'ADMIN_LOGIN_RATE_LIMITED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed' },
+    });
+    return {
+      success: false,
+      message: 'Too many login attempts. Please try again later.',
+    };
+  }
+
   try {
     // First authenticate with Supabase
     const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: validated.data.email,
+      email: normalizedEmail,
       password: validated.data.password,
     });
 
@@ -85,7 +110,7 @@ export async function adminLogin(prevState: AdminActionState, formData: FormData
       await logAuthAuditEvent({
         operation: 'ADMIN_LOGIN',
         changedBy: 'anonymous',
-        recordId: validated.data.email,
+        recordId: normalizedEmail,
         changeData: { status: 'failed', reason: 'auth_error' },
       });
       return {
@@ -108,11 +133,11 @@ export async function adminLogin(prevState: AdminActionState, formData: FormData
         operation: 'ADMIN_LOGIN',
         changedBy: authData.user.id,
         recordId: authData.user.id,
-        changeData: { status: 'failed', reason: 'not_admin', attemptedEmail: validated.data.email },
+        changeData: { status: 'failed', reason: 'not_admin', attemptedEmail: normalizedEmail },
       });
       return {
         success: false,
-        message: 'Access denied. Admin privileges required.',
+        message: 'Invalid credentials',
       };
     }
 

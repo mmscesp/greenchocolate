@@ -871,17 +871,16 @@ export async function deleteCurrentUserAccount(
     }
 
     const adminClient = createAdminClient();
-
-    await prisma.profile.delete({
-      where: { id: profile.id },
-    });
-
     const { error: deleteAuthError } = await adminClient.auth.admin.deleteUser(profile.authId);
 
     if (deleteAuthError) {
       console.error('deleteCurrentUserAccount auth deletion error:', deleteAuthError);
-      return { success: false, message: 'Account data was removed, but auth cleanup failed.' };
+      return { success: false, message: 'Account deletion failed. Please try again.' };
     }
+
+    await prisma.profile.delete({
+      where: { id: profile.id },
+    });
 
     const supabase = await createClient();
     await supabase.auth.signOut();

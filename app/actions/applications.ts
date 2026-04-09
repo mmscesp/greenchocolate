@@ -7,6 +7,9 @@ import { z } from 'zod';
 import { EncryptionService } from '@/lib/encryption';
 import { prisma } from '@/lib/prisma';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
+import { logAuthAuditEvent } from '@/lib/security/auth-audit';
+import { isAuthRateLimited } from '@/lib/security/auth-rate-limit';
+import { getSafeAdminReturnPath } from '@/lib/security/admin-portal';
 import {
   buildApplicantPayload,
   buildLeadToken,
@@ -44,6 +47,8 @@ import {
 import { getSessionProfile } from '@/lib/session-profile';
 
 const TRANSACTION_MAX_RETRIES = 3;
+const ADMIN_BOOTSTRAP_RATE_LIMIT_WINDOW_MINUTES = 15;
+const ADMIN_BOOTSTRAP_RATE_LIMIT_MAX_ATTEMPTS = 5;
 
 type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED';
 
@@ -1769,9 +1774,7 @@ export async function addAdminMembershipNoteAction(formData: FormData): Promise<
     throw new Error(result.error || 'Failed to add note');
   }
 
-  if (parsed.data.returnPath) {
-    redirect(parsed.data.returnPath);
-  }
+  redirect(getSafeAdminReturnPath(parsed.data.returnPath ?? null, '/en/admin/requests'));
 }
 
 export async function approveMembershipRequestAction(formData: FormData): Promise<void> {
@@ -1790,9 +1793,7 @@ export async function approveMembershipRequestAction(formData: FormData): Promis
     throw new Error(result.error || 'Failed to approve application');
   }
 
-  if (returnPath) {
-    redirect(returnPath);
-  }
+  redirect(getSafeAdminReturnPath(returnPath, '/en/admin/requests'));
 }
 
 export async function rejectMembershipRequestAction(formData: FormData): Promise<void> {
@@ -1811,9 +1812,7 @@ export async function rejectMembershipRequestAction(formData: FormData): Promise
     throw new Error(result.error || 'Failed to reject application');
   }
 
-  if (returnPath) {
-    redirect(returnPath);
-  }
+  redirect(getSafeAdminReturnPath(returnPath, '/en/admin/requests'));
 }
 
 async function findAuthUserByEmail(email: string) {
@@ -1856,8 +1855,32 @@ export async function bootstrapInitialAdminProfile(input: {
     return { success: false, message: parsed.error.errors[0]?.message || 'Invalid input' };
   }
 
+  const normalizedEmail = parsed.data.email.trim().toLowerCase();
+  const bootstrapRateLimited = await isAuthRateLimited({
+    operation: 'ADMIN_BOOTSTRAP_FAILED',
+    recordId: normalizedEmail,
+    maxAttempts: ADMIN_BOOTSTRAP_RATE_LIMIT_MAX_ATTEMPTS,
+    windowMinutes: ADMIN_BOOTSTRAP_RATE_LIMIT_WINDOW_MINUTES,
+  });
+
+  if (bootstrapRateLimited) {
+    await logAuthAuditEvent({
+      operation: 'ADMIN_BOOTSTRAP_RATE_LIMITED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed' },
+    });
+    return { success: false, message: 'Too many bootstrap attempts. Please try again later.' };
+  }
+
   if (!env.ADMIN_BOOTSTRAP_SECRET || parsed.data.secret !== env.ADMIN_BOOTSTRAP_SECRET) {
-    return { success: false, message: 'Invalid bootstrap secret' };
+    await logAuthAuditEvent({
+      operation: 'ADMIN_BOOTSTRAP_FAILED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed', reason: 'invalid_secret' },
+    });
+    return { success: false, message: 'Bootstrap failed.' };
   }
 
   const adminCount = await prisma.profile.count({ where: { role: 'ADMIN' } });
@@ -1865,9 +1888,15 @@ export async function bootstrapInitialAdminProfile(input: {
     return { success: false, message: 'An admin already exists. Bootstrap is locked.' };
   }
 
-  const authUser = await findAuthUserByEmail(parsed.data.email);
+  const authUser = await findAuthUserByEmail(normalizedEmail);
   if (!authUser?.id || !authUser.email) {
-    return { success: false, message: 'No Supabase auth user found for that email' };
+    await logAuthAuditEvent({
+      operation: 'ADMIN_BOOTSTRAP_FAILED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed', reason: 'missing_auth_user' },
+    });
+    return { success: false, message: 'Bootstrap failed.' };
   }
 
   const existingProfile = await prisma.profile.findUnique({
@@ -1876,9 +1905,15 @@ export async function bootstrapInitialAdminProfile(input: {
   });
 
   if (existingProfile) {
+    await logAuthAuditEvent({
+      operation: 'ADMIN_BOOTSTRAP_FAILED',
+      changedBy: 'anonymous',
+      recordId: normalizedEmail,
+      changeData: { status: 'failed', reason: 'existing_profile' },
+    });
     return {
       success: false,
-      message: 'A profile already exists for that auth user. Create the admin directly in Supabase first, without app signup.',
+      message: 'Bootstrap failed.',
     };
   }
 
