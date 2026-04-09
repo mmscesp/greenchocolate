@@ -243,6 +243,7 @@ export default function MembershipApplicationModal({
     formData.ageConfirmed &&
     formData.termsConfirmed &&
     (!requiresChallenge || !hasTurnstileSiteKey || Boolean(challengeToken));
+  const formId = 'membership-application-form';
 
   return (
     <AnimatePresence>
@@ -255,15 +256,15 @@ export default function MembershipApplicationModal({
         >
           <motion.div
             className="
-              relative w-full overflow-hidden bg-bg-surface border-white/[0.08] shadow-[0_0_80px_rgba(0,0,0,0.8)]
-              h-[100dvh] rounded-none border-x-0 border-b-0
+              relative flex h-[100dvh] w-full flex-col overflow-hidden bg-bg-surface border-white/[0.08] shadow-[0_0_80px_rgba(0,0,0,0.8)]
+              rounded-none border-x-0 border-b-0
               sm:h-auto sm:max-h-[90vh] sm:max-w-lg sm:rounded-[2.5rem] sm:border
             "
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
           >
-            <div className="h-full overflow-y-auto pb-24 sm:pb-0">
+            <div className="min-h-0 flex-1 overflow-y-auto">
               {/* Header */}
               <div className="relative h-40 overflow-hidden bg-bg-base shrink-0">
                 <div className="absolute inset-0 z-10 bg-gradient-to-t from-bg-surface via-bg-surface/40 to-transparent" />
@@ -292,7 +293,7 @@ export default function MembershipApplicationModal({
               </div>
 
               {/* Form */}
-              <div className="p-5 sm:p-6">
+              <div className="p-5 pb-6 sm:p-6">
                 {formState && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
@@ -321,7 +322,7 @@ export default function MembershipApplicationModal({
                   </motion.div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form id={formId} onSubmit={handleSubmit} className="space-y-5">
                   {/* Name Fields */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
@@ -523,34 +524,36 @@ export default function MembershipApplicationModal({
                     </div>
                   )}
 
-                  {/* Submit Buttons */}
-                  <div className="sticky bottom-0 -mx-5 mt-2 flex flex-col gap-3 border-t border-white/10 bg-bg-surface/95 px-5 pb-4 pt-4 backdrop-blur sm:static sm:mx-0 sm:mt-0 sm:border-0 sm:bg-transparent sm:px-0 sm:pb-0">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      disabled={isSubmitting || !canSubmit}
-                      className="w-full rounded-full bg-brand py-4 text-sm font-bold uppercase tracking-wider text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.3)] hover:bg-brand-dark disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <span className="flex items-center justify-center">
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('form.submitting')}
-                        </span>
-                      ) : (
-                        t('club_profile.modal.submit')
-                      )}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={handleClose}
-                      disabled={isSubmitting}
-                      className="w-full rounded-full py-3 text-xs font-bold uppercase tracking-wider text-zinc-500 hover:bg-white/5 hover:text-white"
-                    >
-                      {t('form.cancel')}
-                    </Button>
-                  </div>
                 </form>
+              </div>
+            </div>
+            <div className="shrink-0 border-t border-white/10 bg-bg-surface/95 px-5 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 backdrop-blur supports-[backdrop-filter]:bg-bg-surface/85 sm:px-6 sm:pb-5">
+              <div className="flex flex-col gap-3">
+                <Button
+                  type="submit"
+                  form={formId}
+                  variant="primary"
+                  disabled={isSubmitting || !canSubmit}
+                  className="w-full rounded-full bg-brand py-4 text-sm font-bold uppercase tracking-wider text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.3)] hover:bg-brand-dark disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center">
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t('form.submitting')}
+                    </span>
+                  ) : (
+                    t('club_profile.modal.submit')
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleClose}
+                  disabled={isSubmitting}
+                  className="w-full rounded-full py-3 text-xs font-bold uppercase tracking-wider text-zinc-500 hover:bg-white/5 hover:text-white"
+                >
+                  {t('form.cancel')}
+                </Button>
               </div>
             </div>
           </motion.div>
