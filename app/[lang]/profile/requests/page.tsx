@@ -9,11 +9,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useLanguage } from '@/hooks/useLanguage';
 import {
-  getUserMembershipRequests,
+  type ActionState,
   cancelMembershipRequest,
-  MembershipRequestCard,
-  ActionState,
-} from '@/app/actions/membership';
+  getUserMembershipRequests,
+  type MembershipRequestCard,
+} from '@/app/actions/applications';
 import { getProfileBackendStatus, type UserProfileBackendStatus } from '@/app/actions/users';
 import Link from 'next/link';
 import { Check,
@@ -25,6 +25,13 @@ MapPin,
 ExternalLink,
 Loader2,
 RefreshCw, } from '@/lib/icons';
+
+function formatRequestStage(stage: MembershipRequestCard['currentStage']) {
+  return stage
+    .toLowerCase()
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
 export default function UserRequestsPage() {
   const { t, language } = useLanguage();
@@ -265,6 +272,7 @@ export default function UserRequestsPage() {
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <h3 className="text-lg font-semibold text-foreground">{request.clubName}</h3>
                       {getStatusBadge(request.status)}
+                      <Badge variant="outline">{formatRequestStage(request.currentStage)}</Badge>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-3">
@@ -281,6 +289,26 @@ export default function UserRequestsPage() {
                     {request.message && (
                       <p className="text-sm text-muted-foreground line-clamp-2 italic bg-muted/50 p-2 rounded-lg">
                         {'"'}{request.message}{'"'}
+                      </p>
+                    )}
+
+                    {request.appointmentNotes && (
+                      <div className="mt-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Decision note</p>
+                        <p className="mt-1 text-sm text-foreground">{request.appointmentNotes}</p>
+                      </div>
+                    )}
+
+                    {request.rejectionReason && (
+                      <div className="mt-3 rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-red-700">Rejection reason</p>
+                        <p className="mt-1 text-sm text-foreground">{request.rejectionReason}</p>
+                      </div>
+                    )}
+
+                    {request.reviewedAt && (
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        Reviewed on {new Date(request.reviewedAt).toLocaleString()}
                       </p>
                     )}
                   </div>

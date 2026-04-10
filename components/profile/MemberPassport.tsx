@@ -11,6 +11,7 @@ interface MemberPassportProps {
   verificationId: string;
   verifiedAt?: Date;
   tier?: 'standard' | 'premium' | 'elite';
+  isActive?: boolean;
   className?: string;
 }
 
@@ -19,9 +20,14 @@ export default function MemberPassport({
   verificationId, 
   verifiedAt = new Date(), 
   tier = 'standard',
+  isActive = true,
   className 
 }: MemberPassportProps) {
   const { t } = useLanguage();
+  const pendingReviewLabel =
+    t('member_passport.pending_review') === 'member_passport.pending_review'
+      ? 'Pending review'
+      : t('member_passport.pending_review');
 
   const tierConfig = {
     standard: {
@@ -81,7 +87,7 @@ export default function MemberPassport({
               <div className={cn("p-2 rounded-xl", config.accentBg)}>
                 <FileCheck className={cn("h-6 w-6", config.accent)} />
               </div>
-              <TrustBadge type="verified" size="sm" />
+              <TrustBadge type={isActive ? 'verified' : 'pending'} size="sm" />
             </div>
             <h3 className="text-xl font-bold text-foreground">{t('member_passport.title')}</h3>
             <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mt-1">
@@ -109,7 +115,7 @@ export default function MemberPassport({
         )}>
           <CheckCircle2 className={cn("h-4 w-4", config.accent)} />
           <span className={cn("text-xs font-bold uppercase tracking-widest", config.accent)}>
-            {config.label}
+            {isActive ? config.label : pendingReviewLabel}
           </span>
         </div>
 

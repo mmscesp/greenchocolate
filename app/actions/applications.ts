@@ -42,6 +42,7 @@ import { resolveLocale } from '@/lib/auth-urls';
 import { isLocale, type Locale } from '@/lib/i18n-config';
 import {
   sendMembershipApprovalEmail,
+  sendMembershipRejectionEmail,
   sendMembershipSubmissionEmail,
 } from '@/lib/email/membership';
 import { getSessionProfile } from '@/lib/session-profile';
@@ -76,6 +77,9 @@ export interface MembershipRequestCard {
   currentStage: ApplicationStage;
   message: string | null;
   createdAt: string;
+  reviewedAt: string | null;
+  appointmentNotes: string | null;
+  rejectionReason: string | null;
   clubId: string;
   clubName: string;
   clubSlug: string;
@@ -349,6 +353,17 @@ function getDecisionError(status: RequestStatus): string {
   return 'Only pending applications can be decided.';
 }
 
+class MembershipDecisionConflictError extends Error {
+  constructor() {
+    super('Membership request decision conflict');
+    this.name = 'MembershipDecisionConflictError';
+  }
+}
+
+function isMembershipDecisionConflictError(error: unknown): error is MembershipDecisionConflictError {
+  return error instanceof MembershipDecisionConflictError;
+}
+
 async function createStageHistory(
   tx: Prisma.TransactionClient,
   requestId: string,
@@ -364,6 +379,42 @@ async function createStageHistory(
       toStage,
       changedBy,
       notes,
+    },
+  });
+}
+
+async function logMembershipDecisionEmailEvent(input: {
+  actorAuthId: string;
+  requestId: string;
+  emailType: 'APPROVAL' | 'REJECTION';
+  result: {
+    success: boolean;
+    skipped?: boolean;
+    error?: string;
+    locale?: string;
+    templateId?: number;
+    fallbackUsed?: boolean;
+    messageId?: string;
+    requestsUrl?: string;
+  };
+}) {
+  await logAdminAuditEvent({
+    tableName: 'MembershipRequest',
+    operation: input.result.success
+      ? `MEMBERSHIP_${input.emailType}_EMAIL_SENT`
+      : input.result.skipped
+        ? `MEMBERSHIP_${input.emailType}_EMAIL_SKIPPED`
+        : `MEMBERSHIP_${input.emailType}_EMAIL_FAILED`,
+    changedBy: input.actorAuthId,
+    recordId: input.requestId,
+    changeData: {
+      provider: 'BREVO',
+      locale: input.result.locale ?? null,
+      templateId: input.result.templateId ?? null,
+      fallbackUsed: input.result.fallbackUsed ?? false,
+      messageId: input.result.messageId ?? null,
+      requestsUrl: input.result.requestsUrl ?? null,
+      error: input.result.success ? null : input.result.error || 'Unknown email error',
     },
   });
 }
@@ -1275,6 +1326,9 @@ export async function getUserMembershipRequests(): Promise<MembershipRequestCard
     currentStage: normalizeApplicationStage(request.currentStage, request.status as RequestStatus),
     message: request.message,
     createdAt: request.createdAt.toISOString(),
+    reviewedAt: request.reviewedAt?.toISOString() || null,
+    appointmentNotes: request.appointmentNotes || null,
+    rejectionReason: request.rejectionReason || null,
     clubId: request.club.id,
     clubName: request.club.name,
     clubSlug: request.club.slug,
@@ -1341,35 +1395,55 @@ export async function approveMembershipRequest(
   const reviewedAt = new Date();
   const locale = resolveMembershipRequestLocale(request.snapshotMeta);
 
-  await runSerializableTransactionWithRetry(async (tx) => {
-    await tx.membershipRequest.update({
-      where: { id: request.id },
-      data: {
-        status: 'APPROVED',
-        currentStage: 'FINAL_APPROVAL',
-        reviewedAt,
-        reviewedBy: profile.id,
-        rejectionReason: null,
-        appointmentNotes: validated.data.note ?? null,
-      },
-    });
+  try {
+    await runSerializableTransactionWithRetry(async (tx) => {
+      const updateResult = await tx.membershipRequest.updateMany({
+        where: {
+          id: request.id,
+          status: 'PENDING',
+        },
+        data: {
+          status: 'APPROVED',
+          currentStage: 'FINAL_APPROVAL',
+          reviewedAt,
+          reviewedBy: profile.id,
+          rejectionReason: null,
+          appointmentNotes: validated.data.note ?? null,
+        },
+      });
 
-    await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.note);
+      if (updateResult.count !== 1) {
+        throw new MembershipDecisionConflictError();
+      }
 
-    await tx.notification.create({
-      data: {
-        userId: request.userId,
-        type: 'APPLICATION_APPROVED',
-        title: 'Application approved',
-        message: 'Your membership application has been approved.',
+      await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.note);
+
+      await tx.notification.create({
+        data: {
+          userId: request.userId,
+          type: 'APPLICATION_APPROVED',
+          title: 'Application approved',
+          message: 'Your membership application has been approved.',
         data: {
           applicationId: request.id,
           clubId: request.club.id,
           status: 'APPROVED',
+          note: validated.data.note ?? null,
         } as Prisma.InputJsonValue,
       },
     });
-  });
+    });
+  } catch (error) {
+    if (isMembershipDecisionConflictError(error)) {
+      const latestRequest = await getMembershipRequestForDecision(requestId);
+      return {
+        success: false,
+        error: latestRequest ? getDecisionError(latestRequest.status as RequestStatus) : 'Application not found',
+      };
+    }
+
+    throw error;
+  }
 
   await logAdminAuditEvent({
     tableName: 'MembershipRequest',
@@ -1396,24 +1470,11 @@ export async function approveMembershipRequest(
     decisionNote: validated.data.note,
   });
 
-  await logAdminAuditEvent({
-    tableName: 'MembershipRequest',
-    operation: emailResult.success
-      ? 'MEMBERSHIP_EMAIL_SENT'
-      : emailResult.skipped
-        ? 'MEMBERSHIP_EMAIL_SKIPPED'
-        : 'MEMBERSHIP_EMAIL_FAILED',
-    changedBy: profile.authId,
-    recordId: request.id,
-    changeData: {
-      provider: 'BREVO',
-      locale: emailResult.locale,
-      templateId: emailResult.templateId ?? null,
-      fallbackUsed: emailResult.fallbackUsed,
-      messageId: emailResult.messageId ?? null,
-      requestsUrl: emailResult.requestsUrl,
-      error: emailResult.success ? null : emailResult.error || 'Unknown email error',
-    },
+  await logMembershipDecisionEmailEvent({
+    actorAuthId: profile.authId,
+    requestId: request.id,
+    emailType: 'APPROVAL',
+    result: emailResult,
   });
 
   revalidatePath('/');
@@ -1449,35 +1510,58 @@ export async function rejectMembershipRequest(
   const currentStage = normalizeApplicationStage(request.currentStage, request.status as RequestStatus);
   const reviewedAt = new Date();
 
-  await runSerializableTransactionWithRetry(async (tx) => {
-    await tx.membershipRequest.update({
-      where: { id: requestId },
-      data: {
-        status: 'REJECTED',
-        currentStage: 'FINAL_APPROVAL',
-        reviewedAt,
-        reviewedBy: profile.id,
-        rejectionReason: validated.data.reason,
-      },
-    });
+  const locale = resolveMembershipRequestLocale(request.snapshotMeta);
 
-    await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.reason);
+  try {
+    await runSerializableTransactionWithRetry(async (tx) => {
+      const updateResult = await tx.membershipRequest.updateMany({
+        where: {
+          id: requestId,
+          status: 'PENDING',
+        },
+        data: {
+          status: 'REJECTED',
+          currentStage: 'FINAL_APPROVAL',
+          reviewedAt,
+          reviewedBy: profile.id,
+          rejectionReason: validated.data.reason,
+          appointmentNotes: null,
+        },
+      });
 
-    await tx.notification.create({
-      data: {
-        userId: request.userId,
-        type: 'APPLICATION_REJECTED',
-        title: 'Application rejected',
-        message: 'Your membership application was rejected. Review the note in your notifications center if needed.',
+      if (updateResult.count !== 1) {
+        throw new MembershipDecisionConflictError();
+      }
+
+      await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.reason);
+
+      await tx.notification.create({
+        data: {
+          userId: request.userId,
+          type: 'APPLICATION_REJECTED',
+          title: 'Application rejected',
+          message: 'Your membership application was rejected. Review the note in your notifications center if needed.',
         data: {
           applicationId: request.id,
           clubId: request.club.id,
           status: 'REJECTED',
           reason: validated.data.reason,
+          note: validated.data.reason,
         } as Prisma.InputJsonValue,
       },
     });
-  });
+    });
+  } catch (error) {
+    if (isMembershipDecisionConflictError(error)) {
+      const latestRequest = await getMembershipRequestForDecision(requestId);
+      return {
+        success: false,
+        error: latestRequest ? getDecisionError(latestRequest.status as RequestStatus) : 'Application not found',
+      };
+    }
+
+    throw error;
+  }
 
   await logAdminAuditEvent({
     tableName: 'MembershipRequest',
@@ -1491,7 +1575,24 @@ export async function rejectMembershipRequest(
       reason: validated.data.reason,
       applicantEmail: request.user.email,
       clubName: request.club.name,
+      locale,
     },
+  });
+
+  const emailResult = await sendMembershipRejectionEmail({
+    applicantEmail: request.user.email,
+    applicantName: request.user.displayName,
+    clubName: request.club.name,
+    requestId: request.id,
+    locale,
+    decisionNote: validated.data.reason,
+  });
+
+  await logMembershipDecisionEmailEvent({
+    actorAuthId: profile.authId,
+    requestId: request.id,
+    emailType: 'REJECTION',
+    result: emailResult,
   });
 
   revalidatePath('/');

@@ -39,6 +39,9 @@ export interface UserMembershipRequest {
   currentStage: 'INTAKE' | 'DOCUMENT_VERIFICATION' | 'BACKGROUND_CHECK' | 'FINAL_APPROVAL';
   message: string | null;
   createdAt: Date;
+  reviewedAt: Date | null;
+  appointmentNotes: string | null;
+  rejectionReason: string | null;
 }
 
 export type ProfileApplicationStatus =
@@ -340,6 +343,9 @@ export async function getUserMembershipRequests(): Promise<UserMembershipRequest
       currentStage: request.currentStage,
       message: request.message,
       createdAt: new Date(request.createdAt),
+      reviewedAt: request.reviewedAt ? new Date(request.reviewedAt) : null,
+      appointmentNotes: request.appointmentNotes,
+      rejectionReason: request.rejectionReason,
     }));
   } catch (error) {
     console.error('getUserMembershipRequests error:', error);

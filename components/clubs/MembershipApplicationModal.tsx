@@ -170,7 +170,6 @@ export default function MembershipApplicationModal({
 
         if (result.success && result.pendingLeadToken) {
           try {
-            sessionStorage.removeItem('pendingApplication');
             const pendingLead = JSON.stringify({
               pendingLeadToken: result.pendingLeadToken,
               clubId: club.id,

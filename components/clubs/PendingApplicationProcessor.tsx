@@ -9,7 +9,6 @@ import { Loader2 } from '@/lib/icons';
 import { toast } from 'sonner';
 
 const pendingMembershipLeadStorageKey = 'pendingMembershipLead';
-const legacyPendingApplicationStorageKey = 'pendingApplication';
 
 type PendingMembershipLead = {
   pendingLeadToken: string;
@@ -31,7 +30,6 @@ export default function PendingApplicationProcessor() {
       sessionStorage.getItem(pendingMembershipLeadStorageKey) ||
       localStorage.getItem(pendingMembershipLeadStorageKey);
     if (!pendingLeadStr) {
-      sessionStorage.removeItem(legacyPendingApplicationStorageKey);
       localStorage.removeItem(pendingMembershipLeadStorageKey);
       return;
     }
@@ -42,14 +40,12 @@ export default function PendingApplicationProcessor() {
     } catch (error) {
       console.error('Failed to parse pending membership lead', error);
       sessionStorage.removeItem(pendingMembershipLeadStorageKey);
-      sessionStorage.removeItem(legacyPendingApplicationStorageKey);
       localStorage.removeItem(pendingMembershipLeadStorageKey);
       return;
     }
 
     if (!pendingLead.pendingLeadToken) {
       sessionStorage.removeItem(pendingMembershipLeadStorageKey);
-      sessionStorage.removeItem(legacyPendingApplicationStorageKey);
       localStorage.removeItem(pendingMembershipLeadStorageKey);
       return;
     }
@@ -63,7 +59,6 @@ export default function PendingApplicationProcessor() {
         });
 
         sessionStorage.removeItem(pendingMembershipLeadStorageKey);
-        sessionStorage.removeItem(legacyPendingApplicationStorageKey);
         localStorage.removeItem(pendingMembershipLeadStorageKey);
 
         if (result.success) {
@@ -76,7 +71,6 @@ export default function PendingApplicationProcessor() {
         console.error('Auto-finalize membership lead error:', error);
         toast.error('An unexpected error occurred while submitting your application');
         sessionStorage.removeItem(pendingMembershipLeadStorageKey);
-        sessionStorage.removeItem(legacyPendingApplicationStorageKey);
         localStorage.removeItem(pendingMembershipLeadStorageKey);
       } finally {
         setIsProcessing(false);

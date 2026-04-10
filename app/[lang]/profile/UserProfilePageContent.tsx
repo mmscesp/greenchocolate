@@ -81,6 +81,12 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
 
   const displayName = userProfile?.displayName || userProfile?.email?.split('@')[0] || t('profile.member_fallback');
   const verificationId = backendStatus?.passport.verificationId || `SCM-${userProfile?.id?.slice(0, 8).toUpperCase() || 'UNKNOWN'}`;
+  const hasVerifiedProfile = backendStatus?.passport.isActive ?? userProfile?.isVerified ?? false;
+  const accountStatusLabel = hasVerifiedProfile ? t('profile.verified') : 'Pending';
+  const accountStatusTitle = hasVerifiedProfile ? t('profile.account_verified') : 'Verification pending';
+  const accountStatusDescription = hasVerifiedProfile
+    ? t('profile.account_verified_desc')
+    : 'Complete verification or wait for approval updates to unlock more member features.';
 
   if (!userProfile) {
     return (
@@ -325,15 +331,24 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/30 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                      <Check className="h-5 w-5 text-green-600" />
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${hasVerifiedProfile ? 'bg-green-500/10' : 'bg-amber-500/10'}`}>
+                      {hasVerifiedProfile ? (
+                        <Check className="h-5 w-5 text-green-600" />
+                      ) : (
+                        <Clock className="h-5 w-5 text-amber-600" />
+                      )}
                     </div>
                     <div>
-                      <div className="font-medium">{t('profile.account_verified')}</div>
-                      <div className="text-xs text-muted-foreground">{t('profile.account_verified_desc')}</div>
+                      <div className="font-medium">{accountStatusTitle}</div>
+                      <div className="text-xs text-muted-foreground">{accountStatusDescription}</div>
                     </div>
                   </div>
-                  <Badge variant="secondary" className="text-green-600 border-green-500/30 bg-green-500/10">{t('profile.verified')}</Badge>
+                  <Badge
+                    variant="secondary"
+                    className={hasVerifiedProfile ? 'text-green-600 border-green-500/30 bg-green-500/10' : 'text-amber-700 border-amber-500/30 bg-amber-500/10'}
+                  >
+                    {accountStatusLabel}
+                  </Badge>
                 </div>
 
                 <div className="flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-accent/30 transition-colors">
@@ -417,6 +432,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
               verificationId={verificationId}
               verifiedAt={backendStatus?.passport.verifiedAt || new Date(userProfile.createdAt)}
               tier={backendStatus?.passport.tier || (userProfile.tier === 'premium' ? 'premium' : 'standard')}
+              isActive={backendStatus?.passport.isActive ?? userProfile.isVerified}
             />
           </div>
         )}
@@ -428,6 +444,7 @@ export default function UserProfilePageContent({ userProfile, backendStatus }: U
               verificationId={verificationId}
               verifiedAt={backendStatus?.passport.verifiedAt || new Date(userProfile.createdAt)}
               tier={backendStatus?.passport.tier || (userProfile.tier === 'premium' ? 'premium' : 'standard')}
+              isActive={backendStatus?.passport.isActive ?? userProfile.isVerified}
             />
           </div>
         )}

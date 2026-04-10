@@ -12,6 +12,7 @@ vi.mock('@/lib/prisma', () => ({
       findMany: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
       count: vi.fn(),
     },
     membershipApplicationLead: {
@@ -73,6 +74,10 @@ vi.mock('@/lib/env', () => ({
     BREVO_TEMPLATE_MEMBERSHIP_APPROVED_ES: 102,
     BREVO_TEMPLATE_MEMBERSHIP_APPROVED_FR: 103,
     BREVO_TEMPLATE_MEMBERSHIP_APPROVED_DE: 104,
+    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_EN: 201,
+    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_ES: 202,
+    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_FR: 203,
+    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_DE: 204,
     TURNSTILE_SECRET_KEY: undefined,
     SERVER_ACTION_ALLOWED_ORIGINS: undefined,
     MEMBERSHIP_GUEST_SOFT_LIMIT: 3,
@@ -95,8 +100,14 @@ vi.mock('@/lib/email/membership', () => ({
     requestsUrl: 'https://example.com/en/profile/requests',
     messageId: 'brevo-message-1',
   }),
-  sendMembershipRejectionEmail: vi.fn().mockResolvedValue({ success: true }),
-  sendMembershipStageUpdateEmail: vi.fn().mockResolvedValue({ success: true }),
+  sendMembershipRejectionEmail: vi.fn().mockResolvedValue({
+    success: true,
+    locale: 'en',
+    templateId: 201,
+    fallbackUsed: false,
+    requestsUrl: 'https://example.com/en/profile/requests',
+    messageId: 'brevo-message-2',
+  }),
 }));
 
 vi.mock('@/lib/security/admin-audit', () => ({
@@ -115,7 +126,7 @@ import {
 } from '@/app/actions/applications';
 import { buildLeadToken } from '@/lib/security/membership-application';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
-import { sendMembershipApprovalEmail } from '@/lib/email/membership';
+import { sendMembershipApprovalEmail, sendMembershipRejectionEmail } from '@/lib/email/membership';
 
 const mockUser = { id: '550e8400-e29b-41d4-a716-446655440001', email: 'ada@example.com' };
 const mockProfile = {
@@ -192,6 +203,7 @@ describe('Application Actions', () => {
       clubId: mockClubId,
       createdAt: new Date('2026-03-08T10:00:00.000Z'),
     });
+    (prisma.membershipRequest.updateMany as any).mockResolvedValue({ count: 1 });
     (prisma.notification.create as any).mockResolvedValue({ id: 'notification-1' });
     (prisma.applicationStageHistory.create as any).mockResolvedValue({ id: 'history-1' });
     (prisma.auditLog.create as any).mockResolvedValue({ id: 'audit-1' });
@@ -591,9 +603,9 @@ describe('Application Actions', () => {
     const result = await approveMembershipRequest(mockRequestId, 'Bring your ID');
 
     expect(result.success).toBe(true);
-    expect(prisma.membershipRequest.update).toHaveBeenCalledWith(
+    expect(prisma.membershipRequest.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: mockRequestId },
+        where: { id: mockRequestId, status: 'PENDING' },
         data: expect.objectContaining({
           status: 'APPROVED',
           currentStage: 'FINAL_APPROVAL',
@@ -607,6 +619,9 @@ describe('Application Actions', () => {
       data: expect.objectContaining({
         userId: mockProfile.id,
         type: 'APPLICATION_APPROVED',
+        data: expect.objectContaining({
+          note: 'Bring your ID',
+        }),
       }),
     });
     expect(sendMembershipApprovalEmail).toHaveBeenCalledWith(
@@ -618,7 +633,7 @@ describe('Application Actions', () => {
     );
     expect(logAdminAuditEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        operation: 'MEMBERSHIP_EMAIL_SENT',
+        operation: 'MEMBERSHIP_APPROVAL_EMAIL_SENT',
         recordId: mockRequestId,
       })
     );
@@ -661,10 +676,10 @@ describe('Application Actions', () => {
     const result = await approveMembershipRequest(mockRequestId, undefined);
 
     expect(result.success).toBe(true);
-    expect(prisma.membershipRequest.update).toHaveBeenCalled();
+    expect(prisma.membershipRequest.updateMany).toHaveBeenCalled();
     expect(logAdminAuditEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        operation: 'MEMBERSHIP_EMAIL_SKIPPED',
+        operation: 'MEMBERSHIP_APPROVAL_EMAIL_SKIPPED',
         recordId: mockRequestId,
       })
     );
@@ -706,16 +721,16 @@ describe('Application Actions', () => {
     const result = await approveMembershipRequest(mockRequestId, undefined);
 
     expect(result.success).toBe(true);
-    expect(prisma.membershipRequest.update).toHaveBeenCalled();
+    expect(prisma.membershipRequest.updateMany).toHaveBeenCalled();
     expect(logAdminAuditEvent).toHaveBeenCalledWith(
       expect.objectContaining({
-        operation: 'MEMBERSHIP_EMAIL_FAILED',
+        operation: 'MEMBERSHIP_APPROVAL_EMAIL_FAILED',
         recordId: mockRequestId,
       })
     );
   });
 
-  it('rejects a pending membership request without sending email', async () => {
+  it('rejects a pending membership request and sends a Brevo rejection email', async () => {
     (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
     (prisma.membershipRequest.findUnique as any).mockResolvedValue({
       id: mockRequestId,
@@ -743,20 +758,38 @@ describe('Application Actions', () => {
     const result = await rejectMembershipRequest(mockRequestId, 'Insufficient information');
 
     expect(result.success).toBe(true);
-    expect(prisma.membershipRequest.update).toHaveBeenCalledWith({
-      where: { id: mockRequestId },
+    expect(prisma.membershipRequest.updateMany).toHaveBeenCalledWith({
+      where: { id: mockRequestId, status: 'PENDING' },
       data: expect.objectContaining({
         status: 'REJECTED',
         currentStage: 'FINAL_APPROVAL',
         rejectionReason: 'Insufficient information',
+        appointmentNotes: null,
       }),
     });
     expect(prisma.notification.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         userId: mockProfile.id,
         type: 'APPLICATION_REJECTED',
+        data: expect.objectContaining({
+          note: 'Insufficient information',
+          reason: 'Insufficient information',
+        }),
       }),
     });
+    expect(sendMembershipRejectionEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        applicantEmail: mockProfile.email,
+        locale: 'en',
+        decisionNote: 'Insufficient information',
+      })
+    );
+    expect(logAdminAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operation: 'MEMBERSHIP_REJECTION_EMAIL_SENT',
+        recordId: mockRequestId,
+      })
+    );
     expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
   });
 
@@ -792,7 +825,7 @@ describe('Application Actions', () => {
     expect(approvalResult.error).toMatch(/already been approved/i);
     expect(rejectionResult.success).toBe(false);
     expect(rejectionResult.error).toMatch(/already been approved/i);
-    expect(prisma.membershipRequest.update).not.toHaveBeenCalled();
+    expect(prisma.membershipRequest.updateMany).not.toHaveBeenCalled();
     expect(prisma.notification.create).not.toHaveBeenCalled();
     expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
   });

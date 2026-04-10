@@ -7,13 +7,14 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface TrustBadgeProps {
-  type: 'encrypted' | 'verified' | 'legal' | 'warning';
+  type: 'encrypted' | 'verified' | 'legal' | 'warning' | 'pending';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 export default function TrustBadge({ type, size = 'md', className }: TrustBadgeProps) {
   const { t } = useLanguage();
+  const pendingLabel = t('badges.pending') === 'badges.pending' ? 'Pending' : t('badges.pending');
 
   const configs = {
     encrypted: {
@@ -46,6 +47,14 @@ export default function TrustBadge({ type, size = 'md', className }: TrustBadgeP
       bg: 'bg-red-500/10',
       border: 'border-red-500/20',
       text_color: 'text-red-500',
+      pulse: true
+    },
+    pending: {
+      icon: Shield,
+      text: pendingLabel,
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/20',
+      text_color: 'text-amber-600',
       pulse: true
     }
   };

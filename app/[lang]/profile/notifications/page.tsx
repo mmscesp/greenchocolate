@@ -27,6 +27,25 @@ function notificationTypeLabel(type: string): string {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function getNotificationDecisionNote(item: NotificationItem): string | null {
+  if (!item.data || typeof item.data !== 'object') {
+    return null;
+  }
+
+  const note = item.data['note'];
+  const reason = item.data['reason'];
+
+  if (typeof note === 'string' && note.trim().length > 0) {
+    return note;
+  }
+
+  if (typeof reason === 'string' && reason.trim().length > 0) {
+    return reason;
+  }
+
+  return null;
+}
+
 export default function ProfileNotificationsPage() {
   const { language, t } = useLanguage();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
@@ -137,6 +156,11 @@ export default function ProfileNotificationsPage() {
             <Card key={item.id} className={item.isRead ? 'opacity-80' : ''}>
               <CardContent className="p-5 flex flex-col md:flex-row md:items-center gap-4 md:justify-between">
                 <div className="flex-1 min-w-0">
+                  {(() => {
+                    const decisionNote = getNotificationDecisionNote(item);
+
+                    return (
+                      <>
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h3 className="font-semibold text-gray-900">{item.title}</h3>
                     <Badge variant={item.isRead ? 'outline' : 'secondary'}>
@@ -145,9 +169,20 @@ export default function ProfileNotificationsPage() {
                     <Badge variant="secondary">{notificationTypeLabel(item.type)}</Badge>
                   </div>
                   <p className="text-gray-600 text-sm">{item.message}</p>
+                  {decisionNote && (
+                    <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        Decision note
+                      </p>
+                      <p className="mt-1 text-sm text-foreground">{decisionNote}</p>
+                    </div>
+                  )}
                   <p className="text-xs text-gray-500 mt-2">
                     {new Date(item.createdAt).toLocaleString('en-GB')}
                   </p>
+                      </>
+                    );
+                  })()}
                 </div>
 
                 <div className="flex w-full flex-col gap-2 md:w-auto sm:flex-row sm:items-center">
