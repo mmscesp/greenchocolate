@@ -42,7 +42,6 @@ import { resolveLocale } from '@/lib/auth-urls';
 import { isLocale, type Locale } from '@/lib/i18n-config';
 import {
   sendMembershipApprovalEmail,
-  sendMembershipRejectionEmail,
   sendMembershipSubmissionEmail,
 } from '@/lib/email/membership';
 import { getSessionProfile } from '@/lib/session-profile';
@@ -416,6 +415,40 @@ async function logMembershipDecisionEmailEvent(input: {
       requestsUrl: input.result.requestsUrl ?? null,
       error: input.result.success ? null : input.result.error || 'Unknown email error',
     },
+  });
+}
+
+async function rollbackMembershipApprovalAfterEmailFailure(input: {
+  requestId: string;
+  currentStage: ApplicationStage;
+  userId: string;
+}) {
+  await runSerializableTransactionWithRetry(async (tx) => {
+    await tx.membershipRequest.updateMany({
+      where: {
+        id: input.requestId,
+        status: 'APPROVED',
+      },
+      data: {
+        status: 'PENDING',
+        currentStage: input.currentStage,
+        reviewedAt: null,
+        reviewedBy: null,
+        appointmentNotes: null,
+        rejectionReason: null,
+      },
+    });
+
+    await tx.notification.deleteMany({
+      where: {
+        userId: input.userId,
+        type: 'APPLICATION_APPROVED',
+        data: {
+          path: ['applicationId'],
+          equals: input.requestId,
+        },
+      },
+    });
   });
 }
 
@@ -1477,6 +1510,32 @@ export async function approveMembershipRequest(
     result: emailResult,
   });
 
+  if (!emailResult.success) {
+    await rollbackMembershipApprovalAfterEmailFailure({
+      requestId: request.id,
+      currentStage,
+      userId: request.userId,
+    });
+
+    await logAdminAuditEvent({
+      tableName: 'MembershipRequest',
+      operation: 'ADMIN_APPROVAL_REVERTED_AFTER_EMAIL_FAILURE',
+      changedBy: profile.authId,
+      recordId: request.id,
+      changeData: {
+        revertedToStage: currentStage,
+        applicantEmail: request.user.email,
+        clubName: request.club.name,
+        emailError: emailResult.error || 'Unknown email error',
+      },
+    });
+
+    return {
+      success: false,
+      error: 'Approval email could not be delivered. The application was returned to pending review.',
+    };
+  }
+
   revalidatePath('/');
 
   return { success: true };
@@ -1535,21 +1594,6 @@ export async function rejectMembershipRequest(
 
       await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.reason);
 
-      await tx.notification.create({
-        data: {
-          userId: request.userId,
-          type: 'APPLICATION_REJECTED',
-          title: 'Application rejected',
-          message: 'Your membership application was rejected. Review the note in your notifications center if needed.',
-        data: {
-          applicationId: request.id,
-          clubId: request.club.id,
-          status: 'REJECTED',
-          reason: validated.data.reason,
-          note: validated.data.reason,
-        } as Prisma.InputJsonValue,
-      },
-    });
     });
   } catch (error) {
     if (isMembershipDecisionConflictError(error)) {
@@ -1577,22 +1621,6 @@ export async function rejectMembershipRequest(
       clubName: request.club.name,
       locale,
     },
-  });
-
-  const emailResult = await sendMembershipRejectionEmail({
-    applicantEmail: request.user.email,
-    applicantName: request.user.displayName,
-    clubName: request.club.name,
-    requestId: request.id,
-    locale,
-    decisionNote: validated.data.reason,
-  });
-
-  await logMembershipDecisionEmailEvent({
-    actorAuthId: profile.authId,
-    requestId: request.id,
-    emailType: 'REJECTION',
-    result: emailResult,
   });
 
   revalidatePath('/');
