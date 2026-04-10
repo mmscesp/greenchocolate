@@ -16,9 +16,12 @@ if (typeof window !== 'undefined') {
 }
 
 const HERO_ASSETS = {
-  desktop: '/images/hero/barcelona-skyline.webp',
-  mobile: '/images/hero/barcelona-skyline.webp',
+  desktop: '/images/hero/barcelona-skyline-desktop.webp',
+  mobile: '/images/hero/barcelona-skyline-mobile.webp',
 } as const;
+
+const EMPTY_IMAGE_PLACEHOLDER =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
 const HERO_CONFIG = {
   scrollHeight: '200vh',
@@ -510,12 +513,21 @@ export default function HeroSection() {
             <div ref={desktopMediaRef} className="absolute inset-0 will-change-transform">
               <div
                 aria-hidden="true"
-                className="absolute inset-0 bg-cover bg-no-repeat select-none"
-                style={{
-                  backgroundImage: `url(${HERO_ASSETS.desktop})`,
-                  backgroundPosition: 'center 35%',
-                }}
-              />
+                className="absolute inset-0 select-none overflow-hidden"
+              >
+                <picture>
+                  <source media="(min-width: 768px)" srcSet={HERO_ASSETS.desktop} />
+                  <img
+                    alt=""
+                    src={EMPTY_IMAGE_PLACEHOLDER}
+                    fetchPriority="high"
+                    loading="eager"
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    style={{ objectPosition: 'center 35%' }}
+                  />
+                </picture>
+              </div>
             </div>
           </div>
 
@@ -641,12 +653,21 @@ export default function HeroSection() {
           <div
             ref={mobileMediaRef}
             aria-hidden="true"
-            className="relative w-full h-full will-change-transform bg-cover bg-no-repeat"
-            style={{
-              backgroundImage: `url(${HERO_ASSETS.mobile})`,
-              backgroundPosition: 'center 38%',
-            }}
-          />
+            className="relative w-full h-full will-change-transform overflow-hidden"
+          >
+            <picture>
+              <source media="(max-width: 767px)" srcSet={HERO_ASSETS.mobile} />
+              <img
+                alt=""
+                src={EMPTY_IMAGE_PLACEHOLDER}
+                fetchPriority="high"
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: 'center 38%' }}
+              />
+            </picture>
+          </div>
           <div className="absolute inset-0 bg-black/40 pointer-events-none" />
           <div className="absolute top-0 inset-x-0 h-[35vh] bg-gradient-to-b from-black/90 via-black/30 to-transparent pointer-events-none" />
           <div className="absolute bottom-0 inset-x-0 h-[65vh] bg-gradient-to-t from-black/95 via-black/60 to-transparent pointer-events-none" />
