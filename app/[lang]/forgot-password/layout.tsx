@@ -3,10 +3,11 @@ import { buildNoIndexMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildNoIndexMetadata();
 
-export default function AdminLayout({
+export default function ForgotPasswordLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return children;
 }
+

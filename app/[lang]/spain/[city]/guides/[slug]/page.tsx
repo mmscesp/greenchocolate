@@ -1,13 +1,41 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getArticleBySlug, getRelatedArticles } from '@/app/actions/articles';
 import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
+import { buildNoIndexMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string; slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { lang, slug } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const guide = await getArticleBySlug(slug, lang as Locale);
+  if (!guide) {
+    return {
+      title: 'Guide Not Found | SocialClubsMaps',
+      ...buildNoIndexMetadata(),
+    };
+  }
+
+  return {
+    title: `${guide.title} | SocialClubsMaps`,
+    description: guide.excerpt,
+    alternates: {
+      canonical: toAbsoluteUrl(`/${lang}/editorial/${guide.slug}`),
+    },
+    ...buildNoIndexMetadata(),
+  };
 }
 
 export default async function GuidePage({ params }: PageProps) {

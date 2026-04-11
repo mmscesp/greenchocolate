@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ShieldCheck, Lock, AlertTriangle, ArrowRight, Shield, Check, X } from '@/lib/icons';
 import { getDictionary } from '@/lib/dictionary';
@@ -6,9 +7,13 @@ import type { Locale } from '@/lib/i18n-config';
 import { H1, H2, H3, Text, Lead, Eyebrow } from '@/components/typography';
 import { Button } from '@/components/ui/button';
 import { SafetyKitFunnel } from '@/components/landing/editorial-concierge/interactive/SafetyKitFunnel';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
-export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
   const metadataByLocale: Record<string, { title: string; description: string }> = {
     es: {
       title: 'El Safety Kit de Espana - Descarga gratis | SocialClubsMaps',
@@ -32,9 +37,13 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     },
   };
 
-  return {
-    ...(metadataByLocale[lang] ?? metadataByLocale.en),
-  };
+  const localized = metadataByLocale[lang] ?? metadataByLocale.en;
+  return buildLocalizedMetadata({
+    lang,
+    path: '/safety-kit',
+    title: localized.title,
+    description: localized.description,
+  });
 }
 
 interface SafetyKitLandingPageProps {

@@ -1,9 +1,13 @@
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
+import { buildNoIndexMetadata } from '@/lib/seo';
 
 interface LegacyLearnPageProps {
   params: Promise<{ lang: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
+
+export const metadata: Metadata = buildNoIndexMetadata();
 
 function toQueryString(searchParams: Record<string, string | string[] | undefined>) {
   const query = new URLSearchParams();

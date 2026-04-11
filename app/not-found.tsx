@@ -52,7 +52,7 @@ export default function NotFound() {
           <p className="text-sm text-muted-foreground">
             ¿Necesitas ayuda?{' '}
             <Link
-              href="/contacto"
+              href="/contact"
               className="text-primary hover:text-primary/80 font-medium"
             >
               Contáctanos

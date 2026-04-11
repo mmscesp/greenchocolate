@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getEventBySlug } from '@/app/actions/events';
 import { getDictionary } from '@/lib/dictionary';
@@ -6,9 +7,65 @@ import type { Locale } from '@/lib/i18n-config';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Clock, ArrowLeft, ExternalLink } from '@/lib/icons';
+import { JsonLd } from '@/components/JsonLd';
+import { buildLanguageAlternates, isLocale, toAbsoluteUrl } from '@/lib/seo';
 
 interface EventPageProps {
   params: Promise<{ lang: string; slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: EventPageProps): Promise<Metadata> {
+  const { lang, slug } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const event = await getEventBySlug(slug);
+  if (!event) {
+    return {
+      title: 'Event Not Found | SocialClubsMaps',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const title = `${event.name} | Events | SocialClubsMaps`;
+  const description = event.description;
+  const canonical = toAbsoluteUrl(`/${lang}/events/${event.slug}`);
+  const eventImage = event.imageUrl || '/images/SCM_Logo_OG.png';
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+      languages: buildLanguageAlternates(`/events/${event.slug}`),
+    },
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      url: canonical,
+      siteName: 'SocialClubsMaps',
+      locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : lang === 'fr' ? 'fr_FR' : 'de_DE',
+      images: [
+        {
+          url: eventImage,
+          alt: event.name,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [eventImage],
+    },
+  };
 }
 
 export default async function EventPage({ params }: EventPageProps) {
@@ -22,8 +79,36 @@ export default async function EventPage({ params }: EventPageProps) {
     notFound();
   }
 
+  const eventJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.name,
+    description: event.description,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    eventStatus: 'https://schema.org/EventScheduled',
+    image: event.imageUrl || toAbsoluteUrl('/images/SCM_Logo_OG.png'),
+    location: {
+      '@type': 'Place',
+      name: event.location,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: event.cityName || undefined,
+        addressCountry: 'ES',
+      },
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: event.clubName || 'SocialClubsMaps',
+      url: event.eventUrl || toAbsoluteUrl(`/${lang}/events/${event.slug}`),
+    },
+    url: toAbsoluteUrl(`/${lang}/events/${event.slug}`),
+  };
+
   return (
     <div className="min-h-screen bg-background relative">
+      <JsonLd data={eventJsonLd} />
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       </div>

@@ -1,12 +1,54 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Mail } from '@/lib/icons';
 import { EditorialFAQ } from '@/components/landing/editorial-concierge/blocks/EditorialFAQ';
 import { FeaturedVault } from '@/components/landing/editorial-concierge/blocks/FeaturedVault';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface ContactPageProps {
   params: Promise<{ lang: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: ContactPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const byLocale: Record<string, { title: string; description: string }> = {
+    es: {
+      title: 'Contacto | SocialClubsMaps',
+      description:
+        'Contacta con el equipo de SocialClubsMaps para soporte, correcciones de listados y consultas editoriales.',
+    },
+    en: {
+      title: 'Contact | SocialClubsMaps',
+      description:
+        'Contact the SocialClubsMaps team for support, listing corrections, and editorial questions.',
+    },
+    fr: {
+      title: 'Contact | SocialClubsMaps',
+      description:
+        'Contactez l équipe SocialClubsMaps pour le support, les corrections de fiches et les questions éditoriales.',
+    },
+    de: {
+      title: 'Kontakt | SocialClubsMaps',
+      description:
+        'Kontaktiere das SocialClubsMaps-Team für Support, Korrekturen von Einträgen und redaktionelle Fragen.',
+    },
+  };
+
+  const localized = byLocale[lang] ?? byLocale.en;
+  return buildLocalizedMetadata({
+    lang,
+    path: '/contact',
+    title: localized.title,
+    description: localized.description,
+  });
 }
 
 export default async function ContactPage({ params }: ContactPageProps) {

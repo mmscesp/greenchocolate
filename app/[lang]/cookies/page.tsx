@@ -1,9 +1,51 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface CookiesPageProps {
   params: Promise<{ lang: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: CookiesPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const byLocale: Record<string, { title: string; description: string }> = {
+    es: {
+      title: 'Política de Cookies | SocialClubsMaps',
+      description:
+        'Consulta qué cookies utiliza SocialClubsMaps, para qué se usan y cómo gestionar tus preferencias.',
+    },
+    en: {
+      title: 'Cookie Policy | SocialClubsMaps',
+      description:
+        'Learn which cookies SocialClubsMaps uses, why they are used, and how to manage your preferences.',
+    },
+    fr: {
+      title: 'Politique de Cookies | SocialClubsMaps',
+      description:
+        'Découvrez les cookies utilisés par SocialClubsMaps, leur finalité et la gestion de vos préférences.',
+    },
+    de: {
+      title: 'Cookie-Richtlinie | SocialClubsMaps',
+      description:
+        'Erfahre, welche Cookies SocialClubsMaps nutzt, zu welchem Zweck und wie du Präferenzen verwaltest.',
+    },
+  };
+
+  const localized = byLocale[lang] ?? byLocale.en;
+  return buildLocalizedMetadata({
+    lang,
+    path: '/cookies',
+    title: localized.title,
+    description: localized.description,
+  });
 }
 
 export default async function CookiesPage({ params }: CookiesPageProps) {

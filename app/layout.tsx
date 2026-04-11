@@ -4,6 +4,8 @@ import { headers } from 'next/headers';
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';
 import AnalyticsDebugListener from '@/components/dev/AnalyticsDebugListener';
 import { i18n, isLocale } from '@/lib/i18n-config';
+import { JsonLd } from '@/components/JsonLd';
+import { buildLanguageAlternates, getBaseUrl, toAbsoluteUrl } from '@/lib/seo';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -24,7 +26,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://socialclubsmaps.com'),
+  metadataBase: new URL(getBaseUrl()),
   title: {
     default: 'SocialClubsMaps - Cannabis Social Clubs Directory Spain',
     template: '%s | SocialClubsMaps',
@@ -53,15 +55,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'es_ES',
-    url: 'https://socialclubsmaps.com',
+    url: getBaseUrl(),
     siteName: 'SocialClubsMaps',
     title: 'SocialClubsMaps - Cannabis Social Clubs Directory Spain',
     description: 'Discover and connect with verified cannabis social clubs in Spain. Browse directories in Barcelona, Madrid, Valencia, and more.',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
+        url: '/images/SCM_Logo_OG.png',
         alt: 'SocialClubsMaps - Cannabis Social Clubs Directory',
       },
     ],
@@ -70,22 +70,45 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SocialClubsMaps - Cannabis Social Clubs Directory Spain',
     description: 'Discover and connect with verified cannabis social clubs in Spain.',
-    images: ['/og-image.png'],
+    images: ['/images/SCM_Logo_OG.png'],
     creator: '@socialclubsmaps',
   },
   icons: {
-    icon: '/images/SCM_Logo_OG.svg',
-    shortcut: '/images/SCM_Logo_OG.svg',
-    apple: '/images/SCM_Logo_OG.svg',
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/images/SCM_Logo_OG.png',
   },
   alternates: {
-    canonical: 'https://socialclubsmaps.com',
-    languages: Object.fromEntries(
-      i18n.locales.map((locale) => [locale, `https://socialclubsmaps.com/${locale}`])
-    ),
+    languages: buildLanguageAlternates(''),
   },
   category: 'reference',
   classification: 'Cannabis Social Club Directory',
+};
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'SocialClubsMaps',
+  url: getBaseUrl(),
+  logo: toAbsoluteUrl('/images/SCM_Logo_OG.png'),
+  sameAs: [
+    'https://www.instagram.com/socialclubsmaps',
+    'https://x.com/socialclubsmaps',
+    'https://www.tiktok.com/@socialclubsmaps',
+  ],
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'SocialClubsMaps',
+  url: getBaseUrl(),
+  inLanguage: i18n.locales,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${getBaseUrl()}/${i18n.defaultLocale}/clubs?search={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
 };
 
 export default async function RootLayout({
@@ -105,6 +128,8 @@ export default async function RootLayout({
       className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}
     >
       <body className="font-sans antialiased">
+        <JsonLd data={organizationJsonLd} />
+        <JsonLd data={websiteJsonLd} />
         <AnalyticsDebugListener />
         {children}
       </body>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCityBySlug } from '@/app/actions/cities';
 import { getArticles } from '@/app/actions/articles';
@@ -8,9 +9,28 @@ import { H1, H3, Text, Lead } from '@/components/typography';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { lang, city } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const cityDetail = await getCityBySlug(city);
+  const cityName = cityDetail?.name || city;
+  return buildLocalizedMetadata({
+    lang,
+    path: `/spain/${city}/guides`,
+    title: `${cityName} Cannabis Guides | SocialClubsMaps`,
+    description: `Local cannabis social club guides for ${cityName}: legal basics, etiquette, safety tips, and practical first-visit guidance.`,
+  });
 }
 
 export default async function CityGuidesPage({ params }: PageProps) {

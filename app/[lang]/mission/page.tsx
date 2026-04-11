@@ -7,29 +7,25 @@ import { LinkCard } from '@/components/ui/card-26';
 import { Button } from '@/components/ui/button';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
   const title = t('mission.meta.title');
   const description = t('mission.meta.description');
 
-  return {
+  return buildLocalizedMetadata({
+    lang,
+    path: '/mission',
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-      locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : `${lang}_${lang.toUpperCase()}`,
-      url: `https://socialclubsmaps.com/${lang}/mission`,
-    },
-    alternates: {
-      canonical: `https://socialclubsmaps.com/${lang}/mission`,
-    },
-  };
+  });
 }
 
 interface MissionPageProps {

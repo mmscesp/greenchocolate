@@ -1,9 +1,51 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface TermsPageProps {
   params: Promise<{ lang: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: TermsPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const byLocale: Record<string, { title: string; description: string }> = {
+    es: {
+      title: 'Términos y Condiciones | SocialClubsMaps',
+      description:
+        'Lee los términos de uso de SocialClubsMaps, responsabilidades de usuarios y alcance informativo del servicio.',
+    },
+    en: {
+      title: 'Terms and Conditions | SocialClubsMaps',
+      description:
+        'Read SocialClubsMaps terms of use, user responsibilities, and the informational scope of the platform.',
+    },
+    fr: {
+      title: 'Conditions d Utilisation | SocialClubsMaps',
+      description:
+        'Consultez les conditions d utilisation de SocialClubsMaps et les responsabilités des utilisateurs.',
+    },
+    de: {
+      title: 'Nutzungsbedingungen | SocialClubsMaps',
+      description:
+        'Lies die Nutzungsbedingungen von SocialClubsMaps, Nutzerpflichten und den Informationsrahmen des Dienstes.',
+    },
+  };
+
+  const localized = byLocale[lang] ?? byLocale.en;
+  return buildLocalizedMetadata({
+    lang,
+    path: '/terms',
+    title: localized.title,
+    description: localized.description,
+  });
 }
 
 export default async function TermsPage({ params }: TermsPageProps) {

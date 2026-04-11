@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCityBySlug } from '@/app/actions/cities';
 import { getClubs } from '@/app/actions/clubs';
@@ -7,9 +8,28 @@ import { Button } from '@/components/ui/button';
 import { H1, H3, Text } from '@/components/typography';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { lang, city } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const cityDetail = await getCityBySlug(city);
+  const cityName = cityDetail?.name || city;
+  return buildLocalizedMetadata({
+    lang,
+    path: `/spain/${city}/clubs`,
+    title: `${cityName} Cannabis Social Clubs | SocialClubsMaps`,
+    description: `Browse verified cannabis social clubs in ${cityName}, Spain with neighborhood context and quick access to full club profiles.`,
+  });
 }
 
 export default async function CityClubsPage({ params }: PageProps) {

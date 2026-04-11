@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getCategoriesWithCounts, getFeaturedArticles } from '@/app/actions/articles';
 import { CommunityRoadmap } from '@/components/landing/editorial-concierge/blocks/CommunityRoadmap';
 import { EditorialFAQ } from '@/components/landing/editorial-concierge/blocks/EditorialFAQ';
@@ -12,9 +13,57 @@ import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
 import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface EditorialPageProps {
   params: Promise<{ lang: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: EditorialPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const metadataByLocale: Record<string, { title: string; description: string }> = {
+    es: {
+      title: 'Guías y Recursos de Cannabis Social Clubs en España | SocialClubsMaps',
+      description:
+        'Guías expertas sobre legalidad, etiqueta, seguridad y cultura de cannabis social clubs en España.',
+    },
+    en: {
+      title: 'Cannabis Social Club Guides and Resources in Spain | SocialClubsMaps',
+      description:
+        'Expert guides on legal compliance, etiquette, safety, and club culture for cannabis social clubs in Spain.',
+    },
+    fr: {
+      title: 'Guides et Ressources des Clubs Sociaux Cannabis en Espagne | SocialClubsMaps',
+      description:
+        'Guides experts sur la conformité légale, l étiquette, la sécurité et la culture des clubs sociaux cannabis en Espagne.',
+    },
+    de: {
+      title: 'Cannabis Social Club Guides und Ressourcen in Spanien | SocialClubsMaps',
+      description:
+        'Expertenleitfäden zu Legalität, Etikette, Sicherheit und Clubkultur rund um Cannabis Social Clubs in Spanien.',
+    },
+  };
+
+  const localized = metadataByLocale[lang] ?? metadataByLocale.en;
+
+  return buildLocalizedMetadata({
+    lang,
+    path: '/editorial',
+    title: localized.title,
+    description: localized.description,
+    keywords: [
+      'cannabis social club guide Spain',
+      'cannabis legal guide Spain',
+      'cannabis harm reduction Spain',
+      'social club etiquette Spain',
+    ],
+  });
 }
 
 export default async function EditorialPage({ params }: EditorialPageProps) {

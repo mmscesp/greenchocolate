@@ -1,9 +1,51 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface PrivacyPageProps {
   params: Promise<{ lang: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PrivacyPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const byLocale: Record<string, { title: string; description: string }> = {
+    es: {
+      title: 'Política de Privacidad | SocialClubsMaps',
+      description:
+        'Consulta cómo SocialClubsMaps recopila, procesa y protege datos personales en la plataforma.',
+    },
+    en: {
+      title: 'Privacy Policy | SocialClubsMaps',
+      description:
+        'Review how SocialClubsMaps collects, processes, and protects personal data across the platform.',
+    },
+    fr: {
+      title: 'Politique de Confidentialité | SocialClubsMaps',
+      description:
+        'Consultez comment SocialClubsMaps collecte, traite et protège les données personnelles sur la plateforme.',
+    },
+    de: {
+      title: 'Datenschutzerklärung | SocialClubsMaps',
+      description:
+        'Erfahre, wie SocialClubsMaps personenbezogene Daten auf der Plattform erhebt, verarbeitet und schützt.',
+    },
+  };
+
+  const localized = byLocale[lang] ?? byLocale.en;
+  return buildLocalizedMetadata({
+    lang,
+    path: '/privacy',
+    title: localized.title,
+    description: localized.description,
+  });
 }
 
 export default async function PrivacyPage({ params }: PrivacyPageProps) {

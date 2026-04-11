@@ -1,9 +1,17 @@
 import { MetadataRoute } from 'next';
 import { i18n } from '@/lib/i18n-config';
+import { getBaseUrl } from '@/lib/seo';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://socialclubsmaps.com';
+  const baseUrl = getBaseUrl();
   const localizedDisallow = i18n.locales.flatMap((locale) => [
+    `/${locale}/account`,
+    `/${locale}/account/*`,
+    `/${locale}/auth`,
+    `/${locale}/auth/*`,
+    `/${locale}/forgot-password`,
+    `/${locale}/resend-confirmation`,
+    `/${locale}/reset-password`,
     `/${locale}/account/requests`,
     `/${locale}/profile`,
     `/${locale}/club-panel`,
@@ -27,7 +35,12 @@ export default function robots(): MetadataRoute.Robots {
           '/.well-known/*',
         ],
         disallow: [
+          '/auth',
+          '/auth/*',
+          '/reset-password',
           '/account/requests',
+          '/account',
+          '/account/*',
           '/profile',
           '/club-panel',
           '/club-panel/*',
@@ -43,6 +56,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'Googlebot',
         disallow: [
+          '/auth',
+          '/auth/*',
+          '/reset-password',
+          '/account',
+          '/account/*',
           '/account/requests',
           '/profile',
           '/club-panel',
@@ -57,6 +75,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: 'GPTBot',
         disallow: [
+          '/auth',
+          '/auth/*',
+          '/reset-password',
+          '/account',
+          '/account/*',
           '/account/requests',
           '/profile',
           '/club-panel',

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getClubBySlug } from '@/app/actions/clubs';
 import { createClient } from '@/lib/supabase/server';
@@ -6,9 +7,40 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
+import { buildNoIndexMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string; slug: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { lang, slug } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
+
+  const club = await getClubBySlug(slug);
+  if (!club) {
+    return {
+      title: 'Club Not Found | SocialClubsMaps',
+      ...buildNoIndexMetadata(),
+    };
+  }
+
+  const title = `${club.name} | SocialClubsMaps`;
+  const description =
+    club.shortDescription || `Discover ${club.name} and continue to the full verified profile.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: toAbsoluteUrl(`/${lang}/clubs/${club.slug}`),
+    },
+    ...buildNoIndexMetadata(),
+  };
 }
 
 export default async function CityClubDetailPage({ params }: PageProps) {

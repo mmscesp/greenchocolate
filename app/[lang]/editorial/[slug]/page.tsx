@@ -4,7 +4,8 @@ import { getArticleBySlug, getRelatedArticles, getArticles } from '@/app/actions
 import { JsonLd } from '@/components/JsonLd';
 import ArticleContent from '@/app/[lang]/editorial/[slug]/ArticleContent';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
-import { i18n } from '@/lib/i18n-config';
+import { isLocale } from '@/lib/i18n-config';
+import { buildLanguageAlternates, toAbsoluteUrl } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -26,6 +27,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
   const { lang, slug } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
   const article = await getArticleBySlug(slug, lang as 'es' | 'en' | 'fr' | 'de');
 
   if (!article) {
@@ -41,7 +45,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     };
   }
 
-  const canonicalUrl = `https://socialclubsmaps.com/${lang}/editorial/${article.slug}`;
+  const canonicalUrl = toAbsoluteUrl(`/${lang}/editorial/${article.slug}`);
   const articleImage = getArticleCardImage({
     heroImage: article.heroImage,
     category: article.category,
@@ -53,15 +57,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     description: article.metaDescription || article.excerpt,
     alternates: {
       canonical: canonicalUrl,
-      languages: {
-        ...Object.fromEntries(
-          i18n.locales.map((locale) => [
-            locale,
-            `https://socialclubsmaps.com/${locale}/editorial/${article.slug}`,
-          ])
-        ),
-        'x-default': `https://socialclubsmaps.com/${i18n.defaultLocale}/editorial/${article.slug}`,
-      },
+      languages: buildLanguageAlternates(`/editorial/${article.slug}`),
     },
     openGraph: {
       title: article.title,
@@ -71,6 +67,15 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       type: 'article',
       publishedTime: article.publishedAt || undefined,
       authors: [article.authorName],
+      siteName: 'SocialClubsMaps',
+      locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : lang === 'fr' ? 'fr_FR' : 'de_DE',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.metaTitle || article.title,
+      description: article.metaDescription || article.excerpt,
+      images: [articleImage],
+      creator: '@socialclubsmaps',
     },
   };
 }
@@ -93,11 +98,12 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
 
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'MedicalWebPage',
+    '@type': 'Article',
     headline: article.title,
     description: article.excerpt,
     image: articleImage,
     datePublished: article.publishedAt,
+    mainEntityOfPage: toAbsoluteUrl(`/${lang}/editorial/${article.slug}`),
     author: {
       '@type': 'Person',
       name: article.authorName,
@@ -105,6 +111,10 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     publisher: {
       '@type': 'Organization',
       name: 'SocialClubsMaps',
+      logo: {
+        '@type': 'ImageObject',
+        url: toAbsoluteUrl('/images/SCM_Logo_OG.png'),
+      },
     },
   };
 
@@ -116,25 +126,25 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: `https://socialclubsmaps.com/${lang}`,
+        item: toAbsoluteUrl(`/${lang}`),
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'Knowledge Hub',
-        item: `https://socialclubsmaps.com/${lang}/editorial`,
+        item: toAbsoluteUrl(`/${lang}/editorial`),
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: article.category,
-        item: `https://socialclubsmaps.com/${lang}/editorial?category=${encodeURIComponent(article.category)}`,
+        item: toAbsoluteUrl(`/${lang}/editorial?category=${encodeURIComponent(article.category)}`),
       },
       {
         '@type': 'ListItem',
         position: 4,
         name: article.title,
-        item: `https://socialclubsmaps.com/${lang}/editorial/${article.slug}`,
+        item: toAbsoluteUrl(`/${lang}/editorial/${article.slug}`),
       },
     ],
   };

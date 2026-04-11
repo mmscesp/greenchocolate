@@ -93,22 +93,22 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/:lang(en|es|fr|de|it|pl|ru|pt)/learn',
+        source: '/:lang(en|es|fr|de)/learn',
         destination: '/:lang/editorial',
         permanent: true,
       },
       {
-        source: '/:lang(en|es|fr|de|it|pl|ru|pt)/learn/:path*',
+        source: '/:lang(en|es|fr|de)/learn/:path*',
         destination: '/:lang/editorial/:path*',
         permanent: true,
       },
       {
-        source: '/:lang(en|es|fr|de|it|pl|ru|pt)/blog',
+        source: '/:lang(en|es|fr|de)/blog',
         destination: '/:lang/editorial',
         permanent: true,
       },
       {
-        source: '/:lang(en|es|fr|de|it|pl|ru|pt)/blog/:path*',
+        source: '/:lang(en|es|fr|de)/blog/:path*',
         destination: '/:lang/editorial/:path*',
         permanent: true,
       },

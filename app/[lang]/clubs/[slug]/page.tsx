@@ -6,10 +6,11 @@ import { getClubDetailsWithAccess } from '@/app/actions/gated-content';
 import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
 import { getDictionary } from '@/lib/dictionary';
-import { i18n, type Locale } from '@/lib/i18n-config';
+import { type Locale } from '@/lib/i18n-config';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 import { toAbsoluteHttpUrl } from '@/lib/url';
+import { buildLanguageAlternates, isLocale, toAbsoluteUrl } from '@/lib/seo';
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -36,6 +37,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ClubPageProps): Promise<Metadata> {
   const { lang, slug } = await params;
+  if (!isLocale(lang)) {
+    return {};
+  }
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const clubDetail = await getClubBySlug(slug);
@@ -58,23 +62,30 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
   return {
     title: `${clubDetail.name} | ${clubDetail.neighborhood}`,
     description: clubDetail.shortDescription || `Discover ${clubDetail.name} in ${clubDetail.neighborhood}`,
+    keywords: [
+      `${clubDetail.name} cannabis social club`,
+      `${clubDetail.cityName} cannabis club`,
+      'verified cannabis social club Spain',
+      'cannabis club membership Spain',
+    ],
     openGraph: {
-      title: clubDetail.name,
-      description: clubDetail.shortDescription || '',
+      title: `${clubDetail.name} | SocialClubsMaps`,
+      description: clubDetail.shortDescription || `Discover ${clubDetail.name} in ${clubDetail.neighborhood}`,
+      url: toAbsoluteUrl(`/${lang}/clubs/${clubDetail.slug}`),
       images: [primaryImage],
       type: 'website',
+      siteName: 'SocialClubsMaps',
+      locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : lang === 'fr' ? 'fr_FR' : 'de_DE',
     },
     alternates: {
-      canonical: `https://socialclubsmaps.com/${lang}/clubs/${clubDetail.slug}`,
-      languages: {
-        ...Object.fromEntries(
-          i18n.locales.map((locale) => [
-            locale,
-            `https://socialclubsmaps.com/${locale}/clubs/${clubDetail.slug}`,
-          ])
-        ),
-        'x-default': `https://socialclubsmaps.com/${i18n.defaultLocale}/clubs/${clubDetail.slug}`,
-      },
+      canonical: toAbsoluteUrl(`/${lang}/clubs/${clubDetail.slug}`),
+      languages: buildLanguageAlternates(`/clubs/${clubDetail.slug}`),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${clubDetail.name} | SocialClubsMaps`,
+      description: clubDetail.shortDescription || `Discover ${clubDetail.name} in ${clubDetail.neighborhood}`,
+      images: [primaryImage],
     },
   };
 }
