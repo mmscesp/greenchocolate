@@ -4,6 +4,7 @@ import { getArticleBySlug, getRelatedArticles, getArticles } from '@/app/actions
 import { JsonLd } from '@/components/JsonLd';
 import ArticleContent from '@/app/[lang]/editorial/[slug]/ArticleContent';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
+import { i18n } from '@/lib/i18n-config';
 
 export const revalidate = 3600;
 
@@ -52,6 +53,15 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     description: article.metaDescription || article.excerpt,
     alternates: {
       canonical: canonicalUrl,
+      languages: {
+        ...Object.fromEntries(
+          i18n.locales.map((locale) => [
+            locale,
+            `https://socialclubsmaps.com/${locale}/editorial/${article.slug}`,
+          ])
+        ),
+        'x-default': `https://socialclubsmaps.com/${i18n.defaultLocale}/editorial/${article.slug}`,
+      },
     },
     openGraph: {
       title: article.title,

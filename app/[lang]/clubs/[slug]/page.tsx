@@ -6,7 +6,7 @@ import { getClubDetailsWithAccess } from '@/app/actions/gated-content';
 import { JsonLd } from '@/components/JsonLd';
 import { Club } from '@/lib/types';
 import { getDictionary } from '@/lib/dictionary';
-import type { Locale } from '@/lib/i18n-config';
+import { i18n, type Locale } from '@/lib/i18n-config';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 import { toAbsoluteHttpUrl } from '@/lib/url';
@@ -66,6 +66,15 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     },
     alternates: {
       canonical: `https://socialclubsmaps.com/${lang}/clubs/${clubDetail.slug}`,
+      languages: {
+        ...Object.fromEntries(
+          i18n.locales.map((locale) => [
+            locale,
+            `https://socialclubsmaps.com/${locale}/clubs/${clubDetail.slug}`,
+          ])
+        ),
+        'x-default': `https://socialclubsmaps.com/${i18n.defaultLocale}/clubs/${clubDetail.slug}`,
+      },
     },
   };
 }

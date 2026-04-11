@@ -39,6 +39,18 @@ function getLocaleFromPathname(pathname: string): string | null {
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const isSeoDiscoveryPath =
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/llms.txt' ||
+    pathname === '/llms-full.txt' ||
+    pathname.startsWith('/.well-known/');
+
+  if (isSeoDiscoveryPath) {
+    return NextResponse.next({
+      request: { headers: request.headers },
+    });
+  }
 
   // Check if this is an API route - skip locale handling for API
   if (pathname.startsWith('/api')) {
@@ -199,7 +211,7 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|mov|ogg)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|llms.txt|llms-full.txt|\\.well-known(?:/.*)?|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|mov|ogg)$).*)',
   ],
 };
 
