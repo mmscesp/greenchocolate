@@ -1,36 +1,30 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const sendBrevoEmailMock = vi.fn();
+const sendTransactionalEmailMock = vi.fn();
 
-vi.mock('@/lib/email/brevo', () => ({
-  sendBrevoEmail: (...args: unknown[]) => sendBrevoEmailMock(...args),
+vi.mock('@/lib/email/service', () => ({
+  sendTransactionalEmail: (...args: unknown[]) => sendTransactionalEmailMock(...args),
 }));
 
 vi.mock('@/lib/env', () => ({
   publicEnv: {
     NEXT_PUBLIC_APP_URL: 'https://example.com',
   },
-  getServerEnv: () => ({
-    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_EN: 101,
-    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_ES: 102,
-    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_FR: undefined,
-    BREVO_TEMPLATE_MEMBERSHIP_APPROVED_DE: undefined,
-    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_EN: 201,
-    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_ES: undefined,
-    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_FR: undefined,
-    BREVO_TEMPLATE_MEMBERSHIP_REJECTED_DE: undefined,
-  }),
 }));
 
 import { sendMembershipApprovalEmail, sendMembershipRejectionEmail } from '@/lib/email/membership';
 
 describe('membership email helpers', () => {
   beforeEach(() => {
-    sendBrevoEmailMock.mockReset();
-    sendBrevoEmailMock.mockResolvedValue({ success: true, messageId: 'brevo-message' });
+    sendTransactionalEmailMock.mockReset();
+    sendTransactionalEmailMock.mockResolvedValue({
+      success: true,
+      provider: 'RESEND',
+      messageId: 'resend-message',
+    });
   });
 
-  it('uses the localized Brevo approval template when configured', async () => {
+  it('sends approval emails through the transactional provider with an idempotency key', async () => {
     const result = await sendMembershipApprovalEmail({
       applicantEmail: 'member@example.com',
       applicantName: 'Ada',
@@ -40,46 +34,37 @@ describe('membership email helpers', () => {
       decisionNote: 'Trae tu identificacion',
     });
 
-    expect(sendBrevoEmailMock).toHaveBeenCalledWith(
+    expect(sendTransactionalEmailMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        templateId: 102,
-        params: expect.objectContaining({
-          applicantName: 'Ada',
-          clubName: 'Club One',
-          decisionNote: 'Trae tu identificacion',
-          requestsUrl: 'https://example.com/es/profile/requests',
-        }),
-        tags: ['membership_approved'],
+        subject: 'Tu solicitud de membresia fue aprobada - Club One',
+        idempotencyKey: 'membership-approved:request-1',
+        textContent: expect.stringContaining('https://example.com/es/profile/requests'),
       })
     );
-    expect(result.templateId).toBe(102);
+    expect(result.provider).toBe('RESEND');
     expect(result.fallbackUsed).toBe(false);
   });
 
-  it('falls back to the English approval template when the locale-specific template is missing', async () => {
+  it('falls back to English copy when locale is unknown', async () => {
     const result = await sendMembershipApprovalEmail({
       applicantEmail: 'member@example.com',
       applicantName: 'Ada',
       clubName: 'Club One',
       requestId: 'request-2',
-      locale: 'fr',
-      decisionNote: 'Apportez une piece d identite',
+      locale: 'it',
+      decisionNote: 'Bring ID',
     });
 
-    expect(sendBrevoEmailMock).toHaveBeenCalledWith(
+    expect(sendTransactionalEmailMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        templateId: 101,
-        params: expect.objectContaining({
-          requestsUrl: 'https://example.com/fr/profile/requests',
-        }),
-        tags: ['membership_approved'],
+        subject: 'Your membership request was approved - Club One',
       })
     );
-    expect(result.templateId).toBe(101);
+    expect(result.locale).toBe('en');
     expect(result.fallbackUsed).toBe(true);
   });
 
-  it('falls back to the English rejection template when the locale-specific template is missing', async () => {
+  it('sends rejection emails through the transactional provider', async () => {
     const result = await sendMembershipRejectionEmail({
       applicantEmail: 'member@example.com',
       applicantName: 'Ada',
@@ -89,17 +74,14 @@ describe('membership email helpers', () => {
       decisionNote: 'Falta informacion obligatoria',
     });
 
-    expect(sendBrevoEmailMock).toHaveBeenCalledWith(
+    expect(sendTransactionalEmailMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        templateId: 201,
-        params: expect.objectContaining({
-          decisionNote: 'Falta informacion obligatoria',
-          requestsUrl: 'https://example.com/es/profile/requests',
-        }),
-        tags: ['membership_rejected'],
+        subject: 'Tu solicitud de membresia no fue aprobada - Club One',
+        idempotencyKey: 'membership-rejected:request-3',
+        textContent: expect.stringContaining('Falta informacion obligatoria'),
       })
     );
-    expect(result.templateId).toBe(201);
-    expect(result.fallbackUsed).toBe(true);
+    expect(result.provider).toBe('RESEND');
+    expect(result.fallbackUsed).toBe(false);
   });
 });

@@ -42,6 +42,7 @@ import { resolveLocale } from '@/lib/auth-urls';
 import { isLocale, type Locale } from '@/lib/i18n-config';
 import {
   sendMembershipApprovalEmail,
+  sendMembershipRejectionEmail,
   sendMembershipSubmissionEmail,
 } from '@/lib/email/membership';
 import { getSessionProfile } from '@/lib/session-profile';
@@ -388,10 +389,10 @@ async function logMembershipDecisionEmailEvent(input: {
   emailType: 'APPROVAL' | 'REJECTION';
   result: {
     success: boolean;
+    provider?: string;
     skipped?: boolean;
     error?: string;
     locale?: string;
-    templateId?: number;
     fallbackUsed?: boolean;
     messageId?: string;
     requestsUrl?: string;
@@ -407,9 +408,8 @@ async function logMembershipDecisionEmailEvent(input: {
     changedBy: input.actorAuthId,
     recordId: input.requestId,
     changeData: {
-      provider: 'BREVO',
+      provider: input.result.provider ?? 'UNKNOWN',
       locale: input.result.locale ?? null,
-      templateId: input.result.templateId ?? null,
       fallbackUsed: input.result.fallbackUsed ?? false,
       messageId: input.result.messageId ?? null,
       requestsUrl: input.result.requestsUrl ?? null,
@@ -1594,6 +1594,21 @@ export async function rejectMembershipRequest(
 
       await createStageHistory(tx, request.id, currentStage, 'FINAL_APPROVAL', profile.id, validated.data.reason);
 
+      await tx.notification.create({
+        data: {
+          userId: request.userId,
+          type: 'APPLICATION_REJECTED',
+          title: 'Application update',
+          message: 'Your membership application was not approved.',
+          data: {
+            applicationId: request.id,
+            clubId: request.club.id,
+            status: 'REJECTED',
+            note: validated.data.reason,
+          } as Prisma.InputJsonValue,
+        },
+      });
+
     });
   } catch (error) {
     if (isMembershipDecisionConflictError(error)) {
@@ -1621,6 +1636,22 @@ export async function rejectMembershipRequest(
       clubName: request.club.name,
       locale,
     },
+  });
+
+  const emailResult = await sendMembershipRejectionEmail({
+    applicantEmail: request.user.email,
+    applicantName: request.user.displayName,
+    clubName: request.club.name,
+    requestId: request.id,
+    locale,
+    decisionNote: validated.data.reason,
+  });
+
+  await logMembershipDecisionEmailEvent({
+    actorAuthId: profile.authId,
+    requestId: request.id,
+    emailType: 'REJECTION',
+    result: emailResult,
   });
 
   revalidatePath('/');

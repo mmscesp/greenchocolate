@@ -95,19 +95,19 @@ vi.mock('@/lib/email/membership', () => ({
   sendMembershipSubmissionEmail: vi.fn().mockResolvedValue({ success: true }),
   sendMembershipApprovalEmail: vi.fn().mockResolvedValue({
     success: true,
+    provider: 'RESEND',
     locale: 'en',
-    templateId: 101,
     fallbackUsed: false,
     requestsUrl: 'https://example.com/en/profile/requests',
-    messageId: 'brevo-message-1',
+    messageId: 'resend-message-1',
   }),
   sendMembershipRejectionEmail: vi.fn().mockResolvedValue({
     success: true,
+    provider: 'RESEND',
     locale: 'en',
-    templateId: 201,
     fallbackUsed: false,
     requestsUrl: 'https://example.com/en/profile/requests',
-    messageId: 'brevo-message-2',
+    messageId: 'resend-message-2',
   }),
 }));
 
@@ -645,10 +645,10 @@ describe('Application Actions', () => {
     (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
     vi.mocked(sendMembershipApprovalEmail).mockResolvedValueOnce({
       success: false,
+      provider: 'RESEND',
       skipped: true,
-      error: 'Membership approval Brevo template is not configured.',
+      error: 'Resend is not configured.',
       locale: 'fr',
-      templateId: 101,
       fallbackUsed: true,
       requestsUrl: 'https://example.com/en/profile/requests',
     });
@@ -708,9 +708,9 @@ describe('Application Actions', () => {
     (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
     vi.mocked(sendMembershipApprovalEmail).mockResolvedValueOnce({
       success: false,
-      error: 'Brevo error 500',
+      provider: 'RESEND',
+      error: 'Resend error 500',
       locale: 'de',
-      templateId: 104,
       fallbackUsed: false,
       requestsUrl: 'https://example.com/de/profile/requests',
     });
@@ -751,7 +751,7 @@ describe('Application Actions', () => {
     );
   });
 
-  it('rejects a pending membership request without sending user-facing email or notification', async () => {
+  it('rejects a pending membership request, creates a notification, and sends a rejection email', async () => {
     (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
     (prisma.membershipRequest.findUnique as any).mockResolvedValue({
       id: mockRequestId,
@@ -788,9 +788,29 @@ describe('Application Actions', () => {
         appointmentNotes: null,
       }),
     });
-    expect(prisma.notification.create).not.toHaveBeenCalled();
-    expect(sendMembershipRejectionEmail).not.toHaveBeenCalled();
+    expect(prisma.notification.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        userId: mockProfile.id,
+        type: 'APPLICATION_REJECTED',
+        data: expect.objectContaining({
+          note: 'Insufficient information',
+        }),
+      }),
+    });
+    expect(sendMembershipRejectionEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        applicantEmail: mockProfile.email,
+        locale: 'en',
+        decisionNote: 'Insufficient information',
+      })
+    );
     expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
+    expect(logAdminAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operation: 'MEMBERSHIP_REJECTION_EMAIL_SENT',
+        recordId: mockRequestId,
+      })
+    );
   });
 
   it('blocks repeated decisions on an already approved request', async () => {

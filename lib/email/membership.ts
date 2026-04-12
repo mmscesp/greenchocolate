@@ -1,5 +1,5 @@
-import { sendBrevoEmail, type BrevoSendResult } from '@/lib/email/brevo';
-import { getServerEnv, publicEnv } from '@/lib/env';
+import { sendTransactionalEmail, type TransactionalEmailSendResult } from '@/lib/email/service';
+import { publicEnv } from '@/lib/env';
 import { isLocale, type Locale } from '@/lib/i18n-config';
 
 type MembershipEmailContext = {
@@ -19,16 +19,13 @@ type MembershipApprovalEmailContext = {
   decisionNote?: string | null;
 };
 
-export type MembershipApprovalEmailResult = BrevoSendResult & {
+export type MembershipApprovalEmailResult = TransactionalEmailSendResult & {
   locale: Locale;
-  templateId?: number;
   fallbackUsed: boolean;
   requestsUrl: string;
 };
 
 export type MembershipRejectionEmailResult = MembershipApprovalEmailResult;
-
-type MembershipEmailKind = 'approved' | 'rejected';
 
 const membershipDecisionCopy: Record<
   Locale,
@@ -139,9 +136,10 @@ async function sendMembershipEmail(
   context: MembershipEmailContext,
   title: string,
   subject: string,
-  body: string
+  body: string,
+  idempotencyKey: string
 ) {
-  return sendBrevoEmail({
+  return sendTransactionalEmail({
     to: [
       {
         email: context.applicantEmail,
@@ -151,40 +149,25 @@ async function sendMembershipEmail(
     subject,
     htmlContent: wrapHtml(title, body, context.requestId),
     textContent: `${title}\n\n${body.replace(/<br\/>/g, '\n').replace(/<[^>]+>/g, '')}\n\nRequest reference: ${context.requestId}`,
+    idempotencyKey,
+    tags: [
+      {
+        name: 'category',
+        value: 'membership',
+      },
+    ],
   });
 }
 
-function resolveMembershipDecisionTemplate(kind: MembershipEmailKind, requestLocale?: string | null): {
+function resolveMembershipDecisionLocale(requestLocale?: string | null): {
   locale: Locale;
-  templateId?: number;
   fallbackUsed: boolean;
 } {
-  const env = getServerEnv();
   const locale = resolveLocaleOrDefault(requestLocale);
-  const englishTemplateId =
-    kind === 'approved'
-      ? env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_EN
-      : env.BREVO_TEMPLATE_MEMBERSHIP_REJECTED_EN;
-
-  const localizedTemplateId =
-    locale === 'es'
-      ? kind === 'approved'
-        ? env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_ES
-        : env.BREVO_TEMPLATE_MEMBERSHIP_REJECTED_ES
-      : locale === 'fr'
-        ? kind === 'approved'
-          ? env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_FR
-          : env.BREVO_TEMPLATE_MEMBERSHIP_REJECTED_FR
-        : locale === 'de'
-          ? kind === 'approved'
-            ? env.BREVO_TEMPLATE_MEMBERSHIP_APPROVED_DE
-            : env.BREVO_TEMPLATE_MEMBERSHIP_REJECTED_DE
-          : englishTemplateId;
 
   return {
     locale,
-    templateId: localizedTemplateId ?? englishTemplateId,
-    fallbackUsed: locale !== 'en' && !localizedTemplateId,
+    fallbackUsed: Boolean(requestLocale && requestLocale !== locale),
   };
 }
 
@@ -200,67 +183,58 @@ export async function sendMembershipSubmissionEmail(context: MembershipEmailCont
     'Application received',
     `We received your membership request for ${context.clubName}`,
     `<p>We received your request for <strong>${context.clubName}</strong>. Our team will review it and contact you with the outcome.</p>
-     <p>You can also track the current status from your profile requests area.</p>`
+     <p>You can also track the current status from your profile requests area.</p>`,
+    `membership-submission:${context.requestId}`
   );
 }
 
 export async function sendMembershipApprovalEmail(
   context: MembershipApprovalEmailContext
 ): Promise<MembershipApprovalEmailResult> {
-  const { locale, templateId, fallbackUsed } = resolveMembershipDecisionTemplate('approved', context.locale);
+  const { locale, fallbackUsed } = resolveMembershipDecisionLocale(context.locale);
   const requestsUrl = getMembershipRequestsUrl(locale);
   const copy = membershipDecisionCopy[locale].approved;
 
-  const result = await sendBrevoEmail(
-    templateId
-      ? {
-          to: [
-            {
-              email: context.applicantEmail,
-              name: context.applicantName || undefined,
-            },
-          ],
-          templateId,
-          params: {
-            applicantName: context.applicantName || context.applicantEmail,
-            clubName: context.clubName,
-            requestId: context.requestId,
-            decisionNote: context.decisionNote || '',
-            requestsUrl,
-          },
-          tags: ['membership_approved'],
-        }
-      : {
-          to: [
-            {
-              email: context.applicantEmail,
-              name: context.applicantName || undefined,
-            },
-          ],
-          subject: `${copy.subject} - ${context.clubName}`,
-          htmlContent: wrapHtml(
-            copy.title,
-            `<p>${copy.intro}</p>
-             <p><strong>${context.clubName}</strong></p>
-             ${notesBlock(context.decisionNote)}
-             <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
-             <p>${copy.outro}</p>`,
-            context.requestId
-          ),
-          textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
-            context.decisionNote ? `\n${context.decisionNote}\n` : ''
-          }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
-          tags: ['membership_approved'],
-        }
-  ).catch((error) => ({
+  const result = await sendTransactionalEmail({
+    to: [
+      {
+        email: context.applicantEmail,
+        name: context.applicantName || undefined,
+      },
+    ],
+    subject: `${copy.subject} - ${context.clubName}`,
+    htmlContent: wrapHtml(
+      copy.title,
+      `<p>${copy.intro}</p>
+       <p><strong>${context.clubName}</strong></p>
+       ${notesBlock(context.decisionNote)}
+       <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
+       <p>${copy.outro}</p>`,
+      context.requestId
+    ),
+    textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
+      context.decisionNote ? `\n${context.decisionNote}\n` : ''
+    }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
+    idempotencyKey: `membership-approved:${context.requestId}`,
+    tags: [
+      {
+        name: 'category',
+        value: 'membership',
+      },
+      {
+        name: 'status',
+        value: 'approved',
+      },
+    ],
+  }).catch((error) => ({
     success: false,
+    provider: 'RESEND' as const,
     error: error instanceof Error ? error.message : 'Unknown email error',
   }));
 
   return {
     ...result,
     locale,
-    templateId: templateId ?? undefined,
     fallbackUsed,
     requestsUrl,
   };
@@ -269,60 +243,50 @@ export async function sendMembershipApprovalEmail(
 export async function sendMembershipRejectionEmail(
   context: MembershipApprovalEmailContext
 ): Promise<MembershipRejectionEmailResult> {
-  const { locale, templateId, fallbackUsed } = resolveMembershipDecisionTemplate('rejected', context.locale);
+  const { locale, fallbackUsed } = resolveMembershipDecisionLocale(context.locale);
   const requestsUrl = getMembershipRequestsUrl(locale);
   const copy = membershipDecisionCopy[locale].rejected;
 
-  const result = await sendBrevoEmail(
-    templateId
-      ? {
-          to: [
-            {
-              email: context.applicantEmail,
-              name: context.applicantName || undefined,
-            },
-          ],
-          templateId,
-          params: {
-            applicantName: context.applicantName || context.applicantEmail,
-            clubName: context.clubName,
-            requestId: context.requestId,
-            decisionNote: context.decisionNote || '',
-            requestsUrl,
-          },
-          tags: ['membership_rejected'],
-        }
-      : {
-          to: [
-            {
-              email: context.applicantEmail,
-              name: context.applicantName || undefined,
-            },
-          ],
-          subject: `${copy.subject} - ${context.clubName}`,
-          htmlContent: wrapHtml(
-            copy.title,
-            `<p>${copy.intro}</p>
-             <p><strong>${context.clubName}</strong></p>
-             ${notesBlock(context.decisionNote)}
-             <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
-             <p>${copy.outro}</p>`,
-            context.requestId
-          ),
-          textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
-            context.decisionNote ? `\n${context.decisionNote}\n` : ''
-          }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
-          tags: ['membership_rejected'],
-        }
-  ).catch((error) => ({
+  const result = await sendTransactionalEmail({
+    to: [
+      {
+        email: context.applicantEmail,
+        name: context.applicantName || undefined,
+      },
+    ],
+    subject: `${copy.subject} - ${context.clubName}`,
+    htmlContent: wrapHtml(
+      copy.title,
+      `<p>${copy.intro}</p>
+       <p><strong>${context.clubName}</strong></p>
+       ${notesBlock(context.decisionNote)}
+       <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
+       <p>${copy.outro}</p>`,
+      context.requestId
+    ),
+    textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
+      context.decisionNote ? `\n${context.decisionNote}\n` : ''
+    }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
+    idempotencyKey: `membership-rejected:${context.requestId}`,
+    tags: [
+      {
+        name: 'category',
+        value: 'membership',
+      },
+      {
+        name: 'status',
+        value: 'rejected',
+      },
+    ],
+  }).catch((error) => ({
     success: false,
+    provider: 'RESEND' as const,
     error: error instanceof Error ? error.message : 'Unknown email error',
   }));
 
   return {
     ...result,
     locale,
-    templateId: templateId ?? undefined,
     fallbackUsed,
     requestsUrl,
   };

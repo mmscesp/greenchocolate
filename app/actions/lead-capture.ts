@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { sendBrevoEmail } from '@/lib/email/brevo';
+import { sendMarketingEmail } from '@/lib/email/service';
 
 type SupportedLocale = 'en' | 'es' | 'fr' | 'de';
 
@@ -409,7 +409,7 @@ export async function deliverSafetyKitLead(input: {
     };
   }
 
-  const delivery = await sendBrevoEmail({
+  const delivery = await sendMarketingEmail({
     to: [{ email: parsed.data.email }],
     subject: buildSafetyKitCopy(locale).subject,
     htmlContent: buildSafetyKitHtml(locale),
@@ -453,7 +453,7 @@ export async function deliverConciergePlan(input: {
     };
   }
 
-  const delivery = await sendBrevoEmail({
+  const delivery = await sendMarketingEmail({
     to: [{ email: parsed.data.email }],
     subject: buildConciergeCopy(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps).subject,
     htmlContent: buildConciergeHtml(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps),
@@ -496,7 +496,7 @@ export async function deliverEditorialDigestLead(input: {
     };
   }
 
-  const delivery = await sendBrevoEmail({
+  const delivery = await sendMarketingEmail({
     to: [{ email: parsed.data.email }],
     subject: buildEditorialDigestCopy(locale, parsed.data.primaryLabel, parsed.data.primaryHref).subject,
     htmlContent: buildEditorialDigestHtml(locale, parsed.data.primaryLabel, parsed.data.primaryHref),
