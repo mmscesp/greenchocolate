@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { CommunicationAudience, EmailProviderRoute } from '@prisma/client';
 import { enqueueAndProcessEmailOutbox } from '@/lib/communications/outbox';
 import { subscribeMarketingEmail } from '@/lib/communications/subscriptions';
+import { buildUnsubscribeUrl } from '@/lib/communications/unsubscribe';
 
 type SupportedLocale = 'en' | 'es' | 'fr' | 'de';
 
@@ -165,6 +166,7 @@ function buildSafetyKitCopy(locale: SupportedLocale) {
 function buildSafetyKitHtml(locale: SupportedLocale) {
   const copy = buildSafetyKitCopy(locale);
   const primaryUrl = toAbsoluteUrl(copy.primaryPath);
+  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
 
   return [
     `<h1>${copy.heading}</h1>`,
@@ -176,6 +178,7 @@ function buildSafetyKitHtml(locale: SupportedLocale) {
     ),
     '</ul>',
     `<p>${copy.footer}</p>`,
+    `<p style="font-size:12px;color:#6b7280;">Unsubscribe: <a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
   ].join('');
 }
 
@@ -252,6 +255,7 @@ function buildConciergeHtml(
   steps: ConciergeStepInput[]
 ) {
   const copy = buildConciergeCopy(locale, planName, summary, steps);
+  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
 
   return [
     `<h1>${copy.heading}</h1>`,
@@ -261,6 +265,7 @@ function buildConciergeHtml(
     ...copy.stepLines.map((step) => `<li><a href="${step.url}">${step.title}</a></li>`),
     '</ol>',
     `<p>${copy.footer}</p>`,
+    `<p style="font-size:12px;color:#6b7280;">Unsubscribe: <a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
   ].join('');
 }
 
@@ -364,6 +369,7 @@ function buildEditorialDigestCopy(locale: SupportedLocale, primaryLabel: string,
 
 function buildEditorialDigestHtml(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
   const copy = buildEditorialDigestCopy(locale, primaryLabel, primaryHref);
+  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
 
   return [
     `<h1>${copy.heading}</h1>`,
@@ -375,11 +381,13 @@ function buildEditorialDigestHtml(locale: SupportedLocale, primaryLabel: string,
     ),
     '</ul>',
     `<p>${copy.footer}</p>`,
+    `<p style="font-size:12px;color:#6b7280;">Unsubscribe: <a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
   ].join('');
 }
 
 function buildEditorialDigestText(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
   const copy = buildEditorialDigestCopy(locale, primaryLabel, primaryHref);
+  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
 
   return [
     copy.heading,
@@ -390,6 +398,8 @@ function buildEditorialDigestText(locale: SupportedLocale, primaryLabel: string,
     ...copy.secondaryLinks.map((link) => `${link.label}: ${toAbsoluteUrl(link.path)}`),
     '',
     copy.footer,
+    '',
+    `Unsubscribe: ${unsubscribeUrl}`,
   ].join('\n');
 }
 
@@ -413,6 +423,9 @@ async function sendMarketingLeadEmail(input: {
     },
   });
 
+  const withRecipientToken = (content: string) =>
+    content.replaceAll('__EMAIL__', input.email.trim().toLowerCase());
+
   const result = await enqueueAndProcessEmailOutbox({
     type: input.type,
     audience: CommunicationAudience.MARKETING,
@@ -425,8 +438,8 @@ async function sendMarketingLeadEmail(input: {
       input: {
         to: [{ email: input.email }],
         subject: input.subject,
-        htmlContent: input.htmlContent,
-        textContent: input.textContent,
+        htmlContent: withRecipientToken(input.htmlContent),
+        textContent: withRecipientToken(input.textContent),
       },
     },
   });
