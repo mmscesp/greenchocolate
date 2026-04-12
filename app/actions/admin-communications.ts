@@ -17,6 +17,7 @@ type AdminCommunicationsFilterInput = {
   search?: string;
   audience?: 'ALL' | CommunicationAudience;
   status?: 'ALL' | CommunicationStatus;
+  outboxStatus?: 'ALL' | EmailOutboxStatus;
 };
 
 function getCommunicationEventWhere(input: AdminCommunicationsFilterInput): Prisma.CommunicationEventWhereInput {
@@ -51,6 +52,7 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
     search: rawInput.search?.trim() || '',
     audience: rawInput.audience ?? 'ALL',
     status: rawInput.status ?? 'ALL',
+    outboxStatus: rawInput.outboxStatus ?? 'ALL',
   } satisfies AdminCommunicationsFilterInput;
 
   const communicationWhere = getCommunicationEventWhere(filters);
@@ -126,6 +128,28 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
       },
     }),
     prisma.emailOutbox.findMany({
+      where: {
+        ...(filters.outboxStatus !== 'ALL' ? { status: filters.outboxStatus } : {}),
+        ...(filters.search
+          ? {
+              OR: [
+                { provider: { contains: filters.search, mode: 'insensitive' } },
+                { lastError: { contains: filters.search, mode: 'insensitive' } },
+                {
+                  communicationEvent: {
+                    is: {
+                      OR: [
+                        { recipientEmail: { contains: filters.search, mode: 'insensitive' } },
+                        { type: { contains: filters.search, mode: 'insensitive' } },
+                        { subject: { contains: filters.search, mode: 'insensitive' } },
+                      ],
+                    },
+                  },
+                },
+              ],
+            }
+          : {}),
+      },
       orderBy: [{ updatedAt: 'desc' }],
       take: 25,
       select: {
@@ -140,8 +164,11 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
         sentAt: true,
         lastError: true,
         createdAt: true,
+        updatedAt: true,
+        relatedRequestId: true,
         communicationEvent: {
           select: {
+            id: true,
             type: true,
             recipientEmail: true,
             subject: true,

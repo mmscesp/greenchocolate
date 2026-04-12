@@ -5,6 +5,7 @@ import {
   getAdminMembershipRequestDetail,
   rejectMembershipRequestAction,
 } from '@/app/actions/applications';
+import { replayAdminCommunicationOutboxItem } from '@/app/actions/admin-communications';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -60,6 +61,11 @@ const adminRequestsCopy = {
     pendingDecision: 'This request is pending review.',
     internalNotes: 'Internal notes',
     noNotes: 'No notes yet.',
+    communications: 'Communications',
+    noCommunications: 'No communication events are linked to this request yet.',
+    notificationsTimeline: 'Notification timeline',
+    noNotifications: 'No in-app notifications were recorded for this request yet.',
+    replayQueuedEmail: 'Replay queued email',
   },
   es: {
     title: 'Solicitudes de membresia',
@@ -100,6 +106,11 @@ const adminRequestsCopy = {
     pendingDecision: 'Esta solicitud sigue pendiente de revision.',
     internalNotes: 'Notas internas',
     noNotes: 'Aun no hay notas.',
+    communications: 'Comunicaciones',
+    noCommunications: 'Todavia no hay eventos de comunicacion vinculados a esta solicitud.',
+    notificationsTimeline: 'Cronologia de notificaciones',
+    noNotifications: 'Todavia no hay notificaciones internas registradas para esta solicitud.',
+    replayQueuedEmail: 'Reintentar email en cola',
   },
   fr: {
     title: 'Demandes d adhesion',
@@ -140,6 +151,11 @@ const adminRequestsCopy = {
     pendingDecision: 'Cette demande est toujours en attente de revision.',
     internalNotes: 'Notes internes',
     noNotes: 'Pas encore de notes.',
+    communications: 'Communications',
+    noCommunications: 'Aucun evenement de communication n est encore lie a cette demande.',
+    notificationsTimeline: 'Chronologie des notifications',
+    noNotifications: 'Aucune notification interne n a encore ete enregistree pour cette demande.',
+    replayQueuedEmail: 'Relancer l email en file',
   },
   de: {
     title: 'Mitgliedschaftsanfragen',
@@ -180,6 +196,11 @@ const adminRequestsCopy = {
     pendingDecision: 'Diese Anfrage wartet noch auf eine Entscheidung.',
     internalNotes: 'Interne Notizen',
     noNotes: 'Noch keine Notizen.',
+    communications: 'Kommunikation',
+    noCommunications: 'Mit dieser Anfrage sind noch keine Kommunikationsereignisse verknupft.',
+    notificationsTimeline: 'Benachrichtigungsverlauf',
+    noNotifications: 'Fur diese Anfrage wurden noch keine In-App-Benachrichtigungen erfasst.',
+    replayQueuedEmail: 'Warteschlangen-E-Mail erneut senden',
   },
 } as const;
 
@@ -485,6 +506,73 @@ export default async function AdminRequestsPage({
                           <p className="font-medium">{note.authorName}</p>
                           <p className="text-muted-foreground">{new Date(note.createdAt).toLocaleString()}</p>
                           <p className="mt-1 text-slate-700">{note.body}</p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold">{copy.communications}</p>
+                  <div className="mt-2 space-y-2">
+                    {selectedRequest.communicationEvents.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">{copy.noCommunications}</p>
+                    ) : (
+                      selectedRequest.communicationEvents.map((event) => (
+                        <div key={event.id} className="rounded-xl border border-border p-3 text-sm">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant={badgeVariant(event.status)}>{event.status}</Badge>
+                            <Badge variant="secondary">{event.audience}</Badge>
+                            <span className="font-medium">{event.type}</span>
+                          </div>
+                          <p className="mt-2 text-muted-foreground">
+                            {event.recipientEmail || selectedRequest.user.email} {event.provider ? `· ${event.provider}` : ''}
+                          </p>
+                          {event.subject ? <p className="mt-1 text-slate-700">{event.subject}</p> : null}
+                          <p className="mt-1 text-muted-foreground">{new Date(event.createdAt).toLocaleString()}</p>
+                          {event.errorMessage ? <p className="mt-1 text-red-700">{event.errorMessage}</p> : null}
+                          {event.outbox ? (
+                            <div className="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-900/40">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant={badgeVariant(event.outbox.status)}>{event.outbox.status}</Badge>
+                                <Badge variant="secondary">{event.outbox.route}</Badge>
+                                <span>Attempts {event.outbox.attempts}/{event.outbox.maxAttempts}</span>
+                              </div>
+                              {event.outbox.lastError ? <p className="mt-2 text-red-700">{event.outbox.lastError}</p> : null}
+                              {['FAILED', 'SKIPPED'].includes(event.outbox.status) ? (
+                                <form action={replayAdminCommunicationOutboxItem} className="mt-3">
+                                  <input type="hidden" name="outboxId" value={event.outbox.id} />
+                                  <input type="hidden" name="returnPath" value={returnPath} />
+                                  <button type="submit" className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-900">
+                                    {copy.replayQueuedEmail}
+                                  </button>
+                                </form>
+                              ) : null}
+                            </div>
+                          ) : null}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold">{copy.notificationsTimeline}</p>
+                  <div className="mt-2 space-y-2">
+                    {selectedRequest.notifications.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">{copy.noNotifications}</p>
+                    ) : (
+                      selectedRequest.notifications.map((notification) => (
+                        <div key={notification.id} className="rounded-xl border border-border p-3 text-sm">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant={notification.isRead ? 'secondary' : 'default'}>
+                              {notification.isRead ? 'Read' : 'Unread'}
+                            </Badge>
+                            <span className="font-medium">{notification.type}</span>
+                          </div>
+                          <p className="mt-2 font-medium">{notification.title}</p>
+                          <p className="mt-1 text-slate-700">{notification.message}</p>
+                          <p className="mt-1 text-muted-foreground">{new Date(notification.createdAt).toLocaleString()}</p>
                         </div>
                       ))
                     )}

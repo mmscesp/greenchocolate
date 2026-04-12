@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import {
   getAdminCommunicationsOverview,
   processAdminPendingCommunications,
+  replayAdminCommunicationOutboxItem,
 } from '@/app/actions/admin-communications';
 
 export const dynamic = 'force-dynamic';
@@ -50,11 +51,13 @@ export default async function AdminCommunicationsPage({
   const search = getString(query.search);
   const audience = getString(query.audience, 'ALL') as 'ALL' | 'TRANSACTIONAL' | 'MARKETING';
   const eventStatus = getString(query.eventStatus, 'ALL') as 'ALL' | 'PENDING' | 'SENT' | 'SKIPPED' | 'FAILED';
+  const outboxStatus = getString(query.outboxStatus, 'ALL') as 'ALL' | 'PENDING' | 'PROCESSING' | 'SENT' | 'SKIPPED' | 'FAILED';
 
   const data = await getAdminCommunicationsOverview({
     search,
     audience,
     status: eventStatus,
+    outboxStatus,
   });
 
   if (!data) {
@@ -240,10 +243,28 @@ export default async function AdminCommunicationsPage({
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent outbox items</CardTitle>
-            <CardDescription>Persistence, retries, and delivery state for queued email work.</CardDescription>
+            <CardTitle>Outbox backlog</CardTitle>
+            <CardDescription>Persistence, retries, dead-letter style triage, and replay access for queued email work.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
+            <form className="grid gap-3 lg:grid-cols-[180px_auto] lg:items-center">
+              <input type="hidden" name="search" value={search} />
+              <input type="hidden" name="audience" value={audience} />
+              <input type="hidden" name="eventStatus" value={eventStatus} />
+              <select
+                name="outboxStatus"
+                defaultValue={outboxStatus}
+                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="ALL">All queue states</option>
+                <option value="PENDING">Pending</option>
+                <option value="PROCESSING">Processing</option>
+                <option value="SENT">Sent</option>
+                <option value="SKIPPED">Skipped</option>
+                <option value="FAILED">Failed</option>
+              </select>
+              <Button type="submit" variant="secondary">Filter backlog</Button>
+            </form>
             {data.recentOutbox.length === 0 ? (
               <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
                 No queued email work has been recorded yet.
@@ -257,16 +278,32 @@ export default async function AdminCommunicationsPage({
                       <Badge variant="secondary">{item.route}</Badge>
                       <span className="font-medium">{item.communicationEvent?.type || 'EMAIL_OUTBOX'}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">{formatDate(item.createdAt)}</span>
+                    <span className="text-xs text-muted-foreground">{formatDate(item.updatedAt)}</span>
                   </div>
                   <div className="mt-2 text-sm text-muted-foreground">
                     {item.communicationEvent?.recipientEmail || 'No recipient email'} {item.provider ? `• ${item.provider}` : ''}
                   </div>
+                  {item.relatedRequestId ? (
+                    <div className="mt-2 text-xs text-muted-foreground">Request {item.relatedRequestId}</div>
+                  ) : null}
                   <div className="mt-2 text-sm">
                     Attempts {item.attempts}/{item.maxAttempts} • Available {formatDate(item.availableAt)}
                   </div>
                   {item.lastError ? (
                     <div className="mt-2 text-sm text-red-600 dark:text-red-400">{item.lastError}</div>
+                  ) : null}
+                  {['FAILED', 'SKIPPED'].includes(item.status) ? (
+                    <form action={replayAdminCommunicationOutboxItem} className="mt-3">
+                      <input type="hidden" name="outboxId" value={item.id} />
+                      <input
+                        type="hidden"
+                        name="returnPath"
+                        value={`/${lang}/admin/communications?search=${encodeURIComponent(search)}&audience=${encodeURIComponent(audience)}&eventStatus=${encodeURIComponent(eventStatus)}&outboxStatus=${encodeURIComponent(outboxStatus)}`}
+                      />
+                      <Button type="submit" size="sm" variant="secondary">
+                        Replay queued email
+                      </Button>
+                    </form>
                   ) : null}
                 </div>
               ))

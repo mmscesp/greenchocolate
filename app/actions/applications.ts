@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { Prisma } from '@prisma/client';
-import { CommunicationAudience, CommunicationStatus } from '@prisma/client';
+import { CommunicationAudience, CommunicationStatus, EmailOutboxStatus, EmailProviderRoute } from '@prisma/client';
 import { z } from 'zod';
 import { EncryptionService } from '@/lib/encryption';
 import { prisma } from '@/lib/prisma';
@@ -155,6 +155,35 @@ export interface AdminMembershipRequestDetail {
     body: string;
     createdAt: string;
     authorName: string;
+  }[];
+  communicationEvents: {
+    id: string;
+    type: string;
+    audience: CommunicationAudience;
+    provider: string | null;
+    status: CommunicationStatus;
+    recipientEmail: string | null;
+    subject: string | null;
+    errorMessage: string | null;
+    sentAt: string | null;
+    createdAt: string;
+    outbox: {
+      id: string;
+      status: EmailOutboxStatus;
+      route: EmailProviderRoute;
+      attempts: number;
+      maxAttempts: number;
+      lastError: string | null;
+      availableAt: string;
+    } | null;
+  }[];
+  notifications: {
+    id: string;
+    type: string;
+    title: string;
+    message: string;
+    createdAt: string;
+    isRead: boolean;
   }[];
 }
 
@@ -1921,6 +1950,23 @@ export async function getAdminMembershipRequestDetail(requestId: string): Promis
           displayName: true,
           avatarUrl: true,
           role: true,
+          notifications: {
+            where: {
+              data: {
+                path: ['applicationId'],
+                equals: requestId,
+              },
+            },
+            orderBy: { createdAt: 'desc' },
+            select: {
+              id: true,
+              type: true,
+              title: true,
+              message: true,
+              createdAt: true,
+              isRead: true,
+            },
+          },
         },
       },
       club: {
@@ -1952,6 +1998,26 @@ export async function getAdminMembershipRequestDetail(requestId: string): Promis
   if (!request || request.user.role !== 'USER') {
     return null;
   }
+
+  const communicationEvents = await prisma.communicationEvent.findMany({
+    where: {
+      relatedRequestId: requestId,
+    },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      emailOutbox: {
+        select: {
+          id: true,
+          status: true,
+          route: true,
+          attempts: true,
+          maxAttempts: true,
+          lastError: true,
+          availableAt: true,
+        },
+      },
+    },
+  });
 
   const storedPayload = parseStoredPayload(request);
 
@@ -1986,6 +2052,37 @@ export async function getAdminMembershipRequestDetail(requestId: string): Promis
       body: note.body,
       createdAt: note.createdAt.toISOString(),
       authorName: note.author.displayName || note.author.email,
+    })),
+    communicationEvents: communicationEvents.map((event) => ({
+      id: event.id,
+      type: event.type,
+      audience: event.audience,
+      provider: event.provider,
+      status: event.status,
+      recipientEmail: event.recipientEmail,
+      subject: event.subject,
+      errorMessage: event.errorMessage,
+      sentAt: event.sentAt?.toISOString() || null,
+      createdAt: event.createdAt.toISOString(),
+      outbox: event.emailOutbox
+        ? {
+            id: event.emailOutbox.id,
+            status: event.emailOutbox.status,
+            route: event.emailOutbox.route,
+            attempts: event.emailOutbox.attempts,
+            maxAttempts: event.emailOutbox.maxAttempts,
+            lastError: event.emailOutbox.lastError,
+            availableAt: event.emailOutbox.availableAt.toISOString(),
+          }
+        : null,
+    })),
+    notifications: request.user.notifications.map((notification) => ({
+      id: notification.id,
+      type: notification.type,
+      title: notification.title,
+      message: notification.message,
+      createdAt: notification.createdAt.toISOString(),
+      isRead: notification.isRead,
     })),
   };
 }
