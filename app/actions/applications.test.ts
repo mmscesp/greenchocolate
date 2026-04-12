@@ -32,6 +32,9 @@ vi.mock('@/lib/prisma', () => ({
       create: vi.fn(),
       deleteMany: vi.fn(),
     },
+    communicationEvent: {
+      create: vi.fn(),
+    },
     membershipRequestNote: {
       create: vi.fn(),
     },
@@ -207,6 +210,7 @@ describe('Application Actions', () => {
     (prisma.membershipRequest.updateMany as any).mockResolvedValue({ count: 1 });
     (prisma.notification.create as any).mockResolvedValue({ id: 'notification-1' });
     (prisma.notification.deleteMany as any).mockResolvedValue({ count: 1 });
+    (prisma.communicationEvent.create as any).mockResolvedValue({ id: 'comm-1' });
     (prisma.applicationStageHistory.create as any).mockResolvedValue({ id: 'history-1' });
     (prisma.auditLog.create as any).mockResolvedValue({ id: 'audit-1' });
 

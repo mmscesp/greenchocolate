@@ -103,6 +103,7 @@ model Profile {
   reviews                         Review[]
   favorites                       Favorite[]
   notifications                   Notification[]
+  communicationEvents             CommunicationEvent[]
   safetyPass                      SafetyPass?
   bookings                        Booking[]
   clubRegistrationRequests ClubRegistrationRequest[]
@@ -389,6 +390,36 @@ model Notification {
   @@index([userId, isRead])
 }
 
+model CommunicationEvent {
+  id             String                 @id @default(uuid())
+  type           String
+  channel        CommunicationChannel
+  audience       CommunicationAudience
+  provider       String?
+  status         CommunicationStatus
+  relatedUserId  String?
+  relatedRequestId String?
+  idempotencyKey String?
+  locale         String?
+  subject        String?
+  recipientEmail String?
+  payload        Json?
+  errorMessage   String?
+  sentAt         DateTime?
+  processedAt    DateTime?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  relatedUser    Profile?               @relation(fields: [relatedUserId], references: [id], onDelete: SetNull)
+
+  @@index([type, createdAt])
+  @@index([status, createdAt])
+  @@index([relatedUserId, createdAt])
+  @@index([relatedRequestId, createdAt])
+  @@index([audience, channel, createdAt])
+  @@index([recipientEmail, createdAt])
+}
+
 model ApplicationStageHistory {
   id            String   @id @default(uuid())
   applicationId String
@@ -454,4 +485,21 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum CommunicationChannel {
+  EMAIL
+  IN_APP
+}
+
+enum CommunicationAudience {
+  TRANSACTIONAL
+  MARKETING
+}
+
+enum CommunicationStatus {
+  PENDING
+  SENT
+  SKIPPED
+  FAILED
 }

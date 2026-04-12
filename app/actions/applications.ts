@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { Prisma } from '@prisma/client';
+import { CommunicationAudience, CommunicationStatus } from '@prisma/client';
 import { z } from 'zod';
 import { EncryptionService } from '@/lib/encryption';
 import { prisma } from '@/lib/prisma';
@@ -45,6 +46,7 @@ import {
   sendMembershipRejectionEmail,
   sendMembershipSubmissionEmail,
 } from '@/lib/email/membership';
+import { recordCommunicationEvent } from '@/lib/communications/events';
 import { getSessionProfile } from '@/lib/session-profile';
 
 const TRANSACTION_MAX_RETRIES = 3;
@@ -387,6 +389,7 @@ async function logMembershipDecisionEmailEvent(input: {
   actorAuthId: string;
   requestId: string;
   emailType: 'APPROVAL' | 'REJECTION';
+  recipientEmail: string;
   result: {
     success: boolean;
     provider?: string;
@@ -415,6 +418,59 @@ async function logMembershipDecisionEmailEvent(input: {
       requestsUrl: input.result.requestsUrl ?? null,
       error: input.result.success ? null : input.result.error || 'Unknown email error',
     },
+  });
+
+  await recordCommunicationEvent({
+    type: `MEMBERSHIP_${input.emailType}_EMAIL`,
+    audience: CommunicationAudience.TRANSACTIONAL,
+    status: input.result.success
+      ? CommunicationStatus.SENT
+      : input.result.skipped
+        ? CommunicationStatus.SKIPPED
+        : CommunicationStatus.FAILED,
+    provider: input.result.provider ?? null,
+    relatedRequestId: input.requestId,
+    locale: input.result.locale ?? null,
+    recipientEmail: input.recipientEmail,
+    payload: {
+      fallbackUsed: input.result.fallbackUsed ?? false,
+      messageId: input.result.messageId ?? null,
+      requestsUrl: input.result.requestsUrl ?? null,
+    },
+    errorMessage: input.result.success ? null : input.result.error || 'Unknown email error',
+    sentAt: input.result.success ? new Date() : null,
+  });
+}
+
+async function logMembershipSubmissionEmailEvent(input: {
+  requestId: string;
+  recipientEmail: string;
+  locale?: string | null;
+  result: {
+    success: boolean;
+    provider?: string;
+    skipped?: boolean;
+    error?: string;
+    messageId?: string;
+  };
+}) {
+  await recordCommunicationEvent({
+    type: 'MEMBERSHIP_SUBMISSION_EMAIL',
+    audience: CommunicationAudience.TRANSACTIONAL,
+    status: input.result.success
+      ? CommunicationStatus.SENT
+      : input.result.skipped
+        ? CommunicationStatus.SKIPPED
+        : CommunicationStatus.FAILED,
+    provider: input.result.provider ?? null,
+    relatedRequestId: input.requestId,
+    recipientEmail: input.recipientEmail,
+    locale: input.locale ?? null,
+    payload: {
+      messageId: input.result.messageId ?? null,
+    },
+    errorMessage: input.result.success ? null : input.result.error || 'Unknown email error',
+    sentAt: input.result.success ? new Date() : null,
   });
 }
 
@@ -831,7 +887,7 @@ export async function submitMembershipApplication(
       },
     });
 
-    await attemptMembershipEmail(() =>
+    const submissionEmailResult = await attemptMembershipEmail(() =>
       sendMembershipSubmissionEmail({
         applicantEmail: profile.email,
         applicantName: profile.displayName,
@@ -839,6 +895,13 @@ export async function submitMembershipApplication(
         requestId: created.id,
       })
     );
+
+    await logMembershipSubmissionEmailEvent({
+      requestId: created.id,
+      recipientEmail: profile.email,
+      locale: validated.data.locale,
+      result: submissionEmailResult,
+    });
 
     const completion = new Date(created.createdAt);
     completion.setDate(completion.getDate() + 10);
@@ -1229,7 +1292,7 @@ export async function finalizeMembershipApplicationLead(input: {
       },
     });
 
-    await attemptMembershipEmail(() =>
+    const submissionEmailResult = await attemptMembershipEmail(() =>
       sendMembershipSubmissionEmail({
         applicantEmail: profile.email,
         applicantName: profile.displayName,
@@ -1237,6 +1300,13 @@ export async function finalizeMembershipApplicationLead(input: {
         requestId: created.id,
       })
     );
+
+    await logMembershipSubmissionEmailEvent({
+      requestId: created.id,
+      recipientEmail: profile.email,
+      locale: resolveMembershipRequestLocale(lead.payloadMeta),
+      result: submissionEmailResult,
+    });
 
     const completion = new Date(created.createdAt);
     completion.setDate(completion.getDate() + 10);
@@ -1507,6 +1577,7 @@ export async function approveMembershipRequest(
     actorAuthId: profile.authId,
     requestId: request.id,
     emailType: 'APPROVAL',
+    recipientEmail: request.user.email,
     result: emailResult,
   });
 
@@ -1651,6 +1722,7 @@ export async function rejectMembershipRequest(
     actorAuthId: profile.authId,
     requestId: request.id,
     emailType: 'REJECTION',
+    recipientEmail: request.user.email,
     result: emailResult,
   });
 
