@@ -2,7 +2,7 @@
 
 import { CommunicationAudience, CommunicationStatus, EmailOutboxStatus, type Prisma } from '@prisma/client';
 import { redirect } from 'next/navigation';
-import { processPendingEmailOutbox } from '@/lib/communications/outbox';
+import { processPendingEmailOutbox, retryEmailOutboxItem, processEmailOutboxItem } from '@/lib/communications/outbox';
 import { getServerEnv } from '@/lib/env';
 import { prisma } from '@/lib/prisma';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
@@ -273,5 +273,57 @@ export async function processAdminPendingCommunications(formData: FormData): Pro
   } catch (error) {
     console.error('processAdminPendingCommunications error:', error);
     redirect(withAdminActionStatus(returnPath, 'error', 'Failed to process queued communications.'));
+  }
+}
+
+export async function replayAdminCommunicationOutboxItem(formData: FormData): Promise<void> {
+  const admin = await getAdminSessionProfile();
+  const returnPath = getSafeAdminReturnPath(formData.get('returnPath'), '/en/admin/communications');
+
+  if (!admin) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Admin session is required.'));
+    return;
+  }
+
+  const outboxId = String(formData.get('outboxId') || '').trim();
+  if (!outboxId) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Outbox item identifier is required.'));
+    return;
+  }
+
+  try {
+    const retried = await retryEmailOutboxItem(outboxId);
+    if (!retried.success) {
+      redirect(withAdminActionStatus(returnPath, 'error', retried.error));
+      return;
+    }
+
+    const result = await processEmailOutboxItem(outboxId);
+
+    await logAdminAuditEvent({
+      tableName: 'EmailOutbox',
+      operation: 'ADMIN_REPLAY_COMMUNICATION',
+      changedBy: admin.authId,
+      recordId: outboxId,
+      changeData: {
+        result,
+      },
+    });
+
+    revalidateAdminPortalPaths(['/communications', '/users']);
+    redirect(
+      withAdminActionStatus(
+        returnPath,
+        result?.success
+          ? 'success'
+          : 'error',
+        result?.success
+          ? 'Communication replay completed successfully.'
+          : result?.error || 'Communication replay did not complete successfully.'
+      )
+    );
+  } catch (error) {
+    console.error('replayAdminCommunicationOutboxItem error:', error);
+    redirect(withAdminActionStatus(returnPath, 'error', 'Failed to replay communication outbox item.'));
   }
 }

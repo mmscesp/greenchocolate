@@ -278,3 +278,51 @@ export async function processPendingEmailOutbox(limit = 25) {
 
   return results;
 }
+
+export async function retryEmailOutboxItem(outboxId: string) {
+  const existing = await prisma.emailOutbox.findUnique({
+    where: { id: outboxId },
+    select: {
+      id: true,
+      status: true,
+      maxAttempts: true,
+      attempts: true,
+      communicationEventId: true,
+    },
+  });
+
+  if (!existing) {
+    return { success: false as const, error: 'Email outbox item was not found.' };
+  }
+
+  if (existing.status !== EmailOutboxStatus.FAILED && existing.status !== EmailOutboxStatus.SKIPPED) {
+    return { success: false as const, error: 'Only failed or skipped email outbox items can be retried.' };
+  }
+
+  await prisma.emailOutbox.update({
+    where: { id: outboxId },
+    data: {
+      status: EmailOutboxStatus.PENDING,
+      availableAt: new Date(),
+      lockedAt: null,
+      processedAt: null,
+      sentAt: null,
+      lastError: null,
+      attempts: existing.status === EmailOutboxStatus.SKIPPED ? 0 : Math.min(existing.attempts, existing.maxAttempts - 1),
+    },
+  });
+
+  if (existing.communicationEventId) {
+    await prisma.communicationEvent.update({
+      where: { id: existing.communicationEventId },
+      data: {
+        status: CommunicationStatus.PENDING,
+        errorMessage: null,
+        processedAt: new Date(),
+        sentAt: null,
+      },
+    });
+  }
+
+  return { success: true as const };
+}
