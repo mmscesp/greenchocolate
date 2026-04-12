@@ -262,7 +262,7 @@ export async function sendMembershipApprovalEmail(
     success: false,
     provider: 'RESEND' as const,
     error: error instanceof Error ? error.message : 'Unknown email error',
-  }));
+  })) as TransactionalEmailSendResult;
 
   return {
     ...result,
@@ -330,7 +330,7 @@ export async function sendMembershipRejectionEmail(
     success: false,
     provider: 'RESEND' as const,
     error: error instanceof Error ? error.message : 'Unknown email error',
-  }));
+  })) as TransactionalEmailSendResult;
 
   return {
     ...result,

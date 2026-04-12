@@ -12,11 +12,11 @@ import { canReceiveMarketingEmail, markSubscriptionEmailDelivered } from '@/lib/
 
 type EmailOutboxPayload =
   | {
-      route: EmailProviderRoute.TRANSACTIONAL;
+      route: 'TRANSACTIONAL';
       input: TransactionalEmailInput;
     }
   | {
-      route: EmailProviderRoute.MARKETING;
+      route: 'MARKETING';
       input: MarketingEmailInput;
     };
 
