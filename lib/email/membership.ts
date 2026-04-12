@@ -1,4 +1,6 @@
-import { sendTransactionalEmail, type TransactionalEmailSendResult } from '@/lib/email/service';
+import { CommunicationAudience, EmailProviderRoute } from '@prisma/client';
+import { enqueueAndProcessEmailOutbox } from '@/lib/communications/outbox';
+import type { TransactionalEmailSendResult } from '@/lib/email/service';
 import { publicEnv } from '@/lib/env';
 import { isLocale, type Locale } from '@/lib/i18n-config';
 
@@ -137,25 +139,38 @@ async function sendMembershipEmail(
   title: string,
   subject: string,
   body: string,
-  idempotencyKey: string
+  idempotencyKey: string,
+  type: string
 ) {
-  return sendTransactionalEmail({
-    to: [
-      {
-        email: context.applicantEmail,
-        name: context.applicantName || undefined,
-      },
-    ],
+  return enqueueAndProcessEmailOutbox({
+    type,
+    audience: CommunicationAudience.TRANSACTIONAL,
+    route: EmailProviderRoute.TRANSACTIONAL,
+    relatedRequestId: context.requestId,
+    recipientEmail: context.applicantEmail,
     subject,
-    htmlContent: wrapHtml(title, body, context.requestId),
-    textContent: `${title}\n\n${body.replace(/<br\/>/g, '\n').replace(/<[^>]+>/g, '')}\n\nRequest reference: ${context.requestId}`,
     idempotencyKey,
-    tags: [
-      {
-        name: 'category',
-        value: 'membership',
+    payload: {
+      route: EmailProviderRoute.TRANSACTIONAL,
+      input: {
+        to: [
+          {
+            email: context.applicantEmail,
+            name: context.applicantName || undefined,
+          },
+        ],
+        subject,
+        htmlContent: wrapHtml(title, body, context.requestId),
+        textContent: `${title}\n\n${body.replace(/<br\/>/g, '\n').replace(/<[^>]+>/g, '')}\n\nRequest reference: ${context.requestId}`,
+        idempotencyKey,
+        tags: [
+          {
+            name: 'category',
+            value: 'membership',
+          },
+        ],
       },
-    ],
+    },
   });
 }
 
@@ -184,7 +199,8 @@ export async function sendMembershipSubmissionEmail(context: MembershipEmailCont
     `We received your membership request for ${context.clubName}`,
     `<p>We received your request for <strong>${context.clubName}</strong>. Our team will review it and contact you with the outcome.</p>
      <p>You can also track the current status from your profile requests area.</p>`,
-    `membership-submission:${context.requestId}`
+    `membership-submission:${context.requestId}`,
+    'MEMBERSHIP_SUBMISSION_EMAIL'
   );
 }
 
@@ -195,37 +211,53 @@ export async function sendMembershipApprovalEmail(
   const requestsUrl = getMembershipRequestsUrl(locale);
   const copy = membershipDecisionCopy[locale].approved;
 
-  const result = await sendTransactionalEmail({
-    to: [
-      {
-        email: context.applicantEmail,
-        name: context.applicantName || undefined,
+  const subject = `${copy.subject} - ${context.clubName}`;
+  const idempotencyKey = `membership-approved:${context.requestId}`;
+
+  const result = await enqueueAndProcessEmailOutbox({
+    type: 'MEMBERSHIP_APPROVAL_EMAIL',
+    audience: CommunicationAudience.TRANSACTIONAL,
+    route: EmailProviderRoute.TRANSACTIONAL,
+    relatedRequestId: context.requestId,
+    recipientEmail: context.applicantEmail,
+    locale,
+    subject,
+    idempotencyKey,
+    payload: {
+      route: EmailProviderRoute.TRANSACTIONAL,
+      input: {
+        to: [
+          {
+            email: context.applicantEmail,
+            name: context.applicantName || undefined,
+          },
+        ],
+        subject,
+        htmlContent: wrapHtml(
+          copy.title,
+          `<p>${copy.intro}</p>
+           <p><strong>${context.clubName}</strong></p>
+           ${notesBlock(context.decisionNote)}
+           <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
+           <p>${copy.outro}</p>`,
+          context.requestId
+        ),
+        textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
+          context.decisionNote ? `\n${context.decisionNote}\n` : ''
+        }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
+        idempotencyKey,
+        tags: [
+          {
+            name: 'category',
+            value: 'membership',
+          },
+          {
+            name: 'status',
+            value: 'approved',
+          },
+        ],
       },
-    ],
-    subject: `${copy.subject} - ${context.clubName}`,
-    htmlContent: wrapHtml(
-      copy.title,
-      `<p>${copy.intro}</p>
-       <p><strong>${context.clubName}</strong></p>
-       ${notesBlock(context.decisionNote)}
-       <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
-       <p>${copy.outro}</p>`,
-      context.requestId
-    ),
-    textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
-      context.decisionNote ? `\n${context.decisionNote}\n` : ''
-    }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
-    idempotencyKey: `membership-approved:${context.requestId}`,
-    tags: [
-      {
-        name: 'category',
-        value: 'membership',
-      },
-      {
-        name: 'status',
-        value: 'approved',
-      },
-    ],
+    },
   }).catch((error) => ({
     success: false,
     provider: 'RESEND' as const,
@@ -247,37 +279,53 @@ export async function sendMembershipRejectionEmail(
   const requestsUrl = getMembershipRequestsUrl(locale);
   const copy = membershipDecisionCopy[locale].rejected;
 
-  const result = await sendTransactionalEmail({
-    to: [
-      {
-        email: context.applicantEmail,
-        name: context.applicantName || undefined,
+  const subject = `${copy.subject} - ${context.clubName}`;
+  const idempotencyKey = `membership-rejected:${context.requestId}`;
+
+  const result = await enqueueAndProcessEmailOutbox({
+    type: 'MEMBERSHIP_REJECTION_EMAIL',
+    audience: CommunicationAudience.TRANSACTIONAL,
+    route: EmailProviderRoute.TRANSACTIONAL,
+    relatedRequestId: context.requestId,
+    recipientEmail: context.applicantEmail,
+    locale,
+    subject,
+    idempotencyKey,
+    payload: {
+      route: EmailProviderRoute.TRANSACTIONAL,
+      input: {
+        to: [
+          {
+            email: context.applicantEmail,
+            name: context.applicantName || undefined,
+          },
+        ],
+        subject,
+        htmlContent: wrapHtml(
+          copy.title,
+          `<p>${copy.intro}</p>
+           <p><strong>${context.clubName}</strong></p>
+           ${notesBlock(context.decisionNote)}
+           <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
+           <p>${copy.outro}</p>`,
+          context.requestId
+        ),
+        textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
+          context.decisionNote ? `\n${context.decisionNote}\n` : ''
+        }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
+        idempotencyKey,
+        tags: [
+          {
+            name: 'category',
+            value: 'membership',
+          },
+          {
+            name: 'status',
+            value: 'rejected',
+          },
+        ],
       },
-    ],
-    subject: `${copy.subject} - ${context.clubName}`,
-    htmlContent: wrapHtml(
-      copy.title,
-      `<p>${copy.intro}</p>
-       <p><strong>${context.clubName}</strong></p>
-       ${notesBlock(context.decisionNote)}
-       <p><a href="${requestsUrl}">${membershipDecisionCopy[locale].requestsCta}</a></p>
-       <p>${copy.outro}</p>`,
-      context.requestId
-    ),
-    textContent: `${copy.title}\n\n${copy.intro}\n${context.clubName}\n${
-      context.decisionNote ? `\n${context.decisionNote}\n` : ''
-    }\n${requestsUrl}\n\n${copy.outro}\n\nRequest reference: ${context.requestId}`,
-    idempotencyKey: `membership-rejected:${context.requestId}`,
-    tags: [
-      {
-        name: 'category',
-        value: 'membership',
-      },
-      {
-        name: 'status',
-        value: 'rejected',
-      },
-    ],
+    },
   }).catch((error) => ({
     success: false,
     provider: 'RESEND' as const,

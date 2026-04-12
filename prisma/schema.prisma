@@ -104,6 +104,7 @@ model Profile {
   favorites                       Favorite[]
   notifications                   Notification[]
   communicationEvents             CommunicationEvent[]
+  emailOutboxItems                EmailOutbox[]
   safetyPass                      SafetyPass?
   bookings                        Booking[]
   clubRegistrationRequests ClubRegistrationRequest[]
@@ -411,6 +412,7 @@ model CommunicationEvent {
   updatedAt      DateTime               @updatedAt
 
   relatedUser    Profile?               @relation(fields: [relatedUserId], references: [id], onDelete: SetNull)
+  emailOutbox    EmailOutbox?
 
   @@index([type, createdAt])
   @@index([status, createdAt])
@@ -418,6 +420,36 @@ model CommunicationEvent {
   @@index([relatedRequestId, createdAt])
   @@index([audience, channel, createdAt])
   @@index([recipientEmail, createdAt])
+}
+
+model EmailOutbox {
+  id                   String            @id @default(uuid())
+  communicationEventId String?           @unique
+  audience             CommunicationAudience
+  route                EmailProviderRoute
+  status               EmailOutboxStatus
+  relatedUserId        String?
+  relatedRequestId     String?
+  provider             String?
+  idempotencyKey       String?
+  payload              Json
+  attempts             Int               @default(0)
+  maxAttempts          Int               @default(3)
+  availableAt          DateTime          @default(now())
+  lockedAt             DateTime?
+  processedAt          DateTime?
+  sentAt               DateTime?
+  lastError            String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  communicationEvent   CommunicationEvent? @relation(fields: [communicationEventId], references: [id], onDelete: SetNull)
+  relatedUser          Profile?            @relation(fields: [relatedUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, availableAt, createdAt])
+  @@index([relatedUserId, createdAt])
+  @@index([relatedRequestId, createdAt])
+  @@index([audience, route, createdAt])
 }
 
 model ApplicationStageHistory {
@@ -499,6 +531,19 @@ enum CommunicationAudience {
 
 enum CommunicationStatus {
   PENDING
+  SENT
+  SKIPPED
+  FAILED
+}
+
+enum EmailProviderRoute {
+  TRANSACTIONAL
+  MARKETING
+}
+
+enum EmailOutboxStatus {
+  PENDING
+  PROCESSING
   SENT
   SKIPPED
   FAILED

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const sendTransactionalEmailMock = vi.fn();
+const enqueueAndProcessEmailOutboxMock = vi.fn();
 
-vi.mock('@/lib/email/service', () => ({
-  sendTransactionalEmail: (...args: unknown[]) => sendTransactionalEmailMock(...args),
+vi.mock('@/lib/communications/outbox', () => ({
+  enqueueAndProcessEmailOutbox: (...args: unknown[]) => enqueueAndProcessEmailOutboxMock(...args),
 }));
 
 vi.mock('@/lib/env', () => ({
@@ -16,8 +16,8 @@ import { sendMembershipApprovalEmail, sendMembershipRejectionEmail } from '@/lib
 
 describe('membership email helpers', () => {
   beforeEach(() => {
-    sendTransactionalEmailMock.mockReset();
-    sendTransactionalEmailMock.mockResolvedValue({
+    enqueueAndProcessEmailOutboxMock.mockReset();
+    enqueueAndProcessEmailOutboxMock.mockResolvedValue({
       success: true,
       provider: 'RESEND',
       messageId: 'resend-message',
@@ -34,11 +34,11 @@ describe('membership email helpers', () => {
       decisionNote: 'Trae tu identificacion',
     });
 
-    expect(sendTransactionalEmailMock).toHaveBeenCalledWith(
+    expect(enqueueAndProcessEmailOutboxMock).toHaveBeenCalledWith(
       expect.objectContaining({
         subject: 'Tu solicitud de membresia fue aprobada - Club One',
         idempotencyKey: 'membership-approved:request-1',
-        textContent: expect.stringContaining('https://example.com/es/profile/requests'),
+        type: 'MEMBERSHIP_APPROVAL_EMAIL',
       })
     );
     expect(result.provider).toBe('RESEND');
@@ -55,7 +55,7 @@ describe('membership email helpers', () => {
       decisionNote: 'Bring ID',
     });
 
-    expect(sendTransactionalEmailMock).toHaveBeenCalledWith(
+    expect(enqueueAndProcessEmailOutboxMock).toHaveBeenCalledWith(
       expect.objectContaining({
         subject: 'Your membership request was approved - Club One',
       })
@@ -74,11 +74,11 @@ describe('membership email helpers', () => {
       decisionNote: 'Falta informacion obligatoria',
     });
 
-    expect(sendTransactionalEmailMock).toHaveBeenCalledWith(
+    expect(enqueueAndProcessEmailOutboxMock).toHaveBeenCalledWith(
       expect.objectContaining({
         subject: 'Tu solicitud de membresia no fue aprobada - Club One',
         idempotencyKey: 'membership-rejected:request-3',
-        textContent: expect.stringContaining('Falta informacion obligatoria'),
+        type: 'MEMBERSHIP_REJECTION_EMAIL',
       })
     );
     expect(result.provider).toBe('RESEND');

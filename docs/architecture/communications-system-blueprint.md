@@ -55,6 +55,7 @@ Marketing sends must be:
 - Add persistent outbox tables for transactional and marketing jobs.
 - Process sends through workers with retry and failure state tracking.
 - Add webhook ingestion for Resend delivery/suppression events and Brevo unsubscribe/campaign events.
+- Expose a secured processing endpoint for cron-driven outbox execution.
 
 ### Phase 3
 
