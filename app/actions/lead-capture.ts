@@ -1,7 +1,9 @@
 'use server';
 
 import { z } from 'zod';
-import { sendMarketingEmail } from '@/lib/email/service';
+import { CommunicationAudience, EmailProviderRoute } from '@prisma/client';
+import { enqueueAndProcessEmailOutbox } from '@/lib/communications/outbox';
+import { subscribeMarketingEmail } from '@/lib/communications/subscriptions';
 
 type SupportedLocale = 'en' | 'es' | 'fr' | 'de';
 
@@ -391,6 +393,47 @@ function buildEditorialDigestText(locale: SupportedLocale, primaryLabel: string,
   ].join('\n');
 }
 
+async function sendMarketingLeadEmail(input: {
+  type: string;
+  email: string;
+  locale: SupportedLocale;
+  source?: string;
+  subject: string;
+  htmlContent: string;
+  textContent: string;
+  fallbackPath: string;
+}) {
+  await subscribeMarketingEmail({
+    email: input.email,
+    locale: input.locale,
+    source: input.source ?? input.type.toLowerCase(),
+    metadata: {
+      fallbackPath: input.fallbackPath,
+      type: input.type,
+    },
+  });
+
+  const result = await enqueueAndProcessEmailOutbox({
+    type: input.type,
+    audience: CommunicationAudience.MARKETING,
+    route: EmailProviderRoute.MARKETING,
+    recipientEmail: input.email,
+    locale: input.locale,
+    subject: input.subject,
+    payload: {
+      route: EmailProviderRoute.MARKETING,
+      input: {
+        to: [{ email: input.email }],
+        subject: input.subject,
+        htmlContent: input.htmlContent,
+        textContent: input.textContent,
+      },
+    },
+  });
+
+  return result;
+}
+
 export async function deliverSafetyKitLead(input: {
   email: string;
   locale?: string;
@@ -409,11 +452,16 @@ export async function deliverSafetyKitLead(input: {
     };
   }
 
-  const delivery = await sendMarketingEmail({
-    to: [{ email: parsed.data.email }],
-    subject: buildSafetyKitCopy(locale).subject,
+  const copy = buildSafetyKitCopy(locale);
+  const delivery = await sendMarketingLeadEmail({
+    type: 'SAFETY_KIT_LEAD_EMAIL',
+    email: parsed.data.email,
+    locale,
+    source: parsed.data.source,
+    subject: copy.subject,
     htmlContent: buildSafetyKitHtml(locale),
     textContent: buildSafetyKitText(locale),
+    fallbackPath,
   });
 
   if (!delivery.success) {
@@ -453,11 +501,16 @@ export async function deliverConciergePlan(input: {
     };
   }
 
-  const delivery = await sendMarketingEmail({
-    to: [{ email: parsed.data.email }],
-    subject: buildConciergeCopy(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps).subject,
+  const copy = buildConciergeCopy(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps);
+  const delivery = await sendMarketingLeadEmail({
+    type: 'CONCIERGE_PLAN_EMAIL',
+    email: parsed.data.email,
+    locale,
+    source: parsed.data.planName,
+    subject: copy.subject,
     htmlContent: buildConciergeHtml(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps),
     textContent: buildConciergeText(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps),
+    fallbackPath,
   });
 
   if (!delivery.success) {
@@ -496,11 +549,16 @@ export async function deliverEditorialDigestLead(input: {
     };
   }
 
-  const delivery = await sendMarketingEmail({
-    to: [{ email: parsed.data.email }],
-    subject: buildEditorialDigestCopy(locale, parsed.data.primaryLabel, parsed.data.primaryHref).subject,
+  const copy = buildEditorialDigestCopy(locale, parsed.data.primaryLabel, parsed.data.primaryHref);
+  const delivery = await sendMarketingLeadEmail({
+    type: 'EDITORIAL_DIGEST_EMAIL',
+    email: parsed.data.email,
+    locale,
+    source: parsed.data.source,
+    subject: copy.subject,
     htmlContent: buildEditorialDigestHtml(locale, parsed.data.primaryLabel, parsed.data.primaryHref),
     textContent: buildEditorialDigestText(locale, parsed.data.primaryLabel, parsed.data.primaryHref),
+    fallbackPath,
   });
 
   if (!delivery.success) {

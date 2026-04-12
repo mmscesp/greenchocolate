@@ -105,6 +105,7 @@ model Profile {
   notifications                   Notification[]
   communicationEvents             CommunicationEvent[]
   emailOutboxItems                EmailOutbox[]
+  emailSubscriptions              EmailSubscription[]
   safetyPass                      SafetyPass?
   bookings                        Booking[]
   clubRegistrationRequests ClubRegistrationRequest[]
@@ -452,6 +453,46 @@ model EmailOutbox {
   @@index([audience, route, createdAt])
 }
 
+model EmailSubscription {
+  id                   String                  @id @default(uuid())
+  email                String                  @unique
+  profileId            String?
+  status               EmailSubscriptionStatus
+  locale               String?
+  source               String?
+  marketingConsentAt   DateTime?
+  unsubscribedAt       DateTime?
+  lastMarketingEmailAt DateTime?
+  lastTransactionalEmailAt DateTime?
+  provider             String?
+  providerContactId    String?
+  metadata             Json?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  profile              Profile?                @relation(fields: [profileId], references: [id], onDelete: SetNull)
+
+  @@index([profileId])
+  @@index([status, updatedAt])
+}
+
+model ProviderWebhookEvent {
+  id               String    @id @default(uuid())
+  provider         String
+  eventType        String
+  externalId       String?
+  recipientEmail   String?
+  signatureValid   Boolean   @default(false)
+  processedAt      DateTime?
+  errorMessage     String?
+  payload          Json
+  createdAt        DateTime  @default(now())
+
+  @@index([provider, eventType, createdAt])
+  @@index([externalId])
+  @@index([recipientEmail, createdAt])
+}
+
 model ApplicationStageHistory {
   id            String   @id @default(uuid())
   applicationId String
@@ -547,4 +588,9 @@ enum EmailOutboxStatus {
   SENT
   SKIPPED
   FAILED
+}
+
+enum EmailSubscriptionStatus {
+  SUBSCRIBED
+  UNSUBSCRIBED
 }

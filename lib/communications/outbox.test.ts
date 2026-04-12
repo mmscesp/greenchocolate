@@ -5,6 +5,7 @@ vi.mock('@/lib/prisma', () => ({
   prisma: {
     communicationEvent: {
       create: vi.fn(),
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
     emailOutbox: {
@@ -19,10 +20,17 @@ vi.mock('@/lib/prisma', () => ({
 
 const sendTransactionalEmailMock = vi.fn();
 const sendMarketingEmailMock = vi.fn();
+const canReceiveMarketingEmailMock = vi.fn();
+const markSubscriptionEmailDeliveredMock = vi.fn();
 
 vi.mock('@/lib/email/service', () => ({
   sendTransactionalEmail: (...args: unknown[]) => sendTransactionalEmailMock(...args),
   sendMarketingEmail: (...args: unknown[]) => sendMarketingEmailMock(...args),
+}));
+
+vi.mock('@/lib/communications/subscriptions', () => ({
+  canReceiveMarketingEmail: (...args: unknown[]) => canReceiveMarketingEmailMock(...args),
+  markSubscriptionEmailDelivered: (...args: unknown[]) => markSubscriptionEmailDeliveredMock(...args),
 }));
 
 import { prisma } from '@/lib/prisma';
@@ -32,6 +40,7 @@ describe('email outbox', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (prisma.communicationEvent.create as any).mockResolvedValue({ id: 'comm-1' });
+    (prisma.communicationEvent.findUnique as any).mockResolvedValue({ payload: { route: 'TRANSACTIONAL' } });
     (prisma.emailOutbox.create as any).mockResolvedValue({ id: 'outbox-1' });
     (prisma.emailOutbox.updateMany as any).mockResolvedValue({ count: 1 });
     (prisma.emailOutbox.findUnique as any).mockResolvedValue({
@@ -57,6 +66,8 @@ describe('email outbox', () => {
       provider: 'RESEND',
       messageId: 'email-1',
     });
+    canReceiveMarketingEmailMock.mockResolvedValue(true);
+    markSubscriptionEmailDeliveredMock.mockResolvedValue(undefined);
   });
 
   it('enqueues and processes a transactional outbox item', async () => {

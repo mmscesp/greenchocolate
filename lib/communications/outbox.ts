@@ -8,6 +8,7 @@ import {
 import { prisma } from '@/lib/prisma';
 import { sendMarketingEmail, sendTransactionalEmail } from '@/lib/email/service';
 import type { MarketingEmailInput, MarketingEmailSendResult, TransactionalEmailInput, TransactionalEmailSendResult } from '@/lib/email/service';
+import { canReceiveMarketingEmail, markSubscriptionEmailDelivered } from '@/lib/communications/subscriptions';
 
 type EmailOutboxPayload =
   | {
@@ -47,10 +48,21 @@ async function updateCommunicationEventForOutbox(input: {
   provider?: string | null;
   errorMessage?: string | null;
   sentAt?: Date | null;
+  payloadPatch?: Record<string, unknown> | null;
 }) {
   if (!input.communicationEventId) {
     return;
   }
+
+  const existing = await prisma.communicationEvent.findUnique({
+    where: { id: input.communicationEventId },
+    select: { payload: true },
+  });
+
+  const mergedPayload =
+    input.payloadPatch && existing?.payload && typeof existing.payload === 'object' && !Array.isArray(existing.payload)
+      ? { ...(existing.payload as Record<string, unknown>), ...input.payloadPatch }
+      : input.payloadPatch ?? undefined;
 
   try {
     await prisma.communicationEvent.update({
@@ -61,6 +73,7 @@ async function updateCommunicationEventForOutbox(input: {
         errorMessage: input.errorMessage ?? null,
         processedAt: new Date(),
         sentAt: input.sentAt ?? null,
+        ...(mergedPayload ? { payload: mergedPayload as Prisma.InputJsonValue } : {}),
       },
     });
   } catch (error) {
@@ -69,6 +82,18 @@ async function updateCommunicationEventForOutbox(input: {
 }
 
 async function sendOutboxPayload(payload: EmailOutboxPayload): Promise<EmailOutboxProcessResult> {
+  if (payload.route === EmailProviderRoute.MARKETING) {
+    const primaryRecipient = payload.input.to[0]?.email;
+    if (primaryRecipient && !(await canReceiveMarketingEmail(primaryRecipient))) {
+      return {
+        success: false,
+        provider: 'BREVO',
+        skipped: true,
+        error: 'Recipient is unsubscribed from marketing email.',
+      };
+    }
+  }
+
   if (payload.route === EmailProviderRoute.TRANSACTIONAL) {
     return sendTransactionalEmail(payload.input);
   }
@@ -165,7 +190,22 @@ export async function processEmailOutboxItem(outboxId: string): Promise<EmailOut
       status: CommunicationStatus.SENT,
       provider: result.provider,
       sentAt: processedAt,
+      payloadPatch: {
+        messageId: result.messageId ?? null,
+      },
     });
+
+    const recipientEmail =
+      payload.route === EmailProviderRoute.TRANSACTIONAL
+        ? payload.input.to[0]?.email
+        : payload.input.to[0]?.email;
+
+    if (recipientEmail) {
+      await markSubscriptionEmailDelivered({
+        email: recipientEmail,
+        audience: item.route === EmailProviderRoute.MARKETING ? 'marketing' : 'transactional',
+      });
+    }
 
     return result;
   }
