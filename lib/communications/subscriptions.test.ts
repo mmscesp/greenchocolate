@@ -79,4 +79,27 @@ describe('subscriptions helpers', () => {
     await expect(canReceiveMarketingEmail('member@example.com')).resolves.toBe(false);
     await expect(canReceiveMarketingEmail('fresh@example.com')).resolves.toBe(true);
   });
+
+  it('allows a contact to resubscribe after being unsubscribed', async () => {
+    await unsubscribeMarketingEmail({
+      email: 'member@example.com',
+      provider: 'BREVO',
+    });
+
+    await subscribeMarketingEmail({
+      email: 'member@example.com',
+      locale: 'en',
+      source: 'newsletter_reoptin',
+    });
+
+    expect(prisma.emailSubscription.upsert).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        where: { email: 'member@example.com' },
+        update: expect.objectContaining({
+          status: 'SUBSCRIBED',
+          unsubscribedAt: null,
+        }),
+      })
+    );
+  });
 });

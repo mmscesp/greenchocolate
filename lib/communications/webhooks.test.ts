@@ -30,7 +30,7 @@ vi.mock('@/lib/communications/subscriptions', () => ({
 }));
 
 import { prisma } from '@/lib/prisma';
-import { handleBrevoWebhookEvent, verifyBrevoWebhook } from '@/lib/communications/webhooks';
+import { handleBrevoWebhookEvent, handleResendWebhookEvent, verifyBrevoWebhook } from '@/lib/communications/webhooks';
 
 describe('communication webhooks', () => {
   beforeEach(() => {
@@ -70,5 +70,35 @@ describe('communication webhooks', () => {
       })
     );
     expect(prisma.providerWebhookEvent.create).toHaveBeenCalled();
+  });
+
+  it('marks matching outbox items as sent for delivered resend events', async () => {
+    (prisma.communicationEvent.findFirst as any).mockResolvedValueOnce({
+      id: 'comm-1',
+      emailOutbox: {
+        id: 'outbox-1',
+      },
+    });
+
+    await handleResendWebhookEvent({
+      type: 'email.delivered',
+      data: {
+        email_id: 'resend-msg-1',
+        to: 'member@example.com',
+      },
+    });
+
+    expect(markSubscriptionEmailDeliveredMock).toHaveBeenCalledWith({
+      email: 'member@example.com',
+      audience: 'transactional',
+    });
+    expect(prisma.emailOutbox.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'outbox-1' },
+        data: expect.objectContaining({
+          status: 'SENT',
+        }),
+      })
+    );
   });
 });

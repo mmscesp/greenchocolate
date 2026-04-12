@@ -279,7 +279,13 @@ export async function processPendingEmailOutbox(limit = 25) {
   return results;
 }
 
-export async function retryEmailOutboxItem(outboxId: string) {
+export async function retryEmailOutboxItem(
+  outboxId: string,
+  options?: {
+    replayedBy?: string | null;
+    replayReason?: string | null;
+  }
+) {
   const existing = await prisma.emailOutbox.findUnique({
     where: { id: outboxId },
     select: {
@@ -288,6 +294,8 @@ export async function retryEmailOutboxItem(outboxId: string) {
       maxAttempts: true,
       attempts: true,
       communicationEventId: true,
+      provider: true,
+      lastError: true,
     },
   });
 
@@ -313,6 +321,17 @@ export async function retryEmailOutboxItem(outboxId: string) {
   });
 
   if (existing.communicationEventId) {
+    const existingEvent = await prisma.communicationEvent.findUnique({
+      where: { id: existing.communicationEventId },
+      select: { payload: true },
+    });
+    const existingPayload =
+      existingEvent?.payload && typeof existingEvent.payload === 'object' && !Array.isArray(existingEvent.payload)
+        ? (existingEvent.payload as Record<string, unknown>)
+        : {};
+    const replayCount =
+      typeof existingPayload.replayCount === 'number' ? Number(existingPayload.replayCount) + 1 : 1;
+
     await prisma.communicationEvent.update({
       where: { id: existing.communicationEventId },
       data: {
@@ -320,6 +339,16 @@ export async function retryEmailOutboxItem(outboxId: string) {
         errorMessage: null,
         processedAt: new Date(),
         sentAt: null,
+        payload: {
+          ...existingPayload,
+          replayCount,
+          lastReplayAt: new Date().toISOString(),
+          lastReplayBy: options?.replayedBy ?? null,
+          lastReplayReason: options?.replayReason ?? null,
+          lastReplayFromStatus: existing.status,
+          lastReplayFromProvider: existing.provider ?? null,
+          lastReplayFromError: existing.lastError ?? null,
+        } as Prisma.InputJsonValue,
       },
     });
   }

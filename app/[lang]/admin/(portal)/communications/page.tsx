@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import {
   getAdminCommunicationsOverview,
   processAdminPendingCommunications,
+  replayAdminCommunicationOutboxBatch,
   replayAdminCommunicationOutboxItem,
 } from '@/app/actions/admin-communications';
 
@@ -124,6 +125,10 @@ export default async function AdminCommunicationsPage({
               <span className="font-semibold">{data.summary.failedOutbox}</span>
             </div>
             <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>Dead-letter review</span>
+              <span className="font-semibold">{data.summary.deadLetterOutbox}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
               <span>Oldest ready item age</span>
               <span className="font-semibold">
                 {data.summary.oldestReadyOutboxAgeMinutes === null
@@ -147,6 +152,63 @@ export default async function AdminCommunicationsPage({
             <div className="flex items-center justify-between rounded-md border px-3 py-2">
               <span>Invalid webhook signatures (7d)</span>
               <span className="font-semibold">{data.summary.invalidWebhooks7d}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Failure rate trend</CardTitle>
+            <CardDescription>Share of failed delivery events across recent windows.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>7 days</span>
+              <span className="font-semibold">{data.analytics.failureRate7d}%</span>
+            </div>
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>30 days</span>
+              <span className="font-semibold">{data.analytics.failureRate30d}%</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Backlog trend</CardTitle>
+            <CardDescription>Outbox items created recently across rolling windows.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>24 hours</span>
+              <span className="font-semibold">{data.analytics.backlogCreated24Hours}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>7 days</span>
+              <span className="font-semibold">{data.analytics.backlogCreated7Days}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>30 days</span>
+              <span className="font-semibold">{data.analytics.backlogCreated30Days}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Webhook integrity trend</CardTitle>
+            <CardDescription>Verified vs invalid webhook signature ratio over time.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>7 day verified rate</span>
+              <span className="font-semibold">{data.analytics.webhookIntegrityRate7d}%</span>
+            </div>
+            <div className="flex items-center justify-between rounded-md border px-3 py-2">
+              <span>30 day verified rate</span>
+              <span className="font-semibold">{data.analytics.webhookIntegrityRate30d}%</span>
             </div>
           </CardContent>
         </Card>
@@ -265,6 +327,15 @@ export default async function AdminCommunicationsPage({
               </select>
               <Button type="submit" variant="secondary">Filter backlog</Button>
             </form>
+            <form action={replayAdminCommunicationOutboxBatch} className="flex items-center gap-3">
+              <input type="hidden" name="search" value={search} />
+              <input type="hidden" name="audience" value={audience} />
+              <input type="hidden" name="eventStatus" value={eventStatus} />
+              <input type="hidden" name="outboxStatus" value={outboxStatus} />
+              <input type="hidden" name="limit" value="25" />
+              <input type="hidden" name="returnPath" value={`/${lang}/admin/communications?search=${encodeURIComponent(search)}&audience=${encodeURIComponent(audience)}&eventStatus=${encodeURIComponent(eventStatus)}&outboxStatus=${encodeURIComponent(outboxStatus)}`} />
+              <Button type="submit">Replay Filtered Backlog</Button>
+            </form>
             {data.recentOutbox.length === 0 ? (
               <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
                 No queued email work has been recorded yet.
@@ -275,6 +346,9 @@ export default async function AdminCommunicationsPage({
                   <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant={getBadgeVariant(item.status)}>{item.status}</Badge>
+                      {item.status === 'SKIPPED' || item.attempts >= item.maxAttempts ? (
+                        <Badge variant="destructive">DEAD LETTER</Badge>
+                      ) : null}
                       <Badge variant="secondary">{item.route}</Badge>
                       <span className="font-medium">{item.communicationEvent?.type || 'EMAIL_OUTBOX'}</span>
                     </div>

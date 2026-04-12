@@ -20,6 +20,41 @@ type AdminCommunicationsFilterInput = {
   outboxStatus?: 'ALL' | EmailOutboxStatus;
 };
 
+function getOutboxWhere(input: AdminCommunicationsFilterInput): Prisma.EmailOutboxWhereInput {
+  return {
+    ...(input.audience && input.audience !== 'ALL' ? { audience: input.audience } : {}),
+    ...(input.outboxStatus && input.outboxStatus !== 'ALL' ? { status: input.outboxStatus } : {}),
+    ...(input.status && input.status !== 'ALL'
+      ? {
+          communicationEvent: {
+            is: {
+              status: input.status,
+            },
+          },
+        }
+      : {}),
+    ...(input.search
+      ? {
+          OR: [
+            { provider: { contains: input.search, mode: 'insensitive' } },
+            { lastError: { contains: input.search, mode: 'insensitive' } },
+            {
+              communicationEvent: {
+                is: {
+                  OR: [
+                    { recipientEmail: { contains: input.search, mode: 'insensitive' } },
+                    { type: { contains: input.search, mode: 'insensitive' } },
+                    { subject: { contains: input.search, mode: 'insensitive' } },
+                  ],
+                },
+              },
+            },
+          ],
+        }
+      : {}),
+  };
+}
+
 function getCommunicationEventWhere(input: AdminCommunicationsFilterInput): Prisma.CommunicationEventWhereInput {
   const search = input.search?.trim();
 
@@ -56,12 +91,15 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
   } satisfies AdminCommunicationsFilterInput;
 
   const communicationWhere = getCommunicationEventWhere(filters);
+  const outboxWhere = getOutboxWhere(filters);
+  const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   const [
     sentLast24Hours,
     failedLast24Hours,
     pendingOutbox,
     failedOutbox,
+    deadLetterCandidates,
     staleOutbox,
     unsubscribedCount,
     recentEvents,
@@ -69,6 +107,16 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
     recentSubscriptions,
     recentWebhooks,
     invalidWebhooks7d,
+    sentLast7Days,
+    failedLast7Days,
+    sentLast30Days,
+    failedLast30Days,
+    outboxCreated24Hours,
+    outboxCreated7Days,
+    outboxCreated30Days,
+    verifiedWebhooks7d,
+    verifiedWebhooks30d,
+    invalidWebhooks30d,
   ] = await Promise.all([
     prisma.communicationEvent.count({
       where: {
@@ -91,6 +139,19 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
     }),
     prisma.emailOutbox.count({
       where: { status: EmailOutboxStatus.FAILED },
+    }),
+    prisma.emailOutbox.findMany({
+      where: {
+        status: {
+          in: [EmailOutboxStatus.FAILED, EmailOutboxStatus.SKIPPED],
+        },
+      },
+      select: {
+        id: true,
+        status: true,
+        attempts: true,
+        maxAttempts: true,
+      },
     }),
     prisma.emailOutbox.findFirst({
       where: {
@@ -128,28 +189,7 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
       },
     }),
     prisma.emailOutbox.findMany({
-      where: {
-        ...(filters.outboxStatus !== 'ALL' ? { status: filters.outboxStatus } : {}),
-        ...(filters.search
-          ? {
-              OR: [
-                { provider: { contains: filters.search, mode: 'insensitive' } },
-                { lastError: { contains: filters.search, mode: 'insensitive' } },
-                {
-                  communicationEvent: {
-                    is: {
-                      OR: [
-                        { recipientEmail: { contains: filters.search, mode: 'insensitive' } },
-                        { type: { contains: filters.search, mode: 'insensitive' } },
-                        { subject: { contains: filters.search, mode: 'insensitive' } },
-                      ],
-                    },
-                  },
-                },
-              ],
-            }
-          : {}),
-      },
+      where: outboxWhere,
       orderBy: [{ updatedAt: 'desc' }],
       take: 25,
       select: {
@@ -214,7 +254,68 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
         createdAt: { gte: last7Days },
       },
     }),
+    prisma.communicationEvent.count({
+      where: {
+        status: CommunicationStatus.SENT,
+        createdAt: { gte: last7Days },
+      },
+    }),
+    prisma.communicationEvent.count({
+      where: {
+        status: CommunicationStatus.FAILED,
+        createdAt: { gte: last7Days },
+      },
+    }),
+    prisma.communicationEvent.count({
+      where: {
+        status: CommunicationStatus.SENT,
+        createdAt: { gte: last30Days },
+      },
+    }),
+    prisma.communicationEvent.count({
+      where: {
+        status: CommunicationStatus.FAILED,
+        createdAt: { gte: last30Days },
+      },
+    }),
+    prisma.emailOutbox.count({
+      where: {
+        createdAt: { gte: last24Hours },
+      },
+    }),
+    prisma.emailOutbox.count({
+      where: {
+        createdAt: { gte: last7Days },
+      },
+    }),
+    prisma.emailOutbox.count({
+      where: {
+        createdAt: { gte: last30Days },
+      },
+    }),
+    prisma.providerWebhookEvent.count({
+      where: {
+        signatureValid: true,
+        createdAt: { gte: last7Days },
+      },
+    }),
+    prisma.providerWebhookEvent.count({
+      where: {
+        signatureValid: true,
+        createdAt: { gte: last30Days },
+      },
+    }),
+    prisma.providerWebhookEvent.count({
+      where: {
+        signatureValid: false,
+        createdAt: { gte: last30Days },
+      },
+    }),
   ]);
+
+  const deadLetterOutbox = deadLetterCandidates.filter(
+    (item) => item.status === EmailOutboxStatus.SKIPPED || item.attempts >= item.maxAttempts
+  ).length;
 
   await logAdminAuditEvent({
     tableName: 'CommunicationEvent',
@@ -237,11 +338,36 @@ export async function getAdminCommunicationsOverview(rawInput: AdminCommunicatio
       failedLast24Hours,
       pendingOutbox,
       failedOutbox,
+      deadLetterOutbox,
       unsubscribedCount,
       invalidWebhooks7d,
       oldestReadyOutboxAgeMinutes: staleOutbox
         ? Math.max(0, Math.round((now.getTime() - staleOutbox.createdAt.getTime()) / 60000))
         : null,
+    },
+    analytics: {
+      failureRate7d:
+        sentLast7Days + failedLast7Days > 0
+          ? Math.round((failedLast7Days / (sentLast7Days + failedLast7Days)) * 1000) / 10
+          : 0,
+      failureRate30d:
+        sentLast30Days + failedLast30Days > 0
+          ? Math.round((failedLast30Days / (sentLast30Days + failedLast30Days)) * 1000) / 10
+          : 0,
+      backlogCreated24Hours: outboxCreated24Hours,
+      backlogCreated7Days: outboxCreated7Days,
+      backlogCreated30Days: outboxCreated30Days,
+      verifiedWebhooks7d,
+      verifiedWebhooks30d,
+      invalidWebhooks30d,
+      webhookIntegrityRate7d:
+        verifiedWebhooks7d + invalidWebhooks7d > 0
+          ? Math.round((verifiedWebhooks7d / (verifiedWebhooks7d + invalidWebhooks7d)) * 1000) / 10
+          : 100,
+      webhookIntegrityRate30d:
+        verifiedWebhooks30d + invalidWebhooks30d > 0
+          ? Math.round((verifiedWebhooks30d / (verifiedWebhooks30d + invalidWebhooks30d)) * 1000) / 10
+          : 100,
     },
     readiness: {
       resendApi: Boolean(env.RESEND_API_KEY && env.RESEND_SENDER_EMAIL),
@@ -319,7 +445,21 @@ export async function replayAdminCommunicationOutboxItem(formData: FormData): Pr
   }
 
   try {
-    const retried = await retryEmailOutboxItem(outboxId);
+    const existing = await prisma.emailOutbox.findUnique({
+      where: { id: outboxId },
+      select: {
+        status: true,
+        attempts: true,
+        maxAttempts: true,
+        provider: true,
+        lastError: true,
+      },
+    });
+
+    const retried = await retryEmailOutboxItem(outboxId, {
+      replayedBy: admin.email,
+      replayReason: 'admin_single_replay',
+    });
     if (!retried.success) {
       redirect(withAdminActionStatus(returnPath, 'error', retried.error));
       return;
@@ -333,6 +473,7 @@ export async function replayAdminCommunicationOutboxItem(formData: FormData): Pr
       changedBy: admin.authId,
       recordId: outboxId,
       changeData: {
+        previousState: existing,
         result,
       },
     });
@@ -353,4 +494,92 @@ export async function replayAdminCommunicationOutboxItem(formData: FormData): Pr
     console.error('replayAdminCommunicationOutboxItem error:', error);
     redirect(withAdminActionStatus(returnPath, 'error', 'Failed to replay communication outbox item.'));
   }
+}
+
+export async function replayAdminCommunicationOutboxBatch(formData: FormData): Promise<void> {
+  const admin = await getAdminSessionProfile();
+  const returnPath = getSafeAdminReturnPath(formData.get('returnPath'), '/en/admin/communications');
+
+  if (!admin) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'Admin session is required.'));
+    return;
+  }
+
+  const filters: AdminCommunicationsFilterInput = {
+    search: String(formData.get('search') || '').trim() || undefined,
+    audience: (String(formData.get('audience') || 'ALL') as AdminCommunicationsFilterInput['audience']) ?? 'ALL',
+    status: (String(formData.get('eventStatus') || 'ALL') as AdminCommunicationsFilterInput['status']) ?? 'ALL',
+    outboxStatus: (String(formData.get('outboxStatus') || 'ALL') as AdminCommunicationsFilterInput['outboxStatus']) ?? 'ALL',
+  };
+  const limit = Math.max(1, Math.min(Number(formData.get('limit') || 25), 50));
+
+  const outboxItems = await prisma.emailOutbox.findMany({
+    where: {
+      ...getOutboxWhere(filters),
+      status: {
+        in: [EmailOutboxStatus.FAILED, EmailOutboxStatus.SKIPPED],
+      },
+    },
+    orderBy: [{ updatedAt: 'desc' }],
+    take: limit,
+    select: {
+      id: true,
+      status: true,
+      attempts: true,
+      maxAttempts: true,
+      provider: true,
+      lastError: true,
+    },
+  });
+
+  if (outboxItems.length === 0) {
+    redirect(withAdminActionStatus(returnPath, 'error', 'No failed or skipped communications matched the current filters.'));
+    return;
+  }
+
+  let succeeded = 0;
+  let failed = 0;
+
+  for (const item of outboxItems) {
+    const retried = await retryEmailOutboxItem(item.id, {
+      replayedBy: admin.email,
+      replayReason: 'admin_batch_replay',
+    });
+
+    if (!retried.success) {
+      failed += 1;
+      continue;
+    }
+
+    const result = await processEmailOutboxItem(item.id);
+    if (result?.success) {
+      succeeded += 1;
+    } else {
+      failed += 1;
+    }
+  }
+
+  await logAdminAuditEvent({
+    tableName: 'EmailOutbox',
+    operation: 'ADMIN_BULK_REPLAY_COMMUNICATIONS',
+    changedBy: admin.authId,
+    recordId: 'batch',
+    changeData: {
+      filters,
+      limit,
+      replayedIds: outboxItems.map((item) => item.id),
+      replayedCount: outboxItems.length,
+      succeeded,
+      failed,
+    },
+  });
+
+  revalidateAdminPortalPaths(['/communications', '/requests', '/users']);
+  redirect(
+    withAdminActionStatus(
+      returnPath,
+      succeeded > 0 ? 'success' : 'error',
+      `Bulk replay processed ${outboxItems.length} queued communications. ${succeeded} succeeded, ${failed} still need attention.`
+    )
+  );
 }

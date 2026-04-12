@@ -34,6 +34,7 @@ vi.mock('@/lib/prisma', () => ({
     },
     communicationEvent: {
       create: vi.fn(),
+      findMany: vi.fn(),
     },
     membershipRequestNote: {
       create: vi.fn(),
@@ -125,6 +126,7 @@ import {
   approveMembershipRequest,
   createMembershipApplicationLead,
   finalizeMembershipApplicationLead,
+  getAdminMembershipRequestDetail,
   rejectMembershipRequest,
   submitMembershipApplication,
 } from '@/app/actions/applications';
@@ -211,6 +213,7 @@ describe('Application Actions', () => {
     (prisma.notification.create as any).mockResolvedValue({ id: 'notification-1' });
     (prisma.notification.deleteMany as any).mockResolvedValue({ count: 1 });
     (prisma.communicationEvent.create as any).mockResolvedValue({ id: 'comm-1' });
+    (prisma.communicationEvent.findMany as any).mockResolvedValue([]);
     (prisma.applicationStageHistory.create as any).mockResolvedValue({ id: 'history-1' });
     (prisma.auditLog.create as any).mockResolvedValue({ id: 'audit-1' });
 
@@ -852,5 +855,114 @@ describe('Application Actions', () => {
     expect(prisma.membershipRequest.updateMany).not.toHaveBeenCalled();
     expect(prisma.notification.create).not.toHaveBeenCalled();
     expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
+  });
+
+  it('returns request communication history and notification timeline for admin detail views', async () => {
+    (prisma.profile.findUnique as any).mockResolvedValueOnce(mockAdminProfile);
+    (prisma.membershipRequest.findUnique as any).mockResolvedValueOnce({
+      id: mockRequestId,
+      userId: mockProfile.id,
+      status: 'APPROVED',
+      currentStage: 'FINAL_APPROVAL',
+      createdAt: new Date('2026-03-08T10:00:00.000Z'),
+      reviewedAt: new Date('2026-03-09T09:00:00.000Z'),
+      reviewedBy: mockAdminProfile.id,
+      rejectionReason: null,
+      message: 'Interested in responsible membership.',
+      encryptedPayload: null,
+      encryptedSnapshot: {
+        eligibilityAnswers: {
+          city: 'Barcelona',
+        },
+      },
+      snapshotMeta: {
+        locale: 'en',
+      },
+      appointmentNotes: 'Bring your ID',
+      user: {
+        id: mockProfile.id,
+        email: mockProfile.email,
+        displayName: mockProfile.displayName,
+        avatarUrl: null,
+        role: 'USER',
+        notifications: [
+          {
+            id: 'notification-1',
+            type: 'APPLICATION_APPROVED',
+            title: 'Application approved',
+            message: 'Your membership application has been approved.',
+            createdAt: new Date('2026-03-09T09:00:00.000Z'),
+            isRead: false,
+          },
+        ],
+      },
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        slug: 'test-club',
+        contactEmail: 'club@example.com',
+        neighborhood: 'Gracia',
+      },
+      stageHistory: [
+        {
+          id: 'history-1',
+          toStage: 'FINAL_APPROVAL',
+          createdAt: new Date('2026-03-09T09:00:00.000Z'),
+          changedBy: mockAdminProfile.id,
+          notes: 'Approved',
+        },
+      ],
+      notes: [
+        {
+          id: 'note-1',
+          body: 'Looks good.',
+          createdAt: new Date('2026-03-08T12:00:00.000Z'),
+          author: {
+            displayName: 'Admin User',
+            email: 'admin@example.com',
+          },
+        },
+      ],
+    });
+    (prisma.communicationEvent.findMany as any).mockResolvedValueOnce([
+      {
+        id: 'comm-1',
+        type: 'MEMBERSHIP_APPROVAL_EMAIL',
+        audience: 'TRANSACTIONAL',
+        provider: 'RESEND',
+        status: 'SENT',
+        recipientEmail: mockProfile.email,
+        subject: 'Your membership request was approved - Test Club',
+        errorMessage: null,
+        sentAt: new Date('2026-03-09T09:00:01.000Z'),
+        createdAt: new Date('2026-03-09T09:00:00.000Z'),
+        emailOutbox: {
+          id: 'outbox-1',
+          status: 'SENT',
+          route: 'TRANSACTIONAL',
+          attempts: 1,
+          maxAttempts: 3,
+          lastError: null,
+          availableAt: new Date('2026-03-09T09:00:00.000Z'),
+        },
+      },
+    ]);
+
+    const detail = await getAdminMembershipRequestDetail(mockRequestId);
+
+    expect(detail).not.toBeNull();
+    expect(detail?.communicationEvents).toHaveLength(1);
+    expect(detail?.communicationEvents[0]).toEqual(
+      expect.objectContaining({
+        type: 'MEMBERSHIP_APPROVAL_EMAIL',
+        status: 'SENT',
+      })
+    );
+    expect(detail?.notifications).toHaveLength(1);
+    expect(detail?.notifications[0]).toEqual(
+      expect.objectContaining({
+        type: 'APPLICATION_APPROVED',
+      })
+    );
   });
 });

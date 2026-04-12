@@ -34,7 +34,7 @@ vi.mock('@/lib/communications/subscriptions', () => ({
 }));
 
 import { prisma } from '@/lib/prisma';
-import { enqueueAndProcessEmailOutbox, processEmailOutboxItem } from '@/lib/communications/outbox';
+import { enqueueAndProcessEmailOutbox, processEmailOutboxItem, retryEmailOutboxItem } from '@/lib/communications/outbox';
 
 describe('email outbox', () => {
   beforeEach(() => {
@@ -128,5 +128,54 @@ describe('email outbox', () => {
       skipped: true,
       error: 'Resend is not configured.',
     });
+  });
+
+  it('resets a failed item for replay and records replay metadata on the communication event', async () => {
+    (prisma.emailOutbox.findUnique as any).mockResolvedValueOnce({
+      id: 'outbox-1',
+      status: EmailOutboxStatus.FAILED,
+      attempts: 3,
+      maxAttempts: 3,
+      communicationEventId: 'comm-1',
+      provider: 'RESEND',
+      lastError: 'Provider timeout',
+    });
+    (prisma.communicationEvent.findUnique as any).mockResolvedValueOnce({
+      payload: {
+        replayCount: 1,
+      },
+    });
+
+    const result = await retryEmailOutboxItem('outbox-1', {
+      replayedBy: 'admin@example.com',
+      replayReason: 'admin_batch_replay',
+    });
+
+    expect(result).toEqual({ success: true });
+    expect(prisma.emailOutbox.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'outbox-1' },
+        data: expect.objectContaining({
+          status: EmailOutboxStatus.PENDING,
+          attempts: 2,
+          lastError: null,
+        }),
+      })
+    );
+    expect(prisma.communicationEvent.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'comm-1' },
+        data: expect.objectContaining({
+          status: CommunicationStatus.PENDING,
+          payload: expect.objectContaining({
+            replayCount: 2,
+            lastReplayBy: 'admin@example.com',
+            lastReplayReason: 'admin_batch_replay',
+            lastReplayFromStatus: EmailOutboxStatus.FAILED,
+            lastReplayFromError: 'Provider timeout',
+          }),
+        }),
+      })
+    );
   });
 });
