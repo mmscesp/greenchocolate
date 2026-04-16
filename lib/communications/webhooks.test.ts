@@ -72,6 +72,25 @@ describe('communication webhooks', () => {
     expect(prisma.providerWebhookEvent.create).toHaveBeenCalled();
   });
 
+  it('marks marketing recipients unsubscribed on brevo unsubscribed events', async () => {
+    await handleBrevoWebhookEvent(
+      {
+        event: 'unsubscribed',
+        email: 'member@example.com',
+        'message-id': 'msg-2',
+      },
+      true
+    );
+
+    expect(unsubscribeMarketingEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: 'member@example.com',
+        provider: 'BREVO',
+      })
+    );
+    expect(prisma.providerWebhookEvent.create).toHaveBeenCalled();
+  });
+
   it('marks matching outbox items as sent for delivered resend events', async () => {
     (prisma.communicationEvent.findFirst as any).mockResolvedValueOnce({
       id: 'comm-1',

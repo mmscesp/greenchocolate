@@ -157,7 +157,7 @@ export async function handleBrevoWebhookEvent(payload: Record<string, unknown>, 
         ? payload.messageId
         : null;
 
-  if (recipientEmail && ['unsubscribe', 'hard_bounce', 'spam'].includes(eventType)) {
+  if (recipientEmail && ['unsubscribe', 'unsubscribed', 'hard_bounce', 'hardBounce', 'spam'].includes(eventType)) {
     await unsubscribeMarketingEmail({
       email: recipientEmail,
       provider: 'BREVO',
@@ -165,15 +165,18 @@ export async function handleBrevoWebhookEvent(payload: Record<string, unknown>, 
     });
   }
 
-  if (recipientEmail && ['delivered', 'requests', 'unique_opened', 'opened'].includes(eventType)) {
+  if (
+    recipientEmail &&
+    ['delivered', 'request', 'requests', 'opened', 'unique_opened', 'uniqueOpened'].includes(eventType)
+  ) {
     await markSubscriptionEmailDelivered({ email: recipientEmail, audience: 'marketing' });
   }
 
-  if (['delivered', 'requests', 'opened', 'unique_opened'].includes(eventType)) {
+  if (['delivered', 'request', 'requests', 'opened', 'unique_opened', 'uniqueOpened'].includes(eventType)) {
     await updateOutboxByMessageId(messageId, EmailOutboxStatus.SENT);
   }
 
-  if (['hard_bounce', 'blocked', 'error', 'spam'].includes(eventType)) {
+  if (['hard_bounce', 'hardBounce', 'softBounce', 'blocked', 'error', 'spam'].includes(eventType)) {
     await updateOutboxByMessageId(messageId, EmailOutboxStatus.FAILED, eventType);
   }
 
