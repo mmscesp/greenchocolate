@@ -6,13 +6,19 @@ import { enqueueAndProcessEmailOutbox } from '@/lib/communications/outbox';
 import { subscribeMarketingEmail } from '@/lib/communications/subscriptions';
 import { buildUnsubscribeUrl } from '@/lib/communications/unsubscribe';
 import { getPlatformControlState } from '@/lib/platform-control';
+import {
+  getSafetyKitAssetPaths,
+  normalizeSafetyKitLocale,
+  type SafetyKitLocale,
+} from '@/lib/safety-kit';
 
-type SupportedLocale = 'en' | 'es' | 'fr' | 'de';
+type SupportedLocale = SafetyKitLocale;
 
 type LeadCaptureResult = {
   success: boolean;
   deliveryMode: 'email' | 'direct';
   fallbackPath: string;
+  downloadPath?: string;
   error?: string;
 };
 
@@ -20,8 +26,6 @@ type ConciergeStepInput = {
   title: string;
   href: string;
 };
-
-const supportedLocales = new Set<SupportedLocale>(['en', 'es', 'fr', 'de']);
 
 const safetyKitSchema = z.object({
   email: z.string().trim().email(),
@@ -55,11 +59,7 @@ const editorialDigestSchema = z.object({
 });
 
 function normalizeLocale(locale?: string): SupportedLocale {
-  if (locale && supportedLocales.has(locale as SupportedLocale)) {
-    return locale as SupportedLocale;
-  }
-
-  return 'en';
+  return normalizeSafetyKitLocale(locale);
 }
 
 function getBaseUrl() {
@@ -70,20 +70,51 @@ function toAbsoluteUrl(path: string) {
   return `${getBaseUrl()}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
-function getSafetyKitFallbackPath(locale: SupportedLocale) {
-  return `/${locale}/editorial/safety-kit-visitors-spain`;
+function normalizeBrevoTagPart(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+}
+
+function buildBrevoTags(input: { type: string; locale: SupportedLocale; source?: string }) {
+  const tags = [
+    `scm-${normalizeBrevoTagPart(input.type)}`,
+    `locale-${input.locale}`,
+  ];
+
+  const normalizedSource = input.source ? normalizeBrevoTagPart(input.source) : '';
+  if (normalizedSource) {
+    tags.push(`source-${normalizedSource}`);
+  }
+
+  return tags.slice(0, 10);
+}
+
+function buildBrevoHeaders(input: { type: string; locale: SupportedLocale; source?: string }) {
+  return {
+    'X-Scm-Lead-Type': input.type,
+    'X-Scm-Locale': input.locale,
+    ...(input.source ? { 'X-Scm-Lead-Source': input.source } : {}),
+  };
 }
 
 function buildSafetyKitCopy(locale: SupportedLocale) {
+  const assetPaths = getSafetyKitAssetPaths(locale);
+
   switch (locale) {
     case 'es':
       return {
         subject: 'Tu Safety Kit de Espana',
         heading: 'Tu Safety Kit ya esta listo.',
         intro:
-          'Aqui tienes la guia base para entender las lineas legales, evitar estafas y prepararte antes de cualquier visita.',
-        primaryCta: 'Abrir el Safety Kit',
-        primaryPath: getSafetyKitFallbackPath(locale),
+          'Ya tienes acceso inmediato al PDF y a la guia web para entender mejor los limites legales, evitar estafas y prepararte antes de cualquier visita.',
+        primaryCta: 'Descargar el PDF',
+        primaryPath: assetPaths.pdfPath,
+        secondaryCta: 'Abrir la guia web',
+        secondaryPath: assetPaths.guidePath,
         secondaryLinks: [
           {
             label: 'Como funcionan realmente los clubes',
@@ -102,9 +133,11 @@ function buildSafetyKitCopy(locale: SupportedLocale) {
         subject: 'Votre Safety Kit Espagne',
         heading: 'Votre Safety Kit est pret.',
         intro:
-          'Voici le guide de base pour comprendre les limites legales, eviter les arnaques et preparer votre visite avec plus de clarte.',
-        primaryCta: 'Ouvrir le Safety Kit',
-        primaryPath: getSafetyKitFallbackPath(locale),
+          'Vous avez maintenant un acces immediat au PDF et a la version web pour comprendre les limites legales, eviter les arnaques et preparer votre visite avec plus de clarte.',
+        primaryCta: 'Telecharger le PDF',
+        primaryPath: assetPaths.pdfPath,
+        secondaryCta: 'Ouvrir le guide web',
+        secondaryPath: assetPaths.guidePath,
         secondaryLinks: [
           {
             label: 'Comment fonctionnent vraiment les clubs',
@@ -123,9 +156,11 @@ function buildSafetyKitCopy(locale: SupportedLocale) {
         subject: 'Dein Spanien Safety Kit',
         heading: 'Dein Safety Kit ist bereit.',
         intro:
-          'Hier ist dein Basisleitfaden zu rechtlichen Grenzen, Betrugswarnzeichen und den wichtigsten Vorbereitungen vor dem ersten Besuch.',
-        primaryCta: 'Safety Kit offnen',
-        primaryPath: getSafetyKitFallbackPath(locale),
+          'Du hast jetzt direkten Zugriff auf das PDF und die Webversion, damit du rechtliche Grenzen, Betrugswarnzeichen und die wichtigsten Vorbereitungen vor dem ersten Besuch verstehen kannst.',
+        primaryCta: 'PDF herunterladen',
+        primaryPath: assetPaths.pdfPath,
+        secondaryCta: 'Webguide offnen',
+        secondaryPath: assetPaths.guidePath,
         secondaryLinks: [
           {
             label: 'Wie Clubs in Spanien wirklich funktionieren',
@@ -145,9 +180,11 @@ function buildSafetyKitCopy(locale: SupportedLocale) {
         subject: 'Your Spain Safety Kit',
         heading: 'Your Safety Kit is ready.',
         intro:
-          'Here is the core guide to legal lines, scam red flags, and the basics you should understand before any club visit.',
-        primaryCta: 'Open the Safety Kit',
-        primaryPath: getSafetyKitFallbackPath(locale),
+          'You now have immediate access to the PDF and the web guide covering legal lines, scam red flags, and the basics worth understanding before any club visit.',
+        primaryCta: 'Download the PDF',
+        primaryPath: assetPaths.pdfPath,
+        secondaryCta: 'Open the web guide',
+        secondaryPath: assetPaths.guidePath,
         secondaryLinks: [
           {
             label: 'How clubs actually work in Spain',
@@ -167,12 +204,14 @@ function buildSafetyKitCopy(locale: SupportedLocale) {
 function buildSafetyKitHtml(locale: SupportedLocale) {
   const copy = buildSafetyKitCopy(locale);
   const primaryUrl = toAbsoluteUrl(copy.primaryPath);
+  const secondaryUrl = toAbsoluteUrl(copy.secondaryPath);
   const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
 
   return [
     `<h1>${copy.heading}</h1>`,
     `<p>${copy.intro}</p>`,
     `<p><a href="${primaryUrl}">${copy.primaryCta}</a></p>`,
+    `<p><a href="${secondaryUrl}">${copy.secondaryCta}</a></p>`,
     '<ul>',
     ...copy.secondaryLinks.map(
       (link) => `<li><a href="${toAbsoluteUrl(link.path)}">${link.label}</a></li>`
@@ -192,6 +231,7 @@ function buildSafetyKitText(locale: SupportedLocale) {
     copy.intro,
     '',
     `${copy.primaryCta}: ${toAbsoluteUrl(copy.primaryPath)}`,
+    `${copy.secondaryCta}: ${toAbsoluteUrl(copy.secondaryPath)}`,
     ...copy.secondaryLinks.map((link) => `${link.label}: ${toAbsoluteUrl(link.path)}`),
     '',
     copy.footer,
@@ -441,6 +481,8 @@ async function sendMarketingLeadEmail(input: {
         subject: input.subject,
         htmlContent: withRecipientToken(input.htmlContent),
         textContent: withRecipientToken(input.textContent),
+        tags: buildBrevoTags(input),
+        headers: buildBrevoHeaders(input),
       },
     },
   });
@@ -455,13 +497,15 @@ export async function deliverSafetyKitLead(input: {
 }): Promise<LeadCaptureResult> {
   const parsed = safetyKitSchema.safeParse(input);
   const locale = normalizeLocale(parsed.success ? parsed.data.locale : input.locale);
-  const fallbackPath = getSafetyKitFallbackPath(locale);
+  const assetPaths = getSafetyKitAssetPaths(locale);
+  const fallbackPath = assetPaths.guidePath;
 
   if (!parsed.success) {
     return {
       success: false,
       deliveryMode: 'direct',
       fallbackPath,
+      downloadPath: assetPaths.pdfPath,
       error: parsed.error.errors[0]?.message || 'Invalid email address',
     };
   }
@@ -472,6 +516,7 @@ export async function deliverSafetyKitLead(input: {
       success: true,
       deliveryMode: 'direct',
       fallbackPath,
+      downloadPath: assetPaths.pdfPath,
       error: 'Lead capture is temporarily paused.',
     };
   }
@@ -493,6 +538,7 @@ export async function deliverSafetyKitLead(input: {
       success: true,
       deliveryMode: 'direct',
       fallbackPath,
+      downloadPath: assetPaths.pdfPath,
       error: delivery.error,
     };
   }
@@ -501,6 +547,7 @@ export async function deliverSafetyKitLead(input: {
     success: true,
     deliveryMode: 'email',
     fallbackPath,
+    downloadPath: assetPaths.pdfPath,
   };
 }
 

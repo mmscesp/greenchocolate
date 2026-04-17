@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/navigation';
 import { PREMIUM_SPRING } from '../motion/config';
 import { ShieldCheck, Download, AlertTriangle } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -10,16 +9,19 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { deliverSafetyKitLead } from '@/app/actions/lead-capture';
+import { getSafetyKitAssetPaths, getSafetyKitPdfPath, normalizeSafetyKitLocale } from '@/lib/safety-kit';
 
 export function SafetyKitFunnel() {
   const { t, language } = useLanguage();
-  const router = useRouter();
-  
+  const locale = normalizeSafetyKitLocale(language);
+
   // States: 'email' -> 'age_gate' -> 'download' | 'rejected'
   const [step, setStep] = useState<'email' | 'age_gate' | 'download' | 'rejected'>('email');
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [deliveryPath, setDeliveryPath] = useState(`/${language}/editorial/safety-kit-visitors-spain`);
+  const [deliveryPath, setDeliveryPath] = useState(getSafetyKitAssetPaths(locale).guidePath);
+  const [downloadPath, setDownloadPath] = useState(getSafetyKitPdfPath(locale));
+  const [deliverySupportKey, setDeliverySupportKey] = useState<'safety_kit.dl_support_email' | 'safety_kit.dl_support_direct'>('safety_kit.dl_support_email');
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,16 +45,20 @@ export function SafetyKitFunnel() {
         source: 'safety_kit_funnel',
       });
 
-      if (result.deliveryMode === 'direct') {
-        router.push(result.fallbackPath);
-        return;
-      }
-
       setDeliveryPath(result.fallbackPath);
+      setDownloadPath(result.downloadPath ?? getSafetyKitPdfPath(locale));
+      setDeliverySupportKey(
+        result.deliveryMode === 'email'
+          ? 'safety_kit.dl_support_email'
+          : 'safety_kit.dl_support_direct'
+      );
       setStep('download');
     } catch (error) {
       console.error('Safety Kit delivery failed:', error);
-      router.push(`/${language}/editorial/safety-kit-visitors-spain`);
+      setDeliveryPath(getSafetyKitAssetPaths(locale).guidePath);
+      setDownloadPath(getSafetyKitPdfPath(locale));
+      setDeliverySupportKey('safety_kit.dl_support_direct');
+      setStep('download');
     } finally {
       setIsSubmitting(false);
     }
@@ -185,15 +191,21 @@ export function SafetyKitFunnel() {
               {t('safety_kit.dl_headline')}
             </h3>
             
-            <Button asChild variant="primary" size="lg" className="mb-4 w-full">
-              <Link href={deliveryPath}>
+            <Button asChild variant="primary" size="lg" className="mb-3 w-full">
+              <a href={downloadPath} download>
                 <Download className="w-4 h-4" />
                 {t('safety_kit.dl_button')}
+              </a>
+            </Button>
+
+            <Button asChild variant="secondary" size="lg" className="mb-4 w-full">
+              <Link href={deliveryPath}>
+                {t('safety_kit.dl_web_button')}
               </Link>
             </Button>
             
             <p className="text-zinc-400 text-xs leading-relaxed mb-6">
-              {t('safety_kit.dl_support')}
+              {t(deliverySupportKey)}
             </p>
             
             <div className="space-y-3">

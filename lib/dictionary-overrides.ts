@@ -109,15 +109,20 @@ export const dictionaryOverrides: Partial<
     'safety_kit.form_placeholder': 'Enter your email',
     'safety_kit.form_button': 'Unlock the guide',
     'safety_kit.microcopy': 'We only use this to deliver the guide and relevant compliance updates.',
+    'safety_kit.open_guide': 'Prefer the web guide first?',
     'safety_kit.age_headline': 'Quick eligibility check',
     'safety_kit.age_q': 'Are you 18 or older?',
     'safety_kit.age_yes': 'Yes, continue',
     'safety_kit.age_no': 'No',
     'safety_kit.age_reject':
       'This guide is only available to adults. Please come back when you meet the minimum age requirement.',
-    'safety_kit.dl_headline': 'You are cleared to continue',
-    'safety_kit.dl_button': 'Send me the Safety Kit',
-    'safety_kit.dl_support': 'You will also unlock a couple of high-signal next steps.',
+    'safety_kit.dl_headline': 'Your Safety Kit is ready',
+    'safety_kit.dl_button': 'Download the PDF',
+    'safety_kit.dl_web_button': 'Open the web guide',
+    'safety_kit.dl_support_email':
+      'The PDF is ready below. We also sent the same links to your inbox so you can pick this up later.',
+    'safety_kit.dl_support_direct':
+      'The PDF is ready below. Email delivery is unavailable right now, so we unlocked the PDF and web guide here instead.',
     'safety_kit.dl_cta1': 'Need clubs after this?',
     'safety_kit.dl_cta1_btn': 'Browse the directory',
     'safety_kit.dl_cta2': 'Need the legal basics first?',
@@ -407,15 +412,20 @@ export const dictionaryOverrides: Partial<
     'safety_kit.form_button': 'Desbloquear la guia',
     'safety_kit.microcopy':
       'Solo usaremos esto para entregarte la guia y actualizaciones relevantes de cumplimiento.',
+    'safety_kit.open_guide': 'Prefieres abrir antes la guia web?',
     'safety_kit.age_headline': 'Comprobacion rapida de elegibilidad',
     'safety_kit.age_q': 'Tienes 18 anos o mas?',
     'safety_kit.age_yes': 'Si, continuar',
     'safety_kit.age_no': 'No',
     'safety_kit.age_reject':
       'Esta guia solo esta disponible para adultos. Vuelve cuando cumplas la edad minima requerida.',
-    'safety_kit.dl_headline': 'Todo listo para continuar',
-    'safety_kit.dl_button': 'Enviarme el Safety Kit',
-    'safety_kit.dl_support': 'Tambien desbloquearas un par de siguientes pasos de alto valor.',
+    'safety_kit.dl_headline': 'Tu Safety Kit ya esta listo',
+    'safety_kit.dl_button': 'Descargar el PDF',
+    'safety_kit.dl_web_button': 'Abrir la guia web',
+    'safety_kit.dl_support_email':
+      'El PDF ya esta listo aqui abajo. Tambien te enviamos los mismos enlaces por email para que puedas retomarlo mas tarde.',
+    'safety_kit.dl_support_direct':
+      'El PDF ya esta listo aqui abajo. Ahora mismo no hay entrega por email, asi que te desbloqueamos el PDF y la guia web directamente aqui.',
     'safety_kit.dl_cta1': 'Necesitas clubs despues de esto?',
     'safety_kit.dl_cta1_btn': 'Explorar el directorio',
     'safety_kit.dl_cta2': 'Prefieres primero la base legal?',
@@ -603,6 +613,28 @@ export const dictionaryOverrides: Partial<
     'safety_kit.final_headline': 'Recevoir le Safety Kit',
     'safety_kit.final_body':
       'Saisissez votre email, confirmez votre eligibilite et debloquez le briefing voyageur.',
+    'safety_kit.form_placeholder': 'Entrez votre email',
+    'safety_kit.form_button': 'Debloquer le guide',
+    'safety_kit.microcopy':
+      'Nous utilisons cet email uniquement pour vous livrer le guide et des mises a jour de conformite pertinentes.',
+    'safety_kit.open_guide': 'Vous preferez commencer par le guide web ?',
+    'safety_kit.age_headline': 'Verification rapide',
+    'safety_kit.age_q': 'Avez-vous 18 ans ou plus ?',
+    'safety_kit.age_yes': 'Oui, continuer',
+    'safety_kit.age_no': 'Non',
+    'safety_kit.age_reject':
+      'Ce guide est reserve aux adultes. Revenez lorsque vous atteignez l age minimum requis.',
+    'safety_kit.dl_headline': 'Votre Safety Kit est pret',
+    'safety_kit.dl_button': 'Telecharger le PDF',
+    'safety_kit.dl_web_button': 'Ouvrir le guide web',
+    'safety_kit.dl_support_email':
+      'Le PDF est pret ci-dessous. Nous vous avons aussi envoye les memes liens par email pour que vous puissiez y revenir plus tard.',
+    'safety_kit.dl_support_direct':
+      'Le PDF est pret ci-dessous. La livraison par email est indisponible pour le moment, donc nous avons debloque le PDF et le guide web ici meme.',
+    'safety_kit.dl_cta1': 'Besoin de clubs apres ca ?',
+    'safety_kit.dl_cta1_btn': 'Explorer le repertoire',
+    'safety_kit.dl_cta2': 'Besoin du cadre legal d abord ?',
+    'safety_kit.dl_cta2_btn': 'Lire l explication legale',
     'settings.subtitle': 'Gerez votre confidentialite, vos notifications et votre securite',
     'settings.save_success': 'Parametres enregistres avec succes',
     'settings.notifications.title': 'Notifications',
@@ -834,6 +866,28 @@ export const dictionaryOverrides: Partial<
     'safety_kit.final_headline': 'Hol dir das Safety Kit',
     'safety_kit.final_body':
       'Trage deine Email ein, bestatige deine Berechtigung und schalte das Reisebriefing frei.',
+    'safety_kit.form_placeholder': 'Trag deine Email ein',
+    'safety_kit.form_button': 'Guide freischalten',
+    'safety_kit.microcopy':
+      'Wir nutzen deine Email nur fur die Zustellung des Guides und relevante Compliance-Updates.',
+    'safety_kit.open_guide': 'Lieber zuerst den Webguide offnen?',
+    'safety_kit.age_headline': 'Kurzer Eignungscheck',
+    'safety_kit.age_q': 'Bist du 18 Jahre oder alter?',
+    'safety_kit.age_yes': 'Ja, weiter',
+    'safety_kit.age_no': 'Nein',
+    'safety_kit.age_reject':
+      'Dieser Guide ist nur fur Erwachsene verfugbar. Komm bitte wieder, wenn du das Mindestalter erreicht hast.',
+    'safety_kit.dl_headline': 'Dein Safety Kit ist bereit',
+    'safety_kit.dl_button': 'PDF herunterladen',
+    'safety_kit.dl_web_button': 'Webguide offnen',
+    'safety_kit.dl_support_email':
+      'Das PDF ist unten sofort verfugbar. Wir haben dir dieselben Links auch per Email geschickt, damit du spater wieder einsteigen kannst.',
+    'safety_kit.dl_support_direct':
+      'Das PDF ist unten sofort verfugbar. Die Email-Zustellung ist gerade nicht verfugbar, deshalb haben wir PDF und Webguide hier direkt freigeschaltet.',
+    'safety_kit.dl_cta1': 'Brauchst du danach Clubs?',
+    'safety_kit.dl_cta1_btn': 'Verzeichnis ansehen',
+    'safety_kit.dl_cta2': 'Erst den rechtlichen Rahmen klarziehen?',
+    'safety_kit.dl_cta2_btn': 'Rechtliche Einordnung lesen',
     'settings.subtitle': 'Verwalte Datenschutz, Benachrichtigungen und Sicherheit',
     'settings.save_success': 'Einstellungen erfolgreich gespeichert',
     'settings.notifications.title': 'Benachrichtigungen',

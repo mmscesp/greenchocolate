@@ -58,6 +58,7 @@ describe('lead capture actions', () => {
       success: true,
       deliveryMode: 'direct',
       fallbackPath: '/en/editorial/safety-kit-visitors-spain',
+      downloadPath: '/material/spain-safety-kit-en.pdf',
       error: 'Lead capture is temporarily paused.',
     });
     expect(subscribeMarketingEmail).not.toHaveBeenCalled();
@@ -75,6 +76,7 @@ describe('lead capture actions', () => {
       success: true,
       deliveryMode: 'email',
       fallbackPath: '/en/editorial/safety-kit-visitors-spain',
+      downloadPath: '/material/spain-safety-kit-en.pdf',
     });
     expect(subscribeMarketingEmail).toHaveBeenCalledWith({
       email: 'lead@example.com',
@@ -91,6 +93,17 @@ describe('lead capture actions', () => {
         recipientEmail: 'lead@example.com',
         locale: 'en',
         route: 'MARKETING',
+        payload: expect.objectContaining({
+          route: 'MARKETING',
+          input: expect.objectContaining({
+            tags: ['scm-safety-kit-lead-email', 'locale-en', 'source-safety-kit-funnel'],
+            headers: {
+              'X-Scm-Lead-Type': 'SAFETY_KIT_LEAD_EMAIL',
+              'X-Scm-Locale': 'en',
+              'X-Scm-Lead-Source': 'safety_kit_funnel',
+            },
+          }),
+        }),
       })
     );
   });

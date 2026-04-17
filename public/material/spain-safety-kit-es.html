@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Safety Kit de España · SocialClubsMaps.com · 2026 PDF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080810;
+    --gold: #c9a84c;
+    --gold-light: #e8d49a;
+    --gold-dark: #8a6e2a;
+    --cream: #f7f2e8;
+    --cream-dark: #ede5d0;
+    --teal: #2dd4bf;
+    --teal-dark: #0f766e;
+    --white: #ffffff;
+    --red: #e84545;
+    --slate: #1a1a2e;
+    --slate-mid: #16213e;
+    --text-dim: rgba(247,242,232,0.55);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--cream);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 794px;
+    min-height: 1123px;
+    margin: 0 auto 60px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+    margin-bottom: 0;
+  }
+
+  .cover {
+    background: var(--black);
+    height: 1123px;
+    min-height: 1123px;
+    position: relative;
+    overflow: hidden;
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  .cover-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 308px;
+    background: linear-gradient(160deg, #1a1608 0%, #0d0d16 50%, #080810 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .cover-top::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(201,168,76,0.12) 0%, transparent 70%);
+  }
+
+  .cover-grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .cover-logo {
+    position: relative;
+    z-index: 2;
+    width: 232px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 18px 40px rgba(8, 8, 16, 0.28));
+  }
+
+  .cover-logo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .cover-bottom {
+    position: absolute;
+    top: 308px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 36px 64px 42px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  .cover-bottom::before {
+    content: ''; position: absolute; top: 0; left: 64px; right: 64px;
+    height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .edition-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 24px;
+  }
+
+  .edition-tag::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif; font-size: 58px; font-weight: 900;
+    line-height: 0.96; color: var(--white); letter-spacing: -1px; margin-bottom: 10px;
+  }
+
+  .cover-title span { color: var(--gold); font-style: italic; }
+
+  .cover-subtitle {
+    font-size: 13px; font-weight: 300; color: var(--text-dim);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-top: 18px; margin-bottom: 10px;
+  }
+
+  .cover-byline { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold-dark); letter-spacing: 0.15em; }
+
+  .cover-disclaimer {
+    margin-top: 16px;
+    max-width: 448px;
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+  }
+
+  .cover-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 24px; border-top: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .cover-footer-note { font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em; }
+  .cover-year { font-family: 'Playfair Display', serif; font-size: 11px; color: var(--gold); letter-spacing: 0.3em; }
+
+  .inner { background: var(--black); padding: 72px 64px; min-height: 1123px; display: flex; flex-direction: column; position: relative; }
+
+  .page-label {
+    font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--gold-dark); margin-bottom: 48px;
+    display: flex; align-items: center; gap: 14px;
+  }
+
+  .page-label::after { content: ''; flex: 1; height: 1px; background: rgba(201,168,76,0.15); }
+
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 12px;
+  }
+
+  .section-heading {
+    font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900;
+    line-height: 1.0; color: var(--white); margin-bottom: 6px; letter-spacing: -0.5px;
+  }
+
+  .section-subhead {
+    font-size: 14px; color: var(--text-dim); font-weight: 300;
+    margin-bottom: 44px; letter-spacing: 0.02em;
+  }
+
+  .page-footer {
+    margin-top: auto; padding-top: 24px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    color: var(--gold-dark); letter-spacing: 0.2em; text-transform: uppercase;
+  }
+
+  .legal-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 48px; }
+
+  .legal-card { border: 1px solid rgba(201,168,76,0.15); padding: 32px 28px; position: relative; overflow: hidden; }
+  .legal-card.danger { background: linear-gradient(135deg, rgba(232,69,69,0.08) 0%, rgba(232,69,69,0.03) 100%); border-color: rgba(232,69,69,0.3); }
+  .legal-card.safe { background: linear-gradient(135deg, rgba(45,212,191,0.08) 0%, rgba(45,212,191,0.03) 100%); border-color: rgba(45,212,191,0.25); }
+  .legal-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .legal-card.danger::before { background: var(--red); }
+  .legal-card.safe::before { background: var(--teal); }
+  .legal-card-status { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-bottom: 16px; }
+  .legal-card.danger .legal-card-status { color: var(--red); }
+  .legal-card.safe .legal-card-status { color: var(--teal); }
+  .legal-card-label { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+  .legal-card-penalty { font-size: 28px; font-weight: 600; margin-bottom: 6px; }
+  .legal-card.danger .legal-card-penalty { color: var(--red); }
+  .legal-card.safe .legal-card-penalty { color: var(--teal); }
+  .legal-card-note { font-size: 12px; color: var(--text-dim); font-weight: 300; }
+
+  .rule-item { display: flex; gap: 28px; align-items: flex-start; padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-num {
+    flex-shrink: 0; width: 48px; height: 48px; border: 1px solid var(--gold); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); font-weight: 700; position: relative;
+  }
+  .rule-num::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(201,168,76,0.2); border-radius: 50%; }
+  .rule-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .rule-desc { font-size: 13px; color: var(--text-dim); line-height: 1.65; font-weight: 300; }
+  .rule-desc strong { color: var(--gold-light); font-weight: 500; }
+
+  .flags-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .flag-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 24px 22px; position: relative; }
+  .flag-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--red); opacity: 0.6; }
+  .flag-icon { font-size: 16px; margin-bottom: 10px; display: block; }
+  .flag-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 8px; line-height: 1.2; }
+  .flag-desc { font-size: 12px; color: var(--text-dim); line-height: 1.6; font-weight: 300; }
+  .flag-desc strong { color: var(--red); font-weight: 600; }
+
+  .visit-steps { margin-bottom: 40px; }
+  .visit-step { display: flex; gap: 28px; padding: 28px 0; position: relative; }
+  .visit-step:not(:last-child)::after { content: ''; position: absolute; left: 21px; top: 76px; bottom: 0; width: 1px; background: linear-gradient(to bottom, rgba(201,168,76,0.4), transparent); }
+  .step-num {
+    flex-shrink: 0; width: 44px; height: 44px; background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 900; color: var(--black); position: relative; z-index: 1;
+  }
+  .step-content { flex: 1; padding-top: 8px; }
+  .step-when { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.25em; color: var(--gold-dark); text-transform: uppercase; margin-bottom: 6px; }
+  .step-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .step-desc { font-size: 13px; color: var(--text-dim); line-height: 1.65; font-weight: 300; }
+  .step-desc strong { color: var(--gold-light); font-weight: 500; }
+
+  .visit-tips { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+  .tip-box { border: 1px solid rgba(201,168,76,0.2); padding: 24px 22px; background: rgba(201,168,76,0.03); position: relative; }
+  .tip-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--gold); opacity: 0.4; }
+  .tip-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .tip-text { font-size: 13px; color: var(--text-dim); line-height: 1.65; font-weight: 300; }
+  .tip-text strong { color: var(--white); font-weight: 500; }
+
+  .club-rules { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .club-rule { display: flex; align-items: center; gap: 24px; padding: 26px 28px; border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.015); position: relative; overflow: hidden; }
+  .club-rule::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(201,168,76,0.04) 0%, transparent 40%); }
+  .club-rule-num { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 900; color: rgba(201,168,76,0.12); line-height: 1; width: 60px; flex-shrink: 0; letter-spacing: -2px; }
+  .club-rule-divider { width: 1px; height: 36px; background: rgba(201,168,76,0.2); flex-shrink: 0; }
+  .club-rule-text { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; color: var(--cream); line-height: 1.3; letter-spacing: 0.01em; position: relative; }
+  .club-rule:nth-child(1) .club-rule-num { color: rgba(45,212,191,0.15); }
+  .club-rule:nth-child(2) .club-rule-num { color: rgba(201,168,76,0.15); }
+  .club-rule:nth-child(3) .club-rule-num { color: rgba(45,212,191,0.12); }
+  .club-rule:nth-child(4) .club-rule-num { color: rgba(201,168,76,0.12); }
+  .club-rule:nth-child(5) .club-rule-num { color: rgba(45,212,191,0.1); }
+
+  .emergency-numbers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 36px; }
+  .emergency-num-card { border: 1px solid rgba(255,255,255,0.07); padding: 24px 16px; text-align: center; background: rgba(255,255,255,0.02); }
+  .emergency-num-card:first-child { border-color: rgba(232,69,69,0.3); background: rgba(232,69,69,0.05); }
+  .emergency-num-card:first-child .e-number { color: var(--red); }
+  .e-number { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 8px; display: block; }
+  .e-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); font-weight: 300; font-family: 'DM Mono', monospace; }
+
+  .emergency-scenarios { display: flex; flex-direction: column; gap: 14px; }
+  .scenario-card { display: flex; gap: 20px; align-items: flex-start; padding: 22px 24px; border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.015); }
+  .scenario-icon { font-size: 22px; flex-shrink: 0; width: 40px; text-align: center; padding-top: 2px; }
+  .scenario-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .scenario-desc { font-size: 12.5px; color: var(--text-dim); line-height: 1.65; font-weight: 300; }
+  .scenario-desc strong { color: var(--gold-light); font-weight: 500; }
+  .scenario-desc a { color: var(--teal); text-decoration: none; }
+
+  .checklist-footer-cta a { color: inherit; text-decoration: none; }
+
+  @page { size: 794px 1123px; margin: 0; }
+
+  .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex: 1; }
+  .checklist-col-label { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .col-do .checklist-col-label { color: var(--teal); }
+  .col-never .checklist-col-label { color: var(--red); }
+  .checklist-col-label::after { content: ''; flex: 1; height: 1px; }
+  .col-do .checklist-col-label::after { background: rgba(45,212,191,0.3); }
+  .col-never .checklist-col-label::after { background: rgba(232,69,69,0.3); }
+
+  .check-item { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .check-item:last-child { border-bottom: none; }
+  .check-box { width: 20px; height: 20px; border: 1px solid; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .col-do .check-box { border-color: rgba(45,212,191,0.5); color: var(--teal); }
+  .col-never .check-box { border-color: rgba(232,69,69,0.5); color: var(--red); }
+  .check-text { font-size: 13px; color: var(--cream); line-height: 1.5; font-weight: 400; }
+
+  .checklist-footer { margin-top: 36px; padding: 28px; border: 1px solid rgba(201,168,76,0.2); background: rgba(201,168,76,0.03); text-align: center; position: relative; }
+  .checklist-footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+  .checklist-footer-brand { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+  .checklist-footer-note { font-size: 11px; color: var(--text-dim); margin-bottom: 12px; font-weight: 300; }
+  .checklist-footer-cta { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--teal); text-transform: uppercase; }
+
+  @media print {
+    @page { size: 794px 1123px; margin: 0; }
+    html, body { margin: 0; padding: 0; background: var(--black); }
+    body { margin: 0; background: var(--black); }
+    .page { width: 794px; min-height: 1123px; height: 1123px; margin: 0; page-break-after: always; break-after: page; }
+    .page:last-child { page-break-after: auto; break-after: auto; }
+    .cover, .cover-top, .cover-bottom { break-inside: avoid-page; page-break-inside: avoid; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PÁGINA 1 — PORTADA -->
+<div class="page cover">
+  <div class="cover-top">
+    <div class="cover-grid-lines"></div>
+    <div class="cover-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"   viewBox="0 0 471 471" role="img" aria-label="SocialClubsMaps logo"><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M2074.76 1464.88C2092.73 1464.24 2116.94 1463.54 2134.42 1465C2160.49 1524.18 2191.45 1585.7 2220.18 1643.93C2273.02 1751.43 2326.62 1858.55 2380.99 1965.28L2454.16 2113.76C2466.45 2138.64 2486.68 2182.52 2502.6 2204.02C2545.42 2139.95 2582.56 2044.32 2619.5 1974.77C2670 1879.67 2713.12 1780.24 2760.55 1684.05C2797.61 1608.89 2834.6 1541.89 2870 1464.96C2895.25 1464.11 2923.93 1465.76 2949.85 1465.78C2991.67 1465.82 3036.05 1463.83 3077.36 1468.47C3055.16 1498.42 3016.78 1516.36 3012.56 1556.68C3006.33 1616.17 3009.3 1679.88 3009.46 1739.76C3009.86 1872.26 3011.05 2004.76 3013.04 2137.25C2960.38 2126.61 2917.29 2122.22 2865.17 2137.26C2862.72 2094.82 2865.07 2026.7 2865.1 1982.09C2864.47 1865.86 2865.18 1749.63 2867.25 1633.41C2855.87 1654.83 2844.35 1676.27 2832.81 1697.61C2768.83 1815.86 2718.34 1941.22 2657.8 2060.95C2595.11 2190.92 2526.07 2317.37 2464.32 2447.57C2440.88 2391.17 2395.91 2308.36 2367.13 2251.63L2225.97 1968.84C2192.26 1901.96 2161.26 1831.38 2126 1764.8C2107.72 1730.28 2086.23 1684.42 2063.82 1652.89C2062.25 1694.35 2063.27 1742.68 2063.23 1784.62L2063.15 2024.35L2063.85 2246.33C2064.09 2305.59 2060.22 2392.41 2073.27 2447.41C2085.3 2486.5 2101.31 2514.35 2143.11 2525.93C2154.55 2529.1 2186.18 2536.67 2171.87 2553.3C2156.44 2559.92 2069 2558.57 2048.9 2556.76C2013.05 2553.54 1927.79 2563.79 1897.64 2554.95C1887.71 2537.68 1906.85 2532.52 1919.12 2528.65C2024.09 2495.51 2007.95 2348.8 2008.29 2261.56C2008.77 2179.91 2008.74 2098.26 2008.19 2016.62L2007.11 1775.87C2006.97 1716.12 2011.05 1610.99 1994.53 1552.16C1988.11 1529.32 1927.64 1489.44 1905.7 1470.57C1958.18 1466.36 2018.77 1469.04 2074.76 1464.88Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1692.77 2581.55C1701.21 2588.73 1701.47 2622.92 1702.99 2636.04C1706.84 2669.89 1713.86 2703.31 1723.97 2735.84C1737.09 2777.52 1764 2820.85 1791.34 2854.56C1846.36 2923.66 1926.78 2967.83 2014.61 2977.2C2100.8 2985.78 2190.18 2960.44 2257.3 2905.21C2337.32 2839.37 2359.56 2745.47 2369.39 2647.15C2408.03 2646.04 2457.34 2647.73 2496.84 2647.93C2496.01 2698.85 2482.92 2770.44 2463.25 2817.49C2454.14 2841.13 2442.16 2863.58 2427.58 2884.31C2291.26 3079.46 1918.39 3091.32 1732.66 2961C1611.79 2876.18 1580.13 2768.16 1556.4 2629.72C1613.09 2624.57 1643.48 2608.1 1692.77 2581.55Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1479.36 2118.24C1454.26 2110.34 1409.01 2088.59 1384.62 2076.79C1314.19 2042.73 1233.18 2004.14 1168.1 1961.02C1101.88 1917.15 1051.3 1849.45 1037.56 1770.17C1024.45 1694.55 1038.4 1622.12 1082.95 1558.64C1124.31 1499.7 1195.76 1468.92 1264.89 1458C1354.71 1443.82 1459.22 1458.38 1542.7 1493.9C1557.8 1500.32 1581.34 1510.26 1594.51 1519.87L1595.67 1520C1598.91 1522.15 1603.46 1524.15 1604.16 1527.3C1607.91 1544.18 1584.47 1585.37 1576.89 1600.81C1553.1 1582.66 1528.01 1566.27 1501.84 1551.76C1400.68 1496.42 1243.42 1480.34 1178.02 1598.46C1159.43 1632.37 1151.3 1687.39 1164.7 1724.31C1207.53 1842.4 1380.87 1909.8 1483.96 1963.07C1478.76 2008.63 1480.01 2071.22 1479.36 2118.24Z"/><path fill="#B4B260" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1595.67 1520C1596.36 1526.06 1596.29 1524.01 1595.07 1530.17C1589.75 1535.97 1592.9 1534.26 1585.54 1535.86C1577.83 1533.27 1580.63 1535.53 1576.16 1529.79L1577.73 1525.42C1585.31 1520.31 1585.57 1520.22 1594.51 1519.87L1595.67 1520Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1727.98 2108.49C1733.96 2109.15 1737.92 2111.73 1742.23 2115.77C1786.5 2157.44 1811.3 2215.16 1814.93 2274.85C1826.5 2464.91 1650.99 2576 1479.43 2584.19C1430.61 2586.53 1373.85 2589.19 1325.18 2582.64C1227.73 2569.52 1098.68 2532.57 1024.45 2468.01L1023.88 2369C1023.53 2345.73 1016.57 2243.83 1032.51 2232.17C1043.19 2233.65 1045.14 2254.04 1048.14 2264.07C1104.69 2452.56 1284.38 2550.83 1474.56 2530.66C1558.37 2521.77 1629.53 2501.33 1686.2 2434.04C1698.31 2419.89 1707.7 2403.62 1713.9 2386.04C1737.73 2318.27 1734.03 2180.49 1727.98 2108.49Z"/><path fill="#B4B260" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1765.66 1095.08C1767.72 1093.91 1769.78 1092.73 1771.84 1091.55C1802.26 1075.01 1834.64 1062.36 1868.22 1053.92C1924.48 1039.63 2061.48 1028.2 2116.51 1044.02C2110.14 1044.49 2066.66 1044.51 2066.87 1044.44L2066.26 1051.17C2075.31 1055.21 2080.82 1051.62 2088.59 1057.92L2089.96 1062.08L2087.95 1064.16C2080.28 1063.99 2080.82 1062.66 2076.13 1066.38C2074.78 1072.48 2074.26 1072.38 2076.3 1078.12C2089.12 1085.93 2101.82 1066.87 2115.15 1069.05C2122.11 1077.39 2112.64 1087.24 2106.99 1094.75C2117.36 1107.25 2124.81 1099.61 2130.63 1117.07C2053.6 1094.88 1983.86 1093.13 1907.46 1120.83C1748.99 1179.8 1689.12 1359.95 1693.44 1516.06C1648.03 1489.85 1593.06 1459.36 1543.98 1441.92C1549.85 1405.29 1556.44 1372.38 1567.42 1336.79C1598.97 1233.19 1670.24 1146.3 1765.66 1095.08Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1765.66 1095.08C1767.72 1093.91 1769.78 1092.73 1771.84 1091.55C1802.26 1075.01 1834.64 1062.36 1868.22 1053.92C1924.48 1039.63 2061.48 1028.2 2116.51 1044.02C2110.14 1044.49 2066.66 1044.51 2066.87 1044.44L2066.26 1051.17C2075.31 1055.21 2080.82 1051.62 2088.59 1057.92L2089.96 1062.08L2087.95 1064.16C2080.28 1063.99 2080.82 1062.66 2076.13 1066.38C2074.78 1072.48 2074.26 1072.38 2076.3 1078.12C2089.12 1085.93 2101.82 1066.87 2115.15 1069.05C2122.11 1077.39 2112.64 1087.24 2106.99 1094.75C2117.36 1107.25 2124.81 1099.61 2130.63 1117.07C2053.6 1094.88 1983.86 1093.13 1907.46 1120.83L1910.31 1114.13C1907.07 1106.35 1908.67 1106.57 1902.9 1103.26C1892.11 1103.6 1883.99 1117.02 1872.58 1121.15C1868.68 1119.74 1865.44 1117.98 1861.89 1115.84C1851.21 1124 1859.64 1126.32 1849.78 1132.29C1846.12 1131.12 1845.18 1130.81 1841.37 1130.04C1836.25 1137.16 1835.64 1138.66 1827.35 1137.69C1811.92 1121.87 1817.85 1130.76 1798.26 1129.32C1798.32 1123.67 1798.93 1121.82 1796.35 1116.87C1780.9 1110.23 1776.2 1125.98 1761.92 1125.09L1760.9 1122.38C1765.68 1114.18 1781.83 1102.74 1790.31 1094.04L1789.1 1092.56C1780.08 1094.41 1776.93 1095 1767.71 1095.08L1765.66 1095.08Z"/><path fill="#B4B260" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M2040.29 1090.57C2049.41 1089.42 2062.13 1089.73 2070.37 1093.82L2070.69 1097.22C2061.45 1097.27 2047.82 1097.58 2039.6 1093.99L2040.29 1090.57Z"/><path fill="#B4B260" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1835.36 1070.19C1838.69 1070.65 1837.17 1069.92 1839.68 1072.79C1834.73 1078.17 1825.75 1081.14 1818.77 1084.16L1814.79 1083.96L1814.02 1081.43C1819.49 1076.34 1828.32 1073.26 1835.36 1070.19Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1750.02 1162.47C1757.29 1165.54 1762.71 1168.29 1764.32 1176.84C1761.16 1181.45 1763.19 1179.64 1757.37 1181.42C1752.43 1185.99 1754.73 1185.09 1748.77 1186.48L1746.16 1183.45C1745.8 1173.86 1746.99 1171.89 1750.02 1162.47Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1622.03 1552.36C1623.11 1552.89 1626.65 1554.43 1627.02 1555.45C1662.95 1654.83 1663.52 1767.67 1656.94 1870.28C1701.23 1804.38 1779.26 1740.95 1851.04 1706.29C1846.81 1718.3 1835.17 1736.54 1828.07 1748C1788.53 1811.8 1744.27 1860.88 1683.3 1904.81C1709.99 1903.82 1837.9 1885.25 1849.09 1909.65C1834.57 1934.63 1679.81 1945.01 1672.02 1951.13C1674.53 1958.89 1738.33 1988.92 1742.39 2010.98L1739.65 2013.25C1705.41 2013.15 1670.78 1978.14 1639.74 1964.83L1637 1963.66C1634.58 1984.65 1634.85 2011.46 1634.86 2032.87C1628.39 2035.57 1628.86 2035.38 1623.55 2032.53C1617.29 2021.65 1619.98 1978.43 1619.91 1963.69C1603.9 1975.78 1528.97 2022.67 1512.4 2012.09L1512.54 2007.44C1524.85 1985.14 1559.11 1968.44 1581.27 1953.84C1553 1952.15 1432.36 1931.1 1415.67 1907.38C1420.79 1884.14 1551.83 1904.16 1571.57 1908.56C1554.22 1893.37 1538.56 1881.33 1521.26 1864.9C1468.19 1814.49 1437.33 1765.85 1402.58 1703.54C1484.59 1744.34 1543.31 1799.67 1598.57 1871.62C1589.21 1764.27 1589.89 1656.48 1622.03 1552.36Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M2929.13 2166.74C2988.93 2166.84 3056.87 2213.91 3060.09 2275.09C3064.55 2360.14 2984.97 2479.99 2933.31 2543.39C2902.78 2519.92 2831.46 2385.22 2811.79 2346.09C2768.54 2260.06 2837.05 2172.96 2929.13 2166.74ZM2946.99 2370.25C2987.48 2361.81 3013.52 2322.21 3005.22 2281.69C2996.93 2241.17 2957.43 2214.98 2916.88 2223.12C2876.11 2231.3 2849.75 2271.06 2858.09 2311.8C2866.43 2352.54 2906.28 2378.74 2946.99 2370.25Z"/><path fill="#B4B260" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M2116.51 1044.02C2134.21 1044.48 2155.75 1049.75 2173.31 1053.42C2349.29 1090.22 2499.02 1210.29 2493.01 1404.04L2492.41 1421.09C2453.16 1421.17 2408.1 1422.71 2369.66 1422.04C2356.36 1263.97 2273 1174.84 2130.63 1117.07C2124.81 1099.61 2117.36 1107.25 2106.99 1094.75C2112.64 1087.24 2122.11 1077.39 2115.15 1069.05C2101.82 1066.87 2089.12 1085.93 2076.3 1078.12C2074.26 1072.38 2074.78 1072.48 2076.13 1066.38C2080.82 1062.66 2080.28 1063.99 2087.95 1064.16L2089.96 1062.08L2088.59 1057.92C2080.82 1051.62 2075.31 1055.21 2066.26 1051.17L2066.87 1044.44C2066.66 1044.51 2110.14 1044.49 2116.51 1044.02Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1593.55 2009.73L1598.31 2014.06C1602.39 2028.16 1574.76 2060.25 1636.88 2063.33C1662.1 2064.58 1655.17 2022.31 1666.48 2009.53C1671.57 2012.67 1675.51 2021.99 1675.4 2027.74C1673.46 2125.54 1677.7 2223.21 1677.84 2320.99C1677.91 2367 1660.45 2390.75 1627.36 2421.07C1603.95 2440.95 1576.99 2456.5 1547.4 2464.99C1543.54 2445.1 1540.4 2399.91 1538.68 2377.8C1530 2265.78 1530.67 2151.52 1528.32 2038.77C1550.57 2029.26 1571.7 2020.19 1593.55 2009.73Z"/><path fill="#A8A555" transform="matrix(0.11499 0 0 0.11499 0.00012207 0)" d="M1663.89 1563.3C1684.14 1570.44 1740.84 1628.92 1755.39 1647.99L1754.81 1649.42C1745.99 1671.5 1733.14 1695.66 1722.4 1717.16C1718.06 1725.94 1713.27 1738.76 1704.99 1742.82L1702.37 1740.1C1695.88 1718.75 1692.4 1686.53 1687.32 1663.44C1682.15 1639.89 1660.37 1583.61 1663.89 1563.3Z"/></svg>
+    </div>
+  </div>
+  </div>
+  <div class="cover-bottom">
+    <div>
+      <div class="edition-tag">Edición Verano 2026</div>
+      <div class="cover-title">El Kit de<br>Seguridad <span>España</span></div>
+      <div class="cover-subtitle">Cannabis Social Clubs · Barcelona · 2026</div>
+      <div class="cover-byline">Por SocialClubsMaps.com</div>
+    </div>
+          <div class="cover-disclaimer">Guia educativa independiente. Sin venta de accesos. Sin facilitacion de compras.</div>
+    <div class="cover-footer">
+      <span class="cover-footer-note">socialclubsmaps.com</span>
+      <span class="cover-year">2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA 2 — LA LÍNEA LEGAL -->
+<div class="page">
+  <div class="inner">
+    <div class="page-label">La Línea Legal · 01</div>
+    <div class="section-eyebrow">Conoce el límite</div>
+    <div class="section-heading">La Línea<br>Legal</div>
+    <div class="section-subhead">Una sola línea separa una multa de una buena noche. Esa línea es público vs privado.</div>
+
+    <div class="legal-split">
+      <div class="legal-card danger">
+        <div class="legal-card-status">⚠ Evitar</div>
+        <div class="legal-card-label">Consumo público</div>
+        <div class="legal-card-penalty">601 € – 30.000 €</div>
+        <div class="legal-card-note">Multa administrativa. Calle, balcón, parque, playa — todo es público.</div>
+      </div>
+      <div class="legal-card safe">
+        <div class="legal-card-status">✓ Menor exposición</div>
+        <div class="legal-card-label">Club privado o tu habitación</div>
+        <div class="legal-card-penalty">Menor exposición</div>
+        <div class="legal-card-note">Dentro de un CSC verificado o en tu alojamiento privado puede reducir la exposición, pero el contexto y las normas locales siguen importando.</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 8px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);">Tres reglas. Eso es todo.</div>
+
+    <div>
+      <div class="rule-item">
+        <div class="rule-num">1</div>
+        <div>
+          <div class="rule-title">Salir con producto puede seguir creando exposición.</div>
+          <div class="rule-desc">Si llevas algo fuera, pasa a ser tu responsabilidad. <strong>Responde de forma factual y evita nombrar un club salvo que te lo exijan formalmente.</strong></div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">2</div>
+        <div>
+          <div class="rule-title">La calle es pública.</div>
+          <div class="rule-desc">Tu balcón de hotel también. El parque también. Los hoteles han irrumpido en habitaciones por esto. <strong>Mantenlo sellado, mantén la discreción.</strong></div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">3</div>
+        <div>
+          <div class="rule-title">Si la policía te para — tranquilo, educado y factual.</div>
+          <div class="rule-desc">Da la dirección vinculada a tu estancia si te la piden. Si te hablan de una multa, pide primero la documentación oficial antes de pagar nada. <strong>Efectivo en el momento sin documentos es una señal de alerta.</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>SocialClubsMaps · Barcelona · 2026</span>
+      <span>socialclubsmaps.com</span>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA 3 — SEÑALES DE ESTAFA -->
+<div class="page">
+  <div class="inner">
+    <div class="page-label">Señales de Estafa · 02</div>
+    <div class="section-eyebrow">Mantente alerta</div>
+    <div class="section-heading">Señales<br>de Estafa</div>
+    <div class="section-subhead">Barcelona tiene sus tiburones. Así es como reconocerlos.</div>
+
+    <div class="flags-grid">
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">Promotor callejero</div>
+        <div class="flag-desc">Cerca de Las Ramblas o Barceloneta, alguien ofrece «acceso». Producto inseguro y no verificado. <strong>Aléjate inmediatamente.</strong></div>
+      </div>
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">Flyer o tarjeta VIP</div>
+        <div class="flag-desc">Los clubs reales no dependen de flyers. <strong>Ignóralo y sigue tu camino.</strong></div>
+      </div>
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">Menú por Telegram / WhatsApp</div>
+        <div class="flag-desc">Un menú por chat no prueba que sea un club legítimo. <strong>Trátalo como un vendedor no verificado y aléjate.</strong></div>
+      </div>
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">Sin proceso de admisión</div>
+        <div class="flag-desc">Si no hay control de identidad ni proceso de alta, el riesgo sube. <strong>Vete.</strong></div>
+      </div>
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">Efectivo antes de entrar</div>
+        <div class="flag-desc">Sin documentación no tienes un rastro fiable. <strong>Tómalo como una alerta y sal de ahí.</strong></div>
+      </div>
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">Piso u ubicación sin identificar</div>
+        <div class="flag-desc">Los clubs reales operan desde locales identificables. <strong>Sal de la zona.</strong></div>
+      </div>
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">«No te preocupes por las normas»</div>
+        <div class="flag-desc">Si alguien minimiza las normas, la señal es mala. <strong>Vete.</strong></div>
+      </div>
+      <div class="flag-card">
+        <span class="flag-icon">🚩</span>
+        <div class="flag-title">Upselling o tratos de «Trae un amigo»</div>
+        <div class="flag-desc">Los CSC son sin ánimo de lucro. Cultura de ventas = operación falsa.</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>SocialClubsMaps · Barcelona · 2026</span>
+      <span>socialclubsmaps.com</span>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA 4 — PRIMERA VISITA -->
+<div class="page">
+  <div class="inner">
+    <div class="page-label">Primera Visita · 03</div>
+    <div class="section-eyebrow">Tu primera vez</div>
+    <div class="section-heading">Primera<br>Visita</div>
+    <div class="section-subhead">Haz esto. En este orden.</div>
+
+    <div class="visit-steps">
+      <div class="visit-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-when">Antes de ir</div>
+          <div class="step-title">Prepárate con antelación</div>
+          <div class="step-desc">Solicita con días de antelación. Verifica en <strong>socialclubsmaps.com</strong>. Trae pasaporte + confirmación + efectivo.</div>
+        </div>
+      </div>
+      <div class="visit-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-when">Llegada</div>
+          <div class="step-title">En la puerta</div>
+          <div class="step-desc">DNI listo. Sé honesto. Sé paciente. Si te rechazan — <strong>agradece y vete.</strong></div>
+        </div>
+      </div>
+      <div class="visit-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-when">Salida</div>
+          <div class="step-title">Al marcharte</div>
+          <div class="step-desc">Pide al personal que guarde tu producto hasta la próxima visita — muchos clubs lo hacen — o llévátelo contigo. <strong>Tu decisión, tu responsabilidad.</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="visit-tips">
+      <div class="tip-box">
+        <div class="tip-label">En la calle</div>
+        <div class="tip-text">Compórtate como lo harías en casa. <strong>Discreto. Atento.</strong> Un ojo en las luces azules.</div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-label">Redes sociales</div>
+        <div class="tip-text">Piensa antes de publicar. <strong>Nunca fotografíes menús, personal ni nada que comprometa la privacidad de los socios.</strong></div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>SocialClubsMaps · Barcelona · 2026</span>
+      <span>socialclubsmaps.com</span>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA 5 — DENTRO DEL CLUB -->
+<div class="page">
+  <div class="inner">
+    <div class="page-label">Dentro del Club · 04</div>
+    <div class="section-eyebrow">Conducta</div>
+    <div class="section-heading">Dentro<br>del Club</div>
+    <div class="section-subhead">5 reglas. No negociables.</div>
+
+    <div class="club-rules">
+      <div class="club-rule">
+        <div class="club-rule-num">01</div>
+        <div class="club-rule-divider"></div>
+        <div class="club-rule-text">Sin fotos de menús ni del personal.</div>
+      </div>
+      <div class="club-rule">
+        <div class="club-rule-num">02</div>
+        <div class="club-rule-divider"></div>
+        <div class="club-rule-text">Volumen bajo. Edificios residenciales. Vecinos reales.</div>
+      </div>
+      <div class="club-rule">
+        <div class="club-rule-num">03</div>
+        <div class="club-rule-divider"></div>
+        <div class="club-rule-text">El personal dice no → la respuesta es «de acuerdo.» Siempre.</div>
+      </div>
+      <div class="club-rule">
+        <div class="club-rule-num">04</div>
+        <div class="club-rule-divider"></div>
+        <div class="club-rule-text">Lo que ves dentro, se queda dentro.</div>
+      </div>
+      <div class="club-rule">
+        <div class="club-rule-num">05</div>
+        <div class="club-rule-divider"></div>
+        <div class="club-rule-text">Da las gracias al salir.</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>SocialClubsMaps · Barcelona · 2026</span>
+      <span>socialclubsmaps.com</span>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA 6 — EMERGENCIA -->
+<div class="page">
+  <div class="inner">
+    <div class="page-label">Emergencia · 05</div>
+    <div class="section-eyebrow">Si algo sale mal</div>
+    <div class="section-heading">Emergencia</div>
+    <div class="section-subhead">Guárdalos. Úsalos.</div>
+
+    <div class="emergency-numbers">
+      <div class="emergency-num-card">
+        <span class="e-number">112</span>
+        <span class="e-label">Emergencia</span>
+      </div>
+      <div class="emergency-num-card">
+        <span class="e-number">091</span>
+        <span class="e-label">Policía Nacional</span>
+      </div>
+      <div class="emergency-num-card">
+        <span class="e-number">092</span>
+        <span class="e-label">Policía Local</span>
+      </div>
+      <div class="emergency-num-card">
+        <span class="e-number">061</span>
+        <span class="e-label">Médico</span>
+      </div>
+    </div>
+
+    <div class="emergency-scenarios">
+      <div class="scenario-card">
+        <div class="scenario-icon">📄</div>
+        <div>
+          <div class="scenario-title">¿Multado?</div>
+          <div class="scenario-desc">Las multas reales llegan con documentación oficial. Si te dicen que existe una multa, revisa primero los datos del expediente. <strong>Efectivo en el momento sin documentos = señal de estafa.</strong></div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-icon">⚠️</div>
+        <div>
+          <div class="scenario-title">¿Te han estafado?</div>
+          <div class="scenario-desc">Presenta una <em>denuncia</em> en la Policía Nacional. Escríbenos: <a href="mailto:info@socialclubsmaps.com">info@socialclubsmaps.com</a></div>
+        </div>
+      </div>
+      <div class="scenario-card">
+        <div class="scenario-icon">🏥</div>
+        <div>
+          <div class="scenario-title">¿Problema médico?</div>
+          <div class="scenario-desc">Llama al <strong>112</strong>. Sé honesto. Es confidencial. Están para ayudar.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>SocialClubsMaps · Barcelona · 2026</span>
+      <span>socialclubsmaps.com</span>
+    </div>
+  </div>
+</div>
+
+<!-- PÁGINA 7 — CHECKLIST -->
+<div class="page">
+  <div class="inner">
+    <div class="page-label">Checklist · 06</div>
+    <div class="section-eyebrow">Haz una captura de pantalla</div>
+    <div class="section-heading">Checklist</div>
+    <div class="section-subhead" style="margin-bottom: 32px;">Todo lo que necesitas. Antes, durante, después.</div>
+
+    <div class="checklist-grid">
+      <div class="col-do">
+        <div class="checklist-col-label">Hacer ✓</div>
+        <div class="check-item"><div class="check-box">✓</div><div class="check-text">Club verificado en socialclubsmaps.com</div></div>
+        <div class="check-item"><div class="check-box">✓</div><div class="check-text">Membresía confirmada</div></div>
+        <div class="check-item"><div class="check-box">✓</div><div class="check-text">Pasaporte o DNI listo</div></div>
+        <div class="check-item"><div class="check-box">✓</div><div class="check-text">Efectivo preparado</div></div>
+        <div class="check-item"><div class="check-box">✓</div><div class="check-text">Sin fotos de menús ni personal</div></div>
+        <div class="check-item"><div class="check-box">✓</div><div class="check-text">Voz baja dentro del club</div></div>
+        <div class="check-item"><div class="check-box">✓</div><div class="check-text">Saliste sin nada / o guardado en el club</div></div>
+      </div>
+      <div class="col-never">
+        <div class="checklist-col-label">Nunca ✕</div>
+        <div class="check-item"><div class="check-box">✕</div><div class="check-text">Nunca seguir a un promotor callejero</div></div>
+        <div class="check-item"><div class="check-box">✕</div><div class="check-text">No entregues efectivo en el momento sin documentación oficial</div></div>
+        <div class="check-item"><div class="check-box">✕</div><div class="check-text">Nunca entrar en un local sin identificar</div></div>
+        <div class="check-item"><div class="check-box">✕</div><div class="check-text">No nombres un club salvo que te lo exijan formalmente</div></div>
+      </div>
+    </div>
+
+    <div class="checklist-footer">
+      <div class="checklist-footer-brand">SocialClubsMaps · Barcelona · 2026</div>
+      <div class="checklist-footer-note">Ningún club ha pagado por nada en esta guía. · safety@socialclubsmaps.com</div>
+      <div class="checklist-footer-cta"><a href="https://socialclubsmaps.com/clubs">Encuentra clubs verificados → socialclubsmaps.com/clubs</a></div>
+    </div>
+
+    <div class="page-footer">
+      <span>SocialClubsMaps · Barcelona · 2026</span>
+      <span>socialclubsmaps.com</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
