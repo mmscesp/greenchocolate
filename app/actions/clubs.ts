@@ -444,8 +444,12 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
 export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
   try {
     const validatedSlug = slugSchema.parse(slug);
-    const club = await prisma.club.findUnique({
-      where: { slug: validatedSlug, isActive: true },
+    const club = await prisma.club.findFirst({
+      where: {
+        slug: validatedSlug,
+        isActive: true,
+        isVerified: true,
+      },
       include: {
         city: {
           select: { name: true, slug: true },

@@ -32,8 +32,9 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
   const status = getString(query.status);
   const message = getString(query.message);
 
-  const [data, totalPendingVerification, totalInactive] = await Promise.all([
+  const [data, totalClubs, totalPendingVerification, totalInactive] = await Promise.all([
     getAdminClubs({ query: q, verification, activity, page, pageSize: 20 }),
+    prisma.club.count(),
     prisma.club.count({ where: { isVerified: false } }),
     prisma.club.count({ where: { isActive: false } }),
   ]);
@@ -50,9 +51,14 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('admin.clubs.title')}</h1>
-        <p className="text-muted-foreground mt-1">{t('admin.clubs.subtitle')}</p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{t('admin.clubs.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('admin.clubs.subtitle')}</p>
+        </div>
+        <Button asChild>
+          <Link href={`/${lang}/admin/clubs/new`}>Create club</Link>
+        </Button>
       </div>
 
       <AdminActionNotice status={status} message={message} />
@@ -61,7 +67,7 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
         <Card>
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Total clubs</p>
-            <p className="text-3xl font-bold">{data.total}</p>
+            <p className="text-3xl font-bold">{totalClubs}</p>
           </CardContent>
         </Card>
         <Card>
@@ -143,6 +149,10 @@ export default async function AdminClubsPage({ params, searchParams }: ClubsPage
                     </div>
 
                     <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+                      <Link href={`/${lang}/admin/clubs/${club.id}/edit`}>
+                        <Button size="sm" className="w-full sm:w-auto">Edit</Button>
+                      </Link>
+
                       <Link href={`/${lang}/admin/clubs/${club.id}`}>
                         <Button variant="secondary" size="sm" className="w-full sm:w-auto">{t('admin.common.details')}</Button>
                       </Link>

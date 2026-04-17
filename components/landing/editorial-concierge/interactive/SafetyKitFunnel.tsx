@@ -95,6 +95,14 @@ export function SafetyKitFunnel() {
             <p className="mt-4 text-[11px] text-zinc-500 max-w-xs mx-auto">
               {t('safety_kit.microcopy')}
             </p>
+            <div className="mt-5">
+              <Link
+                href={`/${language}/editorial/safety-kit-visitors-spain`}
+                className="text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+              >
+                {t('safety_kit.open_guide')}
+              </Link>
+            </div>
           </motion.div>
         )}
 

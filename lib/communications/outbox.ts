@@ -37,6 +37,31 @@ type EnqueueEmailOutboxInput = {
   payload: EmailOutboxPayload;
 };
 
+async function runWithConcurrency<T, R>(
+  items: T[],
+  worker: (item: T) => Promise<R>,
+  concurrency = 4
+) {
+  const results: R[] = new Array(items.length);
+  let cursor = 0;
+
+  const workers = Array.from({ length: Math.max(1, Math.min(concurrency, items.length || 1)) }, async () => {
+    while (true) {
+      const currentIndex = cursor;
+      cursor += 1;
+
+      if (currentIndex >= items.length) {
+        return;
+      }
+
+      results[currentIndex] = await worker(items[currentIndex]);
+    }
+  });
+
+  await Promise.all(workers);
+  return results;
+}
+
 function nextAvailableAt(attempts: number) {
   const delayMinutes = Math.min(30, Math.max(1, attempts * 5));
   return new Date(Date.now() + delayMinutes * 60 * 1000);
@@ -267,16 +292,29 @@ export async function processPendingEmailOutbox(limit = 25) {
     select: { id: true },
   });
 
-  const results = [];
+  const results = await runWithConcurrency(
+    items,
+    async (item) => {
+      const result = await processEmailOutboxItem(item.id);
+      return result ? { id: item.id, result } : null;
+    },
+    4
+  );
 
-  for (const item of items) {
-    const result = await processEmailOutboxItem(item.id);
-    if (result) {
-      results.push({ id: item.id, result });
-    }
-  }
+  return results.filter((entry): entry is { id: string; result: EmailOutboxProcessResult } => Boolean(entry));
+}
 
-  return results;
+export async function processSpecificEmailOutboxItems(ids: string[], concurrency = 4) {
+  const results = await runWithConcurrency(
+    ids,
+    async (id) => {
+      const result = await processEmailOutboxItem(id);
+      return result ? { id, result } : null;
+    },
+    concurrency
+  );
+
+  return results.filter((entry): entry is { id: string; result: EmailOutboxProcessResult } => Boolean(entry));
 }
 
 export async function retryEmailOutboxItem(

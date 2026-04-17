@@ -10,7 +10,7 @@ import { prisma } from '@/lib/prisma';
 import { logAdminAuditEvent } from '@/lib/security/admin-audit';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
 import { isAuthRateLimited } from '@/lib/security/auth-rate-limit';
-import { getSafeAdminReturnPath } from '@/lib/security/admin-portal';
+import { getSafeAdminReturnPath, withAdminActionStatus } from '@/lib/security/admin-portal';
 import {
   buildApplicantPayload,
   buildLeadToken,
@@ -47,6 +47,7 @@ import {
   sendMembershipSubmissionEmail,
 } from '@/lib/email/membership';
 import { recordCommunicationEvent } from '@/lib/communications/events';
+import { getPlatformControlState } from '@/lib/platform-control';
 import { getSessionProfile } from '@/lib/session-profile';
 
 const TRANSACTION_MAX_RETRIES = 3;
@@ -740,14 +741,19 @@ export async function submitMembershipApplication(
   estimatedCompletion?: Date;
   challengeRequired?: boolean;
   error?: string;
-}> {
-  const profile = await getCurrentProfile();
+  }> {
+    const profile = await getCurrentProfile();
 
-  if (!profile) {
-    return { success: false, error: 'Unauthorized' };
-  }
+    if (!profile) {
+      return { success: false, error: 'Unauthorized' };
+    }
 
-  const validated = submitSchema.safeParse(data);
+    const controls = await getPlatformControlState();
+    if (!controls.membershipIntakeEnabled) {
+      return { success: false, error: 'Membership applications are temporarily paused.' };
+    }
+
+    const validated = submitSchema.safeParse(data);
   if (!validated.success) {
     return { success: false, error: validated.error.errors[0]?.message || 'Invalid input' };
   }
@@ -958,7 +964,12 @@ export async function createMembershipApplicationLead(
   expiresAt?: string;
   challengeRequired?: boolean;
   error?: string;
-}> {
+  }> {
+  const controls = await getPlatformControlState();
+  if (!controls.membershipIntakeEnabled) {
+    return { success: false, error: 'Membership applications are temporarily paused.' };
+  }
+
   const validated = submitSchema.safeParse(data);
   if (!validated.success) {
     return { success: false, error: validated.error.errors[0]?.message || 'Invalid input' };
@@ -2088,6 +2099,7 @@ export async function getAdminMembershipRequestDetail(requestId: string): Promis
 }
 
 export async function addAdminMembershipNoteAction(formData: FormData): Promise<void> {
+  const returnPath = getSafeAdminReturnPath(formData.get('returnPath'), '/en/admin/requests');
   const parsed = noteSchema.safeParse({
     requestId: formData.get('requestId'),
     body: formData.get('body'),
@@ -2095,15 +2107,38 @@ export async function addAdminMembershipNoteAction(formData: FormData): Promise<
   });
 
   if (!parsed.success) {
-    throw new Error(parsed.error.errors[0]?.message || 'Invalid note');
+    redirect(
+      withAdminActionStatus(
+        returnPath,
+        'error',
+        parsed.error.errors[0]?.message || 'Invalid note',
+        { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+      )
+    );
+    return;
   }
 
   const result = await addAdminMembershipNote(parsed.data.requestId, parsed.data.body);
   if (!result.success) {
-    throw new Error(result.error || 'Failed to add note');
+    redirect(
+      withAdminActionStatus(
+        returnPath,
+        'error',
+        result.error || 'Failed to add note',
+        { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+      )
+    );
+    return;
   }
 
-  redirect(getSafeAdminReturnPath(parsed.data.returnPath ?? null, '/en/admin/requests'));
+  redirect(
+    withAdminActionStatus(
+      getSafeAdminReturnPath(parsed.data.returnPath ?? null, '/en/admin/requests'),
+      'success',
+      'Internal note added.',
+      { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+    )
+  );
 }
 
 export async function approveMembershipRequestAction(formData: FormData): Promise<void> {
@@ -2114,15 +2149,38 @@ export async function approveMembershipRequestAction(formData: FormData): Promis
   const returnPath = String(formData.get('returnPath') || '');
 
   if (!parsed.success) {
-    throw new Error(parsed.error.errors[0]?.message || 'Invalid approval');
+    redirect(
+      withAdminActionStatus(
+        getSafeAdminReturnPath(returnPath, '/en/admin/requests'),
+        'error',
+        parsed.error.errors[0]?.message || 'Invalid approval',
+        { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+      )
+    );
+    return;
   }
 
   const result = await approveMembershipRequest(parsed.data.requestId, parsed.data.note);
   if (!result.success) {
-    throw new Error(result.error || 'Failed to approve application');
+    redirect(
+      withAdminActionStatus(
+        getSafeAdminReturnPath(returnPath, '/en/admin/requests'),
+        'error',
+        result.error || 'Failed to approve application',
+        { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+      )
+    );
+    return;
   }
 
-  redirect(getSafeAdminReturnPath(returnPath, '/en/admin/requests'));
+  redirect(
+    withAdminActionStatus(
+      getSafeAdminReturnPath(returnPath, '/en/admin/requests'),
+      'success',
+      'Request approved.',
+      { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+    )
+  );
 }
 
 export async function rejectMembershipRequestAction(formData: FormData): Promise<void> {
@@ -2133,15 +2191,38 @@ export async function rejectMembershipRequestAction(formData: FormData): Promise
   const returnPath = String(formData.get('returnPath') || '');
 
   if (!parsed.success) {
-    throw new Error(parsed.error.errors[0]?.message || 'Invalid rejection');
+    redirect(
+      withAdminActionStatus(
+        getSafeAdminReturnPath(returnPath, '/en/admin/requests'),
+        'error',
+        parsed.error.errors[0]?.message || 'Invalid rejection',
+        { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+      )
+    );
+    return;
   }
 
   const result = await rejectMembershipRequest(parsed.data.requestId, parsed.data.reason);
   if (!result.success) {
-    throw new Error(result.error || 'Failed to reject application');
+    redirect(
+      withAdminActionStatus(
+        getSafeAdminReturnPath(returnPath, '/en/admin/requests'),
+        'error',
+        result.error || 'Failed to reject application',
+        { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+      )
+    );
+    return;
   }
 
-  redirect(getSafeAdminReturnPath(returnPath, '/en/admin/requests'));
+  redirect(
+    withAdminActionStatus(
+      getSafeAdminReturnPath(returnPath, '/en/admin/requests'),
+      'success',
+      'Request rejected.',
+      { statusKey: 'actionStatus', messageKey: 'actionMessage' }
+    )
+  );
 }
 
 async function findAuthUserByEmail(email: string) {
@@ -2287,7 +2368,14 @@ export async function bootstrapInitialAdminProfileAction(formData: FormData): Pr
   });
 
   if (!result.success) {
-    throw new Error(result.message || 'Failed to bootstrap admin');
+    redirect(
+      withAdminActionStatus(
+        `/${lang}/admin/bootstrap`,
+        'error',
+        result.message || 'Failed to bootstrap admin'
+      )
+    );
+    return;
   }
 
   redirect(`/${lang}/admin/login?bootstrap=success`);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { createClient } from '@/lib/supabase/server';
@@ -102,77 +103,93 @@ export async function POST(request: NextRequest) {
     const requestIdempotencyKey = headerIdempotencyKey || `blog-publish:${parsed.data.slug}:${contentHash}`;
     const scopedIdempotencyKey = `${user.id}:BLOG_PUBLISH:${requestIdempotencyKey}`;
 
-    const existingSuccess = await prisma.auditLog.findFirst({
-      where: {
-        tableName: 'BlogPublish',
-        operation: 'PUBLISH_SUCCESS',
-        changeHash: scopedIdempotencyKey,
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const publishResult = await prisma.$transaction(
+      async (tx) => {
+        await tx.$queryRaw(
+          Prisma.sql`SELECT pg_advisory_xact_lock(hashtext(${scopedIdempotencyKey}))`
+        );
 
-    if (existingSuccess) {
-      return NextResponse.json({
-        success: true,
-        idempotent: true,
-        idempotencyKey: requestIdempotencyKey,
-        scopedIdempotencyKey,
-        contentHash,
-        path: getStringFromJsonValue(existingSuccess.changeData, 'path'),
-        mode: getStringFromJsonValue(existingSuccess.changeData, 'mode'),
-        commitSha: getStringFromJsonValue(existingSuccess.changeData, 'commitSha'),
-      });
-    }
+        const existingSuccess = await tx.auditLog.findFirst({
+          where: {
+            tableName: 'BlogPublish',
+            operation: 'PUBLISH_SUCCESS',
+            changeHash: scopedIdempotencyKey,
+          },
+          orderBy: { createdAt: 'desc' },
+        });
 
-    await logAdminAuditEvent({
-      tableName: 'BlogPublish',
-      operation: 'PUBLISH_ATTEMPT',
-      changedBy: user.id,
-      recordId: parsed.data.slug,
-        changeData: {
-          slug: parsed.data.slug,
-          category: parsed.data.category,
-          idempotencyKey: requestIdempotencyKey,
-          scopedIdempotencyKey,
-          contentHash,
-        },
-      });
+        if (existingSuccess) {
+          return {
+            success: true as const,
+            idempotent: true as const,
+            path: getStringFromJsonValue(existingSuccess.changeData, 'path'),
+            mode: getStringFromJsonValue(existingSuccess.changeData, 'mode'),
+            commitSha: getStringFromJsonValue(existingSuccess.changeData, 'commitSha'),
+            rollback: getStringFromJsonValue(existingSuccess.changeData, 'rollback'),
+          };
+        }
 
-    await ensureBlogContentDirectories();
+        await tx.auditLog.create({
+          data: {
+            tableName: 'BlogPublish',
+            operation: 'PUBLISH_ATTEMPT',
+            changedBy: user.id,
+            recordId: parsed.data.slug,
+            changeData: {
+              slug: parsed.data.slug,
+              category: parsed.data.category,
+              idempotencyKey: requestIdempotencyKey,
+              scopedIdempotencyKey,
+              contentHash,
+            },
+            changeHash: `${scopedIdempotencyKey}:attempt:${Date.now()}`,
+          },
+        });
 
-    const result = await publishArticleArtifact(publishInput);
+        await ensureBlogContentDirectories();
+        const result = await publishArticleArtifact(publishInput);
 
-    await prisma.auditLog.create({
-      data: {
-        tableName: 'BlogPublish',
-        operation: 'PUBLISH_SUCCESS',
-        changedBy: user.id,
-        recordId: parsed.data.slug,
-        changeData: {
-          slug: parsed.data.slug,
-          category: parsed.data.category,
+        await tx.auditLog.create({
+          data: {
+            tableName: 'BlogPublish',
+            operation: 'PUBLISH_SUCCESS',
+            changedBy: user.id,
+            recordId: parsed.data.slug,
+            changeData: {
+              slug: parsed.data.slug,
+              category: parsed.data.category,
+              path: result.path,
+              mode: result.mode,
+              commitSha: result.commitSha ?? null,
+              rollback: result.rollback,
+              idempotencyKey: requestIdempotencyKey,
+              scopedIdempotencyKey,
+              contentHash,
+            },
+            changeHash: scopedIdempotencyKey,
+          },
+        });
+
+        return {
+          success: true as const,
+          idempotent: false as const,
           path: result.path,
           mode: result.mode,
           commitSha: result.commitSha ?? null,
           rollback: result.rollback,
-          idempotencyKey: requestIdempotencyKey,
-          scopedIdempotencyKey,
-          contentHash,
-        },
-        changeHash: scopedIdempotencyKey,
+        };
       },
-    });
+      {
+        maxWait: 60_000,
+        timeout: 60_000,
+      }
+    );
 
     return NextResponse.json({
-      success: true,
-      idempotent: false,
+      ...publishResult,
       idempotencyKey: requestIdempotencyKey,
       scopedIdempotencyKey,
       contentHash,
-      path: result.path,
-      mode: result.mode,
-      commitSha: result.commitSha ?? null,
-      rollback: result.rollback,
     });
   } catch (error) {
     try {

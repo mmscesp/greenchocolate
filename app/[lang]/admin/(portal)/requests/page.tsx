@@ -6,6 +6,7 @@ import {
   rejectMembershipRequestAction,
 } from '@/app/actions/applications';
 import { replayAdminCommunicationOutboxItem } from '@/app/actions/admin-communications';
+import { AdminActionNotice } from '@/components/admin/AdminActionNotice';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -18,6 +19,8 @@ interface AdminRequestsPageProps {
     query?: string;
     clubId?: string;
     requestId?: string;
+    actionStatus?: string;
+    actionMessage?: string;
   }>;
 }
 
@@ -248,6 +251,7 @@ export default async function AdminRequestsPage({
 
   return (
     <div className="space-y-6">
+      <AdminActionNotice status={search.actionStatus} message={search.actionMessage} />
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{copy.title}</h1>
         <p className="mt-1 text-muted-foreground">

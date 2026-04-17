@@ -5,6 +5,7 @@ import { CommunicationAudience, EmailProviderRoute } from '@prisma/client';
 import { enqueueAndProcessEmailOutbox } from '@/lib/communications/outbox';
 import { subscribeMarketingEmail } from '@/lib/communications/subscriptions';
 import { buildUnsubscribeUrl } from '@/lib/communications/unsubscribe';
+import { getPlatformControlState } from '@/lib/platform-control';
 
 type SupportedLocale = 'en' | 'es' | 'fr' | 'de';
 
@@ -465,6 +466,16 @@ export async function deliverSafetyKitLead(input: {
     };
   }
 
+  const controls = await getPlatformControlState();
+  if (!controls.marketingLeadCaptureEnabled) {
+    return {
+      success: true,
+      deliveryMode: 'direct',
+      fallbackPath,
+      error: 'Lead capture is temporarily paused.',
+    };
+  }
+
   const copy = buildSafetyKitCopy(locale);
   const delivery = await sendMarketingLeadEmail({
     type: 'SAFETY_KIT_LEAD_EMAIL',
@@ -514,6 +525,16 @@ export async function deliverConciergePlan(input: {
     };
   }
 
+  const controls = await getPlatformControlState();
+  if (!controls.marketingLeadCaptureEnabled) {
+    return {
+      success: true,
+      deliveryMode: 'direct',
+      fallbackPath,
+      error: 'Lead capture is temporarily paused.',
+    };
+  }
+
   const copy = buildConciergeCopy(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps);
   const delivery = await sendMarketingLeadEmail({
     type: 'CONCIERGE_PLAN_EMAIL',
@@ -559,6 +580,16 @@ export async function deliverEditorialDigestLead(input: {
       deliveryMode: 'direct',
       fallbackPath,
       error: parsed.error.errors[0]?.message || 'Invalid email address',
+    };
+  }
+
+  const controls = await getPlatformControlState();
+  if (!controls.marketingLeadCaptureEnabled) {
+    return {
+      success: true,
+      deliveryMode: 'direct',
+      fallbackPath,
+      error: 'Lead capture is temporarily paused.',
     };
   }
 

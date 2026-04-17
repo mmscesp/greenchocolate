@@ -106,6 +106,7 @@ model Profile {
   communicationEvents             CommunicationEvent[]
   emailOutboxItems                EmailOutbox[]
   emailSubscriptions              EmailSubscription[]
+  assignedContactInquiries        ContactInquiry[]      @relation("AssignedContactInquiry")
   safetyPass                      SafetyPass?
   bookings                        Booking[]
   clubRegistrationRequests ClubRegistrationRequest[]
@@ -388,8 +389,33 @@ model Notification {
   createdAt DateTime  @default(now())
   
   user      Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId, isRead])
+}
+
+model ContactInquiry {
+  id                     String               @id @default(uuid())
+  locale                 String?
+  source                 String?
+  category               ContactInquiryCategory
+  status                 ContactInquiryStatus @default(NEW)
+  name                   String
+  email                  String
+  subject                String
+  message                String
+  adminNotes             String?
+  metadata               Json?
+  assignedAdminProfileId String?
+  resolvedAt             DateTime?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  assignedAdmin          Profile?             @relation("AssignedContactInquiry", fields: [assignedAdminProfileId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([category, createdAt])
+  @@index([email, createdAt])
+  @@index([assignedAdminProfileId, status])
 }
 
 model CommunicationEvent {
@@ -493,6 +519,16 @@ model ProviderWebhookEvent {
   @@index([recipientEmail, createdAt])
 }
 
+model PlatformSetting {
+  key       String   @id
+  value     Json
+  updatedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([updatedAt])
+}
+
 model ApplicationStageHistory {
   id            String   @id @default(uuid())
   applicationId String
@@ -558,6 +594,22 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum ContactInquiryCategory {
+  GENERAL_SUPPORT
+  LISTING_CORRECTION
+  CLUB_OPERATOR
+  EDITORIAL
+  PARTNERSHIP
+  SAFETY_KIT
+}
+
+enum ContactInquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  SPAM
 }
 
 enum CommunicationChannel {

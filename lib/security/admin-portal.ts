@@ -23,11 +23,15 @@ export function getSafeAdminReturnPath(
 export function withAdminActionStatus(
   path: string,
   status: 'success' | 'error',
-  message: string
+  message: string,
+  keys: {
+    statusKey?: string;
+    messageKey?: string;
+  } = {}
 ): string {
   const url = new URL(path, 'http://localhost');
-  url.searchParams.set('status', status);
-  url.searchParams.set('message', message);
+  url.searchParams.set(keys.statusKey ?? 'status', status);
+  url.searchParams.set(keys.messageKey ?? 'message', message);
   return `${url.pathname}${url.search}`;
 }
 
