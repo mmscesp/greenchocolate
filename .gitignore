@@ -43,3 +43,9 @@ next-env.d.ts
 /assets/editorial-sources/
 
 .pydeps/
+/.agents/
+/.opencode/
+/docs/development/scm-public-copy-surgery-plan.md
+/docs/development/solo-founder-operating-system.md
+/docs/development/solo-founder-quickstart-guide.md
+/docs/development/barcelona-tourism-club-tensions-reference.md

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PREMIUM_SPRING } from '../motion/config';
 import { ShieldCheck, Download, AlertTriangle } from '@/lib/icons';
@@ -10,10 +10,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { deliverSafetyKitLead } from '@/app/actions/lead-capture';
 import { getSafetyKitAssetPaths, getSafetyKitPdfPath, normalizeSafetyKitLocale } from '@/lib/safety-kit';
+import { trackEvent } from '@/lib/analytics';
 
-export function SafetyKitFunnel() {
+interface SafetyKitFunnelProps {
+  placement?: 'hero' | 'final_cta' | (string & {});
+}
+
+export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
   const { t, language } = useLanguage();
   const locale = normalizeSafetyKitLocale(language);
+  const trackedPlacement = useMemo(
+    () => placement.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_') || 'hero',
+    [placement]
+  );
+  const leadSource = `safety_kit_funnel_${trackedPlacement}`;
+  const ageGateTrackedRef = useRef(false);
+  const downloadTrackedRef = useRef(false);
+  const rejectedTrackedRef = useRef(false);
 
   // States: 'email' -> 'age_gate' -> 'download' | 'rejected'
   const [step, setStep] = useState<'email' | 'age_gate' | 'download' | 'rejected'>('email');
@@ -23,26 +36,74 @@ export function SafetyKitFunnel() {
   const [downloadPath, setDownloadPath] = useState(getSafetyKitPdfPath(locale));
   const [deliverySupportKey, setDeliverySupportKey] = useState<'safety_kit.dl_support_email' | 'safety_kit.dl_support_direct'>('safety_kit.dl_support_email');
 
+  useEffect(() => {
+    trackEvent('safety_kit_funnel_view', {
+      placement: trackedPlacement,
+      locale,
+    });
+  }, [trackedPlacement, locale]);
+
+  useEffect(() => {
+    if (step === 'age_gate' && !ageGateTrackedRef.current) {
+      trackEvent('safety_kit_funnel_age_gate_view', {
+        placement: trackedPlacement,
+        locale,
+      });
+      ageGateTrackedRef.current = true;
+    }
+
+    if (step === 'download' && !downloadTrackedRef.current) {
+      trackEvent('safety_kit_funnel_success_view', {
+        placement: trackedPlacement,
+        locale,
+      });
+      downloadTrackedRef.current = true;
+    }
+
+    if (step === 'rejected' && !rejectedTrackedRef.current) {
+      trackEvent('safety_kit_funnel_rejected_view', {
+        placement: trackedPlacement,
+        locale,
+      });
+      rejectedTrackedRef.current = true;
+    }
+  }, [step, trackedPlacement, locale]);
+
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
+    ageGateTrackedRef.current = false;
+    trackEvent('safety_kit_funnel_submit_attempt', {
+      placement: trackedPlacement,
+      locale,
+    });
     setStep('age_gate');
   };
 
   const handleAgeAnswer = async (isAdult: boolean) => {
     if (!isAdult) {
+      rejectedTrackedRef.current = false;
+      trackEvent('safety_kit_funnel_age_gate_reject', {
+        placement: trackedPlacement,
+        locale,
+      });
       setStep('rejected');
       return;
     }
 
+    downloadTrackedRef.current = false;
+    trackEvent('safety_kit_funnel_age_gate_accept', {
+      placement: trackedPlacement,
+      locale,
+    });
     setIsSubmitting(true);
 
     try {
       const result = await deliverSafetyKitLead({
         email,
         locale: language,
-        source: 'safety_kit_funnel',
+        source: leadSource,
       });
 
       setDeliveryPath(result.fallbackPath);
@@ -52,12 +113,27 @@ export function SafetyKitFunnel() {
           ? 'safety_kit.dl_support_email'
           : 'safety_kit.dl_support_direct'
       );
+      trackEvent(
+        result.deliveryMode === 'email'
+          ? 'safety_kit_funnel_delivery_success'
+          : 'safety_kit_funnel_delivery_fallback',
+        {
+          placement: trackedPlacement,
+          locale,
+          delivery_mode: result.deliveryMode,
+        }
+      );
       setStep('download');
     } catch (error) {
       console.error('Safety Kit delivery failed:', error);
       setDeliveryPath(getSafetyKitAssetPaths(locale).guidePath);
       setDownloadPath(getSafetyKitPdfPath(locale));
       setDeliverySupportKey('safety_kit.dl_support_direct');
+      trackEvent('safety_kit_funnel_delivery_fallback', {
+        placement: trackedPlacement,
+        locale,
+        delivery_mode: 'direct',
+      });
       setStep('download');
     } finally {
       setIsSubmitting(false);
@@ -65,7 +141,10 @@ export function SafetyKitFunnel() {
   };
 
   return (
-    <div className="w-full relative min-h-[280px] flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl border border-white/10 bg-bg-card/70 backdrop-blur-md shadow-2xl overflow-hidden">
+    <div
+      data-testid={`safety-kit-funnel-${trackedPlacement}`}
+      className="w-full relative min-h-[280px] flex flex-col items-center justify-center p-6 sm:p-8 rounded-3xl border border-white/10 bg-bg-card/70 backdrop-blur-md shadow-2xl overflow-hidden"
+    >
       <AnimatePresence mode="wait">
         
         {step === 'email' && (
@@ -79,6 +158,7 @@ export function SafetyKitFunnel() {
           >
             <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3">
               <Input
+                data-testid={`safety-kit-email-${trackedPlacement}`}
                 type="email"
                 name="email"
                 autoComplete="email"
@@ -93,6 +173,7 @@ export function SafetyKitFunnel() {
                 variant="primary"
                 size="lg"
                 disabled={isSubmitting}
+                data-testid={`safety-kit-submit-${trackedPlacement}`}
                 className="w-full"
               >
                 {isSubmitting ? '...' : t('safety_kit.form_button')}
@@ -104,6 +185,13 @@ export function SafetyKitFunnel() {
             <div className="mt-5">
               <Link
                 href={`/${language}/editorial/safety-kit-visitors-spain`}
+                data-testid={`safety-kit-open-guide-${trackedPlacement}`}
+                onClick={() =>
+                  trackEvent('safety_kit_funnel_open_guide_click', {
+                    placement: trackedPlacement,
+                    locale,
+                  })
+                }
                 className="text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 {t('safety_kit.open_guide')}
@@ -129,6 +217,7 @@ export function SafetyKitFunnel() {
                 type="button"
                 variant="primary"
                 size="lg"
+                data-testid={`safety-kit-age-yes-${trackedPlacement}`}
                 onClick={() => handleAgeAnswer(true)}
                 disabled={isSubmitting}
                 className="flex-1"
@@ -139,6 +228,7 @@ export function SafetyKitFunnel() {
                 type="button"
                 variant="secondary"
                 size="lg"
+                data-testid={`safety-kit-age-no-${trackedPlacement}`}
                 onClick={() => handleAgeAnswer(false)}
                 disabled={isSubmitting}
                 className="flex-none"
@@ -167,7 +257,17 @@ export function SafetyKitFunnel() {
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setStep('email')}
+              data-testid={`safety-kit-reset-${trackedPlacement}`}
+              onClick={() => {
+                ageGateTrackedRef.current = false;
+                rejectedTrackedRef.current = false;
+                downloadTrackedRef.current = false;
+                trackEvent('safety_kit_funnel_reset', {
+                  placement: trackedPlacement,
+                  locale,
+                });
+                setStep('email');
+              }}
               className="mt-6 text-zinc-500 hover:text-white"
             >
               {t('common.start_over')}
@@ -192,14 +292,33 @@ export function SafetyKitFunnel() {
             </h3>
             
             <Button asChild variant="primary" size="lg" className="mb-3 w-full">
-              <a href={downloadPath} download>
+              <a
+                href={downloadPath}
+                download
+                data-testid={`safety-kit-download-pdf-${trackedPlacement}`}
+                onClick={() =>
+                  trackEvent('safety_kit_funnel_pdf_click', {
+                    placement: trackedPlacement,
+                    locale,
+                  })
+                }
+              >
                 <Download className="w-4 h-4" />
                 {t('safety_kit.dl_button')}
               </a>
             </Button>
 
             <Button asChild variant="secondary" size="lg" className="mb-4 w-full">
-              <Link href={deliveryPath}>
+              <Link
+                href={deliveryPath}
+                data-testid={`safety-kit-web-guide-${trackedPlacement}`}
+                onClick={() =>
+                  trackEvent('safety_kit_funnel_web_guide_click', {
+                    placement: trackedPlacement,
+                    locale,
+                  })
+                }
+              >
                 {t('safety_kit.dl_web_button')}
               </Link>
             </Button>

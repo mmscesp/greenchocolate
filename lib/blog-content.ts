@@ -39,6 +39,10 @@ export interface BlogArticleRecord {
   citySlug: string | null;
   cityName: string | null;
   featuredOrder: number;
+  eventStartDate: string | null;
+  eventEndDate: string | null;
+  eventLocation: string | null;
+  eventUrl: string | null;
 }
 
 function parseFrontmatter(source: string): { frontmatter: ParsedFrontmatter; body: string } {
@@ -230,6 +234,12 @@ async function loadArticleFromFile(filePath: string): Promise<BlogArticleRecord>
     citySlug: asString(frontmatter.citySlug),
     cityName: asString(frontmatter.cityName),
     featuredOrder: asNumber(frontmatter.featuredOrder, 0),
+    eventStartDate: asIsoDateOrNull(asString(frontmatter.eventStartDate)),
+    eventEndDate:
+      asIsoDateOrNull(asString(frontmatter.eventEndDate)) ??
+      asIsoDateOrNull(asString(frontmatter.eventStartDate)),
+    eventLocation: asString(frontmatter.eventLocation),
+    eventUrl: asString(frontmatter.eventUrl),
   };
 }
 

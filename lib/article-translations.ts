@@ -62,33 +62,7 @@ La brecha entre expectativa y realidad es donde aparecen las estafas y los error
 - Lee [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
 - Usa [the directory](/en/clubs/) antes de viajar`,
       tags: ['Cultura', 'Barcelona', 'Amsterdam'],
-    },
-    'cannabis-europa-london-2026': {
-      title: 'Cannabis Europa London 2026: donde se cruzan politica e industria',
-      excerpt: 'Un briefing practico para entender por que Cannabis Europa importa y como prepararte mejor para asistir.',
-      content: `Cannabis Europa se mueve en el cruce entre politica, capital, regulacion y estrategia empresarial. No es un evento de cultura de consumo. Es un espacio para leer hacia donde puede ir el mercado europeo.
-
-## Que tipo de evento es
-
-Es una conferencia con presencia de inversores, operadores, asesores, perfiles regulatorios y personas que siguen de cerca la direccion institucional del sector.
-
-## Por que importa
-
-Ayuda a responder tres preguntas utiles:
-
-- hacia donde apuntan las senales regulatorias
-- que modelos de negocio parecen mas solidos
-- donde se estan concentrando las prioridades de compliance y capital
-
-## Como prepararte mejor
-
-- elige sesiones segun tu rol real
-- define a quien necesitas ver antes de llegar
-- lleva pensado el seguimiento posterior
-
-Se aprovecha mejor si lo tratas como una semana de trabajo, no como una visita pasiva.`,
-      tags: ['Eventos', 'Cannabis Europa', 'Londres'],
-    },
+    },
     'cannabis-social-club-history-spain': {
       title: 'Como empezaron los clubes sociales de cannabis en Espana',
       excerpt: 'Una cronologia practica sobre como las asociaciones privadas de cannabis evolucionaron hasta el modelo de club actual.',
@@ -120,56 +94,7 @@ La historia del modelo no es solo cultural. Tambien es legal. Los clubes han viv
 
 Si quieres la version practica para visitantes, lee [What Cannabis Social Clubs in Spain Actually Are](/en/editorial/what-are-cannabis-social-clubs-spain).`,
       tags: ['Cultura', 'Historia', 'Espana'],
-    },
-    'icbc-berlin-2026': {
-      title: 'ICBC Berlin 2026: la conferencia europea de negocio cannabico',
-      excerpt: 'Una guia breve para entender a quien sirve ICBC Berlin y como sacarle valor si trabajas con regulacion o mercado.',
-      content: `ICBC Berlin es un evento orientado al negocio. Sirve sobre todo a quienes siguen regulacion, desarrollo de mercado, alianzas y estrategia operativa.
-
-## Que esperar
-
-Suele reunir a operadores, inversores, equipos regulatorios, asesores y perfiles que intentan leer la siguiente fase del mercado europeo.
-
-## A quien le encaja mejor
-
-- operadores que buscan expansion o socios
-- equipos de policy o compliance
-- inversores y asesores que siguen la ejecucion del mercado
-
-Si tu interes es puramente de cultura de consumo, no es el mejor formato.
-
-## Como aprovecharlo
-
-- cierra reuniones pronto
-- vigila cambios en el programa oficial
-- prioriza sesiones segun tu rol
-
-La calidad del seguimiento importa mas que la cantidad de tarjetas.`,
-      tags: ['Eventos', 'ICBC', 'Berlin'],
-    },
-    'spannabis-bilbao-2026': {
-      title: 'Spannabis Bilbao 2026: lo que debes saber antes de ir',
-      excerpt: 'Una guia practica sobre por que Spannabis sigue importando y como organizar el viaje con mejor criterio.',
-      content: `Spannabis sigue siendo una referencia dentro del calendario europeo del cannabis. Si vas a Bilbao, conviene enfocarlo con preparacion primero y entusiasmo despues.
-
-## Por que sigue siendo relevante
-
-El evento mezcla visibilidad de marca, networking, cultura de producto y senales de mercado. Incluso mucha gente que no asiste sigue lo que ocurre alli.
-
-## Como planificar bien
-
-- reserva transporte y alojamiento pronto
-- revisa siempre los canales oficiales
-- confirma la logistica del recinto antes de llegar
-- no confundas la planificacion del evento con la normativa local
-
-## Conducta en el recinto y fuera
-
-Las reglas del evento y la realidad legal de la ciudad no son lo mismo. Un ambiente permisivo dentro de una expo no convierte la conducta publica fuera en algo seguro.
-
-Tratelo como un entorno profesional antes que como un espectaculo.`,
-      tags: ['Eventos', 'Spannabis', 'Bilbao'],
-    },
+    },
     'what-are-cannabis-social-clubs-spain': {
       title: 'Que son realmente los clubes sociales de cannabis en Espana y por que importa para tu viaje',
       excerpt: 'Los CSC en Espana no son coffeeshops ni dispensarios. Esta guia explica que son de verdad y por que entenderlo cambia todo.',
@@ -735,33 +660,7 @@ L ecart entre attente et realite est l endroit ou naissent les arnaques et les m
 - Lire [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
 - Utiliser [the directory](/en/clubs/) avant le voyage`,
       tags: ['Culture', 'Barcelone', 'Amsterdam'],
-    },
-    'cannabis-europa-london-2026': {
-      title: 'Cannabis Europa London 2026 : la ou se croisent politique et industrie',
-      excerpt: 'Un briefing pratique pour comprendre l interet de Cannabis Europa et mieux preparer la participation.',
-      content: `Cannabis Europa se situe au croisement de la politique, du capital, de la regulation et de la strategie. Ce n est pas un evenement grand public. C est un lieu pour lire ou peut aller le marche europeen.
-
-## Quel type d evenement
-
-On y trouve surtout investisseurs, operateurs, conseillers, profils reglementaires et personnes qui suivent de pres les signaux institutionnels du secteur.
-
-## Pourquoi cela compte
-
-L evenement aide a repondre a trois questions utiles :
-
-- dans quelle direction vont les signaux reglementaires
-- quels modeles d affaire paraissent les plus credibles
-- ou se concentrent capital et priorites de compliance
-
-## Comment bien se preparer
-
-- choisir les sessions selon son vrai role
-- savoir a l avance qui il faut rencontrer
-- arriver avec une idee claire du suivi a faire
-
-L evenement vaut surtout si on le traite comme une semaine de travail.`,
-      tags: ['Evenements', 'Cannabis Europa', 'Londres'],
-    },
+    },
     'cannabis-social-club-history-spain': {
       title: 'Comment les clubs sociaux de cannabis ont commence en Espagne',
       excerpt: 'Une chronologie pratique sur l evolution des associations de cannabis vers le modele de club actuel.',
@@ -793,56 +692,7 @@ Cette histoire est aussi legale. Les clubs ont toujours evolue dans un cadre sen
 
 Pour la version pratique, lire [What Cannabis Social Clubs in Spain Actually Are](/en/editorial/what-are-cannabis-social-clubs-spain).`,
       tags: ['Culture', 'Histoire', 'Espagne'],
-    },
-    'icbc-berlin-2026': {
-      title: 'ICBC Berlin 2026 : la conference europeenne du business cannabis',
-      excerpt: 'Un guide bref pour comprendre a qui sert ICBC Berlin et comment en tirer de la valeur.',
-      content: `ICBC Berlin est un evenement centre sur le business. Il parle surtout a ceux qui suivent regulation, developpement de marche, partenariats et execution.
-
-## A quoi s attendre
-
-On y retrouve surtout operateurs, investisseurs, equipes policy, juristes et profils qui cherchent a lire la prochaine phase du marche europeen.
-
-## Pour qui c est le plus utile
-
-- operateurs qui cherchent expansion ou partenariats
-- equipes regulation ou compliance
-- investisseurs et conseillers qui suivent l execution du marche
-
-Si votre angle est uniquement culture de consommation, ce n est pas le bon format.
-
-## Comment bien l utiliser
-
-- fixer les rendez-vous tot
-- suivre les mises a jour officielles
-- choisir les sessions selon son role
-
-Le suivi apres l evenement compte plus que l accumulation de contacts.`,
-      tags: ['Evenements', 'ICBC', 'Berlin'],
-    },
-    'spannabis-bilbao-2026': {
-      title: 'Spannabis Bilbao 2026 : ce qu il faut savoir avant d y aller',
-      excerpt: 'Un guide pratique sur la place de Spannabis dans le calendrier europeen et sur la preparation du voyage.',
-      content: `Spannabis reste une reference du calendrier cannabis en Europe. Si vous allez a Bilbao, mieux vaut privilegier la preparation plutot que l enthousiasme sans cadre.
-
-## Pourquoi l evenement attire l attention
-
-Il melange visibilite de marque, networking, culture produit et signaux de marche. Meme ceux qui n y vont pas regardent ce qu il s y passe.
-
-## Comment preparer le deplacement
-
-- reserver transport et logement tot
-- suivre les canaux officiels
-- verifier la logistique du lieu
-- ne pas confondre evenement et cadre legal local
-
-## Conduite sur place
-
-Les regles du salon et la realite legale de la ville ne sont pas les memes. Une ambiance permissive dans un hall n efface pas le risque d un comportement public negligent dehors.
-
-Il faut traiter l evenement comme un environnement professionnel avant tout.`,
-      tags: ['Evenements', 'Spannabis', 'Bilbao'],
-    },
+    },
     'what-are-cannabis-social-clubs-spain': {
       title: 'Ce que sont vraiment les clubs sociaux de cannabis en Espagne et pourquoi cela compte pour votre voyage',
       excerpt: 'Les CSC en Espagne ne sont ni des coffeeshops ni des dispensaires. Ce guide explique ce qu ils sont vraiment et pourquoi cette difference change tout.',
@@ -1406,33 +1256,7 @@ Die Lucke zwischen Erwartung und Realitat ist genau der Raum, in dem Betrug und 
 - [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists) lesen
 - vor der Reise [the directory](/en/clubs/) nutzen`,
       tags: ['Kultur', 'Barcelona', 'Amsterdam'],
-    },
-    'cannabis-europa-london-2026': {
-      title: 'Cannabis Europa London 2026: wo Politik und Branche zusammenkommen',
-      excerpt: 'Ein praktisches Briefing dazu, warum Cannabis Europa relevant ist und wie man den Besuch sinnvoll vorbereitet.',
-      content: `Cannabis Europa liegt an der Schnittstelle von Politik, Kapital, Regulierung und Unternehmensstrategie. Es ist kein Konsumenten-Event, sondern ein Ort, um die Richtung des europaischen Marktes besser zu lesen.
-
-## Was fur ein Event das ist
-
-Dort treffen sich vor allem Investoren, Betreiber, Berater, regulatorische Profile und Menschen, die institutionelle Signale der Branche verfolgen.
-
-## Warum das relevant ist
-
-Die Veranstaltung hilft bei drei praktischen Fragen:
-
-- wohin regulatorische Signale zeigen
-- welche Geschaftsmodelle glaubwurdig wirken
-- wo Kapital und Compliance-Prioritaten liegen
-
-## Wie man sich gut vorbereitet
-
-- Sessions nach der eigenen Rolle auswahlen
-- vorab festlegen, wen man treffen will
-- Follow-up schon vor der Anreise planen
-
-Am meisten bringt das Event, wenn man es wie eine Arbeitswoche behandelt.`,
-      tags: ['Events', 'Cannabis Europa', 'London'],
-    },
+    },
     'cannabis-social-club-history-spain': {
       title: 'Wie Cannabis Social Clubs in Spanien entstanden sind',
       excerpt: 'Eine praktische Einordnung dazu, wie private Cannabis-Vereine zum heutigen Club-Modell wurden.',
@@ -1464,56 +1288,7 @@ Die Geschichte ist nicht nur kulturell, sondern auch rechtlich. Clubs bewegen si
 
 Fur die heutige Besucherperspektive lies [What Cannabis Social Clubs in Spain Actually Are](/en/editorial/what-are-cannabis-social-clubs-spain).`,
       tags: ['Kultur', 'Geschichte', 'Spanien'],
-    },
-    'icbc-berlin-2026': {
-      title: 'ICBC Berlin 2026: Europas Cannabis-Business-Konferenz',
-      excerpt: 'Ein kurzer Guide dazu, fur wen ICBC Berlin relevant ist und wie man den Besuch sinnvoll nutzt.',
-      content: `ICBC Berlin ist ein business-orientiertes Event. Es ist vor allem fur Menschen relevant, die Regulierung, Marktentwicklung, Partnerschaften und operative Strategie verfolgen.
-
-## Was dich dort erwartet
-
-Typisch sind Betreiber, Investoren, Policy-Teams, Rechtsberater und Marktbeobachter, die die nachste Phase des europaischen Cannabis-Marktes einordnen wollen.
-
-## Fur wen das besonders sinnvoll ist
-
-- Betreiber mit Expansions- oder Partnerschaftsinteresse
-- Regulation- und Compliance-Teams
-- Investoren und Berater mit Blick auf Marktumsetzung
-
-Wenn dein Fokus rein auf Konsumkultur liegt, ist es nicht das passende Format.
-
-## Wie man das Event gut nutzt
-
-- Termine fruh festmachen
-- offizielle Updates verfolgen
-- Sessions passend zur eigenen Rolle auswahlen
-
-Entscheidend ist am Ende die Qualitat des Follow-up, nicht die Menge der Kontakte.`,
-      tags: ['Events', 'ICBC', 'Berlin'],
-    },
-    'spannabis-bilbao-2026': {
-      title: 'Spannabis Bilbao 2026: was du vorher wissen solltest',
-      excerpt: 'Ein praktischer Guide dazu, warum Spannabis wichtig bleibt und wie man die Reise besser vorbereitet.',
-      content: `Spannabis bleibt eine Referenz im europaischen Cannabis-Kalender. Wer nach Bilbao fahrt, sollte zuerst an Vorbereitung denken und erst danach an den Hype.
-
-## Warum das Event Aufmerksamkeit bekommt
-
-Es verbindet Markensichtbarkeit, Networking, Produktkultur und Marktsignale. Auch viele Menschen, die nicht teilnehmen, beobachten genau, was dort passiert.
-
-## Wie man die Reise sinnvoll plant
-
-- Transport und Unterkunft fruh buchen
-- offizielle Kanale regelmassig prufen
-- die Logistik des Veranstaltungsorts vorab klarziehen
-- Event-Planung nicht mit lokalem Recht verwechseln
-
-## Verhalten vor Ort
-
-Messe-Regeln und rechtliche Realitat der Stadt sind nicht dasselbe. Eine lockere Atmosphare in der Halle macht offentliches Fehlverhalten draussen nicht sicher.
-
-Behandle das Event zuerst als professionelles Umfeld.`,
-      tags: ['Events', 'Spannabis', 'Bilbao'],
-    },
+    },
     'what-are-cannabis-social-clubs-spain': {
       title: 'Was Cannabis Social Clubs in Spanien wirklich sind und warum das fur deine Reise wichtig ist',
       excerpt: 'CSC in Spanien sind weder Coffeeshops noch Dispensaries. Dieser Guide erklart, was sie wirklich sind und warum diese Unterscheidung entscheidend ist.',

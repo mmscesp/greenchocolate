@@ -26,12 +26,13 @@ const nextConfig = {
     ],
   },
   async headers() {
+    const isDevelopment = process.env.NODE_ENV !== 'production';
     const csp = [
       "default-src 'self'",
       "base-uri 'self'",
       "frame-ancestors 'none'",
       "form-action 'self'",
-      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+      `script-src 'self' 'unsafe-inline' ${isDevelopment ? "'unsafe-eval' " : ''}https://challenges.cloudflare.com`,
       "style-src 'self' 'unsafe-inline' https:",
       "img-src 'self' data: blob: https:",
       "media-src 'self' data: blob: https:",

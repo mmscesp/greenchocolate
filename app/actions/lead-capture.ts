@@ -4,13 +4,17 @@ import { z } from 'zod';
 import { CommunicationAudience, EmailProviderRoute } from '@prisma/client';
 import { enqueueAndProcessEmailOutbox } from '@/lib/communications/outbox';
 import { subscribeMarketingEmail } from '@/lib/communications/subscriptions';
-import { buildUnsubscribeUrl } from '@/lib/communications/unsubscribe';
 import { getPlatformControlState } from '@/lib/platform-control';
 import {
   getSafetyKitAssetPaths,
   normalizeSafetyKitLocale,
   type SafetyKitLocale,
 } from '@/lib/safety-kit';
+import {
+  renderConciergePlanEmail,
+  renderEditorialDigestEmail,
+  renderSafetyKitLeadEmail,
+} from '@/lib/email/templates/brevo/lead-capture';
 
 type SupportedLocale = SafetyKitLocale;
 
@@ -62,14 +66,6 @@ function normalizeLocale(locale?: string): SupportedLocale {
   return normalizeSafetyKitLocale(locale);
 }
 
-function getBaseUrl() {
-  return (process.env.NEXT_PUBLIC_APP_URL || 'https://socialclubsmaps.com').replace(/\/$/, '');
-}
-
-function toAbsoluteUrl(path: string) {
-  return `${getBaseUrl()}${path.startsWith('/') ? path : `/${path}`}`;
-}
-
 function normalizeBrevoTagPart(value: string) {
   return value
     .trim()
@@ -80,10 +76,7 @@ function normalizeBrevoTagPart(value: string) {
 }
 
 function buildBrevoTags(input: { type: string; locale: SupportedLocale; source?: string }) {
-  const tags = [
-    `scm-${normalizeBrevoTagPart(input.type)}`,
-    `locale-${input.locale}`,
-  ];
+  const tags = [`scm-${normalizeBrevoTagPart(input.type)}`, `locale-${input.locale}`];
 
   const normalizedSource = input.source ? normalizeBrevoTagPart(input.source) : '';
   if (normalizedSource) {
@@ -99,349 +92,6 @@ function buildBrevoHeaders(input: { type: string; locale: SupportedLocale; sourc
     'X-Scm-Locale': input.locale,
     ...(input.source ? { 'X-Scm-Lead-Source': input.source } : {}),
   };
-}
-
-function buildSafetyKitCopy(locale: SupportedLocale) {
-  const assetPaths = getSafetyKitAssetPaths(locale);
-
-  switch (locale) {
-    case 'es':
-      return {
-        subject: 'Tu Safety Kit de Espana',
-        heading: 'Tu Safety Kit ya esta listo.',
-        intro:
-          'Ya tienes acceso inmediato al PDF y a la guia web para entender mejor los limites legales, evitar estafas y prepararte antes de cualquier visita.',
-        primaryCta: 'Descargar el PDF',
-        primaryPath: assetPaths.pdfPath,
-        secondaryCta: 'Abrir la guia web',
-        secondaryPath: assetPaths.guidePath,
-        secondaryLinks: [
-          {
-            label: 'Como funcionan realmente los clubes',
-            path: `/${locale}/editorial/what-are-cannabis-social-clubs-spain`,
-          },
-          {
-            label: 'Leyes en Espana para visitantes',
-            path: `/${locale}/editorial/spain-cannabis-laws-tourists`,
-          },
-        ],
-        footer:
-          'SocialClubsMaps no vende acceso ni facilita compras. Esta guia existe para ayudarte a moverte con mas claridad y menos riesgo.',
-      };
-    case 'fr':
-      return {
-        subject: 'Votre Safety Kit Espagne',
-        heading: 'Votre Safety Kit est pret.',
-        intro:
-          'Vous avez maintenant un acces immediat au PDF et a la version web pour comprendre les limites legales, eviter les arnaques et preparer votre visite avec plus de clarte.',
-        primaryCta: 'Telecharger le PDF',
-        primaryPath: assetPaths.pdfPath,
-        secondaryCta: 'Ouvrir le guide web',
-        secondaryPath: assetPaths.guidePath,
-        secondaryLinks: [
-          {
-            label: 'Comment fonctionnent vraiment les clubs',
-            path: `/${locale}/editorial/what-are-cannabis-social-clubs-spain`,
-          },
-          {
-            label: 'Le cadre legal en Espagne',
-            path: `/${locale}/editorial/spain-cannabis-laws-tourists`,
-          },
-        ],
-        footer:
-          'SocialClubsMaps ne vend pas d acces et ne facilite aucun achat. Ce guide existe pour vous aider a avancer avec plus de clarte et moins de risque.',
-      };
-    case 'de':
-      return {
-        subject: 'Dein Spanien Safety Kit',
-        heading: 'Dein Safety Kit ist bereit.',
-        intro:
-          'Du hast jetzt direkten Zugriff auf das PDF und die Webversion, damit du rechtliche Grenzen, Betrugswarnzeichen und die wichtigsten Vorbereitungen vor dem ersten Besuch verstehen kannst.',
-        primaryCta: 'PDF herunterladen',
-        primaryPath: assetPaths.pdfPath,
-        secondaryCta: 'Webguide offnen',
-        secondaryPath: assetPaths.guidePath,
-        secondaryLinks: [
-          {
-            label: 'Wie Clubs in Spanien wirklich funktionieren',
-            path: `/${locale}/editorial/what-are-cannabis-social-clubs-spain`,
-          },
-          {
-            label: 'Spanische Regeln fur Besucher',
-            path: `/${locale}/editorial/spain-cannabis-laws-tourists`,
-          },
-        ],
-        footer:
-          'SocialClubsMaps verkauft keinen Zugang und vermittelt keine Kaufe. Dieser Leitfaden soll dir mehr Klarheit und weniger Risiko geben.',
-      };
-    case 'en':
-    default:
-      return {
-        subject: 'Your Spain Safety Kit',
-        heading: 'Your Safety Kit is ready.',
-        intro:
-          'You now have immediate access to the PDF and the web guide covering legal lines, scam red flags, and the basics worth understanding before any club visit.',
-        primaryCta: 'Download the PDF',
-        primaryPath: assetPaths.pdfPath,
-        secondaryCta: 'Open the web guide',
-        secondaryPath: assetPaths.guidePath,
-        secondaryLinks: [
-          {
-            label: 'How clubs actually work in Spain',
-            path: `/${locale}/editorial/what-are-cannabis-social-clubs-spain`,
-          },
-          {
-            label: "Spain's legal lines for visitors",
-            path: `/${locale}/editorial/spain-cannabis-laws-tourists`,
-          },
-        ],
-        footer:
-          'SocialClubsMaps does not sell access or facilitate purchases. This guide exists to help you move with more clarity and less risk.',
-      };
-  }
-}
-
-function buildSafetyKitHtml(locale: SupportedLocale) {
-  const copy = buildSafetyKitCopy(locale);
-  const primaryUrl = toAbsoluteUrl(copy.primaryPath);
-  const secondaryUrl = toAbsoluteUrl(copy.secondaryPath);
-  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
-
-  return [
-    `<h1>${copy.heading}</h1>`,
-    `<p>${copy.intro}</p>`,
-    `<p><a href="${primaryUrl}">${copy.primaryCta}</a></p>`,
-    `<p><a href="${secondaryUrl}">${copy.secondaryCta}</a></p>`,
-    '<ul>',
-    ...copy.secondaryLinks.map(
-      (link) => `<li><a href="${toAbsoluteUrl(link.path)}">${link.label}</a></li>`
-    ),
-    '</ul>',
-    `<p>${copy.footer}</p>`,
-    `<p style="font-size:12px;color:#6b7280;">Unsubscribe: <a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
-  ].join('');
-}
-
-function buildSafetyKitText(locale: SupportedLocale) {
-  const copy = buildSafetyKitCopy(locale);
-
-  return [
-    copy.heading,
-    '',
-    copy.intro,
-    '',
-    `${copy.primaryCta}: ${toAbsoluteUrl(copy.primaryPath)}`,
-    `${copy.secondaryCta}: ${toAbsoluteUrl(copy.secondaryPath)}`,
-    ...copy.secondaryLinks.map((link) => `${link.label}: ${toAbsoluteUrl(link.path)}`),
-    '',
-    copy.footer,
-  ].join('\n');
-}
-
-function buildConciergeCopy(locale: SupportedLocale, planName: string, summary: string, steps: ConciergeStepInput[]) {
-  const stepLines = steps.map((step, index) => ({
-    title: `${index + 1}. ${step.title}`,
-    url: toAbsoluteUrl(step.href),
-  }));
-
-  switch (locale) {
-    case 'es':
-      return {
-        subject: `Tu plan SCM: ${planName}`,
-        heading: `${planName} ya esta listo.`,
-        intro: summary,
-        stepLabel: 'Tus siguientes pasos',
-        footer:
-          'Usa este plan como guia editorial y de seguridad. SocialClubsMaps no vende acceso ni garantiza aprobaciones.',
-        stepLines,
-      };
-    case 'fr':
-      return {
-        subject: `Votre plan SCM : ${planName}`,
-        heading: `${planName} est pret.`,
-        intro: summary,
-        stepLabel: 'Vos prochaines etapes',
-        footer:
-          'Utilisez ce plan comme guide editorial et securitaire. SocialClubsMaps ne vend pas d acces et ne garantit aucune approbation.',
-        stepLines,
-      };
-    case 'de':
-      return {
-        subject: `Dein SCM-Plan: ${planName}`,
-        heading: `${planName} ist bereit.`,
-        intro: summary,
-        stepLabel: 'Deine nachsten Schritte',
-        footer:
-          'Nutze diesen Plan als redaktionelle und sicherheitsorientierte Orientierung. SocialClubsMaps verkauft keinen Zugang und garantiert keine Zusagen.',
-        stepLines,
-      };
-    case 'en':
-    default:
-      return {
-        subject: `Your SCM plan: ${planName}`,
-        heading: `${planName} is ready.`,
-        intro: summary,
-        stepLabel: 'Your next steps',
-        footer:
-          'Use this plan as an editorial and safety guide. SocialClubsMaps does not sell access or guarantee approvals.',
-        stepLines,
-      };
-  }
-}
-
-function buildConciergeHtml(
-  locale: SupportedLocale,
-  planName: string,
-  summary: string,
-  steps: ConciergeStepInput[]
-) {
-  const copy = buildConciergeCopy(locale, planName, summary, steps);
-  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
-
-  return [
-    `<h1>${copy.heading}</h1>`,
-    `<p>${copy.intro}</p>`,
-    `<h2>${copy.stepLabel}</h2>`,
-    '<ol>',
-    ...copy.stepLines.map((step) => `<li><a href="${step.url}">${step.title}</a></li>`),
-    '</ol>',
-    `<p>${copy.footer}</p>`,
-    `<p style="font-size:12px;color:#6b7280;">Unsubscribe: <a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
-  ].join('');
-}
-
-function buildConciergeText(
-  locale: SupportedLocale,
-  planName: string,
-  summary: string,
-  steps: ConciergeStepInput[]
-) {
-  const copy = buildConciergeCopy(locale, planName, summary, steps);
-
-  return [
-    copy.heading,
-    '',
-    copy.intro,
-    '',
-    copy.stepLabel,
-    ...copy.stepLines.map((step) => `${step.title}: ${step.url}`),
-    '',
-    copy.footer,
-  ].join('\n');
-}
-
-function buildEditorialDigestCopy(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
-  const sharedLinks = [
-    {
-      labelByLocale: {
-        en: 'How clubs actually work in Spain',
-        es: 'Como funcionan realmente los clubs en Espana',
-        fr: 'Comment fonctionnent vraiment les clubs en Espagne',
-        de: 'Wie Clubs in Spanien wirklich funktionieren',
-      },
-      path: `/${locale}/editorial/what-are-cannabis-social-clubs-spain`,
-    },
-    {
-      labelByLocale: {
-        en: 'Open the Spain Safety Kit',
-        es: 'Abrir el Safety Kit de Espana',
-        fr: 'Ouvrir le Safety Kit Espagne',
-        de: 'Das Spanien Safety Kit offnen',
-      },
-      path: `/${locale}/editorial/safety-kit-visitors-spain`,
-    },
-  ].map((link) => ({
-    label: link.labelByLocale[locale],
-    path: link.path,
-  }));
-
-  switch (locale) {
-    case 'es':
-      return {
-        subject: 'Tu actualizacion de SocialClubsMaps',
-        heading: 'Ya estas en la lista.',
-        intro:
-          'Te enviaremos nuevas guias, drops verificados y contexto de seguridad. Mientras tanto, empieza por estos recursos base.',
-        primaryCta: primaryLabel,
-        primaryPath: primaryHref,
-        secondaryLinks: sharedLinks,
-        footer:
-          'SocialClubsMaps es educacion primero. No vendemos acceso ni garantizamos aprobaciones.',
-      };
-    case 'fr':
-      return {
-        subject: 'Votre mise a jour SocialClubsMaps',
-        heading: 'Vous etes sur la liste.',
-        intro:
-          'Nous vous enverrons de nouveaux guides, des mises a jour verifiees et du contexte securitaire. En attendant, commencez par ces ressources de base.',
-        primaryCta: primaryLabel,
-        primaryPath: primaryHref,
-        secondaryLinks: sharedLinks,
-        footer:
-          'SocialClubsMaps reste centre sur l education. Nous ne vendons pas d acces et ne garantissons aucune approbation.',
-      };
-    case 'de':
-      return {
-        subject: 'Dein SocialClubsMaps Update',
-        heading: 'Du stehst auf der Liste.',
-        intro:
-          'Wir schicken dir verifizierte Updates, neue Guides und Sicherheitskontext. Starte bis dahin mit diesen Kernressourcen.',
-        primaryCta: primaryLabel,
-        primaryPath: primaryHref,
-        secondaryLinks: sharedLinks,
-        footer:
-          'SocialClubsMaps ist education-first. Wir verkaufen keinen Zugang und garantieren keine Zusagen.',
-      };
-    case 'en':
-    default:
-      return {
-        subject: 'Your SocialClubsMaps update',
-        heading: "You're on the list.",
-        intro:
-          'We will send verified updates, new guides, and safety context. Until then, start with these core resources.',
-        primaryCta: primaryLabel,
-        primaryPath: primaryHref,
-        secondaryLinks: sharedLinks,
-        footer:
-          'SocialClubsMaps is education-first. We do not sell access or guarantee approvals.',
-      };
-  }
-}
-
-function buildEditorialDigestHtml(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
-  const copy = buildEditorialDigestCopy(locale, primaryLabel, primaryHref);
-  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
-
-  return [
-    `<h1>${copy.heading}</h1>`,
-    `<p>${copy.intro}</p>`,
-    `<p><a href="${toAbsoluteUrl(copy.primaryPath)}">${copy.primaryCta}</a></p>`,
-    '<ul>',
-    ...copy.secondaryLinks.map(
-      (link) => `<li><a href="${toAbsoluteUrl(link.path)}">${link.label}</a></li>`
-    ),
-    '</ul>',
-    `<p>${copy.footer}</p>`,
-    `<p style="font-size:12px;color:#6b7280;">Unsubscribe: <a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
-  ].join('');
-}
-
-function buildEditorialDigestText(locale: SupportedLocale, primaryLabel: string, primaryHref: string) {
-  const copy = buildEditorialDigestCopy(locale, primaryLabel, primaryHref);
-  const unsubscribeUrl = buildUnsubscribeUrl({ email: '__EMAIL__', locale });
-
-  return [
-    copy.heading,
-    '',
-    copy.intro,
-    '',
-    `${copy.primaryCta}: ${toAbsoluteUrl(copy.primaryPath)}`,
-    ...copy.secondaryLinks.map((link) => `${link.label}: ${toAbsoluteUrl(link.path)}`),
-    '',
-    copy.footer,
-    '',
-    `Unsubscribe: ${unsubscribeUrl}`,
-  ].join('\n');
 }
 
 async function sendMarketingLeadEmail(input: {
@@ -464,9 +114,6 @@ async function sendMarketingLeadEmail(input: {
     },
   });
 
-  const withRecipientToken = (content: string) =>
-    content.replaceAll('__EMAIL__', input.email.trim().toLowerCase());
-
   const result = await enqueueAndProcessEmailOutbox({
     type: input.type,
     audience: CommunicationAudience.MARKETING,
@@ -479,8 +126,8 @@ async function sendMarketingLeadEmail(input: {
       input: {
         to: [{ email: input.email }],
         subject: input.subject,
-        htmlContent: withRecipientToken(input.htmlContent),
-        textContent: withRecipientToken(input.textContent),
+        htmlContent: input.htmlContent,
+        textContent: input.textContent,
         tags: buildBrevoTags(input),
         headers: buildBrevoHeaders(input),
       },
@@ -521,15 +168,19 @@ export async function deliverSafetyKitLead(input: {
     };
   }
 
-  const copy = buildSafetyKitCopy(locale);
+  const template = renderSafetyKitLeadEmail({
+    locale,
+    recipientEmail: parsed.data.email,
+  });
+
   const delivery = await sendMarketingLeadEmail({
     type: 'SAFETY_KIT_LEAD_EMAIL',
     email: parsed.data.email,
     locale,
     source: parsed.data.source,
-    subject: copy.subject,
-    htmlContent: buildSafetyKitHtml(locale),
-    textContent: buildSafetyKitText(locale),
+    subject: template.subject,
+    htmlContent: template.htmlContent,
+    textContent: template.textContent,
     fallbackPath,
   });
 
@@ -582,15 +233,22 @@ export async function deliverConciergePlan(input: {
     };
   }
 
-  const copy = buildConciergeCopy(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps);
+  const template = renderConciergePlanEmail({
+    locale,
+    recipientEmail: parsed.data.email,
+    planName: parsed.data.planName,
+    summary: parsed.data.summary,
+    steps: parsed.data.steps,
+  });
+
   const delivery = await sendMarketingLeadEmail({
     type: 'CONCIERGE_PLAN_EMAIL',
     email: parsed.data.email,
     locale,
     source: parsed.data.planName,
-    subject: copy.subject,
-    htmlContent: buildConciergeHtml(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps),
-    textContent: buildConciergeText(locale, parsed.data.planName, parsed.data.summary, parsed.data.steps),
+    subject: template.subject,
+    htmlContent: template.htmlContent,
+    textContent: template.textContent,
     fallbackPath,
   });
 
@@ -640,15 +298,21 @@ export async function deliverEditorialDigestLead(input: {
     };
   }
 
-  const copy = buildEditorialDigestCopy(locale, parsed.data.primaryLabel, parsed.data.primaryHref);
+  const template = renderEditorialDigestEmail({
+    locale,
+    recipientEmail: parsed.data.email,
+    primaryHref: parsed.data.primaryHref,
+    primaryLabel: parsed.data.primaryLabel,
+  });
+
   const delivery = await sendMarketingLeadEmail({
     type: 'EDITORIAL_DIGEST_EMAIL',
     email: parsed.data.email,
     locale,
     source: parsed.data.source,
-    subject: copy.subject,
-    htmlContent: buildEditorialDigestHtml(locale, parsed.data.primaryLabel, parsed.data.primaryHref),
-    textContent: buildEditorialDigestText(locale, parsed.data.primaryLabel, parsed.data.primaryHref),
+    subject: template.subject,
+    htmlContent: template.htmlContent,
+    textContent: template.textContent,
     fallbackPath,
   });
 
