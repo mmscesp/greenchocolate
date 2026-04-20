@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     description: 'Discover and connect with verified cannabis social clubs in Spain. Browse directories in Barcelona, Madrid, Valencia, and more.',
     images: [
       {
-        url: '/images/SCM_Logo_OG.png',
+        url: '/images/SCM_Logo_SVG.svg',
         alt: 'SocialClubsMaps - Cannabis Social Clubs Directory',
       },
     ],
@@ -70,13 +70,13 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SocialClubsMaps - Cannabis Social Clubs Directory Spain',
     description: 'Discover and connect with verified cannabis social clubs in Spain.',
-    images: ['/images/SCM_Logo_OG.png'],
+    images: ['/images/SCM_Logo_SVG.svg'],
     creator: '@socialclubsmaps',
   },
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
-    apple: '/images/SCM_Logo_OG.png',
+    apple: '/images/SCM_Logo_SVG.svg',
   },
   alternates: {
     languages: buildLanguageAlternates(''),
@@ -90,7 +90,7 @@ const organizationJsonLd = {
   '@type': 'Organization',
   name: 'SocialClubsMaps',
   url: getBaseUrl(),
-  logo: toAbsoluteUrl('/images/SCM_Logo_OG.png'),
+  logo: toAbsoluteUrl('/images/SCM_Logo_SVG.svg'),
   sameAs: [
     'https://www.instagram.com/socialclubsmaps',
     'https://x.com/socialclubsmaps',

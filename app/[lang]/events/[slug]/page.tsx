@@ -47,7 +47,7 @@ export async function generateMetadata({
           category: event.articleCategory,
           citySlug: event.citySlug,
         })
-      : getEventImage(event.imageUrl, event.citySlug)) || '/images/SCM_Logo_OG.png';
+      : getEventImage(event.imageUrl, event.citySlug)) || '/images/SCM_Logo_SVG.svg';
 
   return {
     title,
@@ -109,7 +109,7 @@ export default async function EventPage({ params }: EventPageProps) {
     endDate: event.endDate,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     eventStatus: 'https://schema.org/EventScheduled',
-    image: event.imageUrl || toAbsoluteUrl('/images/SCM_Logo_OG.png'),
+    image: event.imageUrl || toAbsoluteUrl('/images/SCM_Logo_SVG.svg'),
     location: {
       '@type': 'Place',
       name: event.location,
