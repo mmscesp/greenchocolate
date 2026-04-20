@@ -8,8 +8,8 @@ import { useLanguage } from '@/hooks/useLanguage';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { deliverSafetyKitLead } from '@/app/actions/lead-capture';
-import { getSafetyKitAssetPaths, getSafetyKitPdfPath, normalizeSafetyKitLocale } from '@/lib/safety-kit';
+import { deliverEditorialDigestLead } from '@/app/actions/lead-capture';
+import { getSafetyKitAssetPaths, normalizeSafetyKitLocale } from '@/lib/safety-kit';
 import { trackEvent } from '@/lib/analytics';
 
 interface SafetyKitFunnelProps {
@@ -19,22 +19,21 @@ interface SafetyKitFunnelProps {
 export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
   const { t, language } = useLanguage();
   const locale = normalizeSafetyKitLocale(language);
+  const assetPaths = useMemo(() => getSafetyKitAssetPaths(locale), [locale]);
   const trackedPlacement = useMemo(
     () => placement.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_') || 'hero',
     [placement]
   );
-  const leadSource = `safety_kit_funnel_${trackedPlacement}`;
+  const newsletterSource = `safety_kit_funnel_${trackedPlacement}_download`;
   const ageGateTrackedRef = useRef(false);
   const downloadTrackedRef = useRef(false);
   const rejectedTrackedRef = useRef(false);
 
-  // States: 'email' -> 'age_gate' -> 'download' | 'rejected'
-  const [step, setStep] = useState<'email' | 'age_gate' | 'download' | 'rejected'>('email');
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [deliveryPath, setDeliveryPath] = useState(getSafetyKitAssetPaths(locale).guidePath);
-  const [downloadPath, setDownloadPath] = useState(getSafetyKitPdfPath(locale));
-  const [deliverySupportKey, setDeliverySupportKey] = useState<'safety_kit.dl_support_email' | 'safety_kit.dl_support_direct'>('safety_kit.dl_support_email');
+  const [step, setStep] = useState<'age_gate' | 'download' | 'rejected'>('age_gate');
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'fallback'>(
+    'idle'
+  );
 
   useEffect(() => {
     trackEvent('safety_kit_funnel_view', {
@@ -69,19 +68,53 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
     }
   }, [step, trackedPlacement, locale]);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!newsletterEmail.trim()) return;
 
-    ageGateTrackedRef.current = false;
-    trackEvent('safety_kit_funnel_submit_attempt', {
+    setNewsletterStatus('loading');
+    trackEvent('safety_kit_funnel_newsletter_submit_attempt', {
       placement: trackedPlacement,
       locale,
     });
-    setStep('age_gate');
+
+    try {
+      const result = await deliverEditorialDigestLead({
+        email: newsletterEmail.trim(),
+        locale: language,
+        primaryHref: `/${language}/editorial`,
+        primaryLabel: t('landing.featured_vault.all_guides'),
+        source: newsletterSource,
+      });
+
+      if (result.deliveryMode === 'direct') {
+        setNewsletterStatus('fallback');
+        trackEvent('safety_kit_funnel_newsletter_submit_fallback', {
+          placement: trackedPlacement,
+          locale,
+          delivery_mode: 'direct',
+        });
+        return;
+      }
+
+      setNewsletterStatus('success');
+      trackEvent('safety_kit_funnel_newsletter_submit_success', {
+        placement: trackedPlacement,
+        locale,
+        delivery_mode: 'email',
+      });
+    } catch (error) {
+      console.error('Safety Kit newsletter signup failed:', error);
+      setNewsletterStatus('fallback');
+      trackEvent('safety_kit_funnel_newsletter_submit_fallback', {
+        placement: trackedPlacement,
+        locale,
+        delivery_mode: 'direct',
+      });
+    }
   };
 
-  const handleAgeAnswer = async (isAdult: boolean) => {
+  const handleAgeAnswer = (isAdult: boolean) => {
     if (!isAdult) {
       rejectedTrackedRef.current = false;
       trackEvent('safety_kit_funnel_age_gate_reject', {
@@ -97,47 +130,7 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
       placement: trackedPlacement,
       locale,
     });
-    setIsSubmitting(true);
-
-    try {
-      const result = await deliverSafetyKitLead({
-        email,
-        locale: language,
-        source: leadSource,
-      });
-
-      setDeliveryPath(result.fallbackPath);
-      setDownloadPath(result.downloadPath ?? getSafetyKitPdfPath(locale));
-      setDeliverySupportKey(
-        result.deliveryMode === 'email'
-          ? 'safety_kit.dl_support_email'
-          : 'safety_kit.dl_support_direct'
-      );
-      trackEvent(
-        result.deliveryMode === 'email'
-          ? 'safety_kit_funnel_delivery_success'
-          : 'safety_kit_funnel_delivery_fallback',
-        {
-          placement: trackedPlacement,
-          locale,
-          delivery_mode: result.deliveryMode,
-        }
-      );
-      setStep('download');
-    } catch (error) {
-      console.error('Safety Kit delivery failed:', error);
-      setDeliveryPath(getSafetyKitAssetPaths(locale).guidePath);
-      setDownloadPath(getSafetyKitPdfPath(locale));
-      setDeliverySupportKey('safety_kit.dl_support_direct');
-      trackEvent('safety_kit_funnel_delivery_fallback', {
-        placement: trackedPlacement,
-        locale,
-        delivery_mode: 'direct',
-      });
-      setStep('download');
-    } finally {
-      setIsSubmitting(false);
-    }
+    setStep('download');
   };
 
   return (
@@ -147,59 +140,6 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
     >
       <AnimatePresence mode="wait">
         
-        {step === 'email' && (
-          <motion.div
-            key="email"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={PREMIUM_SPRING}
-            className="w-full max-w-sm mx-auto text-center"
-          >
-            <form onSubmit={handleEmailSubmit} className="flex flex-col gap-3">
-              <Input
-                data-testid={`safety-kit-email-${trackedPlacement}`}
-                type="email"
-                name="email"
-                autoComplete="email"
-                placeholder={t('safety_kit.form_placeholder')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="h-12 bg-bg-base/70 border-white/10 focus-visible:ring-brand/50 text-white placeholder:text-zinc-500 rounded-xl"
-              />
-              <Button 
-                type="submit" 
-                variant="primary"
-                size="lg"
-                disabled={isSubmitting}
-                data-testid={`safety-kit-submit-${trackedPlacement}`}
-                className="w-full"
-              >
-                {isSubmitting ? '...' : t('safety_kit.form_button')}
-              </Button>
-            </form>
-            <p className="mt-4 text-[11px] text-zinc-500 max-w-xs mx-auto">
-              {t('safety_kit.microcopy')}
-            </p>
-            <div className="mt-5">
-              <Link
-                href={`/${language}/editorial/safety-kit-visitors-spain`}
-                data-testid={`safety-kit-open-guide-${trackedPlacement}`}
-                onClick={() =>
-                  trackEvent('safety_kit_funnel_open_guide_click', {
-                    placement: trackedPlacement,
-                    locale,
-                  })
-                }
-                className="text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
-              >
-                {t('safety_kit.open_guide')}
-              </Link>
-            </div>
-          </motion.div>
-        )}
-
         {step === 'age_gate' && (
           <motion.div
             key="age_gate"
@@ -219,10 +159,9 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
                 size="lg"
                 data-testid={`safety-kit-age-yes-${trackedPlacement}`}
                 onClick={() => handleAgeAnswer(true)}
-                disabled={isSubmitting}
                 className="flex-1"
               >
-                {isSubmitting ? '...' : t('safety_kit.age_yes')}
+                {t('safety_kit.age_yes')}
               </Button>
               <Button
                 type="button"
@@ -230,11 +169,26 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
                 size="lg"
                 data-testid={`safety-kit-age-no-${trackedPlacement}`}
                 onClick={() => handleAgeAnswer(false)}
-                disabled={isSubmitting}
                 className="flex-none"
               >
                 {t('safety_kit.age_no')}
               </Button>
+            </div>
+
+            <div className="mt-5">
+              <Link
+                href={assetPaths.guidePath}
+                data-testid={`safety-kit-open-guide-${trackedPlacement}`}
+                onClick={() =>
+                  trackEvent('safety_kit_funnel_open_guide_click', {
+                    placement: trackedPlacement,
+                    locale,
+                  })
+                }
+                className="text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+              >
+                {t('safety_kit.open_guide')}
+              </Link>
             </div>
           </motion.div>
         )}
@@ -266,7 +220,7 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
                   placement: trackedPlacement,
                   locale,
                 });
-                setStep('email');
+                setStep('age_gate');
               }}
               className="mt-6 text-zinc-500 hover:text-white"
             >
@@ -293,7 +247,7 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
             
             <Button asChild variant="primary" size="lg" className="mb-3 w-full">
               <a
-                href={downloadPath}
+                href={assetPaths.pdfPath}
                 download
                 data-testid={`safety-kit-download-pdf-${trackedPlacement}`}
                 onClick={() =>
@@ -310,7 +264,7 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
 
             <Button asChild variant="secondary" size="lg" className="mb-4 w-full">
               <Link
-                href={deliveryPath}
+                href={assetPaths.guidePath}
                 data-testid={`safety-kit-web-guide-${trackedPlacement}`}
                 onClick={() =>
                   trackEvent('safety_kit_funnel_web_guide_click', {
@@ -324,8 +278,48 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
             </Button>
             
             <p className="text-zinc-400 text-xs leading-relaxed mb-6">
-              {t(deliverySupportKey)}
+              {t('safety_kit.dl_support_direct')}
             </p>
+
+            <div className="mb-6 rounded-2xl border border-white/10 bg-bg-base/50 p-4 text-left">
+              <h4 className="text-sm font-semibold text-white mb-1">{t('safety_kit.newsletter_title')}</h4>
+              <p className="text-xs text-zinc-400 mb-3">{t('safety_kit.newsletter_subtitle')}</p>
+
+              {newsletterStatus === 'success' ? (
+                <p className="text-xs text-green-400">{t('safety_kit.newsletter_success')}</p>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-2">
+                  <Input
+                    data-testid={`safety-kit-newsletter-email-${trackedPlacement}`}
+                    type="email"
+                    name="email"
+                    autoComplete="email"
+                    placeholder={t('safety_kit.newsletter_placeholder')}
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    required
+                    disabled={newsletterStatus === 'loading'}
+                    className="h-10 bg-bg-base/70 border-white/10 focus-visible:ring-brand/50 text-white placeholder:text-zinc-500 rounded-xl"
+                  />
+                  <Button
+                    type="submit"
+                    variant="secondary"
+                    size="sm"
+                    disabled={newsletterStatus === 'loading'}
+                    data-testid={`safety-kit-newsletter-submit-${trackedPlacement}`}
+                    className="w-full"
+                  >
+                    {newsletterStatus === 'loading'
+                      ? t('safety_kit.newsletter_loading')
+                      : t('safety_kit.newsletter_button')}
+                  </Button>
+                  <p className="text-[11px] text-zinc-500">{t('safety_kit.newsletter_microcopy')}</p>
+                  {newsletterStatus === 'fallback' ? (
+                    <p className="text-[11px] text-zinc-400">{t('safety_kit.newsletter_fallback')}</p>
+                  ) : null}
+                </form>
+              )}
+            </div>
             
             <div className="space-y-3">
               <Link href={`/${language}/clubs`} className="block w-full p-3 rounded-lg border border-white/5 bg-bg-base/40 hover:bg-bg-surface/60 hover:border-brand/30 transition-all text-left group">

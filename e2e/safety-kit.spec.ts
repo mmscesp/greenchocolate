@@ -49,22 +49,23 @@ test.describe('Safety Kit funnel', () => {
     );
   });
 
-  test('advances to age gate and emits hero placement analytics', async ({ page }) => {
+  test('starts on age gate and reaches download after adult confirmation', async ({ page }) => {
     await primeLegalConsent(page);
     await installAnalyticsCollector(page);
     await page.goto('/en/safety-kit');
 
-    await page.getByTestId('safety-kit-email-hero').fill('lead@example.com');
-    await page.getByTestId('safety-kit-submit-hero').click();
-
     await expect(page.getByTestId('safety-kit-age-yes-hero')).toBeVisible();
+    await page.getByTestId('safety-kit-age-yes-hero').click();
+    await expect(page.getByTestId('safety-kit-download-pdf-hero')).toBeVisible();
+    await expect(page.getByTestId('safety-kit-newsletter-email-hero')).toBeVisible();
 
     const events = await getAnalyticsEvents(page);
     const eventNames = events.map((event) => event.event);
 
     expect(eventNames).toContain('safety_kit_funnel_view');
-    expect(eventNames).toContain('safety_kit_funnel_submit_attempt');
     expect(eventNames).toContain('safety_kit_funnel_age_gate_view');
+    expect(eventNames).toContain('safety_kit_funnel_age_gate_accept');
+    expect(eventNames).toContain('safety_kit_funnel_success_view');
 
     expect(events).toEqual(
       expect.arrayContaining([
@@ -82,8 +83,6 @@ test.describe('Safety Kit funnel', () => {
     await installAnalyticsCollector(page);
     await page.goto('/en/safety-kit');
 
-    await page.getByTestId('safety-kit-email-final_cta').fill('lead@example.com');
-    await page.getByTestId('safety-kit-submit-final_cta').click();
     await page.getByTestId('safety-kit-age-no-final_cta').click();
 
     await expect(page.getByTestId('safety-kit-reset-final_cta')).toBeVisible();

@@ -122,11 +122,21 @@ export const dictionaryOverrides: Partial<
     'safety_kit.dl_support_email':
       'The PDF is ready below. We also sent the same links to your inbox so you can pick this up later.',
     'safety_kit.dl_support_direct':
-      'The PDF is ready below. Email delivery is unavailable right now, so we unlocked the PDF and web guide here instead.',
+      'The PDF is ready below. Download it now, then optionally subscribe for deeper updates.',
     'safety_kit.dl_cta1': 'Need clubs after this?',
     'safety_kit.dl_cta1_btn': 'Browse the directory',
     'safety_kit.dl_cta2': 'Need the legal basics first?',
     'safety_kit.dl_cta2_btn': 'Read the legal explainer',
+    'safety_kit.newsletter_title': 'Want deeper weekly insights?',
+    'safety_kit.newsletter_subtitle':
+      'Optional: get legal updates, scam alerts, and new city guides by email.',
+    'safety_kit.newsletter_placeholder': 'Enter your email',
+    'safety_kit.newsletter_button': 'Subscribe to newsletter',
+    'safety_kit.newsletter_loading': 'Subscribing...',
+    'safety_kit.newsletter_success': "You're in. Check your inbox for the first update.",
+    'safety_kit.newsletter_microcopy': 'At most one useful email per week. No ads.',
+    'safety_kit.newsletter_fallback':
+      'Email delivery is temporarily unavailable, but all guides remain open here.',
   },
   es: {
     'faq.timestamp': 'Preguntas frecuentes',
@@ -425,11 +435,21 @@ export const dictionaryOverrides: Partial<
     'safety_kit.dl_support_email':
       'El PDF ya esta listo aqui abajo. Tambien te enviamos los mismos enlaces por email para que puedas retomarlo mas tarde.',
     'safety_kit.dl_support_direct':
-      'El PDF ya esta listo aqui abajo. Ahora mismo no hay entrega por email, asi que te desbloqueamos el PDF y la guia web directamente aqui.',
+      'El PDF ya esta listo aqui abajo. Descargalo ahora y, si quieres, suscribete para recibir contexto mas profundo.',
     'safety_kit.dl_cta1': 'Necesitas clubs despues de esto?',
     'safety_kit.dl_cta1_btn': 'Explorar el directorio',
     'safety_kit.dl_cta2': 'Prefieres primero la base legal?',
     'safety_kit.dl_cta2_btn': 'Leer la explicacion legal',
+    'safety_kit.newsletter_title': 'Quieres insights semanales mas profundos?',
+    'safety_kit.newsletter_subtitle':
+      'Opcional: recibe actualizaciones legales, alertas de estafas y nuevas guias por email.',
+    'safety_kit.newsletter_placeholder': 'Tu correo',
+    'safety_kit.newsletter_button': 'Suscribirme al newsletter',
+    'safety_kit.newsletter_loading': 'Suscribiendo...',
+    'safety_kit.newsletter_success': 'Ya estas dentro. Revisa tu inbox para la primera actualizacion.',
+    'safety_kit.newsletter_microcopy': 'Como maximo, un email util por semana. Sin anuncios.',
+    'safety_kit.newsletter_fallback':
+      'El envio por email no esta disponible ahora, pero todas las guias siguen abiertas aqui.',
   },
   fr: {
     'faq.timestamp': 'Questions frequentes',
@@ -630,11 +650,22 @@ export const dictionaryOverrides: Partial<
     'safety_kit.dl_support_email':
       'Le PDF est pret ci-dessous. Nous vous avons aussi envoye les memes liens par email pour que vous puissiez y revenir plus tard.',
     'safety_kit.dl_support_direct':
-      'Le PDF est pret ci-dessous. La livraison par email est indisponible pour le moment, donc nous avons debloque le PDF et le guide web ici meme.',
+      'Le PDF est pret ci-dessous. Telechargez-le maintenant, puis inscrivez-vous si vous voulez des mises a jour plus approfondies.',
     'safety_kit.dl_cta1': 'Besoin de clubs apres ca ?',
     'safety_kit.dl_cta1_btn': 'Explorer le repertoire',
     'safety_kit.dl_cta2': 'Besoin du cadre legal d abord ?',
     'safety_kit.dl_cta2_btn': 'Lire l explication legale',
+    'safety_kit.newsletter_title': 'Vous voulez des insights hebdomadaires plus profonds ?',
+    'safety_kit.newsletter_subtitle':
+      'Optionnel : recevez des mises a jour legales, alertes arnaques et nouveaux guides par email.',
+    'safety_kit.newsletter_placeholder': 'Votre adresse email',
+    'safety_kit.newsletter_button': 'S inscrire a la newsletter',
+    'safety_kit.newsletter_loading': 'Inscription...',
+    'safety_kit.newsletter_success':
+      'C est bon. Verifiez votre boite mail pour la premiere mise a jour.',
+    'safety_kit.newsletter_microcopy': 'Au maximum un email utile par semaine. Zero pub.',
+    'safety_kit.newsletter_fallback':
+      'L envoi par email est temporairement indisponible, mais les guides restent ouverts ici.',
     'settings.subtitle': 'Gerez votre confidentialite, vos notifications et votre securite',
     'settings.save_success': 'Parametres enregistres avec succes',
     'settings.notifications.title': 'Notifications',
@@ -883,11 +914,22 @@ export const dictionaryOverrides: Partial<
     'safety_kit.dl_support_email':
       'Das PDF ist unten sofort verfugbar. Wir haben dir dieselben Links auch per Email geschickt, damit du spater wieder einsteigen kannst.',
     'safety_kit.dl_support_direct':
-      'Das PDF ist unten sofort verfugbar. Die Email-Zustellung ist gerade nicht verfugbar, deshalb haben wir PDF und Webguide hier direkt freigeschaltet.',
+      'Das PDF ist unten sofort verfugbar. Lade es jetzt herunter und abonniere optional fur tiefere Updates.',
     'safety_kit.dl_cta1': 'Brauchst du danach Clubs?',
     'safety_kit.dl_cta1_btn': 'Verzeichnis ansehen',
     'safety_kit.dl_cta2': 'Erst den rechtlichen Rahmen klarziehen?',
     'safety_kit.dl_cta2_btn': 'Rechtliche Einordnung lesen',
+    'safety_kit.newsletter_title': 'Willst du tiefere Wochen-Insights?',
+    'safety_kit.newsletter_subtitle':
+      'Optional: Erhalte rechtliche Updates, Betrugswarnungen und neue City-Guides per Email.',
+    'safety_kit.newsletter_placeholder': 'Deine E-Mail-Adresse',
+    'safety_kit.newsletter_button': 'Newsletter abonnieren',
+    'safety_kit.newsletter_loading': 'Abonnieren...',
+    'safety_kit.newsletter_success':
+      'Du bist drin. Pruf dein Postfach fur das erste Update.',
+    'safety_kit.newsletter_microcopy': 'Maximal eine nutzliche Email pro Woche. Keine Werbung.',
+    'safety_kit.newsletter_fallback':
+      'Email-Zustellung ist gerade nicht verfugbar, aber alle Guides bleiben hier offen.',
     'settings.subtitle': 'Verwalte Datenschutz, Benachrichtigungen und Sicherheit',
     'settings.save_success': 'Einstellungen erfolgreich gespeichert',
     'settings.notifications.title': 'Benachrichtigungen',
