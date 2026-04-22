@@ -103,6 +103,10 @@ model Profile {
   reviews                         Review[]
   favorites                       Favorite[]
   notifications                   Notification[]
+  communicationEvents             CommunicationEvent[]
+  emailOutboxItems                EmailOutbox[]
+  emailSubscriptions              EmailSubscription[]
+  assignedContactInquiries        ContactInquiry[]      @relation("AssignedContactInquiry")
   safetyPass                      SafetyPass?
   bookings                        Booking[]
   clubRegistrationRequests ClubRegistrationRequest[]
@@ -385,8 +389,144 @@ model Notification {
   createdAt DateTime  @default(now())
   
   user      Profile   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([userId, isRead])
+}
+
+model ContactInquiry {
+  id                     String               @id @default(uuid())
+  locale                 String?
+  source                 String?
+  category               ContactInquiryCategory
+  status                 ContactInquiryStatus @default(NEW)
+  name                   String
+  email                  String
+  subject                String
+  message                String
+  adminNotes             String?
+  metadata               Json?
+  assignedAdminProfileId String?
+  resolvedAt             DateTime?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  assignedAdmin          Profile?             @relation("AssignedContactInquiry", fields: [assignedAdminProfileId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([category, createdAt])
+  @@index([email, createdAt])
+  @@index([assignedAdminProfileId, status])
+}
+
+model CommunicationEvent {
+  id             String                 @id @default(uuid())
+  type           String
+  channel        CommunicationChannel
+  audience       CommunicationAudience
+  provider       String?
+  status         CommunicationStatus
+  relatedUserId  String?
+  relatedRequestId String?
+  idempotencyKey String?
+  locale         String?
+  subject        String?
+  recipientEmail String?
+  payload        Json?
+  errorMessage   String?
+  sentAt         DateTime?
+  processedAt    DateTime?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  relatedUser    Profile?               @relation(fields: [relatedUserId], references: [id], onDelete: SetNull)
+  emailOutbox    EmailOutbox?
+
+  @@index([type, createdAt])
+  @@index([status, createdAt])
+  @@index([relatedUserId, createdAt])
+  @@index([relatedRequestId, createdAt])
+  @@index([audience, channel, createdAt])
+  @@index([recipientEmail, createdAt])
+}
+
+model EmailOutbox {
+  id                   String            @id @default(uuid())
+  communicationEventId String?           @unique
+  audience             CommunicationAudience
+  route                EmailProviderRoute
+  status               EmailOutboxStatus
+  relatedUserId        String?
+  relatedRequestId     String?
+  provider             String?
+  idempotencyKey       String?
+  payload              Json
+  attempts             Int               @default(0)
+  maxAttempts          Int               @default(3)
+  availableAt          DateTime          @default(now())
+  lockedAt             DateTime?
+  processedAt          DateTime?
+  sentAt               DateTime?
+  lastError            String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  communicationEvent   CommunicationEvent? @relation(fields: [communicationEventId], references: [id], onDelete: SetNull)
+  relatedUser          Profile?            @relation(fields: [relatedUserId], references: [id], onDelete: SetNull)
+
+  @@index([status, availableAt, createdAt])
+  @@index([relatedUserId, createdAt])
+  @@index([relatedRequestId, createdAt])
+  @@index([audience, route, createdAt])
+}
+
+model EmailSubscription {
+  id                   String                  @id @default(uuid())
+  email                String                  @unique
+  profileId            String?
+  status               EmailSubscriptionStatus
+  locale               String?
+  source               String?
+  marketingConsentAt   DateTime?
+  unsubscribedAt       DateTime?
+  lastMarketingEmailAt DateTime?
+  lastTransactionalEmailAt DateTime?
+  provider             String?
+  providerContactId    String?
+  metadata             Json?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+
+  profile              Profile?                @relation(fields: [profileId], references: [id], onDelete: SetNull)
+
+  @@index([profileId])
+  @@index([status, updatedAt])
+}
+
+model ProviderWebhookEvent {
+  id               String    @id @default(uuid())
+  provider         String
+  eventType        String
+  externalId       String?
+  recipientEmail   String?
+  signatureValid   Boolean   @default(false)
+  processedAt      DateTime?
+  errorMessage     String?
+  payload          Json
+  createdAt        DateTime  @default(now())
+
+  @@index([provider, eventType, createdAt])
+  @@index([externalId])
+  @@index([recipientEmail, createdAt])
+}
+
+model PlatformSetting {
+  key       String   @id
+  value     Json
+  updatedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([updatedAt])
 }
 
 model ApplicationStageHistory {
@@ -454,4 +594,55 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum ContactInquiryCategory {
+  GENERAL_SUPPORT
+  LISTING_CORRECTION
+  CLUB_OPERATOR
+  EDITORIAL
+  PARTNERSHIP
+  SAFETY_KIT
+}
+
+enum ContactInquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  SPAM
+}
+
+enum CommunicationChannel {
+  EMAIL
+  IN_APP
+}
+
+enum CommunicationAudience {
+  TRANSACTIONAL
+  MARKETING
+}
+
+enum CommunicationStatus {
+  PENDING
+  SENT
+  SKIPPED
+  FAILED
+}
+
+enum EmailProviderRoute {
+  TRANSACTIONAL
+  MARKETING
+}
+
+enum EmailOutboxStatus {
+  PENDING
+  PROCESSING
+  SENT
+  SKIPPED
+  FAILED
+}
+
+enum EmailSubscriptionStatus {
+  SUBSCRIBED
+  UNSUBSCRIBED
 }

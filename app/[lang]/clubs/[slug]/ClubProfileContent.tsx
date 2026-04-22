@@ -15,7 +15,8 @@ import { toAbsoluteHttpUrl } from '@/lib/url';
 import {
   Lock,
   Star,
-  Mail,
+  Instagram,
+  MessageCircle,
   Globe,
   Clock,
   ArrowLeft,
@@ -42,6 +43,14 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const { t, language } = useLanguage();
   const [showPreRegistrationModal, setShowPreRegistrationModal] = useState(false);
   const websiteUrl = club.website ? toAbsoluteHttpUrl(club.website) : undefined;
+  const instagramRaw =
+    typeof club.socialMedia?.instagram === 'string' && club.socialMedia.instagram.trim().length > 0
+      ? club.socialMedia.instagram.trim()
+      : '@club_311';
+  const instagramUrl = instagramRaw.startsWith('http')
+    ? instagramRaw
+    : `https://www.instagram.com/${instagramRaw.replace(/^@/, '')}/`;
+  const whatsappUrl = 'https://wa.me/34602618664';
 
   const fallbackImages = getClubImageGallery(club.images);
   const galleryItems =
@@ -343,6 +352,26 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                   {t('club_profile.get_in_touch')}
                 </ConciergeLabel>
                 <div className="flex flex-wrap items-center justify-center gap-6">
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-2 text-zinc-400 transition-colors hover:text-brand"
+                    aria-label="Instagram"
+                  >
+                    <Instagram className="h-3.5 w-3.5" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Instagram</span>
+                  </a>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-2 text-zinc-400 transition-colors hover:text-brand"
+                    aria-label="WhatsApp"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">WhatsApp</span>
+                  </a>
                   {websiteUrl && (
                     <a
                       href={websiteUrl}
@@ -354,10 +383,6 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                       <span className="text-[10px] font-bold uppercase tracking-widest">{t('club_profile.website')}</span>
                     </a>
                   )}
-                  <div className="flex items-center gap-2 text-zinc-500">
-                    <Mail className="h-3.5 w-3.5" />
-                    <span className="text-[10px] uppercase tracking-widest">{club.contactEmail ? t('club_profile.email') : t('club_profile.email_hidden')}</span>
-                  </div>
                 </div>
               </div>
 

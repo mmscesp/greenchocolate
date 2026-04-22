@@ -33,6 +33,7 @@ export type BrevoEmailInput = BrevoContentEmailInput | BrevoTemplateEmailInput;
 
 export type BrevoSendResult = {
   success: boolean;
+  provider: 'BREVO';
   skipped?: boolean;
   error?: string;
   messageId?: string;
@@ -45,6 +46,7 @@ export async function sendBrevoEmail(input: BrevoEmailInput): Promise<BrevoSendR
   if (!env.BREVO_API_KEY || !env.BREVO_SENDER_EMAIL) {
     return {
       success: false,
+      provider: 'BREVO',
       skipped: true,
       error: 'Brevo is not configured.',
     };
@@ -95,6 +97,7 @@ export async function sendBrevoEmail(input: BrevoEmailInput): Promise<BrevoSendR
     const errorText = await response.text();
     return {
       success: false,
+      provider: 'BREVO',
       error: `Brevo error ${response.status}: ${errorText}`,
     };
   }
@@ -103,6 +106,7 @@ export async function sendBrevoEmail(input: BrevoEmailInput): Promise<BrevoSendR
 
   return {
     success: true,
+    provider: 'BREVO',
     messageId: payload?.messageId,
   };
 }

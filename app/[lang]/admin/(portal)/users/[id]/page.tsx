@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { AdminActionNotice } from '@/components/admin/AdminActionNotice';
 import { ArrowLeft, Mail, Star, ClipboardList, Heart, Shield, CalendarDays } from '@/lib/icons';
 import { getAdminUserById, updateUserRole, updateUserVerification } from '@/app/actions/admin-users';
+import { replayAdminCommunicationOutboxItem } from '@/app/actions/admin-communications';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getAdminSessionProfile } from '@/lib/security/admin-guard';
@@ -40,6 +41,20 @@ export default async function AdminUserDetailPage({ params, searchParams }: User
   type ReviewRow = (typeof user.reviews)[number];
   type FavoriteRow = (typeof user.favorites)[number];
   type BookingRow = (typeof user.bookings)[number];
+  type CommunicationRow = (typeof user.communicationEvents)[number];
+  type EmailSubscriptionRow = (typeof user.emailSubscriptions)[number];
+
+  const badgeVariantForStatus = (statusLabel: string) => {
+    if (statusLabel === 'FAILED' || statusLabel === 'UNSUBSCRIBED') {
+      return 'destructive' as const;
+    }
+
+    if (statusLabel === 'SENT' || statusLabel === 'SUBSCRIBED') {
+      return 'default' as const;
+    }
+
+    return 'secondary' as const;
+  };
 
   return (
     <div className="space-y-6">
@@ -131,6 +146,14 @@ export default async function AdminUserDetailPage({ params, searchParams }: User
             <div className="rounded-xl border border-border p-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notifications</p>
               <p className="mt-1 text-sm font-medium">{user._count.notifications}</p>
+            </div>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Communication events</p>
+              <p className="mt-1 text-sm font-medium">{user._count.communicationEvents}</p>
+            </div>
+            <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Email subscriptions</p>
+              <p className="mt-1 text-sm font-medium">{user._count.emailSubscriptions}</p>
             </div>
           </div>
         </CardContent>
@@ -246,6 +269,102 @@ export default async function AdminUserDetailPage({ params, searchParams }: User
                   {booking.event?.name ? (
                     <div className="text-muted-foreground">{booking.event.name}</div>
                   ) : null}
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Communication history</CardTitle>
+            <CardDescription>Recent transactional and marketing events linked to this user.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {user.communicationEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No communication history is recorded for this user yet.</p>
+            ) : (
+              user.communicationEvents.map((event: CommunicationRow) => (
+                <div key={event.id} className="rounded-md border p-3">
+                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant={badgeVariantForStatus(event.status)}>{event.status}</Badge>
+                      <Badge variant="secondary">{event.audience}</Badge>
+                      <span className="font-medium">{event.type}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{new Date(event.createdAt).toLocaleString()}</span>
+                  </div>
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    {event.recipientEmail || user.email} {event.provider ? `• ${event.provider}` : ''}
+                  </div>
+                  {event.subject ? <div className="mt-2 text-sm">{event.subject}</div> : null}
+                  {event.relatedRequestId ? (
+                    <div className="mt-2 text-xs text-muted-foreground">Request: {event.relatedRequestId}</div>
+                  ) : null}
+                  {event.emailOutbox ? (
+                    <div className="mt-3 rounded-md bg-slate-50 p-3 text-sm dark:bg-slate-900/40">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={badgeVariantForStatus(event.emailOutbox.status)}>
+                          {event.emailOutbox.status}
+                        </Badge>
+                        <Badge variant="secondary">{event.emailOutbox.route}</Badge>
+                        <span>
+                          Attempts {event.emailOutbox.attempts}/{event.emailOutbox.maxAttempts}
+                        </span>
+                      </div>
+                      {event.emailOutbox.lastError ? (
+                        <div className="mt-2 text-sm text-red-600 dark:text-red-400">{event.emailOutbox.lastError}</div>
+                      ) : null}
+                      {['FAILED', 'SKIPPED'].includes(event.emailOutbox.status) ? (
+                        <form action={replayAdminCommunicationOutboxItem} className="mt-3">
+                          <input type="hidden" name="outboxId" value={event.emailOutbox.id} />
+                          <input type="hidden" name="returnPath" value={`/${lang}/admin/users/${user.id}`} />
+                          <Button type="submit" size="sm" variant="secondary">
+                            Replay queued email
+                          </Button>
+                        </form>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  {event.errorMessage ? (
+                    <div className="mt-2 text-sm text-red-600 dark:text-red-400">{event.errorMessage}</div>
+                  ) : null}
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Email consent state</CardTitle>
+            <CardDescription>Local subscription and suppression signals known for this user.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {user.emailSubscriptions.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No email subscription records are linked to this user yet.</p>
+            ) : (
+              user.emailSubscriptions.map((subscription: EmailSubscriptionRow) => (
+                <div key={subscription.id} className="rounded-md border p-3">
+                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant={badgeVariantForStatus(subscription.status)}>{subscription.status}</Badge>
+                      {subscription.locale ? <Badge variant="secondary">{subscription.locale}</Badge> : null}
+                      <span className="font-medium">{subscription.email}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{new Date(subscription.updatedAt).toLocaleString()}</span>
+                  </div>
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    Source {subscription.source || 'unknown'} {subscription.provider ? `• ${subscription.provider}` : ''}
+                  </div>
+                  <div className="mt-2 text-sm">
+                    Last marketing send: {subscription.lastMarketingEmailAt ? new Date(subscription.lastMarketingEmailAt).toLocaleString() : 'Not yet'}
+                  </div>
+                  <div className="mt-1 text-sm">
+                    Last transactional send: {subscription.lastTransactionalEmailAt ? new Date(subscription.lastTransactionalEmailAt).toLocaleString() : 'Not yet'}
+                  </div>
                 </div>
               ))
             )}

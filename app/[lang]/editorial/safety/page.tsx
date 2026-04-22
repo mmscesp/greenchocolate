@@ -62,11 +62,11 @@ export default async function SafetyPage({ params }: SafetyPageProps) {
     <CategoryArticlePage
       lang={lang}
       t={t}
-      backToVaultKey="editorial.safety.back_to_vault"
+      backToVaultKey="editorial.legal.back_to_vault"
       badgeKey="editorial.categories.safety.title"
-      titlePrefixKey="safety.title_prefix"
-      titleHighlightKey="safety.title_highlight"
-      leadKey="safety.subtitle"
+      titlePrefixKey="editorial.safety.title_prefix"
+      titleHighlightKey="editorial.safety.title_highlight"
+      leadKey="editorial.safety.lead"
       guidesTitleKey="editorial.standards.items.harm_reduction.title"
       featuredKey="editorial.safety.featured"
       badgeIcon={<Shield className="w-4 h-4" />}

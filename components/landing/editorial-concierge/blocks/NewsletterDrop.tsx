@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Check } from '@/lib/icons';
 import { trackEvent } from '@/lib/analytics';
@@ -146,6 +147,14 @@ export function NewsletterDrop() {
         <p className="mt-12 text-zinc-500 text-xs">
           {t('landing.newsletter_drop.disclaimer')}
         </p>
+        <div className="mt-6">
+          <Link
+            href={`/${language}/editorial`}
+            className="text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+          >
+            {t('landing.newsletter_drop.secondary_cta')}
+          </Link>
+        </div>
       </motion.div>
     </section>
   );

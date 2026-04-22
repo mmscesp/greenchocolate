@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -133,6 +134,14 @@ export function FinalMicDrop() {
         <p className="mt-12 text-zinc-600 text-[10px] font-bold uppercase tracking-[0.3em]">
           {t('landing.final_mic_drop.disclaimer')}
         </p>
+        <div className="mt-6">
+          <Link
+            href={`/${language}/editorial`}
+            className="text-sm font-medium text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+          >
+            {t('landing.final_mic_drop.secondary_cta')}
+          </Link>
+        </div>
       </motion.div>
     </section>
   );

@@ -12,17 +12,17 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   }
 
   const titles: Record<string, string> = {
-    es: 'Directorio de Clubs Sociales de Cannabis en España | SocialClubsMaps',
-    en: 'Cannabis Social Clubs Directory Spain | SocialClubsMaps',
-    fr: 'Annuaire des Clubs Sociaux Cannabis en Espagne | SocialClubsMaps',
-    de: 'Cannabis Social Clubs Verzeichnis Spanien | SocialClubsMaps',
+    es: 'Guía Verificada de Cannabis Social Clubs en España | SocialClubsMaps',
+    en: 'Verified Cannabis Social Club Guide for Spain | SocialClubsMaps',
+    fr: 'Guide Vérifié des Cannabis Social Clubs en Espagne | SocialClubsMaps',
+    de: 'Verifizierter Leitfaden für Cannabis Social Clubs in Spanien | SocialClubsMaps',
   };
 
   const descriptions: Record<string, string> = {
-    es: 'Descubre y conecta con los mejores clubs sociales de cannabis en España. Barcelona, Madrid, Valencia y más. Guías expertas sobre cumplimiento legal y seguridad.',
-    en: 'Discover and connect with verified cannabis social clubs in Spain. Barcelona, Madrid, Valencia and more. Expert guides on legal compliance and safety.',
-    fr: 'Découvrez et connectez-vous aux clubs sociaux de cannabis vérifiés en Espagne. Barcelone, Madrid, Valence et plus. Guides experts sur la conformité légale.',
-    de: 'Entdecken und verbinden Sie sich mit verifizierten Cannabis-Social-Clubs in Spanien. Barcelona, Madrid, Valencia and more. Expertenleitfäden zu rechtlicher Compliance.',
+    es: 'Empieza por Barcelona con guías verificadas sobre la realidad legal, la seguridad, la etiqueta y cómo funcionan de verdad los cannabis social clubs en España.',
+    en: 'Start with Barcelona through verified guides on legal reality, safety, etiquette, and how cannabis social clubs in Spain actually work.',
+    fr: 'Commencez par Barcelone avec des guides vérifiés sur la réalité juridique, la sécurité, l etiquette et le fonctionnement réel des cannabis social clubs en Espagne.',
+    de: 'Starte mit Barcelona anhand verifizierter Leitfäden zu Rechtslage, Sicherheit, Etikette und dazu, wie Cannabis Social Clubs in Spanien tatsächlich funktionieren.',
   };
 
   return buildLocalizedMetadata({

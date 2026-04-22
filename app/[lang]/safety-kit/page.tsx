@@ -128,7 +128,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
           </div>
 
           <div>
-            <SafetyKitFunnel />
+            <SafetyKitFunnel placement="hero" />
           </div>
         </div>
       </div>
@@ -263,7 +263,7 @@ export default async function SafetyKitLandingPage({ params }: SafetyKitLandingP
           <Lead className="text-brand mb-10">{t('safety_kit.final_body')}</Lead>
           
           <div className="max-w-md mx-auto">
-            <SafetyKitFunnel />
+            <SafetyKitFunnel placement="final_cta" />
           </div>
         </div>
       </div>

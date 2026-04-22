@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getUpcomingEvents } from '@/app/actions/events';
+import { getEvents } from '@/app/actions/events';
 import EventsPageClient from './EventsPageClient';
 import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
@@ -19,22 +19,22 @@ export async function generateMetadata({
     es: {
       title: 'Eventos de Cannabis Social Clubs en España | SocialClubsMaps',
       description:
-        'Descubre eventos, encuentros y actividades publicadas por cannabis social clubs verificados en España.',
+        'Descubre eventos, conferencias y coberturas clave vinculadas al ecosistema del cannabis en España y Europa.',
     },
     en: {
       title: 'Cannabis Social Club Events in Spain | SocialClubsMaps',
       description:
-        'Discover upcoming events, meetups, and activities published by verified cannabis social clubs in Spain.',
+        'Discover key cannabis events, conferences, and editorial signal pieces relevant to Spain and the wider European scene.',
     },
     fr: {
       title: 'Événements des Clubs Sociaux Cannabis en Espagne | SocialClubsMaps',
       description:
-        'Découvrez les événements et activités publiés par des clubs sociaux cannabis vérifiés en Espagne.',
+        "Découvrez les événements, conférences et lectures clés liés à l'écosystème du cannabis en Espagne et en Europe.",
     },
     de: {
       title: 'Events von Cannabis Social Clubs in Spanien | SocialClubsMaps',
       description:
-        'Entdecke bevorstehende Events und Aktivitäten von verifizierten Cannabis Social Clubs in Spanien.',
+        'Entdecke wichtige Cannabis-Events, Konferenzen und redaktionelle Signalstücke für Spanien und Europa.',
     },
   };
 
@@ -49,7 +49,7 @@ export async function generateMetadata({
 
 export default async function EventsPage({ params }: EventsPageProps) {
   const { lang } = await params;
-  const events = await getUpcomingEvents(24);
+  const events = await getEvents(24, isLocale(lang) ? lang : 'en');
 
   return (
     <EventsPageClient lang={lang} initialEvents={events} />

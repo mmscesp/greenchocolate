@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+**/node_modules/
 /.pnp
 .pnp.js
 
@@ -25,6 +26,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/output/*.log
 
 # local env files
 .env
@@ -43,3 +45,9 @@ next-env.d.ts
 /assets/editorial-sources/
 
 .pydeps/
+/.agents/
+/.opencode/
+/docs/development/scm-public-copy-surgery-plan.md
+/docs/development/solo-founder-operating-system.md
+/docs/development/solo-founder-quickstart-guide.md
+/docs/development/barcelona-tourism-club-tensions-reference.md

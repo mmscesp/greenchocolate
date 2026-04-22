@@ -125,7 +125,7 @@ export async function proxy(request: NextRequest) {
   // Role-scoped routes
   const adminRoutes = ['/admin'];
   const clubPanelRoutes = ['/club-panel/dashboard'];
-  const adminAuthRoutes = ['/admin/login', '/admin/bootstrap'];
+  const adminAuthRoutes = ['/admin/login'];
 
   const isProtected = protectedRoutes.some(route => localizedPathname.startsWith(route));
   const isAdminRoute = adminRoutes.some(route => localizedPathname.startsWith(route));
@@ -176,7 +176,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  const authRoutes = ['/club-panel/login', '/club-panel/signup', '/account/login', '/account/register', '/admin/login', '/admin/bootstrap'];
+  const authRoutes = ['/club-panel/login', '/club-panel/signup', '/account/login', '/account/register', '/admin/login'];
   if (authRoutes.some(route => localizedPathname.startsWith(route)) && user) {
     // Get user role to redirect appropriately
     const { data: profile } = await supabase

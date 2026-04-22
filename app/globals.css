@@ -1,8 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  --color-brand-base: #0B1320;
+  --color-brand-panel: #132238;
+  --color-brand-panel-light: #1A2D45;
+  --color-brand-main: #F5F7FA;
+  --color-brand-muted: #8EA4BE;
+  --color-brand-divider: #2B415A;
+  --color-brand-teal: #00C9B1;
+  --color-brand-teal-soft: #6BE7D7;
+  --color-brand-saffron: #E7A63B;
+  --color-brand-olive: #A8A555;
+
   --brand: 180 100% 40%;
   --brand-light: 178 100% 48%;
   --brand-dark: 181 100% 30%;
@@ -174,10 +187,28 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-brand-panel);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-brand-divider);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-teal);
+}
 
 
 @keyframes aurora {

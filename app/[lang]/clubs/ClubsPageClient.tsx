@@ -11,6 +11,7 @@ import { Map, Grid, Search, Zap, ShieldCheck, ArrowRight } from '@/lib/icons';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
+import { toAbsoluteUrl } from '@/lib/seo';
 
 // Editorial Concierge Components
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
@@ -26,8 +27,6 @@ interface ClubsPageClientProps {
   amenities: string[];
   vibes: string[];
 }
-
-const LIVE_CLUB_SLUGS = new Set(['club-311-barcelona']);
 
 export default function ClubsPageClient({ 
   initialClubs, 
@@ -61,7 +60,7 @@ export default function ClubsPageClient({
         priceRange: newFilters.priceRange.length > 0 ? newFilters.priceRange : undefined,
         isVerified: newFilters.isVerified ? true : undefined,
       });
-      setClubs(result.filter((club) => LIVE_CLUB_SLUGS.has(club.slug)));
+      setClubs(result);
     } catch (error) {
       console.error('Error fetching clubs:', error);
     } finally {
@@ -76,7 +75,7 @@ export default function ClubsPageClient({
         schema={{
           name: t('clubs.title'),
           description: t('clubs.subtitle'),
-          url: `https://socialclubsmaps.com/${language}/clubs`,
+          url: toAbsoluteUrl(`/${language}/clubs`),
           numberOfItems: clubs.length,
         }}
       />

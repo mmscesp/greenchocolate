@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getEventBySlug } from '@/app/actions/events';
+import { getArticleCardImage, getEventImage } from '@/lib/image-fallbacks';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Clock, ArrowLeft, ExternalLink } from '@/lib/icons';
 import { JsonLd } from '@/components/JsonLd';
 import { buildLanguageAlternates, isLocale, toAbsoluteUrl } from '@/lib/seo';
+import Image from 'next/image';
+import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 
 interface EventPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -22,7 +25,7 @@ export async function generateMetadata({
     return {};
   }
 
-  const event = await getEventBySlug(slug);
+  const event = await getEventBySlug(slug, lang);
   if (!event) {
     return {
       title: 'Event Not Found | SocialClubsMaps',
@@ -33,10 +36,18 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${event.name} | Events | SocialClubsMaps`;
+  const displayTitle = event.articleTitle || event.name;
+  const title = `${displayTitle} | Events | SocialClubsMaps`;
   const description = event.description;
   const canonical = toAbsoluteUrl(`/${lang}/events/${event.slug}`);
-  const eventImage = event.imageUrl || '/images/SCM_Logo_OG.png';
+  const eventImage =
+    (event.articleHeroImage
+      ? getArticleCardImage({
+          heroImage: event.articleHeroImage,
+          category: event.articleCategory,
+          citySlug: event.citySlug,
+        })
+      : getEventImage(event.imageUrl, event.citySlug)) || '/images/SCM_Logo_SVG.svg';
 
   return {
     title,
@@ -55,7 +66,7 @@ export async function generateMetadata({
       images: [
         {
           url: eventImage,
-          alt: event.name,
+          alt: displayTitle,
         },
       ],
     },
@@ -73,22 +84,32 @@ export default async function EventPage({ params }: EventPageProps) {
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
 
-  const event = await getEventBySlug(slug);
+  const event = await getEventBySlug(slug, lang as Locale);
 
   if (!event) {
     notFound();
   }
 
+  const displayTitle = event.articleTitle || event.name;
+
+  const eventHeroImage = event.articleHeroImage
+    ? getArticleCardImage({
+        heroImage: event.articleHeroImage,
+        category: event.articleCategory,
+        citySlug: event.citySlug,
+      })
+    : getEventImage(event.imageUrl, event.citySlug);
+
   const eventJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Event',
-    name: event.name,
+    name: displayTitle,
     description: event.description,
     startDate: event.startDate,
     endDate: event.endDate,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     eventStatus: 'https://schema.org/EventScheduled',
-    image: event.imageUrl || toAbsoluteUrl('/images/SCM_Logo_OG.png'),
+    image: event.imageUrl || toAbsoluteUrl('/images/SCM_Logo_SVG.svg'),
     location: {
       '@type': 'Place',
       name: event.location,
@@ -124,6 +145,18 @@ export default async function EventPage({ params }: EventPageProps) {
         </div>
 
         <section className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-8 md:p-12 mb-8">
+          <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-2xl border bg-muted">
+            <Image
+              src={eventHeroImage}
+              alt={event.articleHeroImageAlt || event.name}
+              fill
+              priority
+              sizes="(min-width: 1024px) 896px, 100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+          </div>
+
           <div className="flex flex-wrap gap-2 mb-6">
             {event.cityName && (
               <Badge variant="secondary" className="border-primary/20 text-primary bg-primary/5">
@@ -138,7 +171,7 @@ export default async function EventPage({ params }: EventPageProps) {
             )}
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-black text-foreground mb-6">{event.name}</h1>
+          <h1 className="text-3xl md:text-5xl font-black text-foreground mb-6">{displayTitle}</h1>
 
           <p className="text-lg text-muted-foreground mb-8 leading-relaxed">{event.description}</p>
 
@@ -166,6 +199,14 @@ export default async function EventPage({ params }: EventPageProps) {
             </div>
           </div>
         </section>
+
+        {event.articleContent ? (
+          <section className="rounded-3xl border bg-card shadow-lg shadow-primary/5 p-8 md:p-12 mb-8">
+            <div className="prose prose-invert max-w-none">
+              <ArticleContentRenderer content={event.articleContent} />
+            </div>
+          </section>
+        ) : null}
 
         <section className="rounded-2xl border bg-card p-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 text-muted-foreground">

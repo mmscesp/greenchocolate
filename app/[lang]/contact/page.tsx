@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { Mail } from '@/lib/icons';
 import { EditorialFAQ } from '@/components/landing/editorial-concierge/blocks/EditorialFAQ';
 import { FeaturedVault } from '@/components/landing/editorial-concierge/blocks/FeaturedVault';
+import { ContactInquiryForm } from '@/components/contact/ContactInquiryForm';
+import { contactInquiryCategoryOptions } from '@/lib/contact-inquiries';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
@@ -55,34 +56,32 @@ export default async function ContactPage({ params }: ContactPageProps) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
+  const supportEmail = t('contact.email');
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-16">
-        <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">{t('contact.title')}</h1>
-        <p className="text-muted-foreground text-lg mb-8">
-          {t('contact.lead')}
-        </p>
-
-        <div className="rounded-2xl border bg-card p-6 md:p-8 space-y-4">
-          <div className="inline-flex items-center gap-2 text-primary font-semibold">
-            <Mail className="h-4 w-4" />
-            {t('contact.email')}
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {t('contact.urgent_note')}
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.10),transparent_32%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--muted)/0.35))]">
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-24 sm:px-6 lg:px-8 md:pt-32">
+        <div className="max-w-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">Founder operations</p>
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground md:text-6xl">
+            {t('contact.title')}
+          </h1>
+          <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg">
+            {t('contact.lead')}
           </p>
-          <a
-            href={`mailto:${t('contact.email')}`}
-            className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            {t('contact.email_cta')}
-          </a>
         </div>
 
-        <div className="mt-6 rounded-2xl border bg-card p-6 md:p-8 space-y-3">
+        <div className="mt-10">
+          <ContactInquiryForm
+            lang={lang}
+            supportEmail={supportEmail}
+            categoryOptions={contactInquiryCategoryOptions}
+          />
+        </div>
+
+        <div className="mt-8 rounded-[1.75rem] border border-border/70 bg-card/95 p-6 md:p-8">
           <h2 className="text-lg font-semibold text-foreground">{t('contact.operator_support.title')}</h2>
-          <p className="text-sm text-muted-foreground">{t('contact.operator_support.description')}</p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{t('contact.operator_support.description')}</p>
         </div>
 
         <div className="mt-8 text-sm text-muted-foreground">

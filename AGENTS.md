@@ -77,3 +77,46 @@ npm run verify:chunks
 - `postinstall` runs `prisma generate`; environment must provide compatible Prisma setup.
 - `netlify.toml` exists; treat deployment build as downstream of local quality gates.
 - LSP index via Biome is unavailable in this environment; codemap above is derived from direct search.
+
+## LOCAL SKILLS PACK (SCM)
+- Master skill: `.agents/skills/scm/SKILL.md` (load first for any SCM task).
+- Domain skills:
+  - `.agents/skills/scm-brand-voice/SKILL.md`
+  - `.agents/skills/scm-editorial-seo/SKILL.md`
+  - `.agents/skills/scm-product-engineering/SKILL.md`
+  - `.agents/skills/scm-growth-marketing/SKILL.md`
+  - `.agents/skills/scm-legal-safety-guardrails/SKILL.md`
+  - `.agents/skills/scm-competitive-intelligence/SKILL.md`
+  - `.agents/skills/scm-article-writing/SKILL.md`
+  - `.agents/skills/scm-frontend-slides/SKILL.md`
+- Usage rule: load `scm` + one domain skill; add `scm-brand-voice` for all public-facing output.
+- Phase 2 templates live under `.agents/skills/*/references/` and should be used for serious execution:
+  - `scm/references/scm-execution-control-tower.md`
+  - `scm-editorial-seo/references/editorial-brief-template.md`
+  - `scm-product-engineering/references/feature-delivery-spec-template.md`
+  - `scm-growth-marketing/references/growth-campaign-template.md`
+  - `scm-legal-safety-guardrails/references/legal-preflight-template.md`
+  - `scm-competitive-intelligence/references/competitor-dossier-template.md`
+  - `scm-brand-voice/references/voice-enforcement-template.md`
+  - `scm-article-writing/references/article-draft-template.md`
+  - `scm-frontend-slides/references/slides-spec-template.md`
+  - `scm/references/operating-cadence-template.md`
+  - `scm/references/weekly-review-template.md`
+  - `scm/references/decision-log-template.md`
+  - `scm/references/outcome-backlog-template.md`
+- OpenCode local command shortcuts live under `.opencode/commands/`:
+  - `scm-help`
+  - `scm-control-tower`
+  - `scm-editorial-brief`
+  - `scm-growth-campaign`
+  - `scm-feature-spec`
+  - `scm-competitor-dossier`
+  - `scm-voice-enforce`
+  - `scm-legal-preflight`
+  - `scm-ship-check`
+  - `scm-article-write`
+  - `scm-slide-deck`
+  - `scm-operating-cadence`
+  - `scm-weekly-review`
+- High-value internal reference for Barcelona club politics/tourism pressure:
+  - `docs/development/barcelona-tourism-club-tensions-reference.md`

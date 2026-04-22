@@ -109,19 +109,34 @@ export const dictionaryOverrides: Partial<
     'safety_kit.form_placeholder': 'Enter your email',
     'safety_kit.form_button': 'Unlock the guide',
     'safety_kit.microcopy': 'We only use this to deliver the guide and relevant compliance updates.',
+    'safety_kit.open_guide': 'Prefer the web guide first?',
     'safety_kit.age_headline': 'Quick eligibility check',
     'safety_kit.age_q': 'Are you 18 or older?',
     'safety_kit.age_yes': 'Yes, continue',
     'safety_kit.age_no': 'No',
     'safety_kit.age_reject':
       'This guide is only available to adults. Please come back when you meet the minimum age requirement.',
-    'safety_kit.dl_headline': 'You are cleared to continue',
-    'safety_kit.dl_button': 'Send me the Safety Kit',
-    'safety_kit.dl_support': 'You will also unlock a couple of high-signal next steps.',
+    'safety_kit.dl_headline': 'Your Safety Kit is ready',
+    'safety_kit.dl_button': 'Download the PDF',
+    'safety_kit.dl_web_button': 'Open the web guide',
+    'safety_kit.dl_support_email':
+      'The PDF is ready below. We also sent the same links to your inbox so you can pick this up later.',
+    'safety_kit.dl_support_direct':
+      'The PDF is ready below. Download it now, then optionally subscribe for deeper updates.',
     'safety_kit.dl_cta1': 'Need clubs after this?',
     'safety_kit.dl_cta1_btn': 'Browse the directory',
     'safety_kit.dl_cta2': 'Need the legal basics first?',
     'safety_kit.dl_cta2_btn': 'Read the legal explainer',
+    'safety_kit.newsletter_title': 'Want deeper weekly insights?',
+    'safety_kit.newsletter_subtitle':
+      'Optional: get legal updates, scam alerts, and new city guides by email.',
+    'safety_kit.newsletter_placeholder': 'Enter your email',
+    'safety_kit.newsletter_button': 'Subscribe to newsletter',
+    'safety_kit.newsletter_loading': 'Subscribing...',
+    'safety_kit.newsletter_success': "You're in. Check your inbox for the first update.",
+    'safety_kit.newsletter_microcopy': 'At most one useful email per week. No ads.',
+    'safety_kit.newsletter_fallback':
+      'Email delivery is temporarily unavailable, but all guides remain open here.',
   },
   es: {
     'faq.timestamp': 'Preguntas frecuentes',
@@ -407,19 +422,34 @@ export const dictionaryOverrides: Partial<
     'safety_kit.form_button': 'Desbloquear la guia',
     'safety_kit.microcopy':
       'Solo usaremos esto para entregarte la guia y actualizaciones relevantes de cumplimiento.',
+    'safety_kit.open_guide': 'Prefieres abrir antes la guia web?',
     'safety_kit.age_headline': 'Comprobacion rapida de elegibilidad',
     'safety_kit.age_q': 'Tienes 18 anos o mas?',
     'safety_kit.age_yes': 'Si, continuar',
     'safety_kit.age_no': 'No',
     'safety_kit.age_reject':
       'Esta guia solo esta disponible para adultos. Vuelve cuando cumplas la edad minima requerida.',
-    'safety_kit.dl_headline': 'Todo listo para continuar',
-    'safety_kit.dl_button': 'Enviarme el Safety Kit',
-    'safety_kit.dl_support': 'Tambien desbloquearas un par de siguientes pasos de alto valor.',
+    'safety_kit.dl_headline': 'Tu Safety Kit ya esta listo',
+    'safety_kit.dl_button': 'Descargar el PDF',
+    'safety_kit.dl_web_button': 'Abrir la guia web',
+    'safety_kit.dl_support_email':
+      'El PDF ya esta listo aqui abajo. Tambien te enviamos los mismos enlaces por email para que puedas retomarlo mas tarde.',
+    'safety_kit.dl_support_direct':
+      'El PDF ya esta listo aqui abajo. Descargalo ahora y, si quieres, suscribete para recibir contexto mas profundo.',
     'safety_kit.dl_cta1': 'Necesitas clubs despues de esto?',
     'safety_kit.dl_cta1_btn': 'Explorar el directorio',
     'safety_kit.dl_cta2': 'Prefieres primero la base legal?',
     'safety_kit.dl_cta2_btn': 'Leer la explicacion legal',
+    'safety_kit.newsletter_title': 'Quieres insights semanales mas profundos?',
+    'safety_kit.newsletter_subtitle':
+      'Opcional: recibe actualizaciones legales, alertas de estafas y nuevas guias por email.',
+    'safety_kit.newsletter_placeholder': 'Tu correo',
+    'safety_kit.newsletter_button': 'Suscribirme al newsletter',
+    'safety_kit.newsletter_loading': 'Suscribiendo...',
+    'safety_kit.newsletter_success': 'Ya estas dentro. Revisa tu inbox para la primera actualizacion.',
+    'safety_kit.newsletter_microcopy': 'Como maximo, un email util por semana. Sin anuncios.',
+    'safety_kit.newsletter_fallback':
+      'El envio por email no esta disponible ahora, pero todas las guias siguen abiertas aqui.',
   },
   fr: {
     'faq.timestamp': 'Questions frequentes',
@@ -603,6 +633,39 @@ export const dictionaryOverrides: Partial<
     'safety_kit.final_headline': 'Recevoir le Safety Kit',
     'safety_kit.final_body':
       'Saisissez votre email, confirmez votre eligibilite et debloquez le briefing voyageur.',
+    'safety_kit.form_placeholder': 'Entrez votre email',
+    'safety_kit.form_button': 'Debloquer le guide',
+    'safety_kit.microcopy':
+      'Nous utilisons cet email uniquement pour vous livrer le guide et des mises a jour de conformite pertinentes.',
+    'safety_kit.open_guide': 'Vous preferez commencer par le guide web ?',
+    'safety_kit.age_headline': 'Verification rapide',
+    'safety_kit.age_q': 'Avez-vous 18 ans ou plus ?',
+    'safety_kit.age_yes': 'Oui, continuer',
+    'safety_kit.age_no': 'Non',
+    'safety_kit.age_reject':
+      'Ce guide est reserve aux adultes. Revenez lorsque vous atteignez l age minimum requis.',
+    'safety_kit.dl_headline': 'Votre Safety Kit est pret',
+    'safety_kit.dl_button': 'Telecharger le PDF',
+    'safety_kit.dl_web_button': 'Ouvrir le guide web',
+    'safety_kit.dl_support_email':
+      'Le PDF est pret ci-dessous. Nous vous avons aussi envoye les memes liens par email pour que vous puissiez y revenir plus tard.',
+    'safety_kit.dl_support_direct':
+      'Le PDF est pret ci-dessous. Telechargez-le maintenant, puis inscrivez-vous si vous voulez des mises a jour plus approfondies.',
+    'safety_kit.dl_cta1': 'Besoin de clubs apres ca ?',
+    'safety_kit.dl_cta1_btn': 'Explorer le repertoire',
+    'safety_kit.dl_cta2': 'Besoin du cadre legal d abord ?',
+    'safety_kit.dl_cta2_btn': 'Lire l explication legale',
+    'safety_kit.newsletter_title': 'Vous voulez des insights hebdomadaires plus profonds ?',
+    'safety_kit.newsletter_subtitle':
+      'Optionnel : recevez des mises a jour legales, alertes arnaques et nouveaux guides par email.',
+    'safety_kit.newsletter_placeholder': 'Votre adresse email',
+    'safety_kit.newsletter_button': 'S inscrire a la newsletter',
+    'safety_kit.newsletter_loading': 'Inscription...',
+    'safety_kit.newsletter_success':
+      'C est bon. Verifiez votre boite mail pour la premiere mise a jour.',
+    'safety_kit.newsletter_microcopy': 'Au maximum un email utile par semaine. Zero pub.',
+    'safety_kit.newsletter_fallback':
+      'L envoi par email est temporairement indisponible, mais les guides restent ouverts ici.',
     'settings.subtitle': 'Gerez votre confidentialite, vos notifications et votre securite',
     'settings.save_success': 'Parametres enregistres avec succes',
     'settings.notifications.title': 'Notifications',
@@ -834,6 +897,39 @@ export const dictionaryOverrides: Partial<
     'safety_kit.final_headline': 'Hol dir das Safety Kit',
     'safety_kit.final_body':
       'Trage deine Email ein, bestatige deine Berechtigung und schalte das Reisebriefing frei.',
+    'safety_kit.form_placeholder': 'Trag deine Email ein',
+    'safety_kit.form_button': 'Guide freischalten',
+    'safety_kit.microcopy':
+      'Wir nutzen deine Email nur fur die Zustellung des Guides und relevante Compliance-Updates.',
+    'safety_kit.open_guide': 'Lieber zuerst den Webguide offnen?',
+    'safety_kit.age_headline': 'Kurzer Eignungscheck',
+    'safety_kit.age_q': 'Bist du 18 Jahre oder alter?',
+    'safety_kit.age_yes': 'Ja, weiter',
+    'safety_kit.age_no': 'Nein',
+    'safety_kit.age_reject':
+      'Dieser Guide ist nur fur Erwachsene verfugbar. Komm bitte wieder, wenn du das Mindestalter erreicht hast.',
+    'safety_kit.dl_headline': 'Dein Safety Kit ist bereit',
+    'safety_kit.dl_button': 'PDF herunterladen',
+    'safety_kit.dl_web_button': 'Webguide offnen',
+    'safety_kit.dl_support_email':
+      'Das PDF ist unten sofort verfugbar. Wir haben dir dieselben Links auch per Email geschickt, damit du spater wieder einsteigen kannst.',
+    'safety_kit.dl_support_direct':
+      'Das PDF ist unten sofort verfugbar. Lade es jetzt herunter und abonniere optional fur tiefere Updates.',
+    'safety_kit.dl_cta1': 'Brauchst du danach Clubs?',
+    'safety_kit.dl_cta1_btn': 'Verzeichnis ansehen',
+    'safety_kit.dl_cta2': 'Erst den rechtlichen Rahmen klarziehen?',
+    'safety_kit.dl_cta2_btn': 'Rechtliche Einordnung lesen',
+    'safety_kit.newsletter_title': 'Willst du tiefere Wochen-Insights?',
+    'safety_kit.newsletter_subtitle':
+      'Optional: Erhalte rechtliche Updates, Betrugswarnungen und neue City-Guides per Email.',
+    'safety_kit.newsletter_placeholder': 'Deine E-Mail-Adresse',
+    'safety_kit.newsletter_button': 'Newsletter abonnieren',
+    'safety_kit.newsletter_loading': 'Abonnieren...',
+    'safety_kit.newsletter_success':
+      'Du bist drin. Pruf dein Postfach fur das erste Update.',
+    'safety_kit.newsletter_microcopy': 'Maximal eine nutzliche Email pro Woche. Keine Werbung.',
+    'safety_kit.newsletter_fallback':
+      'Email-Zustellung ist gerade nicht verfugbar, aber alle Guides bleiben hier offen.',
     'settings.subtitle': 'Verwalte Datenschutz, Benachrichtigungen und Sicherheit',
     'settings.save_success': 'Einstellungen erfolgreich gespeichert',
     'settings.notifications.title': 'Benachrichtigungen',

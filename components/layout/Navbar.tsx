@@ -131,9 +131,9 @@ export default function Navbar() {
           <div className="flex items-center">
             <Logo
               href={localizedHomePath}
-              size={isScrolled ? 'md' : 'lg'}
+              size={isScrolled ? 'lg' : 'xl'}
               showText={false}
-              className="gap-3 scale-90 md:scale-100 origin-left transition-transform"
+              className="gap-3 scale-[1.25] md:scale-[1.2] origin-left transition-transform"
               imageClassName="drop-shadow-[0_1px_4px_rgba(0,0,0,0.25)]"
               priority
             />

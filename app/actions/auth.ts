@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
 import { EncryptionService, type PIIData } from '@/lib/encryption';
 import { z } from 'zod';
+import { CommunicationAudience, CommunicationStatus } from '@prisma/client';
 import { getLandingPageByRole } from '@/lib/auth-utils';
 import {
   getAuthCallbackUrl,
@@ -18,6 +19,7 @@ import {
   resolveLocale,
 } from '@/lib/auth-urls';
 import { passwordSchema } from '@/lib/auth-password-policy';
+import { recordCommunicationEvent } from '@/lib/communications/events';
 import { logAuthAuditEvent } from '@/lib/security/auth-audit';
 import { isAuthRateLimited } from '@/lib/security/auth-rate-limit';
 import { ensureProfileForUser, getSessionProfile, getSessionUser } from '@/lib/session-profile';
@@ -100,6 +102,32 @@ function getSafeRedirectPath(rawRedirect: string | null, role: string, lang: str
 
 async function getCurrentUser() {
   return getSessionProfile();
+}
+
+async function recordAuthEmailEvent(input: {
+  type: string;
+  recipientEmail: string;
+  locale: string;
+  status: CommunicationStatus;
+  relatedUserId?: string | null;
+  errorMessage?: string | null;
+  payload?: Record<string, unknown> | null;
+}) {
+  await recordCommunicationEvent({
+    type: input.type,
+    audience: CommunicationAudience.TRANSACTIONAL,
+    status: input.status,
+    provider: 'SUPABASE_AUTH',
+    relatedUserId: input.relatedUserId ?? null,
+    locale: input.locale,
+    recipientEmail: input.recipientEmail,
+    payload: {
+      deliveryManagedBy: 'supabase_auth',
+      ...(input.payload ?? {}),
+    },
+    errorMessage: input.errorMessage ?? null,
+    sentAt: input.status === CommunicationStatus.SENT ? new Date() : null,
+  });
 }
 
 // ==========================================
@@ -238,6 +266,18 @@ export async function signUp(prevState: ActionState, formData: FormData): Promis
     // Check if email confirmation is required
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
+      await recordAuthEmailEvent({
+        type: 'AUTH_SIGNUP_CONFIRMATION_EMAIL',
+        recipientEmail: normalizedEmail,
+        locale: lang,
+        status: CommunicationStatus.SENT,
+        relatedUserId: profile.id,
+        payload: {
+          redirectPath,
+          trigger: 'sign_up',
+        },
+      });
+
       await logAuthAuditEvent({
         operation: 'SIGN_UP',
         changedBy: user.id,
@@ -548,8 +588,21 @@ export async function requestPasswordReset(
   }
 
   try {
+    const resetRedirectTo = getResetPasswordUrl(lang);
     const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-      redirectTo: getResetPasswordUrl(lang),
+      redirectTo: resetRedirectTo,
+    });
+
+    await recordAuthEmailEvent({
+      type: 'AUTH_PASSWORD_RESET_EMAIL',
+      recipientEmail: normalizedEmail,
+      locale: lang,
+      status: error ? CommunicationStatus.FAILED : CommunicationStatus.SENT,
+      errorMessage: error?.message ?? null,
+      payload: {
+        redirectTo: resetRedirectTo,
+        trigger: 'password_reset',
+      },
     });
 
     await logAuthAuditEvent({
@@ -575,6 +628,17 @@ export async function requestPasswordReset(
     };
   } catch (error) {
     console.error('Password reset request error:', error);
+    await recordAuthEmailEvent({
+      type: 'AUTH_PASSWORD_RESET_EMAIL',
+      recipientEmail: normalizedEmail,
+      locale: lang,
+      status: CommunicationStatus.FAILED,
+      errorMessage: 'exception',
+      payload: {
+        redirectTo: getResetPasswordUrl(lang),
+        trigger: 'password_reset',
+      },
+    });
     await logAuthAuditEvent({
       operation: 'PASSWORD_RESET_REQUEST',
       changedBy: 'anonymous',
@@ -635,11 +699,24 @@ export async function resendConfirmationEmail(
   }
 
   try {
+    const emailRedirectTo = getAuthCallbackUrl(lang, redirectPath);
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: normalizedEmail,
       options: {
-        emailRedirectTo: getAuthCallbackUrl(lang, redirectPath),
+        emailRedirectTo,
+      },
+    });
+
+    await recordAuthEmailEvent({
+      type: 'AUTH_CONFIRMATION_RESEND_EMAIL',
+      recipientEmail: normalizedEmail,
+      locale: lang,
+      status: error ? CommunicationStatus.FAILED : CommunicationStatus.SENT,
+      errorMessage: error?.message ?? null,
+      payload: {
+        emailRedirectTo,
+        trigger: 'confirmation_resend',
       },
     });
 
@@ -666,6 +743,17 @@ export async function resendConfirmationEmail(
     };
   } catch (error) {
     console.error('Resend confirmation error:', error);
+    await recordAuthEmailEvent({
+      type: 'AUTH_CONFIRMATION_RESEND_EMAIL',
+      recipientEmail: normalizedEmail,
+      locale: lang,
+      status: CommunicationStatus.FAILED,
+      errorMessage: 'exception',
+      payload: {
+        emailRedirectTo: getAuthCallbackUrl(lang, redirectPath),
+        trigger: 'confirmation_resend',
+      },
+    });
     await logAuthAuditEvent({
       operation: 'RESEND_CONFIRMATION_REQUEST',
       changedBy: 'anonymous',

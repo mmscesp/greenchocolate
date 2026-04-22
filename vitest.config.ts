@@ -13,7 +13,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./test/setup.ts'],
     include: ['**/*.test.{ts,tsx}'],
-    exclude: ['node_modules', '.next', 'dist', '.tmp-librarian/**'],
+    exclude: ['node_modules', '.next', 'dist', '.tmp-librarian/**', '.opencode/**'],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [

@@ -6,6 +6,7 @@ const config: Config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './scm-ig-template/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -26,6 +27,16 @@ const config: Config = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       colors: {
+        'brand-base': 'var(--color-brand-base)',
+        'brand-panel': 'var(--color-brand-panel)',
+        'brand-panel-light': 'var(--color-brand-panel-light)',
+        'brand-main': 'var(--color-brand-main)',
+        'brand-muted': 'var(--color-brand-muted)',
+        'brand-divider': 'var(--color-brand-divider)',
+        'brand-teal': 'var(--color-brand-teal)',
+        'brand-teal-soft': 'var(--color-brand-teal-soft)',
+        'brand-saffron': 'var(--color-brand-saffron)',
+        'brand-olive': 'var(--color-brand-olive)',
         brand: {
           DEFAULT: 'hsl(var(--brand))',
           light: 'hsl(var(--brand-light))',

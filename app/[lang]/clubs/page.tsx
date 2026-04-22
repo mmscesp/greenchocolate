@@ -17,24 +17,24 @@ export async function generateMetadata({ params }: ClubsPageProps): Promise<Meta
   }
   const metadataByLocale: Record<string, { title: string; description: string }> = {
     es: {
-      title: 'Directorio de Cannabis Social Clubs | Encuentra CSC en Espana | SocialClubsMaps',
+      title: 'Perfiles Verificados de Cannabis Social Clubs | SocialClubsMaps',
       description:
-        'Explora cannabis social clubs verificados en Madrid, Barcelona y toda Espana. Filtra por barrio, servicios y ambiente.',
+        'Explora la capa pública verificada que SCM publica hoy, empezando por Barcelona y por los detalles de acceso que podemos respaldar.',
     },
     en: {
-      title: 'Cannabis Social Clubs Directory | Find CSCs in Spain | SocialClubsMaps',
+      title: 'Verified Cannabis Social Club Profiles | SocialClubsMaps',
       description:
-        'Browse verified cannabis social clubs in Madrid, Barcelona, and across Spain. Filter by neighborhood, amenities, and vibe.',
+        'Browse the live verified profile layer SCM publishes today, starting with Barcelona and the trust signals we can stand behind.',
     },
     fr: {
-      title: 'Annuaire des Cannabis Social Clubs | Trouver des CSC en Espagne | SocialClubsMaps',
+      title: 'Profils Vérifiés de Cannabis Social Clubs | SocialClubsMaps',
       description:
-        'Parcourez des cannabis social clubs verifies a Madrid, Barcelone et dans toute l Espagne. Filtrez par quartier, services et ambiance.',
+        'Parcourez la couche publique vérifiée que SCM publie aujourd hui, en commençant par Barcelone et par les signaux de confiance que nous pouvons défendre.',
     },
     de: {
-      title: 'Verzeichnis der Cannabis Social Clubs | CSCs in Spanien finden | SocialClubsMaps',
+      title: 'Verifizierte Cannabis Social Club Profile | SocialClubsMaps',
       description:
-        'Entdecke verifizierte Cannabis Social Clubs in Madrid, Barcelona und ganz Spanien. Filtere nach Viertel, Ausstattung und Stimmung.',
+        'Sieh dir die verifizierte öffentliche Profilebene an, die SCM heute veröffentlicht, beginnend mit Barcelona und den Vertrauenssignalen, die wir belegen können.',
     },
   };
   const metadata = metadataByLocale[lang] ?? metadataByLocale.en;

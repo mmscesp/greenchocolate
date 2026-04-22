@@ -113,7 +113,7 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
       name: 'SocialClubsMaps',
       logo: {
         '@type': 'ImageObject',
-        url: toAbsoluteUrl('/images/SCM_Logo_OG.png'),
+        url: toAbsoluteUrl('/images/SCM_Logo_SVG.svg'),
       },
     },
   };

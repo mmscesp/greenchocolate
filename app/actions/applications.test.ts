@@ -32,6 +32,10 @@ vi.mock('@/lib/prisma', () => ({
       create: vi.fn(),
       deleteMany: vi.fn(),
     },
+    communicationEvent: {
+      create: vi.fn(),
+      findMany: vi.fn(),
+    },
     membershipRequestNote: {
       create: vi.fn(),
     },
@@ -95,19 +99,19 @@ vi.mock('@/lib/email/membership', () => ({
   sendMembershipSubmissionEmail: vi.fn().mockResolvedValue({ success: true }),
   sendMembershipApprovalEmail: vi.fn().mockResolvedValue({
     success: true,
+    provider: 'RESEND',
     locale: 'en',
-    templateId: 101,
     fallbackUsed: false,
     requestsUrl: 'https://example.com/en/profile/requests',
-    messageId: 'brevo-message-1',
+    messageId: 'resend-message-1',
   }),
   sendMembershipRejectionEmail: vi.fn().mockResolvedValue({
     success: true,
+    provider: 'RESEND',
     locale: 'en',
-    templateId: 201,
     fallbackUsed: false,
     requestsUrl: 'https://example.com/en/profile/requests',
-    messageId: 'brevo-message-2',
+    messageId: 'resend-message-2',
   }),
 }));
 
@@ -122,6 +126,7 @@ import {
   approveMembershipRequest,
   createMembershipApplicationLead,
   finalizeMembershipApplicationLead,
+  getAdminMembershipRequestDetail,
   rejectMembershipRequest,
   submitMembershipApplication,
 } from '@/app/actions/applications';
@@ -207,6 +212,8 @@ describe('Application Actions', () => {
     (prisma.membershipRequest.updateMany as any).mockResolvedValue({ count: 1 });
     (prisma.notification.create as any).mockResolvedValue({ id: 'notification-1' });
     (prisma.notification.deleteMany as any).mockResolvedValue({ count: 1 });
+    (prisma.communicationEvent.create as any).mockResolvedValue({ id: 'comm-1' });
+    (prisma.communicationEvent.findMany as any).mockResolvedValue([]);
     (prisma.applicationStageHistory.create as any).mockResolvedValue({ id: 'history-1' });
     (prisma.auditLog.create as any).mockResolvedValue({ id: 'audit-1' });
 
@@ -645,10 +652,10 @@ describe('Application Actions', () => {
     (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
     vi.mocked(sendMembershipApprovalEmail).mockResolvedValueOnce({
       success: false,
+      provider: 'RESEND',
       skipped: true,
-      error: 'Membership approval Brevo template is not configured.',
+      error: 'Resend is not configured.',
       locale: 'fr',
-      templateId: 101,
       fallbackUsed: true,
       requestsUrl: 'https://example.com/en/profile/requests',
     });
@@ -708,9 +715,9 @@ describe('Application Actions', () => {
     (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
     vi.mocked(sendMembershipApprovalEmail).mockResolvedValueOnce({
       success: false,
-      error: 'Brevo error 500',
+      provider: 'RESEND',
+      error: 'Resend error 500',
       locale: 'de',
-      templateId: 104,
       fallbackUsed: false,
       requestsUrl: 'https://example.com/de/profile/requests',
     });
@@ -751,7 +758,7 @@ describe('Application Actions', () => {
     );
   });
 
-  it('rejects a pending membership request without sending user-facing email or notification', async () => {
+  it('rejects a pending membership request, creates a notification, and sends a rejection email', async () => {
     (prisma.profile.findUnique as any).mockResolvedValue(mockAdminProfile);
     (prisma.membershipRequest.findUnique as any).mockResolvedValue({
       id: mockRequestId,
@@ -788,9 +795,29 @@ describe('Application Actions', () => {
         appointmentNotes: null,
       }),
     });
-    expect(prisma.notification.create).not.toHaveBeenCalled();
-    expect(sendMembershipRejectionEmail).not.toHaveBeenCalled();
+    expect(prisma.notification.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        userId: mockProfile.id,
+        type: 'APPLICATION_REJECTED',
+        data: expect.objectContaining({
+          note: 'Insufficient information',
+        }),
+      }),
+    });
+    expect(sendMembershipRejectionEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        applicantEmail: mockProfile.email,
+        locale: 'en',
+        decisionNote: 'Insufficient information',
+      })
+    );
     expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
+    expect(logAdminAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        operation: 'MEMBERSHIP_REJECTION_EMAIL_SENT',
+        recordId: mockRequestId,
+      })
+    );
   });
 
   it('blocks repeated decisions on an already approved request', async () => {
@@ -828,5 +855,114 @@ describe('Application Actions', () => {
     expect(prisma.membershipRequest.updateMany).not.toHaveBeenCalled();
     expect(prisma.notification.create).not.toHaveBeenCalled();
     expect(sendMembershipApprovalEmail).not.toHaveBeenCalled();
+  });
+
+  it('returns request communication history and notification timeline for admin detail views', async () => {
+    (prisma.profile.findUnique as any).mockResolvedValueOnce(mockAdminProfile);
+    (prisma.membershipRequest.findUnique as any).mockResolvedValueOnce({
+      id: mockRequestId,
+      userId: mockProfile.id,
+      status: 'APPROVED',
+      currentStage: 'FINAL_APPROVAL',
+      createdAt: new Date('2026-03-08T10:00:00.000Z'),
+      reviewedAt: new Date('2026-03-09T09:00:00.000Z'),
+      reviewedBy: mockAdminProfile.id,
+      rejectionReason: null,
+      message: 'Interested in responsible membership.',
+      encryptedPayload: null,
+      encryptedSnapshot: {
+        eligibilityAnswers: {
+          city: 'Barcelona',
+        },
+      },
+      snapshotMeta: {
+        locale: 'en',
+      },
+      appointmentNotes: 'Bring your ID',
+      user: {
+        id: mockProfile.id,
+        email: mockProfile.email,
+        displayName: mockProfile.displayName,
+        avatarUrl: null,
+        role: 'USER',
+        notifications: [
+          {
+            id: 'notification-1',
+            type: 'APPLICATION_APPROVED',
+            title: 'Application approved',
+            message: 'Your membership application has been approved.',
+            createdAt: new Date('2026-03-09T09:00:00.000Z'),
+            isRead: false,
+          },
+        ],
+      },
+      club: {
+        id: mockClubId,
+        name: 'Test Club',
+        slug: 'test-club',
+        contactEmail: 'club@example.com',
+        neighborhood: 'Gracia',
+      },
+      stageHistory: [
+        {
+          id: 'history-1',
+          toStage: 'FINAL_APPROVAL',
+          createdAt: new Date('2026-03-09T09:00:00.000Z'),
+          changedBy: mockAdminProfile.id,
+          notes: 'Approved',
+        },
+      ],
+      notes: [
+        {
+          id: 'note-1',
+          body: 'Looks good.',
+          createdAt: new Date('2026-03-08T12:00:00.000Z'),
+          author: {
+            displayName: 'Admin User',
+            email: 'admin@example.com',
+          },
+        },
+      ],
+    });
+    (prisma.communicationEvent.findMany as any).mockResolvedValueOnce([
+      {
+        id: 'comm-1',
+        type: 'MEMBERSHIP_APPROVAL_EMAIL',
+        audience: 'TRANSACTIONAL',
+        provider: 'RESEND',
+        status: 'SENT',
+        recipientEmail: mockProfile.email,
+        subject: 'Your membership request was approved - Test Club',
+        errorMessage: null,
+        sentAt: new Date('2026-03-09T09:00:01.000Z'),
+        createdAt: new Date('2026-03-09T09:00:00.000Z'),
+        emailOutbox: {
+          id: 'outbox-1',
+          status: 'SENT',
+          route: 'TRANSACTIONAL',
+          attempts: 1,
+          maxAttempts: 3,
+          lastError: null,
+          availableAt: new Date('2026-03-09T09:00:00.000Z'),
+        },
+      },
+    ]);
+
+    const detail = await getAdminMembershipRequestDetail(mockRequestId);
+
+    expect(detail).not.toBeNull();
+    expect(detail?.communicationEvents).toHaveLength(1);
+    expect(detail?.communicationEvents[0]).toEqual(
+      expect.objectContaining({
+        type: 'MEMBERSHIP_APPROVAL_EMAIL',
+        status: 'SENT',
+      })
+    );
+    expect(detail?.notifications).toHaveLength(1);
+    expect(detail?.notifications[0]).toEqual(
+      expect.objectContaining({
+        type: 'APPLICATION_APPROVED',
+      })
+    );
   });
 });

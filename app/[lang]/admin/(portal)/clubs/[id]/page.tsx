@@ -44,12 +44,17 @@ export default async function AdminClubDetailPage({ params, searchParams }: Club
           <h1 className="text-3xl font-bold tracking-tight">{t('admin.clubs.details.title')}</h1>
           <p className="text-muted-foreground mt-1">{t('admin.clubs.details.subtitle')}</p>
         </div>
-        <Link href={`/${lang}/admin/clubs`}>
-          <Button variant="secondary" className="w-full sm:w-auto">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('admin.clubs.details.back_to_clubs')}
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button asChild className="w-full sm:w-auto">
+            <Link href={`/${lang}/admin/clubs/${club.id}/edit`}>Edit club</Link>
           </Button>
-        </Link>
+          <Link href={`/${lang}/admin/clubs`}>
+            <Button variant="secondary" className="w-full sm:w-auto">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {t('admin.clubs.details.back_to_clubs')}
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <Card>
@@ -77,6 +82,10 @@ export default async function AdminClubDetailPage({ params, searchParams }: Club
               <p className="mt-1 text-sm font-medium">{club.contactEmail}</p>
             </div>
             <div className="rounded-xl border border-border p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Route</p>
+              <p className="mt-1 text-sm font-medium">/{club.slug}</p>
+            </div>
+            <div className="rounded-xl border border-border p-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Requests</p>
               <p className="mt-1 text-sm font-medium">{club._count.membershipRequests}</p>
             </div>
@@ -87,6 +96,9 @@ export default async function AdminClubDetailPage({ params, searchParams }: Club
           </div>
 
           <div className="flex flex-wrap gap-3 pt-2">
+            <Button asChild variant="secondary">
+              <Link href={`/${lang}/clubs/${club.slug}`}>Open public profile</Link>
+            </Button>
             <form action={updateClubFlags}>
               <input type="hidden" name="clubId" value={club.id} />
               <input type="hidden" name="isVerified" value={String(!club.isVerified)} />
