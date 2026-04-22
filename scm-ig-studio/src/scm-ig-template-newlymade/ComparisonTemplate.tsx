@@ -21,7 +21,7 @@ export function ComparisonTemplate() {
               Reality
             </h1>
             <div className="absolute bottom-[20px] left-[50px] font-mono text-[20px] tracking-widest text-[#E7A63B]">
-              // EXPECTATION
+              {'// EXPECTATION'}
             </div>
           </div>
           <div className="h-1/2 bg-brand-base relative flex items-center justify-center p-[80px]">

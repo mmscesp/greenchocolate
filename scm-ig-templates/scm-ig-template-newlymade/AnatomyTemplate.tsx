@@ -26,7 +26,7 @@ export function AnatomyTemplate() {
         <div className="relative z-10 flex flex-col h-full justify-between p-[80px]">
           <div className="flex justify-between items-start border-b-[1px] border-brand-divider pb-6">
             <span className="font-mono font-bold text-[20px] uppercase tracking-[0.3em] text-brand-main bg-brand-panel px-6 py-2 border border-brand-divider">
-              // {ANATOMY_CONTENT.eyebrow}
+              {'// '}{ANATOMY_CONTENT.eyebrow}
             </span>
             <img src="/SCM_Logo_SVG.svg" className="h-[70px] w-auto brightness-0 invert opacity-50 block" alt="SCM" />
           </div>

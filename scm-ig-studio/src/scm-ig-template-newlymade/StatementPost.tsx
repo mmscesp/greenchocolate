@@ -29,7 +29,7 @@ export function StatementPost() {
           
           <div className="flex justify-between items-start border-b-[1px] border-brand-divider/50 pb-8">
             <span className="font-mono font-bold text-[24px] uppercase tracking-[0.3em] text-brand-saffron">
-              // DATA POINT
+              {'// DATA POINT'}
             </span>
             <img src="/SCM_Logo_SVG.svg" className="h-[90px] w-auto brightness-0 invert opacity-100 drop-shadow-md" alt="SCM" />
           </div>

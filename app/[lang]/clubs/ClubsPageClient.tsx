@@ -11,6 +11,7 @@ import { Map, Grid, Search, Zap, ShieldCheck, ArrowRight } from '@/lib/icons';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
+import { toAbsoluteUrl } from '@/lib/seo';
 
 // Editorial Concierge Components
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
@@ -74,7 +75,7 @@ export default function ClubsPageClient({
         schema={{
           name: t('clubs.title'),
           description: t('clubs.subtitle'),
-          url: `https://socialclubsmaps.com/${language}/clubs`,
+          url: toAbsoluteUrl(`/${language}/clubs`),
           numberOfItems: clubs.length,
         }}
       />
