@@ -36,10 +36,15 @@ export function getSafetyKitPdfPath(locale: SafetyKitLocale) {
   return `/material/${safetyKitPdfFiles[locale]}`;
 }
 
+export function getSafetyKitForcedDownloadPath(locale: SafetyKitLocale) {
+  return `/api/safety-kit/download?locale=${locale}`;
+}
+
 export function getSafetyKitAssetPaths(locale: SafetyKitLocale) {
   return {
     guidePath: getSafetyKitGuidePath(locale),
     pdfPath: getSafetyKitPdfPath(locale),
+    downloadPath: getSafetyKitForcedDownloadPath(locale),
     htmlPath: getSafetyKitHtmlPath(locale),
   };
 }

@@ -152,7 +152,7 @@ export async function deliverSafetyKitLead(input: {
       success: false,
       deliveryMode: 'direct',
       fallbackPath,
-      downloadPath: assetPaths.pdfPath,
+      downloadPath: assetPaths.downloadPath,
       error: parsed.error.errors[0]?.message || 'Invalid email address',
     };
   }
@@ -163,7 +163,7 @@ export async function deliverSafetyKitLead(input: {
       success: true,
       deliveryMode: 'direct',
       fallbackPath,
-      downloadPath: assetPaths.pdfPath,
+      downloadPath: assetPaths.downloadPath,
       error: 'Lead capture is temporarily paused.',
     };
   }
@@ -189,7 +189,7 @@ export async function deliverSafetyKitLead(input: {
       success: true,
       deliveryMode: 'direct',
       fallbackPath,
-      downloadPath: assetPaths.pdfPath,
+      downloadPath: assetPaths.downloadPath,
       error: delivery.error,
     };
   }
@@ -198,7 +198,7 @@ export async function deliverSafetyKitLead(input: {
     success: true,
     deliveryMode: 'email',
     fallbackPath,
-    downloadPath: assetPaths.pdfPath,
+    downloadPath: assetPaths.downloadPath,
   };
 }
 

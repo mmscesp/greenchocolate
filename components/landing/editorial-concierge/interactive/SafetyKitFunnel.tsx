@@ -247,7 +247,7 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
             
             <Button asChild variant="primary" size="lg" className="mb-3 w-full">
               <a
-                href={assetPaths.pdfPath}
+                href={assetPaths.downloadPath}
                 download
                 data-testid={`safety-kit-download-pdf-${trackedPlacement}`}
                 onClick={() =>

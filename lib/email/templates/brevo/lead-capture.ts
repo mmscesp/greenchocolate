@@ -52,7 +52,7 @@ function safetyKitCopy(locale: SupportedLocale) {
         heading: 'Tu Safety Kit ya esta listo.',
         intro:
           'Ya tienes acceso inmediato al PDF y a la guia web para entender mejor los limites legales, evitar estafas y prepararte antes de cualquier visita.',
-        primaryCta: { label: 'Descargar el PDF', href: toAbsoluteUrl(assetPaths.pdfPath) },
+        primaryCta: { label: 'Descargar el PDF', href: toAbsoluteUrl(assetPaths.downloadPath) },
         secondaryCta: { label: 'Abrir la guia web', href: toAbsoluteUrl(assetPaths.guidePath) },
         links: [
           {
@@ -73,7 +73,7 @@ function safetyKitCopy(locale: SupportedLocale) {
         heading: 'Votre Safety Kit est pret.',
         intro:
           'Vous avez maintenant un acces immediat au PDF et a la version web pour comprendre les limites legales, eviter les arnaques et preparer votre visite avec plus de clarte.',
-        primaryCta: { label: 'Telecharger le PDF', href: toAbsoluteUrl(assetPaths.pdfPath) },
+        primaryCta: { label: 'Telecharger le PDF', href: toAbsoluteUrl(assetPaths.downloadPath) },
         secondaryCta: { label: 'Ouvrir le guide web', href: toAbsoluteUrl(assetPaths.guidePath) },
         links: [
           {
@@ -94,7 +94,7 @@ function safetyKitCopy(locale: SupportedLocale) {
         heading: 'Dein Safety Kit ist bereit.',
         intro:
           'Du hast jetzt direkten Zugriff auf das PDF und die Webversion, damit du rechtliche Grenzen, Betrugswarnzeichen und die wichtigsten Vorbereitungen vor dem ersten Besuch verstehen kannst.',
-        primaryCta: { label: 'PDF herunterladen', href: toAbsoluteUrl(assetPaths.pdfPath) },
+        primaryCta: { label: 'PDF herunterladen', href: toAbsoluteUrl(assetPaths.downloadPath) },
         secondaryCta: { label: 'Webguide offnen', href: toAbsoluteUrl(assetPaths.guidePath) },
         links: [
           {
@@ -116,7 +116,7 @@ function safetyKitCopy(locale: SupportedLocale) {
         heading: 'Your Safety Kit is ready.',
         intro:
           'You now have immediate access to the PDF and the web guide covering legal lines, scam red flags, and the basics worth understanding before any club visit.',
-        primaryCta: { label: 'Download the PDF', href: toAbsoluteUrl(assetPaths.pdfPath) },
+        primaryCta: { label: 'Download the PDF', href: toAbsoluteUrl(assetPaths.downloadPath) },
         secondaryCta: { label: 'Open the web guide', href: toAbsoluteUrl(assetPaths.guidePath) },
         links: [
           {
