@@ -30,8 +30,8 @@ export function SpotlightTemplate() {
                 {SPOTLIGHT_CONTENT.eyebrow}
               </span>
               <h1 className="font-serif text-[90px] leading-[0.95] tracking-tight text-brand-main mb-6">
-                A closer<br/>
-                <span className="italic text-brand-teal">look at Gràcia</span>
+                {SPOTLIGHT_CONTENT.title.split(" ").slice(0, 2).join(" ")}<br/>
+                <span className="italic text-brand-teal">{SPOTLIGHT_CONTENT.title.split(" ").slice(2).join(" ")}</span>
               </h1>
               <p className="font-sans text-[28px] font-medium leading-[1.3] text-brand-muted max-w-[90%]">
                 {SPOTLIGHT_CONTENT.subtitle}

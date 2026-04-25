@@ -8,6 +8,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { type ArticleCard } from '@/app/actions/articles';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
 import { SectionEyebrow } from './SectionEyebrow';
+import { getFeaturedVaultPackages } from '@/lib/editorial-sprint';
 
 interface FeaturedVaultProps {
   articles?: ArticleCard[];
@@ -17,52 +18,15 @@ export function FeaturedVault({ articles = [] }: FeaturedVaultProps) {
   const { language, t } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
 
-  const fallbackArticles = [
-    {
-      id: '1',
-      tag: t('landing.featured_vault.fallback.essential.tag'),
-      title: t('landing.featured_vault.fallback.essential.title'),
-      description: t('landing.featured_vault.fallback.essential.description'),
-      readTime: t('landing.featured_vault.fallback.essential.read_time'),
-      slug: 'what-are-cannabis-social-clubs-spain',
-      category: 'culture',
-      citySlug: 'barcelona',
-      image: '/images/editorial/barcelona-gaudi-house.webp',
-    },
-    {
-      id: '2',
-      tag: t('landing.featured_vault.fallback.safety.tag'),
-      title: t('landing.featured_vault.fallback.safety.title'),
-      description: t('landing.featured_vault.fallback.safety.description'),
-      readTime: t('landing.featured_vault.fallback.safety.read_time'),
-      slug: 'safety-kit-visitors-spain',
-      category: 'harm-reduction',
-      citySlug: 'barcelona',
-      image: '/images/editorial/safety-kit.webp',
-    },
-    {
-      id: '3',
-      tag: t('landing.featured_vault.fallback.culture.tag'),
-      title: t('landing.featured_vault.fallback.culture.title'),
-      description: t('landing.featured_vault.fallback.culture.description'),
-      readTime: t('landing.featured_vault.fallback.culture.read_time'),
-      slug: 'barcelona-vs-amsterdam-cannabis',
-      category: 'culture',
-      citySlug: 'barcelona',
-      image: '/images/editorial/barcelona-vs-amsterdam.webp',
-    },
-    {
-      id: '4',
-      tag: t('landing.featured_vault.fallback.city_guide.tag'),
-      title: t('landing.featured_vault.fallback.city_guide.title'),
-      description: t('landing.featured_vault.fallback.city_guide.description'),
-      readTime: t('landing.featured_vault.fallback.city_guide.read_time'),
-      slug: 'first-time-barcelona-cannabis-club',
-      category: 'etiquette',
-      citySlug: 'barcelona',
-      image: '/images/editorial/barcelo-gothic-quarter.webp',
-    },
-  ];
+  const fallbackArticles = getFeaturedVaultPackages((language as 'en' | 'es' | 'fr' | 'de') ?? 'en').map((article) => ({
+    ...article,
+    readTime: `${article.readTime} ${t('landing.featured_vault.read_time_suffix')}`,
+    image: getArticleCardImage({
+      heroImage: null,
+      category: article.category,
+      citySlug: article.citySlug,
+    }),
+  }));
 
   const displayItems =
     articles.length > 0

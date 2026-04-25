@@ -2,6 +2,10 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { normalizeArticleContent } from '@/lib/article-content';
 import { ARTICLE_TRANSLATIONS } from '@/lib/article-translations';
+import {
+  EDITORIAL_SPRINT_PACKAGES,
+  getEditorialSprintLocaleFields,
+} from '@/lib/editorial-sprint';
 import type { Locale } from '@/lib/i18n-config';
 
 const CONTENT_ROOT = path.join(process.cwd(), 'data/content');
@@ -285,10 +289,44 @@ export async function getAllBlogArticles(locale: Locale = 'en'): Promise<BlogArt
   const files = filesByCategory.flat();
   const articleTasks = files.map((filePath) => loadArticleFromFile(filePath));
   const articles = await Promise.all(articleTasks);
-
-  return articles
+  const localizedArticles = articles
     .filter((article) => article.isPublished)
-    .map((article) => localizeArticle(article, locale))
+    .map((article) => localizeArticle(article, locale));
+  const sprintArticles: BlogArticleRecord[] = EDITORIAL_SPRINT_PACKAGES.map((pkg) => {
+    const fields = getEditorialSprintLocaleFields(pkg, locale);
+
+    return {
+      id: pkg.slug,
+      slug: pkg.slug,
+      title: fields.title,
+      excerpt: fields.excerpt,
+      content: localizeInternalLinks(normalizeArticleContent(fields.content), locale),
+      category:
+        pkg.category === 'harm-reduction'
+          ? 'Harm Reduction'
+          : pkg.category.charAt(0).toUpperCase() + pkg.category.slice(1),
+      tags: fields.tags,
+      heroImage: null,
+      heroImageAlt: pkg.heroImageAlt,
+      authorName: pkg.authorName,
+      authorAvatar: null,
+      authorBio: pkg.authorBio,
+      publishedAt: pkg.publishedAt,
+      readTime: pkg.readTime,
+      isPublished: true,
+      metaTitle: fields.metaTitle,
+      metaDescription: fields.metaDescription,
+      citySlug: pkg.citySlug,
+      cityName: pkg.cityName,
+      featuredOrder: pkg.featuredOrder,
+      eventStartDate: null,
+      eventEndDate: null,
+      eventLocation: null,
+      eventUrl: null,
+    };
+  });
+
+  return [...localizedArticles, ...sprintArticles]
     .sort((a, b) => {
       const aTime = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
       const bTime = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;

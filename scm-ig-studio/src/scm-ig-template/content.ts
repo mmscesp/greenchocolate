@@ -1,105 +1,105 @@
 export const CAROUSEL_CONTENT = [
   {
     slide: 1,
-    title: "Barcelona 2026",
+    title: "Club Reality",
     body: [
-      "200+ cannabis clubs.",
-      "Most visitors still misunderstand how the system works.",
-      "This fixes the basics fast.",
+      "Private associations.",
+      "Public rules still matter.",
+      "This is the reset.",
     ],
-    footnote: "Swipe for the part people usually get wrong.",
+    footnote: "Swipe before you trust the loudest advice.",
     brand: "Independent. Verified. Free.",
     url: "socialclubsmaps.com",
   },
   {
     slide: 2,
-    eyebrow: "First things first",
-    title: "Barcelona is not Amsterdam.",
+    eyebrow: "First rule",
+    title: "Private is not public.",
     body: [
-      "And clubs are not coffeeshops.",
-      "That is where most confusion starts.",
-      "If you treat this like a public retail scene, you are already reading it wrong.",
-      "Let’s clean that up.",
+      "And clubs are not dispensaries.",
+      "That is where the mistakes start.",
+      "If it feels built for walk-ins, read the risk differently.",
+      "Slow down first.",
     ],
     url: "socialclubsmaps.com",
   },
   {
     slide: 3,
-    title: "What clubs actually are",
-    subtitle: "Private. Members-only. More nuanced than most people expect.",
+    title: "What clubs actually signal",
+    subtitle: "The serious ones feel quiet, controlled, and specific.",
     list: [
       {
-        head: "Not a public venue",
-        desc: "No casual walk-in culture. No open retail model. This is supposed to operate as a private association.",
+        head: "Controlled access",
+        desc: "No casual retail energy. A real process protects the private model.",
       },
       {
-        head: "Membership matters",
-        desc: "Expect ID checks, a yearly fee, and often some kind of referral, invitation, or club-specific screening.",
+        head: "Clear rules",
+        desc: "Good clubs explain privacy, conduct, and what membership means.",
       },
       {
-        head: "Different legal lane",
-        desc: "Private consumption is treated very differently from public use, which can still trigger serious fines.",
+        head: "No rush",
+        desc: "Instant approval is not always a win. Friction can be a signal.",
       },
     ],
-    brand: "Fast facts. No fluff.",
+    brand: "Do it right, not fast.",
     url: "socialclubsmaps.com",
   },
   {
     slide: 4,
-    title: "Why people get this wrong",
-    subtitle: "Because three different things keep getting mixed together:",
+    title: "Where people get confused",
+    subtitle: "Three lines get blurred too often:",
     list: [
       {
         head: "Private",
-        desc: "This is the lane the association model is supposed to sit in.",
+        desc: "The association lane. Members, rules, and discretion matter.",
       },
       {
         head: "Public",
-        desc: "Streets, beaches, parks, and other public spaces can lead to fines commonly cited in the €601 to €30,000 range.",
+        desc: "Streets, beaches, and parks can still create real fine risk.",
       },
       {
-        head: "Public-facing",
-        desc: "When a club starts to feel less private and more outward-facing, the risk picture can change fast.",
+        head: "Commercial",
+        desc: "When a club acts too public, the risk picture changes fast.",
       },
     ],
-    closing: "That is why context matters.\nAnd that is why lazy advice causes problems.",
+    closing: "Context matters.\nLazy advice creates problems.",
     url: "socialclubsmaps.com",
   },
   {
     slide: 5,
-    title: "So what does SCM actually check?",
-    subtitle: "Four things. Every listing.",
+    title: "What SCM checks first",
+    subtitle: "A bigger list is not the goal. A better filter is.",
     list: [
       {
-        head: "Registry status",
-        desc: "Is the association structure real, current, and documented?",
+        head: "Registry signal",
+        desc: "Does the association structure look real and documented?",
       },
       {
         head: "House rules",
-        desc: "Does the club still look and behave like a private association?",
+        desc: "Does the club behave like a private member space?",
       },
       {
-        head: "Premises and access",
-        desc: "Is entry controlled, discreet, and consistent with a private model?",
+        head: "Access posture",
+        desc: "Is entry controlled, discreet, and coherent?",
       },
       {
         head: "Onboarding flow",
-        desc: "Does the membership process feel responsible, documented, and not built to rush strangers through?",
+        desc: "Does the process feel responsible, not rushed?",
       },
     ],
-    closing: "A better filter beats a bigger list.",
+    closing: "Selected, never bought.",
     url: "socialclubsmaps.com",
   },
   {
     slide: 6,
-    eyebrow: "Before you visit Barcelona",
-    title: "Do yourself a favor:\nlearn the lines before you trust the loudest page online.",
+    eyebrow: "Before you rely on advice",
+    title: "Learn the lines before you trust the scene.",
     action: "Get the free Safety Kit.",
     inside: [
-      "the legal basics that actually matter",
-      "scam patterns to watch for",
-      "privacy and etiquette basics",
-      "what to do if something feels off",
+      "legal basics that matter",
+      "red flags worth knowing",
+      "privacy and etiquette rules",
+      "what to do when it feels off",
     ],
     closing: "Free forever.\nLink in bio.",
     url: "socialclubsmaps.com",
@@ -110,91 +110,91 @@ export const COMPARISON_CONTENT = {
   title: "Reality vs Rumor",
   eyebrow: "Debunking the Scene",
   myth: {
-    head: "THE MYTH",
-    body: "You can walk right up to a registered legal club, show your tourist passport, and buy whatever you want instantly."
+    head: "THE RUMOR",
+    body: "If a club says yes instantly, that means the process is easier and better."
   },
   fact: {
     head: "THE REALITY",
-    body: "Clubs operating as public dispensaries are usually shut down fast. Real associations require a strict membership process, an endorsement, and a waiting period."
+    body: "Serious clubs protect the private model with checks, rules, and discretion."
   },
-  takeaway: "If a club feels like a fast-food drive-thru, it's operating on borrowed time."
+  takeaway: "Fast access is not the same thing as a trustworthy club."
 }
 
 export const SPOTLIGHT_CONTENT = {
-  eyebrow: "Area Spotlight",
-  title: "A closer look at Gràcia",
-  subtitle: "3 of the most properly run associations operating locally in 2026.",
+  eyebrow: "Verification Spotlight",
+  title: "What SCM checks first",
+  subtitle: "Three signals matter before a club earns trust.",
   clubs: [
     {
       id: "01",
-      name: "The Reading Room",
-      desc: "Strictly referrals only. Known for its extensive library, quiet workspace environment, and high-end botanical sourcing.",
-      vibe: "Quiet, Professional, Work-friendly"
+      name: "Private posture",
+      desc: "The club should feel controlled, discreet, and built around members, not public foot traffic.",
+      vibe: "Discreet, Controlled, Member-led"
     },
     {
       id: "02",
-      name: "Asociación Verde",
-      desc: "Deeply embedded in the local culture. Focuses strictly on members who reside permanently in the immediate neighborhoods.",
-      vibe: "Local, Heritage, Community"
+      name: "Clear rules",
+      desc: "House rules, privacy expectations, and intake steps should be easy to understand.",
+      vibe: "Transparent, Specific, Serious"
     },
     {
       id: "03",
-      name: "El Refugio",
-      desc: "A creative hub emphasizing art and music. Requires an existing member's vouch and a strict orientation session.",
-      vibe: "Creative, Artistic, Social"
+      name: "Slow enough",
+      desc: "A careful process can be a good sign. Rushed entry often tells you more than the pitch.",
+      vibe: "Patient, Careful, Legitimate"
     }
   ],
-  action: "View the full verified map."
+  action: "Start with the Safety Kit."
 }
 
 export const STATEMENT_CONTENT = {
-  quote: "73% of tourists get rejected at the door simply because they treat a private association like a public dispensary.",
+  quote: "A small verified set beats a giant unvetted list.",
   author: "SCM Context Series",
-  cta: "Learn the proper etiquette before you fly."
+  cta: "Do it right, not fast."
 }
 
 export const WARNING_CONTENT = {
-  eyebrow: "SCM Security Alert",
+  eyebrow: "SCM Safety Alert",
   title: "Red Flags",
-  subtitle: "3 signs of a tourist trap.",
+  subtitle: "2 signals that should slow you down.",
   flags: [
     {
       num: "01",
-      title: "Promoters on the Street",
-      desc: "Legal associations in Spain are strictly forbidden from street promotion. If someone hands you a flyer or approaches you, it's an illegal setup."
+      title: "Street-pitch energy",
+      desc: "If the setup is built to catch strangers fast, treat that as a warning sign."
     },
     {
       num: "02",
-      title: "Instant Approval",
-      desc: "If they approve you at the door without a proper vouch verification process or an official ID scan, they are operating outside the law."
+      title: "Instant approval",
+      desc: "Weak checks and vague rules are not convenience. They are usually the risk signal."
     },
     {
       num: "03",
-      title: "Public Menus Online",
-      desc: "Private clubs cannot advertise their inventory or pricing publicly. A massive red flag is a club spamming their 'menu' on public social media accounts."
+      title: "Retail language",
+      desc: "If it sounds like a public storefront, pause before you trust the process."
     }
   ],
-  cta: "Verify your club first."
+  cta: "Verify before you trust."
 }
 
 export const ANATOMY_CONTENT = {
   eyebrow: "The Blueprint",
-  title: "Anatomy of a Legal Club",
-  stat: "73%",
-  statContext: "of clubs closed last year were shut down for failing these 3 structural pillars.",
+  title: "Barcelona Pressure Map",
+  stat: "4X",
+  statContext: "Tourism, neighborhood fatigue, commercial behavior, and enforcement pressure hit the same club system.",
   pillars: [
     {
       id: "P-01",
-      name: "The Closed Loop",
-      desc: "A true club operates exclusively on a closed-loop economy. Members contribute to a shared cultivation pool, not a retail purchase model.",
-      tag: "FINANCIAL"
+      name: "Public-facing drift",
+      desc: "When a club starts looking like open retail, scrutiny rises and the private model gets weaker.",
+      tag: "RISK"
     },
     {
       id: "P-02",
-      name: "The Waiting Period",
-      desc: "Immediate entry is a myth. Proper clubs enforce a cooling-off period between registration and access to ensure community intent.",
-      tag: "LEGAL"
+      name: "City pressure",
+      desc: "Noise, foot traffic, and politics make Barcelona less forgiving than people expect.",
+      tag: "CIVIC"
     }
   ],
-  action: "Access the Blueprint Map."
+  action: "Read the pressure briefing."
 }

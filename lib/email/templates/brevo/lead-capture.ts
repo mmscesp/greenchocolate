@@ -4,6 +4,11 @@ import {
   normalizeSafetyKitLocale,
   type SafetyKitLocale,
 } from '@/lib/safety-kit';
+import {
+  EDITORIAL_SPRINT_PACKAGES,
+  getEditorialSprintLocaleFields,
+  getWeeklyDigestSupport,
+} from '@/lib/editorial-sprint';
 import { renderScmEmailShell } from '@/lib/email/templates/shared/scm-email-shell';
 
 export type LeadTemplateEmail = {
@@ -32,6 +37,11 @@ type EditorialDigestInput = {
   recipientEmail: string;
   primaryHref: string;
   primaryLabel: string;
+};
+
+type SprintEditorialDigestInput = {
+  locale: SupportedLocale;
+  recipientEmail: string;
 };
 
 function getBaseUrl() {
@@ -361,6 +371,68 @@ export function renderEditorialDigestEmail(input: EditorialDigestInput): LeadTem
 
   return {
     subject: copy.subject,
+    htmlContent,
+    textContent,
+  };
+}
+
+export function renderSprintEditorialDigestEmail(input: SprintEditorialDigestInput): LeadTemplateEmail {
+  const locale = normalizeSafetyKitLocale(input.locale);
+  const copy = getWeeklyDigestSupport(locale);
+  const unsubscribeUrl = buildUnsubscribeUrl({ email: input.recipientEmail, locale });
+  const digestPackages = EDITORIAL_SPRINT_PACKAGES.map((pkg) => {
+    const fields = getEditorialSprintLocaleFields(pkg, locale);
+    return {
+      title: fields.title,
+      body: pkg.digest[locale].body,
+      href: toAbsoluteUrl(`/${locale}/editorial/${pkg.slug}`),
+    };
+  });
+  const htmlContent = renderScmEmailShell({
+    eyebrow: copy.eyebrow,
+    heading: copy.headline,
+    intro: copy.intro,
+    bodyLines: [
+      copy.sectionIntro,
+      ...digestPackages.map((pkg, index) => `${index + 1}. ${pkg.title} — ${pkg.body}`),
+      '',
+      copy.closingTitle,
+      copy.closingBody,
+    ],
+    primaryCta: {
+      label: copy.primaryCtaLabel,
+      href: toAbsoluteUrl(copy.primaryCtaHref),
+    },
+    secondaryCta: {
+      label: copy.secondaryCtaLabel,
+      href: toAbsoluteUrl(copy.secondaryCtaHref),
+    },
+    supportLinks: digestPackages.map((pkg) => ({
+      label: pkg.title,
+      href: pkg.href,
+    })),
+    footer: `SocialClubsMaps Weekly Intelligence. Unsubscribe: ${unsubscribeUrl}`,
+  });
+
+  const textContent = [
+    copy.headline,
+    '',
+    copy.intro,
+    '',
+    copy.sectionIntro,
+    ...digestPackages.map((pkg, index) => `${index + 1}. ${pkg.title}: ${pkg.href}`),
+    '',
+    copy.closingTitle,
+    copy.closingBody,
+    '',
+    `${copy.primaryCtaLabel}: ${toAbsoluteUrl(copy.primaryCtaHref)}`,
+    `${copy.secondaryCtaLabel}: ${toAbsoluteUrl(copy.secondaryCtaHref)}`,
+    '',
+    `Unsubscribe: ${unsubscribeUrl}`,
+  ].join('\n');
+
+  return {
+    subject: copy.subjectLine,
     htmlContent,
     textContent,
   };
