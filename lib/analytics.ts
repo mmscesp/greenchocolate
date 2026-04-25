@@ -13,7 +13,7 @@ declare global {
 export function trackEvent(event: string, payload: AnalyticsPayload = {}): void {
   if (typeof window === 'undefined') return;
 
-  const sessionId = getOrCreateSessionId();
+  const sessionId = getAnalyticsSessionId();
   const pagePath = window.location.pathname;
 
   const eventPayload: Record<string, unknown> = {
@@ -54,7 +54,7 @@ export function clearAnalyticsContext(keys?: string[]): void {
   }
 }
 
-function getOrCreateSessionId(): string {
+export function getAnalyticsSessionId(): string {
   if (typeof window === 'undefined') return 'server';
 
   const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);

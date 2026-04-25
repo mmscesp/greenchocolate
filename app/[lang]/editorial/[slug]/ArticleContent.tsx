@@ -13,6 +13,7 @@ import ExpertByline from '@/components/trust/ExpertByline';
 import TrustBadge from '@/components/trust/TrustBadge';
 import { EligibilityFlow } from '@/components/landing/editorial-concierge/interactive/EligibilityFlow';
 import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
+import { ArticleViewTracker } from '@/components/article/ArticleViewTracker';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
 import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
 
@@ -62,6 +63,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
 
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
+      <ArticleViewTracker articleSlug={article.slug} locale={language} category={article.category} />
       {/* Reading Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-brand z-[60] origin-left"

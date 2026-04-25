@@ -6,6 +6,7 @@ import {
   getAllBlogArticles,
   getBlogArticleBySlug,
 } from '@/lib/blog-content';
+import { getPopularArticleViewCounts, mergeFeaturedArticles } from '@/lib/article-popularity';
 import type { Locale } from '@/lib/i18n-config';
 
 const articleFiltersSchema = z.object({
@@ -124,22 +125,14 @@ export async function getFeaturedArticles(limit = 3, locale: Locale = 'en'): Pro
   try {
     const validatedLimit = limitSchema.parse(limit) ?? 3;
     const all = await getAllBlogArticles(locale);
+    const popularityBySlug = await getPopularArticleViewCounts();
+    const featured = mergeFeaturedArticles({
+      allArticles: all,
+      popularityBySlug,
+      limit: validatedLimit,
+    });
 
-    const featured = all
-      .filter((article) => article.featuredOrder > 0)
-      .sort((a, b) => a.featuredOrder - b.featuredOrder)
-      .slice(0, validatedLimit);
-
-    if (featured.length >= validatedLimit) {
-      return featured.map((article) => toArticleCard(article));
-    }
-
-    const excluded = new Set(featured.map((article) => article.id));
-    const fallback = all
-      .filter((article) => !excluded.has(article.id))
-      .slice(0, Math.max(0, validatedLimit - featured.length));
-
-    return [...featured, ...fallback].map((article) => toArticleCard(article));
+    return featured.map((article) => toArticleCard(article));
   } catch (error) {
     console.error('getFeaturedArticles error:', error);
     return [];

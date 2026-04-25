@@ -286,6 +286,20 @@ model Article {
   @@index([clubId])
 }
 
+model ArticleView {
+  id          String   @id @default(uuid())
+  articleSlug String
+  locale      String
+  sessionHash String
+  viewDate    DateTime
+  createdAt   DateTime @default(now())
+
+  @@unique([articleSlug, sessionHash, viewDate])
+  @@index([articleSlug, viewDate])
+  @@index([locale, viewDate])
+  @@index([createdAt])
+}
+
 model ConsentRecord {
   id          String    @id @default(uuid())
   userId      String
