@@ -124,20 +124,22 @@ function DesktopFilterPopover({
           variant={count > 0 ? 'primary' : 'secondary'}
           size="sm"
           className={cn(
-            'h-11 rounded-full border px-4',
+            'h-12 min-w-0 justify-between rounded-2xl border px-4 text-sm',
             count > 0
-              ? 'border-brand/40 bg-brand/90 text-bg-base shadow-[0_14px_30px_rgba(0,0,0,0.18)] backdrop-blur-xl hover:bg-brand-dark'
-              : 'glass-liquid border-white/14 bg-white/[0.05] text-zinc-100 hover:border-brand/35 hover:bg-white/[0.08]'
+              ? 'border-brand/50 bg-brand/90 text-bg-base shadow-[0_16px_34px_rgba(0,205,200,0.16)] backdrop-blur-xl hover:bg-brand-dark'
+              : 'border-white/10 bg-white/[0.045] text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-brand/35 hover:bg-white/[0.08]'
           )}
         >
-          <Icon className="h-4 w-4" />
-          <span className="max-w-[12rem] truncate">{label}</span>
+          <span className="flex min-w-0 items-center gap-2">
+            <Icon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{label}</span>
+          </span>
           {count > 0 && (
-            <Badge className="h-5 min-w-[20px] border-none bg-bg-base/90 px-1 text-[10px] font-bold text-brand shadow-none">
+            <Badge className="h-5 min-w-[20px] shrink-0 border-none bg-bg-base/90 px-1 text-[10px] font-bold text-brand shadow-none">
               {count}
             </Badge>
           )}
-          <ChevronDown className="h-3.5 w-3.5 opacity-70 transition-transform group-data-[state=open]:rotate-180" />
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-70 transition-transform group-data-[state=open]:rotate-180" />
         </Button>
       </PopoverTrigger>
         <PopoverContent
@@ -368,6 +370,9 @@ function DesktopFilterBar({
   clearAllLabel,
   resultsFoundLabel,
   advancedLabel,
+  panelTitle,
+  noFiltersLabel,
+  activeFiltersLabel,
   verifiedOnlyLabel,
   activeStatusLabel,
   verifiedLabel,
@@ -381,6 +386,9 @@ function DesktopFilterBar({
   clearAllLabel: string;
   resultsFoundLabel: string;
   advancedLabel: string;
+  panelTitle: string;
+  noFiltersLabel: string;
+  activeFiltersLabel: string;
   verifiedOnlyLabel: string;
   activeStatusLabel: string;
   verifiedLabel: string;
@@ -388,20 +396,49 @@ function DesktopFilterBar({
   const activeFilterCount = countActiveFilters(filters);
 
   return (
-    <div className="hidden lg:block">
-      <div className="glass-liquid sticky top-24 z-30 rounded-[2rem] border border-white/14 bg-[#08131d]/72 p-4 shadow-[0_18px_42px_rgba(0,0,0,0.24)] backdrop-blur-2xl">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="glass-liquid flex min-w-[11rem] items-center gap-3 rounded-[1.25rem] border border-white/12 bg-white/[0.05] px-4 py-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand/12 text-brand">
+    <div className="hidden md:block">
+      <div className="sticky top-24 z-30 overflow-hidden rounded-[1.75rem] border border-white/12 bg-[#061017]/90 shadow-[0_24px_70px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/60 to-transparent" />
+        <div className="flex flex-col gap-4 p-4 lg:p-5">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-brand/20 bg-brand/12 text-brand shadow-[0_0_28px_rgba(0,205,200,0.12)]">
               <Search className="h-4 w-4" />
             </span>
-            <div>
-              <p className="text-xl font-semibold text-white">{totalResults}</p>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-400">{resultsFoundLabel}</p>
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brand">{panelTitle}</p>
+                <p className="mt-1 text-sm text-zinc-400">
+                  <span className="text-xl font-semibold text-white">{totalResults}</span>{' '}
+                  <span className="uppercase tracking-[0.14em]">{resultsFoundLabel}</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              {activeFilterCount > 0 ? (
+                <>
+                  <span className="hidden rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand lg:inline-flex">
+                    {activeFilterCount} {activeFiltersLabel}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={onClearAll}
+                    className="h-10 rounded-full border border-white/12 bg-white/[0.04] px-4 text-xs font-semibold text-zinc-300 hover:bg-white/[0.08] hover:text-white"
+                  >
+                    <X className="h-4 w-4" />
+                    <span>{clearAllLabel}</span>
+                  </Button>
+                </>
+              ) : (
+                <span className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                  {noFiltersLabel}
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+          <div className="grid min-w-0 grid-cols-1 gap-2 lg:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_auto]">
             {sections.map((section) => (
               <DesktopFilterPopover
                 key={section.key}
@@ -434,34 +471,21 @@ function DesktopFilterBar({
               size="sm"
               onClick={() => onUpdateFilter('isVerified', !filters.isVerified)}
               className={cn(
-                'h-11 rounded-full border px-4',
+                'h-12 justify-between rounded-2xl border px-4 text-sm xl:min-w-[13rem]',
                 filters.isVerified
-                  ? 'border-brand/40 bg-brand/90 text-bg-base shadow-[0_14px_30px_rgba(0,0,0,0.18)] backdrop-blur-xl hover:bg-brand-dark'
-                  : 'glass-liquid border-white/14 bg-white/[0.05] text-zinc-100 hover:border-brand/35 hover:bg-white/[0.08]'
+                  ? 'border-brand/50 bg-brand/90 text-bg-base shadow-[0_16px_34px_rgba(0,205,200,0.16)] backdrop-blur-xl hover:bg-brand-dark'
+                  : 'border-white/10 bg-white/[0.045] text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-brand/35 hover:bg-white/[0.08]'
               )}
             >
-              <Shield className="h-4 w-4" />
-              <span>{verifiedOnlyLabel}</span>
+              <span className="flex min-w-0 items-center gap-2">
+                <Shield className="h-4 w-4 shrink-0" />
+                <span className="truncate">{verifiedOnlyLabel}</span>
+              </span>
+              {filters.isVerified && (
+                <span className="h-2 w-2 shrink-0 rounded-full bg-bg-base shadow-[0_0_12px_rgba(0,0,0,0.35)]" />
+              )}
             </Button>
           </div>
-
-          <div className="ml-auto flex items-center gap-3">
-            {activeFilterCount > 0 ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={onClearAll}
-                className="glass-liquid h-11 rounded-full border border-white/12 bg-white/[0.04] px-4 text-zinc-300 hover:bg-white/[0.08] hover:text-white"
-              >
-                <X className="h-4 w-4" />
-                <span>{clearAllLabel}</span>
-              </Button>
-            ) : (
-              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">{advancedLabel}</span>
-            )}
-          </div>
-        </div>
 
         <AnimatePresence>
           {activeFilterCount > 0 && (
@@ -469,7 +493,7 @@ function DesktopFilterBar({
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="mt-4 flex flex-wrap gap-2 border-t border-white/8 pt-4"
+              className="flex flex-wrap gap-2 border-t border-white/8 pt-4"
             >
               {filters.neighborhood && (
                 <ActiveFilterToken
@@ -500,6 +524,8 @@ function DesktopFilterBar({
             </motion.div>
           )}
         </AnimatePresence>
+          <p className="sr-only">{advancedLabel}</p>
+        </div>
       </div>
     </div>
   );
@@ -519,7 +545,7 @@ export default function FilterBar({
 
   useEffect(() => {
     const updateTriggerVisibility = () => {
-      if (typeof window === 'undefined' || window.innerWidth >= 1024) {
+      if (typeof window === 'undefined' || window.innerWidth >= 768) {
         setHideMobileTrigger(false);
         return;
       }
@@ -597,7 +623,7 @@ export default function FilterBar({
     <>
       <div
         className={cn(
-          'fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 transition-all duration-200 lg:hidden',
+          'fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 transition-all duration-200 md:hidden',
           (hideMobileTrigger && !isMobileOpen) ? 'pointer-events-none translate-y-6 opacity-0' : 'opacity-100'
         )}
       >
@@ -628,6 +654,9 @@ export default function FilterBar({
         clearAllLabel={t('filters.clear_all')}
         resultsFoundLabel={t('filters.results_found')}
         advancedLabel={t('filters.advanced')}
+        panelTitle={t('filters.panel_title')}
+        noFiltersLabel={t('filters.no_filters')}
+        activeFiltersLabel={t('filters.active_filters_short')}
         verifiedOnlyLabel={t('filters.verified_only')}
         activeStatusLabel={t('filters.active_status')}
         verifiedLabel={t('filters.verified')}
