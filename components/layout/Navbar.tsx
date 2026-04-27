@@ -112,7 +112,7 @@ export default function Navbar() {
         initial={false}
         animate={{
           y: isScrolled ? pillOffsetY : 0,
-          width: isScrolled ? 'min(95%, 1100px)' : '100%',
+          width: isScrolled ? 'min(97vw, 1240px)' : '100%',
         }}
         transition={
           shouldReduceMotion
@@ -122,23 +122,23 @@ export default function Navbar() {
         className={cn(
           'fixed inset-x-0 mx-auto z-50 transition-all duration-500',
           isScrolled
-            ? 'top-4 glass-liquid rounded-full px-6 py-2'
+            ? 'top-4 glass-liquid rounded-full px-4 py-2 md:px-5'
             : 'top-0 w-full px-4 md:px-8 py-2 md:py-4 bg-transparent border-transparent'
         )}
       >
-        <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-2 xl:gap-3">
           {/* Logo Section */}
-          <div className="flex items-center">
+          <div className="flex min-w-0 flex-1 basis-[24%] items-center">
             <Logo
               href={localizedHomePath}
               size={isScrolled ? 'lg' : 'xl'}
               showText={false}
-              className="gap-3 scale-[1.25] md:scale-[1.2] origin-left transition-transform"
+              className="origin-left scale-[1.12] gap-2.5 transition-transform md:scale-[1.08]"
               imageClassName="drop-shadow-[0_1px_4px_rgba(0,0,0,0.25)]"
               priority
             />
-            <Link href={localizedHomePath} className="flex items-center shrink-0 ml-0.5 sm:ml-1">
-              <span className="text-lg sm:text-xl md:text-2xl xl:text-3xl font-serif font-bold tracking-tight transition-all duration-300 text-[#a8a555]">
+            <Link href={localizedHomePath} className="ml-0.5 flex min-w-0 items-center sm:ml-1">
+              <span className="truncate text-base font-serif font-bold tracking-tight text-[#a8a555] transition-all duration-300 sm:text-lg md:text-xl xl:text-2xl">
                 {t('brand.name')}
               </span>
             </Link>
@@ -146,14 +146,14 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className={cn(
-            'hidden lg:flex min-w-0 items-center rounded-full px-2 py-1 mx-2 xl:mx-4 transition-all duration-300',
+            'mx-1 hidden min-w-0 flex-1 basis-[46%] items-center justify-center rounded-full px-1.5 py-1 transition-all duration-300 lg:flex xl:mx-3',
             isScrolled ? 'bg-white/5' : 'bg-transparent'
           )}>
             <MainNavigation tone="light" />
           </div>
 
           {/* Desktop Actions Section */}
-          <div className={cn('hidden lg:flex shrink-0 items-center gap-2 xl:gap-3')}>
+          <div className={cn('hidden min-w-0 flex-1 basis-[30%] items-center justify-end gap-1.5 lg:flex xl:gap-2')}>
             <LanguageSelector />
             <UserProfileDropdown />
             <motion.div
@@ -164,9 +164,9 @@ export default function Navbar() {
             >
               <Link
                 href={withLocale('/safety-kit')}
-                className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-brand px-3 py-2 text-xs font-bold text-black shadow-sm transition-colors hover:bg-brand-dark xl:px-5 xl:text-sm"
+                className="inline-flex h-10 shrink-0 items-center whitespace-nowrap rounded-full bg-brand px-3 text-xs font-bold text-black shadow-sm transition-colors hover:bg-brand-dark xl:px-4"
               >
-                {t('nav.get_safety_kit')}
+                {t('nav.safety_kit_short')}
               </Link>
             </motion.div>
           </div>
@@ -219,7 +219,7 @@ export default function Navbar() {
 
             <div className="flex flex-col gap-4 text-xl font-semibold text-white/90 pt-2 shrink-0">
               <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="text-brand hover:text-brand-light transition-colors">
-                {t('nav.get_safety_kit')}
+                {t('nav.safety_kit_short')}
               </Link>
               <Link href={withLocale('/spain/barcelona')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.barcelona')}
@@ -253,7 +253,7 @@ export default function Navbar() {
                   onClick={closeMobileMenu}
                   className="block w-full text-center py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
                 >
-                  {t('nav.get_safety_kit')}
+                  {t('nav.safety_kit_short')}
                 </Link>
               </motion.div>
             </div>

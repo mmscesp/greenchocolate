@@ -149,6 +149,11 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
   }
 
   const displayName = profile?.displayName || user.user_metadata?.full_name || user.email?.split('@')[0] || t('user.fallback.name');
+  const compactDisplayName = (() => {
+    const firstToken = displayName.trim().split(/\s+/)[0] ?? displayName;
+    const maxChars = 8;
+    return firstToken.length > maxChars ? `${firstToken.slice(0, maxChars)}...` : firstToken;
+  })();
   const userEmail = profile?.email || user.email || '';
   const isAdmin = profile?.role === 'ADMIN';
   const isClubAdmin = profile?.role === 'CLUB_ADMIN';
@@ -258,7 +263,7 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'flex h-10 max-w-[11rem] items-center gap-2 rounded-full border pl-1 pr-3 transition-all group xl:max-w-[13rem]',
+          'group flex h-10 max-w-[9rem] items-center gap-1.5 rounded-full border pl-1 pr-2.5 transition-all xl:max-w-[10rem]',
           useLightTone
             ? 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
             : 'bg-black/5 border-black/10 hover:bg-black/10 hover:border-black/20'
@@ -279,8 +284,14 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
           </div>
         )}
       </div>
-      <span className={cn('hidden max-w-[6.5rem] truncate sm:inline xl:max-w-[8rem] font-medium text-sm', useLightTone ? 'text-white group-hover:text-white' : 'text-slate-900 group-hover:text-slate-950')}>
-        {displayName.split(' ')[0]}
+      <span
+        data-testid="desktop-profile-name"
+        className={cn(
+          'hidden max-w-[4.25rem] truncate text-sm font-medium sm:inline xl:max-w-[5.25rem]',
+          useLightTone ? 'text-white group-hover:text-white' : 'text-slate-900 group-hover:text-slate-950'
+        )}
+      >
+        {compactDisplayName}
       </span>
       <ChevronDown className={cn('h-3 w-3 transition-transform duration-300', useLightTone ? 'text-white/40' : 'text-slate-500', isOpen && 'rotate-180')} />
     </Button>

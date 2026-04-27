@@ -54,11 +54,18 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
     : 'bg-transparent hover:bg-black/5 data-[state=open]:bg-black/5 text-slate-800 hover:text-slate-900 transition-colors';
 
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
+    <NavigationMenu className="w-full min-w-0">
+      <NavigationMenuList className="w-full min-w-0 justify-center gap-0.5 xl:gap-1">
         {desktopPrimaryItems.map(({ href, labelKey }) => (
           <NavigationMenuItem key={href}>
-            <Link href={withLocale(href)} className={cn(navigationMenuTriggerStyle(), triggerClassName, 'relative')}> 
+            <Link
+              href={withLocale(href)}
+              className={cn(
+                navigationMenuTriggerStyle(),
+                triggerClassName,
+                'relative h-9 min-w-0 max-w-[9.5rem] px-2.5 text-[0.9rem] leading-none xl:max-w-[10.5rem] xl:px-3'
+              )}
+            >
               {/* [motion] */}
               {isActiveRoute(href) ? (
                 <motion.span
@@ -74,7 +81,7 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
                   }
                 />
               ) : null}
-              {t(labelKey)}
+              <span className="block truncate">{t(labelKey)}</span>
             </Link>
           </NavigationMenuItem>
         ))}
