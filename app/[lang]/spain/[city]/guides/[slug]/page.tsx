@@ -58,7 +58,7 @@ export default async function GuidePage({ params }: PageProps) {
   const related = await getRelatedArticles(guide.id, 3, lang as Locale);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-10 md:pt-36 space-y-8">
       <section className="rounded-2xl border bg-card p-8">
         <div className="text-xs text-muted-foreground mb-3">{getLocalizedArticleCategory(guide.category, t)} - {format('city_guides.min_read', { minutes: String(guide.readTime) })}</div>
         <h1 className="text-3xl md:text-4xl font-bold mb-4">{guide.title}</h1>

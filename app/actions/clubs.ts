@@ -35,6 +35,37 @@ function isMissingMigrationColumnError(error: unknown): boolean {
   return typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2022';
 }
 
+function getClubPriorityRank(club: { slug: string; verificationStatus?: string | null; isVerified?: boolean }): number {
+  if (club.slug === 'club-311-barcelona') {
+    return 0;
+  }
+
+  if (club.verificationStatus === 'FEATURED') {
+    return 1;
+  }
+
+  if (club.verificationStatus === 'SCM_VERIFIED' || club.isVerified) {
+    return 2;
+  }
+
+  if (club.verificationStatus === 'PENDING_REVIEW') {
+    return 3;
+  }
+
+  return 4;
+}
+
+function sortClubsForPublicDisplay<T extends { slug: string; name: string; verificationStatus?: string | null; isVerified?: boolean }>(clubs: T[]): T[] {
+  return [...clubs].sort((a, b) => {
+    const priorityDelta = getClubPriorityRank(a) - getClubPriorityRank(b);
+    if (priorityDelta !== 0) {
+      return priorityDelta;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
+}
+
 // JSON field validation schemas
 const coordinatesSchema = z.object({
   lat: z.number(),
@@ -431,7 +462,7 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
       orderBy: { name: 'asc' },
     });
 
-    return clubs.map((club: ClubWithCity & { reviews: { rating: number }[] }) => {
+    return sortClubsForPublicDisplay(clubs.map((club: ClubWithCity & { reviews: { rating: number }[] }) => {
       const ratings = club.reviews.map(r => r.rating);
       const avgRating = ratings.length > 0
         ? Math.round((ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10) / 10
@@ -465,7 +496,7 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
         capacity: club.capacity,
         foundedYear: club.foundedYear,
       };
-    });
+    }));
   } catch (error) {
     if (isMissingMigrationColumnError(error)) {
       return [];
@@ -566,7 +597,7 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
       take: validatedLimit,
     });
 
-    return clubs.map((club: ClubWithCity) => ({
+    return sortClubsForPublicDisplay(clubs.map((club: ClubWithCity) => ({
       id: club.id,
       name: club.name,
       slug: club.slug,
@@ -593,7 +624,7 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
       description: club.description,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
-    }));
+    }))).slice(0, validatedLimit);
   } catch (error) {
     console.error('getFeaturedClubs error:', error);
     return [];
@@ -632,7 +663,7 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
       take: validatedLimit,
     });
 
-    return neighbors.map((clubItem: ClubWithCity) => ({
+    return sortClubsForPublicDisplay(neighbors.map((clubItem: ClubWithCity) => ({
       id: clubItem.id,
       name: clubItem.name,
       slug: clubItem.slug,
@@ -659,7 +690,7 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
       description: clubItem.description,
       capacity: clubItem.capacity,
       foundedYear: clubItem.foundedYear,
-    }));
+    })));
   } catch (error) {
     console.error('getCityNeighbors error:', error);
     return [];

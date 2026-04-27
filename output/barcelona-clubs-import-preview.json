@@ -1,6 +1,6 @@
 {
   "source": "data\\SCM_Barcelona_Clubs_list_v1.xlsx",
-  "generatedAt": "2026-04-27T11:08:19.730368+00:00",
+  "generatedAt": "2026-04-27T11:33:03.719667+00:00",
   "totalRows": 100,
   "readyRows": 97,
   "heldRows": 3,
@@ -36,7 +36,7 @@
       "shortDescription": "Dragon club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Dragon club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.716650+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.710433+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -66,7 +66,7 @@
       "shortDescription": "The High Class Barcelona Weed Club is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing.",
       "description": "The High Class Barcelona Weed Club is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.716650+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.710433+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -96,7 +96,7 @@
       "shortDescription": "Terpy Flavors Gallery is listed as a public Barcelona club profile in El Raval. SCM has not completed an on-site verification review for this listing.",
       "description": "Terpy Flavors Gallery is listed as a public Barcelona club profile in El Raval. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.716650+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.710433+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -126,7 +126,7 @@
       "shortDescription": "The Cut Barcelona is listed as a public Barcelona club profile in Sant Antoni. SCM has not completed an on-site verification review for this listing.",
       "description": "The Cut Barcelona is listed as a public Barcelona club profile in Sant Antoni. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -156,7 +156,7 @@
       "shortDescription": "Bcn Kush Weed Club is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing.",
       "description": "Bcn Kush Weed Club is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -186,7 +186,7 @@
       "shortDescription": "Cube Barcelona is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Cube Barcelona is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -216,7 +216,7 @@
       "shortDescription": "Mano Verde Barcelona is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Mano Verde Barcelona is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -246,7 +246,7 @@
       "shortDescription": "Hollyweed Weed Club is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing.",
       "description": "Hollyweed Weed Club is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -276,7 +276,7 @@
       "shortDescription": "The Good Guyz is listed as a public Barcelona club profile in Eixample. SCM has not completed an on-site verification review for this listing.",
       "description": "The Good Guyz is listed as a public Barcelona club profile in Eixample. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -306,7 +306,7 @@
       "shortDescription": "Smoke Weed Barcelona is listed as a public Barcelona club profile in El Raval. SCM has not completed an on-site verification review for this listing.",
       "description": "Smoke Weed Barcelona is listed as a public Barcelona club profile in El Raval. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -336,7 +336,7 @@
       "shortDescription": "Cannabis Club Barcelona is listed as a public Barcelona club profile in Nou Barris. SCM has not completed an on-site verification review for this listing.",
       "description": "Cannabis Club Barcelona is listed as a public Barcelona club profile in Nou Barris. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -366,7 +366,7 @@
       "shortDescription": "La Canna Bcn Private Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "La Canna Bcn Private Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -396,7 +396,7 @@
       "shortDescription": "Kush House BCN Social Club is listed as a public Barcelona club profile in Barceloneta. SCM has not completed an on-site verification review for this listing.",
       "description": "Kush House BCN Social Club is listed as a public Barcelona club profile in Barceloneta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -426,7 +426,7 @@
       "shortDescription": "Blue Dream Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Blue Dream Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -456,7 +456,7 @@
       "shortDescription": "House is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing.",
       "description": "House is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.711436+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -486,7 +486,7 @@
       "shortDescription": "Cannabis Club Guru is listed as a public Barcelona club profile in El Born. SCM has not completed an on-site verification review for this listing.",
       "description": "Cannabis Club Guru is listed as a public Barcelona club profile in El Born. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.717647+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -516,7 +516,7 @@
       "shortDescription": "The Hasher Club is listed as a public Barcelona club profile in Poble Sec. SCM has not completed an on-site verification review for this listing.",
       "description": "The Hasher Club is listed as a public Barcelona club profile in Poble Sec. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -546,7 +546,7 @@
       "shortDescription": "Zkittlez Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Zkittlez Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -576,7 +576,7 @@
       "shortDescription": "Blunted Cannabis Social Club is listed as a public Barcelona club profile in El Born. SCM has not completed an on-site verification review for this listing.",
       "description": "Blunted Cannabis Social Club is listed as a public Barcelona club profile in El Born. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -606,7 +606,7 @@
       "shortDescription": "Stone age is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing.",
       "description": "Stone age is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -636,7 +636,7 @@
       "shortDescription": "Grasshopper Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Grasshopper Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -666,7 +666,7 @@
       "shortDescription": "Green Garden Social Club is listed as a public Barcelona club profile in El Raval. SCM has not completed an on-site verification review for this listing.",
       "description": "Green Garden Social Club is listed as a public Barcelona club profile in El Raval. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -696,7 +696,7 @@
       "shortDescription": "Sticky Dabs BCN Cannabis Social Club is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing.",
       "description": "Sticky Dabs BCN Cannabis Social Club is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -726,7 +726,7 @@
       "shortDescription": "Stonerz Bcn Social Weed Club is listed as a public Barcelona club profile in Sant Antoni. SCM has not completed an on-site verification review for this listing.",
       "description": "Stonerz Bcn Social Weed Club is listed as a public Barcelona club profile in Sant Antoni. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -756,7 +756,7 @@
       "shortDescription": "Weedy Wonka is listed as a public Barcelona club profile in Sant Antoni. SCM has not completed an on-site verification review for this listing.",
       "description": "Weedy Wonka is listed as a public Barcelona club profile in Sant Antoni. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -786,7 +786,7 @@
       "shortDescription": "Nova 420 bcn private social club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Nova 420 bcn private social club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -816,7 +816,7 @@
       "shortDescription": "Mary Jane Weed Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Mary Jane Weed Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -846,7 +846,7 @@
       "shortDescription": "Terps Social Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Terps Social Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.712439+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -876,7 +876,7 @@
       "shortDescription": "La Cultura Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "La Cultura Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.718645+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -906,7 +906,7 @@
       "shortDescription": "HighstreetBCN is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing.",
       "description": "HighstreetBCN is listed as a public Barcelona club profile in Poblenou. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -936,7 +936,7 @@
       "shortDescription": "Chill Zone (Cannabis & Weed Club) is listed as a public Barcelona club profile in Sant Gervasi. SCM has not completed an on-site verification review for this listing.",
       "description": "Chill Zone (Cannabis & Weed Club) is listed as a public Barcelona club profile in Sant Gervasi. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -966,7 +966,7 @@
       "shortDescription": "Hashtagbcn Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Hashtagbcn Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -996,7 +996,7 @@
       "shortDescription": "High time Barcelona-Private social club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "High time Barcelona-Private social club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1026,7 +1026,7 @@
       "shortDescription": "Coffeshop Weed Club Barcelona is listed as a public Barcelona club profile in — fill manually. SCM has not completed an on-site verification review for this listing.",
       "description": "Coffeshop Weed Club Barcelona is listed as a public Barcelona club profile in — fill manually. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1056,7 +1056,7 @@
       "shortDescription": "The Corner Social Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "The Corner Social Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1086,7 +1086,7 @@
       "shortDescription": "House Of Flavours is listed as a public Barcelona club profile in Poble Sec. SCM has not completed an on-site verification review for this listing.",
       "description": "House Of Flavours is listed as a public Barcelona club profile in Poble Sec. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1116,7 +1116,7 @@
       "shortDescription": "Ice Tray Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Ice Tray Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.719642+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1146,7 +1146,7 @@
       "shortDescription": "Atmosphere Social Club is listed as a public Barcelona club profile in El Born. SCM has not completed an on-site verification review for this listing.",
       "description": "Atmosphere Social Club is listed as a public Barcelona club profile in El Born. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1176,7 +1176,7 @@
       "shortDescription": "Buds Tree Private Weed Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Buds Tree Private Weed Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.713444+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1206,7 +1206,7 @@
       "shortDescription": "Auc Weedoom Cannabis Club / Weed Club is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing.",
       "description": "Auc Weedoom Cannabis Club / Weed Club is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1236,7 +1236,7 @@
       "shortDescription": "DIAGONAL SOCIAL CLUB BARCELONA is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing.",
       "description": "DIAGONAL SOCIAL CLUB BARCELONA is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1266,7 +1266,7 @@
       "shortDescription": "Zaza social club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Zaza social club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1296,7 +1296,7 @@
       "shortDescription": "Haze Social Club is listed as a public Barcelona club profile in — fill manually. SCM has not completed an on-site verification review for this listing.",
       "description": "Haze Social Club is listed as a public Barcelona club profile in — fill manually. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1326,7 +1326,7 @@
       "shortDescription": "sunrise social club is listed as a public Barcelona club profile in Gòtic. SCM has not completed an on-site verification review for this listing.",
       "description": "sunrise social club is listed as a public Barcelona club profile in Gòtic. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1356,7 +1356,7 @@
       "shortDescription": "Cali Dream Social Club Barcelona is listed as a public Barcelona club profile in Sarrià. SCM has not completed an on-site verification review for this listing.",
       "description": "Cali Dream Social Club Barcelona is listed as a public Barcelona club profile in Sarrià. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1386,7 +1386,7 @@
       "shortDescription": "Rolling Stoned is listed as a public Barcelona club profile in Gòtic. SCM has not completed an on-site verification review for this listing.",
       "description": "Rolling Stoned is listed as a public Barcelona club profile in Gòtic. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.721999+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1416,7 +1416,7 @@
       "shortDescription": "Zeta Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing.",
       "description": "Zeta Social Club is listed as a public Barcelona club profile in Eixample Dreta. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.721999+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1446,7 +1446,7 @@
       "shortDescription": "BUSHI CLUB is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing.",
       "description": "BUSHI CLUB is listed as a public Barcelona club profile in Les Corts. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.721999+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1476,7 +1476,7 @@
       "shortDescription": "Barcelona Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Barcelona Weed Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.721999+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1506,7 +1506,7 @@
       "shortDescription": "Cali Weed Barcelona is listed as a public Barcelona club profile in — fill manually. SCM has not completed an on-site verification review for this listing.",
       "description": "Cali Weed Barcelona is listed as a public Barcelona club profile in — fill manually. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.721999+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1538,7 +1538,7 @@
       "shortDescription": "Sweet Oil Cannabis Club Barcelona is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Sweet Oil Cannabis Club Barcelona is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.720640+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.714645+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1570,7 +1570,7 @@
       "shortDescription": "Sweet Oil Cannabis Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing.",
       "description": "Sweet Oil Cannabis Club is listed as a public Barcelona club profile in Eixample Esquerra. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.722997+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.715659+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",
@@ -1602,7 +1602,7 @@
       "shortDescription": "Dee Dee Cannabis Club is listed as a public Barcelona club profile in Nou Barris. SCM has not completed an on-site verification review for this listing.",
       "description": "Dee Dee Cannabis Club is listed as a public Barcelona club profile in Nou Barris. SCM has not completed an on-site verification review for this listing. Public source data can change, and this profile should be treated as a starting point for research rather than a promise of access.",
       "publicDataSource": "SCM Barcelona Clubs XLSX v1 + public map references",
-      "publicDataReviewedAt": "2026-04-27T11:08:19.728163+00:00",
+      "publicDataReviewedAt": "2026-04-27T11:33:03.717662+00:00",
       "dataQualityScore": 95,
       "unsafeSourceMetadataMatches": [
         "\\baccess tips?\\b",

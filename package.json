@@ -17,6 +17,7 @@
     "test:e2e:debug": "playwright test --debug",
     "carousel:jpg": "node scripts/render-scm-carousel-jpgs.mjs",
     "clubs:preview-import": "python scripts/preview-barcelona-clubs-import.py",
+    "clubs:import-barcelona": "node scripts/import-barcelona-clubs.mjs",
     "seo:safety-scan": "node scripts/check-public-copy-safety.mjs",
     "seo:club-spine": "node scripts/check-club-seo-spine.mjs",
     "pdf:safety-kit": "node scripts/generate-safety-kit-pdfs.mjs",

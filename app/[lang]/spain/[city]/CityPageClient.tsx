@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { MapPin, Building2, Shield, ArrowRight, Star, Clock } from '@/lib/icons';
 import { H1, H2, H3, Text, Lead } from '@/components/typography';
+import { isVerifiedClubStatus } from '@/lib/club-verification';
 
 interface CityPageClientProps {
   lang: string;
@@ -37,6 +38,9 @@ export default function CityPageClient({
           .replace('{{city}}', cityName)
           .replace('{{brand}}', t('brand.name'))
       : t('city.description_fallback').replace('{{city}}', cityName));
+  const verifiedClubs = clubs.filter((club) => club.isVerified || isVerifiedClubStatus(club.verificationStatus));
+  const publicListings = clubs.filter((club) => !club.isVerified && !isVerifiedClubStatus(club.verificationStatus));
+  const publicPreview = publicListings.slice(0, 6);
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -78,7 +82,7 @@ export default function CityPageClient({
             <div className="flex items-center gap-2 text-muted-foreground bg-muted px-4 py-2 rounded-full">
               <Building2 className="h-4 w-4 text-primary" />
               <span className="font-bold text-foreground">{clubs.length}</span>
-              <span>{t('city.verified_clubs')}</span>
+              <span>{t('city.public_profiles')}</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground bg-muted px-4 py-2 rounded-full">
               <Shield className="h-4 w-4 text-primary" />
@@ -229,9 +233,9 @@ export default function CityPageClient({
                 {t('city.coming_soon.notice')}
               </Text>
             </div>
-          ) : clubs.length > 0 ? (
+          ) : verifiedClubs.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {clubs.map((club) => (
+              {verifiedClubs.map((club) => (
                 <ClubCard key={club.id} club={club} />
               ))}
             </div>
@@ -244,6 +248,34 @@ export default function CityPageClient({
             </div>
           )}
         </motion.section>
+
+        {!isComingSoon && publicPreview.length > 0 ? (
+          <motion.section
+            className="mt-16 rounded-3xl border bg-card p-8 shadow-lg shadow-primary/5"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.34 }}
+          >
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-3xl">
+                <H2 className="mb-4">{t('city.public_listings.title')}</H2>
+                <Text variant="muted">{t('city.public_listings.body')}</Text>
+              </div>
+              <Button
+                variant="secondary"
+                asChild
+                className="border-border text-foreground hover:bg-muted hover:text-foreground rounded-xl"
+              >
+                <Link href={`/${lang}/spain/${city}/clubs`}>{t('city.public_listings.view_all')}</Link>
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {publicPreview.map((club) => (
+                <ClubCard key={club.id} club={club} />
+              ))}
+            </div>
+          </motion.section>
+        ) : null}
 
         {!isComingSoon && city === 'barcelona' ? (
           <motion.section

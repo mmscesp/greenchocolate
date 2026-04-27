@@ -8,13 +8,12 @@ import { Button } from './ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { Club as ClubModel } from '@/lib/types';
 import type { ClubCard as ClubCardData } from '@/app/actions/clubs';
-import { MapPin, Star, Users, Clock, ArrowRight } from '@/lib/icons';
-import TrustBadge from './trust/TrustBadge';
+import { MapPin, Star, Users, Clock, ArrowRight, ShieldCheck } from '@/lib/icons';
 import { EditorialHeading } from './landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
 import { cn } from '@/lib/utils';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
-import { getClubStatusLabel, isVerifiedClubStatus } from '@/lib/club-verification';
+import { isVerifiedClubStatus } from '@/lib/club-verification';
 
 type ClubCardEntity = ClubModel | ClubCardData;
 
@@ -30,6 +29,11 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
   const clubDistrict = 'district' in club ? club.district : undefined;
   const clubVerificationStatus = 'verificationStatus' in club ? club.verificationStatus : undefined;
   const isVerifiedProfile = club.isVerified || isVerifiedClubStatus(clubVerificationStatus);
+  const statusBadgeLabel = isVerifiedProfile ? t('clubs.card.status_verified') : t('clubs.card.status_unverified');
+  const visibleVibeTags = club.vibeTags.filter((vibe) => {
+    const normalized = vibe.toLowerCase();
+    return normalized !== 'public listing' && normalized !== 'unverified';
+  });
   const mediaItems = buildClubMediaItems({
     slug: club.slug,
     name: club.name,
@@ -76,24 +80,16 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-2">
             {isVerifiedProfile ? (
-              // [motion]
-              <motion.div
-                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -10 }}
-                animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-                className="relative"
-              >
-                <div className="absolute inset-0 bg-brand/15 rounded-full blur-md animate-pulse" />
-                <TrustBadge type="verified" size="sm" className="relative bg-bg-base/70 backdrop-blur-md border-brand/30 scale-90 sm:scale-100 origin-left" />
-              </motion.div>
+              <div className="relative inline-flex w-fit items-center gap-1.5 overflow-hidden rounded-full border border-brand/50 bg-brand px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.16em] text-black shadow-[0_0_28px_-8px_hsl(var(--brand)/0.9)] backdrop-blur-sm sm:text-[10px]">
+                <span className="absolute inset-y-0 left-0 w-8 bg-white/35 blur-xl" />
+                <ShieldCheck className="relative h-3.5 w-3.5" />
+                <span className="relative">{statusBadgeLabel}</span>
+              </div>
             ) : (
               <div className="inline-flex w-fit items-center rounded-full border border-amber-300/25 bg-bg-base/70 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.15em] text-amber-100 shadow-lg backdrop-blur-sm sm:text-[9px]">
-                {getClubStatusLabel(clubVerificationStatus)}
+                {statusBadgeLabel}
               </div>
             )}
-            <div className="inline-flex items-center px-2.5 py-1 bg-bg-base/70 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.15em] rounded-full border border-white/10 shadow-lg w-fit">
-              {club.priceRange}
-            </div>
           </div>
 
           {/* Rating Badge */}
@@ -126,18 +122,21 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
           {/* Description */}
           <p className="text-zinc-400 text-xs sm:text-sm mb-6 line-clamp-2 leading-relaxed font-serif italic opacity-80">{club.description}</p>
 
-          {/* Vibe Tags */}
-          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
-            {club.vibeTags.slice(0, 3).map((vibe, index) => (
-              <Badge
-                key={index}
-                variant="secondary"
-                className="text-[8px] sm:text-[9px] uppercase tracking-widest border-white/5 text-zinc-400 bg-white/5 px-2.5 sm:px-3 py-0.5 rounded-full"
-              >
-                {vibe}
-              </Badge>
-            ))}
-          </div>
+          {visibleVibeTags.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
+              {visibleVibeTags.slice(0, 3).map((vibe, index) => (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="text-[8px] sm:text-[9px] uppercase tracking-widest border-white/5 text-zinc-400 bg-white/5 px-2.5 sm:px-3 py-0.5 rounded-full"
+                >
+                  {vibe}
+                </Badge>
+              ))}
+            </div>
+          ) : (
+            <div className="mb-6 sm:mb-8" />
+          )}
 
           {/* Spacer to push stats and button to bottom */}
           <div className="mt-auto">
@@ -157,18 +156,12 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
                   </ConciergeLabel>
                 </div>
               </div>
-            ) : (
-              <div className="mb-6 sm:mb-8">
-                <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">
-                  Public listing / not SCM verified
-                </ConciergeLabel>
-              </div>
-            )}
+            ) : null}
 
             {/* CTA Button */}
             <Link href={`/${language}/clubs/${club.slug}`}>
               <Button className="w-full bg-brand hover:bg-brand-dark text-black font-black rounded-full transition-all duration-500 border-none group/btn h-12 sm:h-14 shadow-[0_8px_20px_-10px_hsl(var(--brand)/0.4)]">
-                <span className="uppercase tracking-[0.2em] text-[10px]">{t('nav.explore')}</span>
+                <span className="uppercase tracking-[0.2em] text-[10px]">{t('clubs.card.explore_this_club')}</span>
                 <ArrowRight className="h-3.5 w-3.5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
               </Button>
             </Link>
