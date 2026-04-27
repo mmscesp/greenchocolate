@@ -12,8 +12,8 @@ describe('club visuals', () => {
   });
 
   it('prefers neighborhood covers before district covers', () => {
-    expect(getBarcelonaIllustratedCover({ neighborhood: 'Gràcia', district: 'Eixample' })).toContain(
-      'barcelona-parc-guel'
+    expect(getBarcelonaIllustratedCover({ neighborhood: 'Raval', district: 'Eixample' })).toContain(
+      '/images/fallbacks/Districts/ElRaval.webp'
     );
   });
 
@@ -23,7 +23,7 @@ describe('club visuals', () => {
     );
   });
 
-  it('keeps alt text explicit that the fallback is editorial', () => {
-    expect(getIllustratedCoverAlt('Eixample')).toBe('Editorial illustration for Eixample, Barcelona');
+  it('keeps alt text explicit that the fallback is district-based', () => {
+    expect(getIllustratedCoverAlt('Eixample')).toBe('District fallback image for Eixample, Barcelona');
   });
 });
