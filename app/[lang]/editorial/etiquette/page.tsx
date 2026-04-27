@@ -70,6 +70,7 @@ export default async function EtiquettePage({ params }: EtiquettePageProps) {
       guidesTitleKey="editorial.etiquette.guides_title"
       featuredKey="editorial.etiquette.featured"
       badgeIcon={<Heart className="w-4 h-4" />}
+      categoryPath="/editorial/etiquette"
       articles={articles}
     />
   );

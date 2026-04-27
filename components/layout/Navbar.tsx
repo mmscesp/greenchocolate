@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import MainNavigation, { desktopExploreItems } from './MainNavigation';
+import MainNavigation from './MainNavigation';
 import UserProfileDropdown from '@/components/UserProfileDropdown';
 import LanguageSelector from '@/components/LanguageSelector';
 import { Logo } from '@/components/ui/logo';
@@ -149,7 +149,7 @@ export default function Navbar() {
             'hidden lg:flex min-w-0 items-center rounded-full px-2 py-1 mx-2 xl:mx-4 transition-all duration-300',
             isScrolled ? 'bg-white/5' : 'bg-transparent'
           )}>
-            <MainNavigation tone="light" isScrolled={isScrolled} />
+            <MainNavigation tone="light" />
           </div>
 
           {/* Desktop Actions Section */}
@@ -218,36 +218,27 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col gap-4 text-xl font-semibold text-white/90 pt-2 shrink-0">
-              <Link href={withLocale('/editorial')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
-                {t('nav.guides')}
+              <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="text-brand hover:text-brand-light transition-colors">
+                {t('nav.get_safety_kit')}
+              </Link>
+              <Link href={withLocale('/spain/barcelona')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.barcelona')}
               </Link>
               <Link href={withLocale('/clubs')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.clubs_directory')}
               </Link>
-              <Link href={withLocale('/events')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
-                {t('nav.events')}
+              <Link href={withLocale('/editorial')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.guides')}
               </Link>
-              <div className="pt-4 border-t border-white/10 flex flex-col gap-4">
-                <span className="block text-sm uppercase tracking-wider text-white/50">{t('nav.cities')}</span>
-                {desktopExploreItems.map(({ href, titleKey, comingSoon }) => {
-                  if (comingSoon || !href) {
-                    return (
-                      <div key={titleKey} className="flex items-center justify-between gap-3 text-white/60 text-lg font-medium cursor-not-allowed" aria-disabled="true">
-                        <span>{t(titleKey)}</span>
-                        <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/80">
-                          {t('nav.coming_soon')}
-                        </span>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <Link key={href} href={withLocale(href)} onClick={closeMobileMenu} className="block hover:text-white/85 hover:text-white transition-colors text-lg font-medium">
-                      {t(titleKey)}
-                    </Link>
-                  );
-                })}
-              </div>
+              <Link href={withLocale('/verification')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.verification')}
+              </Link>
+              <Link href={withLocale('/mission')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.mission')}
+              </Link>
+              <Link href={withLocale('/contact')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+                {t('nav.contact')}
+              </Link>
             </div>
 
             <div className="mt-auto pb-8 flex flex-col gap-6 border-t border-white/10 pt-6 shrink-0">

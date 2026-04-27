@@ -5,7 +5,7 @@ import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/g
 import AnalyticsDebugListener from '@/components/dev/AnalyticsDebugListener';
 import { i18n, isLocale } from '@/lib/i18n-config';
 import { JsonLd } from '@/components/JsonLd';
-import { buildLanguageAlternates, getBaseUrl, toAbsoluteUrl } from '@/lib/seo';
+import { buildLanguageAlternates, buildSiteNavigationJsonLd, getBaseUrl, toAbsoluteUrl } from '@/lib/seo';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -130,6 +130,7 @@ export default async function RootLayout({
       <body className="font-sans antialiased">
         <JsonLd data={organizationJsonLd} />
         <JsonLd data={websiteJsonLd} />
+        <JsonLd data={buildSiteNavigationJsonLd(htmlLang)} />
         <AnalyticsDebugListener />
         {children}
       </body>

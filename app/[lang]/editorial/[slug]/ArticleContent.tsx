@@ -15,7 +15,7 @@ import { EligibilityFlow } from '@/components/landing/editorial-concierge/intera
 import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 import { ArticleViewTracker } from '@/components/article/ArticleViewTracker';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
-import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
+import { getArticleCategoryPath, getLocalizedArticleCategory } from '@/lib/article-taxonomy';
 
 interface ArticleContentProps {
   article: ArticleDetail;
@@ -37,6 +37,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
 
   const locale = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : 'en-US';
   const localizedCategory = getLocalizedArticleCategory(article.category, t);
+  const categoryPath = getArticleCategoryPath(article.category);
 
   useEffect(() => {
     let frameId = 0;
@@ -245,6 +246,31 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                     {t('article.learn_about_vetting')} <ExternalLink className="h-3 w-3 ml-2" />
                   </Button>
                 </Link>
+              </div>
+
+              <div className="p-8 bg-bg-card/70 border border-white/10 rounded-3xl shadow-xl">
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-brand mb-6">
+                  {t('article.trust_spine.title')}
+                </h4>
+                <div className="grid gap-3">
+                  {[
+                    { href: categoryPath, label: localizedCategory },
+                    { href: '/safety-kit', label: t('footer.new.start.safety_kit') },
+                    { href: '/verification', label: t('footer.new.start.verification_standard') },
+                    ...(article.citySlug === 'barcelona'
+                      ? [{ href: '/spain/barcelona', label: t('footer.new.start.barcelona_guide') }]
+                      : []),
+                  ].map((link) => (
+                    <Link
+                      key={link.href}
+                      href={`/${language}${link.href}`}
+                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-zinc-300 transition hover:border-brand/40 hover:text-white"
+                    >
+                      {link.label}
+                      <ArrowRight className="h-4 w-4 text-brand" />
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </aside>

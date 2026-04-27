@@ -70,6 +70,7 @@ export default async function SafetyPage({ params }: SafetyPageProps) {
       guidesTitleKey="editorial.standards.items.harm_reduction.title"
       featuredKey="editorial.safety.featured"
       badgeIcon={<Shield className="w-4 h-4" />}
+      categoryPath="/editorial/safety"
       articles={articles}
     />
   );

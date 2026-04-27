@@ -21,9 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         'Guia gratuita para viajeros que visitan Cannabis Social Clubs en Espana. Limites legales, senales de estafa, etiqueta de primera visita y numeros de emergencia.',
     },
     en: {
-      title: 'The Spain Safety Kit - Free Download | SocialClubsMaps',
+      title: 'Free Spain Safety Kit for Cannabis Social Club Visitors | SocialClubsMaps',
       description:
-        'Free guide for travelers visiting Cannabis Social Clubs in Spain. Legal lines, scam red flags, first-visit etiquette, and emergency numbers.',
+        'Free guide for adults researching Cannabis Social Clubs in Spain. Legal lines, scam red flags, first-visit etiquette, and emergency numbers.',
     },
     fr: {
       title: 'Le Safety Kit pour l Espagne - Telechargement gratuit | SocialClubsMaps',

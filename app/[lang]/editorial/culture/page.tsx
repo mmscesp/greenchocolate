@@ -70,6 +70,7 @@ export default async function CulturePage({ params }: CulturePageProps) {
       guidesTitleKey="editorial.culture.guides_title"
       featuredKey="editorial.culture.featured"
       badgeIcon={<History className="w-4 h-4" />}
+      categoryPath="/editorial/culture"
       articles={articles}
     />
   );

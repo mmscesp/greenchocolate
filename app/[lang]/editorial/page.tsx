@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getCategoriesWithCounts, getFeaturedArticles } from '@/app/actions/articles';
+import { JsonLd } from '@/components/JsonLd';
 import { CommunityRoadmap } from '@/components/landing/editorial-concierge/blocks/CommunityRoadmap';
 import { EditorialFAQ } from '@/components/landing/editorial-concierge/blocks/EditorialFAQ';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +14,7 @@ import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
 import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
-import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildItemListJsonLd, buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface EditorialPageProps {
   params: Promise<{ lang: string }>;
@@ -34,9 +35,9 @@ export async function generateMetadata({
         'Guías expertas sobre legalidad, etiqueta, seguridad y cultura de cannabis social clubs en España.',
     },
     en: {
-      title: 'Cannabis Social Club Guides and Resources in Spain | SocialClubsMaps',
+      title: 'Cannabis Social Club Guides for Spain | SocialClubsMaps',
       description:
-        'Expert guides on legal compliance, etiquette, safety, and club culture for cannabis social clubs in Spain.',
+        'Legal, safety, etiquette, and city intelligence guides for understanding cannabis social clubs in Spain without relying on shortcut advice.',
     },
     fr: {
       title: 'Guides et Ressources des Clubs Sociaux Cannabis en Espagne | SocialClubsMaps',
@@ -130,9 +131,33 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       imageUrl: '/images/cards/UpatedRegularly.webp',
     },
   ];
+  const collectionJsonLd = buildCollectionPageJsonLd({
+    name: 'Cannabis Social Club Guides for Spain',
+    description: 'Legal, safety, etiquette, and city intelligence guides from SocialClubsMaps.',
+    path: `/${lang}/editorial`,
+  });
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Home', path: `/${lang}` },
+    { name: 'Editorial Guides', path: `/${lang}/editorial` },
+  ]);
+  const itemListJsonLd = buildItemListJsonLd([
+    ...CATEGORIES.map((category) => ({
+      name: category.title,
+      path: `/${lang}/editorial/${category.slug}`,
+      description: category.description,
+    })),
+    ...featuredArticles.map((article) => ({
+      name: article.title,
+      path: `/${lang}/editorial/${article.slug}`,
+      description: article.excerpt,
+    })),
+  ]);
 
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
+      <JsonLd data={collectionJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={itemListJsonLd} />
       <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/40 via-bg-base to-bg-base pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-brand/5 blur-[120px]" />

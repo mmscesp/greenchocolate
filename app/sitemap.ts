@@ -20,15 +20,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '', changeFrequency: 'daily', priority: 1.0 },
     { path: '/clubs', changeFrequency: 'daily', priority: 0.9 },
     { path: '/spain', changeFrequency: 'weekly', priority: 0.85 },
+    { path: '/spain/barcelona', changeFrequency: 'weekly', priority: 0.9 },
     { path: '/editorial', changeFrequency: 'weekly', priority: 0.85 },
-    { path: '/editorial/legal', changeFrequency: 'weekly', priority: 0.75 },
+    { path: '/editorial/legal', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/editorial/etiquette', changeFrequency: 'weekly', priority: 0.75 },
     { path: '/editorial/culture', changeFrequency: 'weekly', priority: 0.75 },
-    { path: '/editorial/safety', changeFrequency: 'weekly', priority: 0.75 },
-    { path: '/safety-kit', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/editorial/safety', changeFrequency: 'weekly', priority: 0.78 },
+    { path: '/safety-kit', changeFrequency: 'weekly', priority: 0.95 },
+    { path: '/verification', changeFrequency: 'monthly', priority: 0.85 },
     { path: '/safety', changeFrequency: 'monthly', priority: 0.7 },
-    { path: '/events', changeFrequency: 'weekly', priority: 0.7 },
-    { path: '/mission', changeFrequency: 'monthly', priority: 0.6 },
+    { path: '/events', changeFrequency: 'weekly', priority: 0.45 },
+    { path: '/mission', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/contact', changeFrequency: 'monthly', priority: 0.5 },
     { path: '/privacy', changeFrequency: 'yearly', priority: 0.2 },
     { path: '/terms', changeFrequency: 'yearly', priority: 0.2 },
@@ -77,15 +79,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     toLocalizedEntries(page.path, page.changeFrequency, page.priority)
   );
 
-  const cityRoutes: MetadataRoute.Sitemap = cities.flatMap((city) =>
+  const indexableCities = cities.filter((city) => city.slug === 'barcelona');
+
+  const cityRoutes: MetadataRoute.Sitemap = indexableCities.flatMap((city) =>
     toLocalizedEntries(`/spain/${city.slug}`, 'weekly', 0.8)
   );
 
-  const cityGuidesIndexRoutes: MetadataRoute.Sitemap = cities.flatMap((city) =>
+  const cityGuidesIndexRoutes: MetadataRoute.Sitemap = indexableCities.flatMap((city) =>
     toLocalizedEntries(`/spain/${city.slug}/guides`, 'weekly', 0.65)
   );
 
-  const cityClubsIndexRoutes: MetadataRoute.Sitemap = cities.flatMap((city) =>
+  const cityClubsIndexRoutes: MetadataRoute.Sitemap = indexableCities.flatMap((city) =>
     toLocalizedEntries(`/spain/${city.slug}/clubs`, 'weekly', 0.65)
   );
 

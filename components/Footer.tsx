@@ -28,8 +28,7 @@ export default function Footer() {
         transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10"
       >
-        {/* 4 Column Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-12">
           
           {/* Column 1: Brand */}
           <div className="lg:col-span-1">
@@ -75,6 +74,39 @@ export default function Footer() {
                 <TikTok className="h-4 w-4" />
               </motion.a>
             </div>
+          </div>
+
+          <div>
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand mb-8">
+              {t('footer.new.columns.start_here')}
+            </h3>
+            <ul className="space-y-4">
+              <li>
+                <Link href={withLocale('/safety-kit')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                  {t('footer.new.start.safety_kit')}
+                </Link>
+              </li>
+              <li>
+                <Link href={withLocale('/clubs')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                  {t('footer.new.start.verified_clubs')}
+                </Link>
+              </li>
+              <li>
+                <Link href={withLocale('/spain/barcelona')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                  {t('footer.new.start.barcelona_guide')}
+                </Link>
+              </li>
+              <li>
+                <Link href={withLocale('/editorial/legal')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                  {t('footer.new.start.legal_guides')}
+                </Link>
+              </li>
+              <li>
+                <Link href={withLocale('/verification')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                  {t('footer.new.start.verification_standard')}
+                </Link>
+              </li>
+            </ul>
           </div>
 
           {/* Column 2: Learn */}
@@ -191,7 +223,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link 
-                  href={withLocale('/mission#verification-standard')} 
+                  href={withLocale('/verification')} 
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.verification_standard')}

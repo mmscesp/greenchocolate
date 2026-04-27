@@ -70,6 +70,7 @@ export default async function LegalPage({ params }: LegalPageProps) {
       guidesTitleKey="editorial.legal.guides_title"
       featuredKey="editorial.legal.featured"
       badgeIcon={<Scale className="w-4 h-4" />}
+      categoryPath="/editorial/legal"
       articles={articles}
     />
   );

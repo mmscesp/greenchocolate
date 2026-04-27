@@ -122,3 +122,71 @@ export function buildLocalizedMetadata({
     ...(noindex ? buildNoIndexMetadata() : {}),
   };
 }
+
+export function buildBreadcrumbJsonLd(items: Array<{ name: string; path: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: toAbsoluteUrl(item.path),
+    })),
+  };
+}
+
+export function buildCollectionPageJsonLd({
+  name,
+  description,
+  path,
+}: {
+  name: string;
+  description: string;
+  path: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name,
+    description,
+    url: toAbsoluteUrl(path),
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'SocialClubsMaps',
+      url: getBaseUrl(),
+    },
+  };
+}
+
+export function buildItemListJsonLd(items: Array<{ name: string; path: string; description?: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: toAbsoluteUrl(item.path),
+      name: item.name,
+      ...(item.description ? { description: item.description } : {}),
+    })),
+  };
+}
+
+export function buildSiteNavigationJsonLd(locale: Locale) {
+  const navItems = [
+    { name: 'Safety Kit', path: `/${locale}/safety-kit` },
+    { name: 'Verified Clubs', path: `/${locale}/clubs` },
+    { name: 'Barcelona Guide', path: `/${locale}/spain/barcelona` },
+    { name: 'Legal Guides', path: `/${locale}/editorial/legal` },
+    { name: 'Verification Standard', path: `/${locale}/verification` },
+    { name: 'Editorial Guides', path: `/${locale}/editorial` },
+  ];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SiteNavigationElement',
+    name: navItems.map((item) => item.name),
+    url: navItems.map((item) => toAbsoluteUrl(item.path)),
+  };
+}

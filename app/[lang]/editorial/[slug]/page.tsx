@@ -4,6 +4,7 @@ import { getArticleBySlug, getRelatedArticles, getArticles } from '@/app/actions
 import { JsonLd } from '@/components/JsonLd';
 import ArticleContent from '@/app/[lang]/editorial/[slug]/ArticleContent';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
+import { getArticleCategoryPath } from '@/lib/article-taxonomy';
 import { isLocale } from '@/lib/i18n-config';
 import { buildLanguageAlternates, toAbsoluteUrl } from '@/lib/seo';
 
@@ -103,6 +104,7 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     description: article.excerpt,
     image: articleImage,
     datePublished: article.publishedAt,
+    dateModified: article.publishedAt,
     mainEntityOfPage: toAbsoluteUrl(`/${lang}/editorial/${article.slug}`),
     author: {
       '@type': 'Person',
@@ -138,7 +140,7 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
         '@type': 'ListItem',
         position: 3,
         name: article.category,
-        item: toAbsoluteUrl(`/${lang}/editorial?category=${encodeURIComponent(article.category)}`),
+        item: toAbsoluteUrl(`/${lang}${getArticleCategoryPath(article.category)}`),
       },
       {
         '@type': 'ListItem',

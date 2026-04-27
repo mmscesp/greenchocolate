@@ -1,11 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { JsonLd } from '@/components/JsonLd';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Clock } from '@/lib/icons';
 import { H1, H2, H3, Label, Lead, Text } from '@/components/typography';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildItemListJsonLd } from '@/lib/seo';
 
 interface CategoryArticlePageProps {
   lang: string;
@@ -18,6 +20,7 @@ interface CategoryArticlePageProps {
   guidesTitleKey: string;
   featuredKey: string;
   badgeIcon: ReactNode;
+  categoryPath: string;
   articles: Array<{
     id: string;
     slug: string;
@@ -41,10 +44,33 @@ export default function CategoryArticlePage({
   guidesTitleKey,
   featuredKey,
   badgeIcon,
+  categoryPath,
   articles,
 }: CategoryArticlePageProps) {
+  const title = `${t(titlePrefixKey)} ${t(titleHighlightKey)}`;
+  const collectionJsonLd = buildCollectionPageJsonLd({
+    name: title,
+    description: t(leadKey),
+    path: `/${lang}${categoryPath}`,
+  });
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Home', path: `/${lang}` },
+    { name: 'Editorial Guides', path: `/${lang}/editorial` },
+    { name: title, path: `/${lang}${categoryPath}` },
+  ]);
+  const itemListJsonLd = buildItemListJsonLd(
+    articles.map((article) => ({
+      name: article.title,
+      path: `/${lang}/editorial/${article.slug}`,
+      description: article.excerpt,
+    }))
+  );
+
   return (
     <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
+      <JsonLd data={collectionJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={itemListJsonLd} />
       <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/50 via-bg-base to-bg-surface/50 pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-brand/5 to-transparent" />

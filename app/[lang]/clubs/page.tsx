@@ -22,9 +22,9 @@ export async function generateMetadata({ params }: ClubsPageProps): Promise<Meta
         'Explora la capa pública verificada que SCM publica hoy, empezando por Barcelona y por los detalles de acceso que podemos respaldar.',
     },
     en: {
-      title: 'Verified Cannabis Social Club Profiles | SocialClubsMaps',
+      title: 'Verified Cannabis Social Clubs in Spain | SocialClubsMaps',
       description:
-        'Browse the live verified profile layer SCM publishes today, starting with Barcelona and the trust signals we can stand behind.',
+        'Browse SCM’s verified public club profile layer, starting with Barcelona. Learn trust signals, safety context, and what to check before relying on a club.',
     },
     fr: {
       title: 'Profils Vérifiés de Cannabis Social Clubs | SocialClubsMaps',
@@ -55,6 +55,7 @@ export async function generateMetadata({ params }: ClubsPageProps): Promise<Meta
   });
 }
 
-export default function ClubsPage() {
-  return <ClubsPageWrapper />;
+export default async function ClubsPage({ params }: ClubsPageProps) {
+  const { lang } = await params;
+  return <ClubsPageWrapper lang={lang} />;
 }

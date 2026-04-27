@@ -5,10 +5,11 @@ import { getCityBySlug } from '@/app/actions/cities';
 import { getClubs } from '@/app/actions/clubs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { JsonLd } from '@/components/JsonLd';
 import { H1, H3, Text } from '@/components/typography';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
-import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildItemListJsonLd, buildLocalizedMetadata, isLocale } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
@@ -52,10 +53,34 @@ export default async function CityClubsPage({ params }: PageProps) {
   if (!cityDetail) {
     notFound();
   }
+  const collectionJsonLd = buildCollectionPageJsonLd({
+    name: `${cityDetail.name} Cannabis Social Clubs`,
+    description: `Verified public club profiles in ${cityDetail.name}, Spain.`,
+    path: `/${lang}/spain/${city}/clubs`,
+  });
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Home', path: `/${lang}` },
+    { name: 'Spain', path: `/${lang}/spain` },
+    { name: cityDetail.name, path: `/${lang}/spain/${city}` },
+    { name: 'Clubs', path: `/${lang}/spain/${city}/clubs` },
+  ]);
+  const itemListJsonLd = buildItemListJsonLd(
+    clubs.map((club) => ({
+      name: club.name,
+      path: `/${lang}/spain/${city}/clubs/${club.slug}`,
+      description: club.shortDescription || club.description,
+    }))
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <JsonLd data={collectionJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+      <JsonLd data={itemListJsonLd} />
       <section className="rounded-2xl border bg-card p-8">
+        <Button asChild variant="secondary" className="mb-6">
+          <Link href={`/${lang}/spain/${city}`}>{format('city_clubs.back_to_city', { city: cityDetail.name })}</Link>
+        </Button>
         <H1 className="mb-3">{format('city_clubs.title', { city: cityDetail.name })}</H1>
         <Text variant="muted" className="max-w-3xl">
           {t('city_clubs.lead')}

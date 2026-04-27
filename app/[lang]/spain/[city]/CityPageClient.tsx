@@ -91,6 +91,49 @@ export default function CityPageClient({
           </div>
         </motion.section>
 
+        {!isComingSoon && city === 'barcelona' ? (
+          <motion.section
+            className="mb-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+          >
+            <div className="rounded-3xl border bg-card p-8 shadow-lg shadow-primary/5">
+              <H2 className="mb-4">{t('city.barcelona.authority.title')}</H2>
+              <Text variant="muted" className="mb-6 max-w-3xl">
+                {t('city.barcelona.authority.body')}
+              </Text>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  { href: '/safety-kit', title: t('city.barcelona.links.safety'), desc: t('city.barcelona.links.safety_desc') },
+                  { href: '/spain/barcelona/clubs', title: t('city.barcelona.links.clubs'), desc: t('city.barcelona.links.clubs_desc') },
+                  { href: '/editorial/legal', title: t('city.barcelona.links.legal'), desc: t('city.barcelona.links.legal_desc') },
+                  { href: '/verification', title: t('city.barcelona.links.verification'), desc: t('city.barcelona.links.verification_desc') },
+                ].map((item) => (
+                  <Link
+                    key={item.href}
+                    href={`/${lang}${item.href}`}
+                    className="group rounded-2xl border bg-background/60 p-5 transition hover:border-primary/50"
+                  >
+                    <h3 className="mb-2 font-bold text-foreground group-hover:text-primary">{item.title}</h3>
+                    <Text size="sm" variant="muted">{item.desc}</Text>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-primary/20 bg-primary/5 p-8">
+              <H2 className="mb-4">{t('city.barcelona.start_safely.title')}</H2>
+              <Text variant="muted" className="mb-6">{t('city.barcelona.start_safely.body')}</Text>
+              <Button asChild className="rounded-xl">
+                <Link href={`/${lang}/safety-kit`}>
+                  {t('city.barcelona.start_safely.cta')} <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </motion.section>
+        ) : null}
+
         <motion.section
           className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
           initial={{ opacity: 0, y: 30 }}
@@ -201,6 +244,49 @@ export default function CityPageClient({
             </div>
           )}
         </motion.section>
+
+        {!isComingSoon && city === 'barcelona' ? (
+          <motion.section
+            className="mt-16 rounded-3xl border bg-card p-8 shadow-lg shadow-primary/5"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+          >
+            <div className="mb-8 max-w-3xl">
+              <H2 className="mb-4">{t('city.barcelona.guides.title')}</H2>
+              <Text variant="muted">{t('city.barcelona.guides.body')}</Text>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {[
+                {
+                  href: '/editorial/barcelona-club-reality-what-most-people-get-wrong',
+                  title: t('city.barcelona.guides.reality'),
+                },
+                {
+                  href: '/editorial/barcelona-club-red-flags',
+                  title: t('city.barcelona.guides.red_flags'),
+                },
+                {
+                  href: '/editorial/barcelona-membership-rules-2026',
+                  title: t('city.barcelona.guides.membership'),
+                },
+                {
+                  href: '/editorial/why-barcelona-clubs-are-under-pressure-2026',
+                  title: t('city.barcelona.guides.pressure'),
+                },
+              ].map((guide) => (
+                <Link
+                  key={guide.href}
+                  href={`/${lang}${guide.href}`}
+                  className="flex items-center justify-between rounded-2xl border bg-background/60 p-5 font-bold transition hover:border-primary/50 hover:text-primary"
+                >
+                  {guide.title}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ))}
+            </div>
+          </motion.section>
+        ) : null}
       </div>
     </div>
   );
