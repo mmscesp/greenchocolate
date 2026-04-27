@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { i18n, type Locale } from '@/lib/i18n-config';
 export { isLocale } from '@/lib/i18n-config';
 
-const DEFAULT_BASE_URL = 'https://socialclubsmaps.com';
+const DEFAULT_BASE_URL = 'https://www.socialclubsmaps.com';
 const DEFAULT_OG_IMAGE_PATH = '/images/SCM_Logo_SVG.svg';
 
 const OG_LOCALE_BY_LANG: Record<Locale, string> = {
@@ -35,13 +35,37 @@ function buildLocalizedPath(lang: Locale, path: string): string {
   return `/${lang}${normalizePath(path)}`;
 }
 
+function normalizeBaseUrl(rawUrl: string): string | null {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    return null;
+  }
+
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    return null;
+  }
+
+  if (process.env.NODE_ENV === 'production' && parsed.protocol !== 'https:') {
+    return null;
+  }
+
+  return parsed.origin;
+}
+
 export function getBaseUrl(): string {
   const envUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
   if (!envUrl) {
     return DEFAULT_BASE_URL;
   }
 
-  return envUrl.replace(/\/+$/, '');
+  return normalizeBaseUrl(envUrl) ?? DEFAULT_BASE_URL;
 }
 
 export function toAbsoluteUrl(path: string): string {
