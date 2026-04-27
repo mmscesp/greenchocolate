@@ -94,6 +94,34 @@ const updateClubFlagsSchema = z.object({
 
 export type AdminClubsFilterInput = z.input<typeof clubsFilterSchema>;
 
+const adminClubInclude = Prisma.validator<Prisma.ClubInclude>()({
+  city: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  },
+  admins: {
+    select: {
+      id: true,
+      email: true,
+      displayName: true,
+      managedClubId: true,
+    },
+  },
+  _count: {
+    select: {
+      membershipRequests: true,
+      reviews: true,
+      events: true,
+      articles: true,
+    },
+  },
+});
+
+export type AdminClubRow = Prisma.ClubGetPayload<{ include: typeof adminClubInclude }>;
+
 export type AdminClubEditorOption = {
   id: string;
   name: string;
@@ -213,6 +241,17 @@ function buildOpeningHours(parsed: z.infer<typeof clubMutationSchema>): Record<D
     saturday: parsed.saturdayHours,
     sunday: parsed.sundayHours,
   };
+}
+
+function resolveVerificationStatus(input: {
+  isActive: boolean;
+  isVerified: boolean;
+}): 'UNVERIFIED' | 'SCM_VERIFIED' | 'INACTIVE' {
+  if (!input.isActive) {
+    return 'INACTIVE';
+  }
+
+  return input.isVerified ? 'SCM_VERIFIED' : 'UNVERIFIED';
 }
 
 function boolFromFormData(value: FormDataEntryValue | null): boolean {
@@ -504,6 +543,8 @@ function buildClubMutationData(parsed: z.infer<typeof clubMutationSchema>, cityI
       x: parsed.x,
     }),
     isVerified: parsed.isVerified,
+    verificationStatus: resolveVerificationStatus(parsed),
+    listingTier: 'STANDARD',
     isActive: parsed.isActive,
     allowsPreRegistration: parsed.allowsPreRegistration,
     openingHours: buildOpeningHours(parsed),
@@ -567,7 +608,13 @@ export async function getAdminClubEditorOptions(): Promise<{
   };
 }
 
-export async function getAdminClubs(rawInput: AdminClubsFilterInput = {}) {
+export async function getAdminClubs(rawInput: AdminClubsFilterInput = {}): Promise<{
+  clubs: AdminClubRow[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}> {
   const admin = await getAdminSessionProfile();
   if (!admin) {
     return {
@@ -583,7 +630,7 @@ export async function getAdminClubs(rawInput: AdminClubsFilterInput = {}) {
   const input = parsedInput.success ? parsedInput.data : clubsFilterSchema.parse({});
   const skip = (input.page - 1) * input.pageSize;
 
-  const whereClause = {
+  const whereClause: Prisma.ClubWhereInput = {
     ...(input.query
       ? {
           OR: [
@@ -594,9 +641,9 @@ export async function getAdminClubs(rawInput: AdminClubsFilterInput = {}) {
         }
       : {}),
     ...(input.verification === 'VERIFIED'
-      ? { isVerified: true }
+      ? { verificationStatus: { in: ['SCM_VERIFIED', 'FEATURED'] as const } }
       : input.verification === 'PENDING'
-        ? { isVerified: false }
+        ? { verificationStatus: { in: ['UNVERIFIED', 'PENDING_REVIEW'] as const } }
         : {}),
     ...(input.activity === 'ACTIVE'
       ? { isActive: true }
@@ -608,32 +655,8 @@ export async function getAdminClubs(rawInput: AdminClubsFilterInput = {}) {
   const [clubs, total] = await Promise.all([
     prisma.club.findMany({
       where: whereClause,
-      include: {
-        city: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        admins: {
-          select: {
-            id: true,
-            email: true,
-            displayName: true,
-            managedClubId: true,
-          },
-        },
-        _count: {
-          select: {
-            membershipRequests: true,
-            reviews: true,
-            events: true,
-            articles: true,
-          },
-        },
-      },
-      orderBy: [{ isVerified: 'asc' }, { updatedAt: 'desc' }],
+      include: adminClubInclude,
+      orderBy: [{ verificationStatus: 'asc' }, { updatedAt: 'desc' }],
       skip,
       take: input.pageSize,
     }),
@@ -656,7 +679,7 @@ export async function getPendingClubVerifications() {
   }
 
   return prisma.club.findMany({
-    where: { isVerified: false },
+    where: { verificationStatus: { in: ['UNVERIFIED', 'PENDING_REVIEW'] } },
     include: {
       city: { select: { name: true, slug: true } },
       admins: {
@@ -1024,6 +1047,7 @@ export async function updateClubFlags(formData: FormData): Promise<void> {
       slug: true,
       isVerified: true,
       isActive: true,
+      verificationStatus: true,
       city: {
         select: {
           slug: true,
@@ -1037,15 +1061,22 @@ export async function updateClubFlags(formData: FormData): Promise<void> {
     return;
   }
 
+  const nextIsVerified = parsed.data.isVerified ?? previous.isVerified;
+  const nextIsActive = parsed.data.isActive ?? previous.isActive;
   const updated = await prisma.club.update({
     where: { id: parsed.data.clubId },
     data: {
-      ...(parsed.data.isVerified !== undefined ? { isVerified: parsed.data.isVerified } : {}),
-      ...(parsed.data.isActive !== undefined ? { isActive: parsed.data.isActive } : {}),
+      isVerified: nextIsVerified,
+      isActive: nextIsActive,
+      verificationStatus: resolveVerificationStatus({
+        isVerified: nextIsVerified,
+        isActive: nextIsActive,
+      }),
     },
     select: {
       isVerified: true,
       isActive: true,
+      verificationStatus: true,
     },
   });
 
@@ -1059,10 +1090,12 @@ export async function updateClubFlags(formData: FormData): Promise<void> {
       from: {
         isVerified: previous.isVerified,
         isActive: previous.isActive,
+        verificationStatus: previous.verificationStatus,
       },
       to: {
         isVerified: updated.isVerified,
         isActive: updated.isActive,
+        verificationStatus: updated.verificationStatus,
       },
     },
   });

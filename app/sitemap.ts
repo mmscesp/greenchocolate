@@ -61,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const [resolvedCities, resolvedClubs, resolvedEvents, ...localizedArticles] = await Promise.all([
       getCities(),
-      getClubs({ isVerified: true }),
+      getClubs(),
       getEvents(500),
       ...i18n.locales.map((locale) => getArticles({ locale })),
     ]);
@@ -93,9 +93,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     toLocalizedEntries(`/spain/${city.slug}/clubs`, 'weekly', 0.65)
   );
 
-  const clubRoutes: MetadataRoute.Sitemap = clubs.flatMap((club) =>
-    toLocalizedEntries(`/clubs/${club.slug}`, 'weekly', 0.7)
-  );
+  const clubRoutes: MetadataRoute.Sitemap = clubs.flatMap((club) => {
+    const priority = club.verificationStatus === 'FEATURED'
+      ? 0.9
+      : club.verificationStatus === 'SCM_VERIFIED'
+        ? 0.85
+        : 0.6;
+
+    return toLocalizedEntries(`/clubs/${club.slug}`, 'weekly', priority);
+  });
 
   const articleRoutes: MetadataRoute.Sitemap = i18n.locales.flatMap((locale) =>
     (articlesByLocale[locale] || []).map((article) => ({

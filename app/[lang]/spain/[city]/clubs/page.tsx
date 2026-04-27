@@ -28,8 +28,8 @@ export async function generateMetadata({
   return buildLocalizedMetadata({
     lang,
     path: `/spain/${city}/clubs`,
-    title: `${cityName} Cannabis Social Clubs | SocialClubsMaps`,
-    description: `Browse verified cannabis social clubs in ${cityName}, Spain with neighborhood context and quick access to full club profiles.`,
+    title: `${cityName} Cannabis Social Clubs | Public Profiles | SocialClubsMaps`,
+    description: `Browse public cannabis social club profiles in ${cityName}, Spain with neighborhood context, safety guidance, and SCM verification signals.`,
   });
 }
 
@@ -47,7 +47,7 @@ export default async function CityClubsPage({ params }: PageProps) {
 
   const [cityDetail, clubs] = await Promise.all([
     getCityBySlug(city),
-    getClubs({ citySlug: city, isVerified: true }),
+    getClubs({ citySlug: city }),
   ]);
 
   if (!cityDetail) {
@@ -55,7 +55,7 @@ export default async function CityClubsPage({ params }: PageProps) {
   }
   const collectionJsonLd = buildCollectionPageJsonLd({
     name: `${cityDetail.name} Cannabis Social Clubs`,
-    description: `Verified public club profiles in ${cityDetail.name}, Spain.`,
+    description: `Public club profiles in ${cityDetail.name}, Spain with verification status and safety context.`,
     path: `/${lang}/spain/${city}/clubs`,
   });
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -67,7 +67,7 @@ export default async function CityClubsPage({ params }: PageProps) {
   const itemListJsonLd = buildItemListJsonLd(
     clubs.map((club) => ({
       name: club.name,
-      path: `/${lang}/spain/${city}/clubs/${club.slug}`,
+      path: `/${lang}/clubs/${club.slug}`,
       description: club.shortDescription || club.description,
     }))
   );
@@ -93,6 +93,7 @@ export default async function CityClubsPage({ params }: PageProps) {
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <H3>{club.name}</H3>
               {club.isVerified && <Badge>{t('city_clubs.verified')}</Badge>}
+              {!club.isVerified && <Badge variant="secondary">Unverified public listing</Badge>}
               <Badge variant="secondary">{club.priceRange}</Badge>
             </div>
 
@@ -107,7 +108,7 @@ export default async function CityClubsPage({ params }: PageProps) {
             <div className="flex items-center justify-between gap-3">
               <span className="text-sm text-muted-foreground">{club.neighborhood}</span>
               <Button asChild>
-                <Link href={`/${lang}/spain/${city}/clubs/${club.slug}`}>{t('city_clubs.view_public_profile')}</Link>
+                <Link href={`/${lang}/clubs/${club.slug}`}>{t('city_clubs.view_public_profile')}</Link>
               </Button>
             </div>
           </article>

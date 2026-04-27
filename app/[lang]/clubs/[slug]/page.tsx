@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import ClubProfileContent from './ClubProfileContent';
+import UnverifiedClubProfileContent from './UnverifiedClubProfileContent';
 import { getClubBySlug, getClubs } from '@/app/actions/clubs';
 import { getClubDetailsWithAccess } from '@/app/actions/gated-content';
 import { JsonLd } from '@/components/JsonLd';
@@ -25,7 +26,7 @@ interface ClubPageProps {
 // Generate static params for all clubs at build time
 export async function generateStaticParams() {
   try {
-    const clubs = await getClubs({ isVerified: true });
+    const clubs = await getClubs();
     return clubs.map((club) => ({
       slug: club.slug,
     }));
@@ -56,6 +57,10 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     name: clubDetail.name,
     images: clubDetail.images,
     citySlug: clubDetail.citySlug,
+    neighborhood: clubDetail.neighborhood,
+    district: clubDetail.district,
+    isVerified: clubDetail.isVerified,
+    verificationStatus: clubDetail.verificationStatus,
   });
   const primaryImage = getClubPrimaryMediaImage(mediaItems);
 
@@ -100,16 +105,20 @@ export default async function ClubPage({ params }: ClubPageProps) {
     notFound();
   }
 
-  const gatedClub = await getClubDetailsWithAccess(clubDetail.id);
-  const hasFullAccess = gatedClub.accessLevel === 'FULL';
   const clubImages = getClubImageGallery(clubDetail.images, clubDetail.citySlug);
   const mediaItems = buildClubMediaItems({
     slug: clubDetail.slug,
     name: clubDetail.name,
     images: clubImages,
     citySlug: clubDetail.citySlug,
+    neighborhood: clubDetail.neighborhood,
+    district: clubDetail.district,
+    isVerified: clubDetail.isVerified,
+    verificationStatus: clubDetail.verificationStatus,
   });
   const primaryImage = getClubPrimaryMediaImage(mediaItems);
+  const gatedClub = clubDetail.isVerified ? await getClubDetailsWithAccess(clubDetail.id) : null;
+  const hasFullAccess = gatedClub?.accessLevel === 'FULL';
 
   // Map ClubDetail to Club type expected by ClubProfileContent
   const club: Club = {
@@ -117,6 +126,14 @@ export default async function ClubPage({ params }: ClubPageProps) {
     name: clubDetail.name,
     slug: clubDetail.slug,
     isVerified: clubDetail.isVerified,
+    verificationStatus: clubDetail.verificationStatus as Club['verificationStatus'],
+    listingTier: clubDetail.listingTier as Club['listingTier'],
+    district: clubDetail.district || undefined,
+    googlePlaceId: clubDetail.googlePlaceId || undefined,
+    googleMapsUrl: clubDetail.googleMapsUrl || undefined,
+    googleRatingSnapshot: clubDetail.googleRatingSnapshot || undefined,
+    googleReviewCountSnapshot: clubDetail.googleReviewCountSnapshot || undefined,
+    publicDataReviewedAt: clubDetail.publicDataReviewedAt ? new Date(clubDetail.publicDataReviewedAt) : undefined,
     neighborhood: clubDetail.neighborhood,
     images: clubImages,
     description: clubDetail.description,
@@ -126,8 +143,8 @@ export default async function ClubPage({ params }: ClubPageProps) {
     allowsPreRegistration: clubDetail.allowsPreRegistration,
     coordinates: hasFullAccess ? clubDetail.coordinates : undefined,
     address: hasFullAccess ? clubDetail.addressDisplay : undefined,
-    contactEmail: hasFullAccess ? gatedClub.club?.contactEmail || '' : '',
-    phoneNumber: hasFullAccess ? gatedClub.club?.phoneNumber || '' : '',
+    contactEmail: hasFullAccess ? gatedClub?.club?.contactEmail || '' : '',
+    phoneNumber: hasFullAccess ? gatedClub?.club?.phoneNumber || '' : '',
     website: clubDetail.website || undefined,
     socialMedia: clubDetail.socialMedia || undefined,
     rating: clubDetail.rating || undefined,
@@ -153,8 +170,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
       addressLocality: club.neighborhood,
       addressCountry: 'ES',
     },
-    priceRange: club.priceRange,
-    url: club.website ? toAbsoluteHttpUrl(club.website) : undefined,
+    url: toAbsoluteUrl(`/${lang}/clubs/${club.slug}`),
     amenityFeature: club.amenities.map((amenity) => ({
       '@type': 'LocationFeatureSpecification',
       name: amenity,
@@ -168,8 +184,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
           },
         }
       : {}),
-    ...(hasFullAccess && club.phoneNumber ? { telephone: club.phoneNumber } : {}),
-    ...(hasFullAccess && club.contactEmail ? { email: club.contactEmail } : {}),
+    ...(club.isVerified && club.website ? { sameAs: [toAbsoluteHttpUrl(club.website)] } : {}),
+    ...(club.isVerified && hasFullAccess && club.phoneNumber ? { telephone: club.phoneNumber } : {}),
+    ...(club.isVerified && hasFullAccess && club.contactEmail ? { email: club.contactEmail } : {}),
   };
 
   const breadcrumbJsonLd = {
@@ -192,7 +209,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
         '@type': 'ListItem',
         position: 3,
         name: clubDetail.cityName,
-        item: toAbsoluteUrl(`/${lang}/clubs?city=${clubDetail.citySlug}`),
+        item: toAbsoluteUrl(`/${lang}/spain/${clubDetail.citySlug}`),
       },
       {
         '@type': 'ListItem',
@@ -207,7 +224,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      <ClubProfileContent club={club} mediaItems={mediaItems} />
+      {club.isVerified ? (
+        <ClubProfileContent club={club} mediaItems={mediaItems} />
+      ) : (
+        <UnverifiedClubProfileContent club={club} mediaItems={mediaItems} lang={lang} />
+      )}
     </>
   );
 }

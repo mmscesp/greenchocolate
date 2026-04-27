@@ -99,7 +99,7 @@ export default async function CityPage({ params }: CityPageProps) {
   if (citySlug === LIVE_CITY_SLUG) {
     const [cityDetail, clubs] = await Promise.all([
       getCityBySlug(citySlug),
-      getClubs({ citySlug, isVerified: true }),
+      getClubs({ citySlug }),
     ]);
 
     if (!cityDetail) {
@@ -120,7 +120,7 @@ export default async function CityPage({ params }: CityPageProps) {
     const itemListJsonLd = buildItemListJsonLd([
       ...clubs.slice(0, 8).map((club) => ({
         name: club.name,
-        path: `/${lang}/spain/barcelona/clubs/${club.slug}`,
+        path: `/${lang}/clubs/${club.slug}`,
         description: club.shortDescription || club.description,
       })),
       {

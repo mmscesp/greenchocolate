@@ -1,4 +1,6 @@
 import { getClubImageGallery } from '@/lib/image-fallbacks';
+import { getBarcelonaIllustratedCover, getIllustratedCoverAlt } from '@/lib/club-visuals';
+import { isVerifiedClubStatus } from '@/lib/club-verification';
 
 export interface ClubImageMediaItem {
   kind: 'image';
@@ -187,10 +189,32 @@ export function buildClubMediaItems(params: {
   name: string;
   images?: string[] | null;
   citySlug?: string | null;
+  neighborhood?: string | null;
+  district?: string | null;
+  isVerified?: boolean | null;
+  verificationStatus?: string | null;
 }): ClubMediaItem[] {
   const configured = CLUB_MEDIA_BY_SLUG[params.slug];
   if (configured) {
     return configured;
+  }
+
+  const hasRealImages = Boolean(params.images?.filter(Boolean).length);
+  const isVerified =
+    params.isVerified === true ||
+    isVerifiedClubStatus(params.verificationStatus);
+
+  if (!isVerified && !hasRealImages && params.citySlug === 'barcelona') {
+    return [
+      {
+        kind: 'image',
+        src: getBarcelonaIllustratedCover({
+          neighborhood: params.neighborhood,
+          district: params.district,
+        }),
+        alt: getIllustratedCoverAlt(params.neighborhood),
+      },
+    ];
   }
 
   if (params.slug.toLowerCase().includes('cozy')) {

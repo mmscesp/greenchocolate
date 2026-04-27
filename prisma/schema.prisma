@@ -37,12 +37,24 @@ model Club {
   shortDescription      String?
   cityId                String
   neighborhood          String
+  district              String?
   addressDisplay        String
   coordinates           Json
   contactEmail          String
   phoneNumber           String?
   website               String?
   socialMedia           Json?
+  verificationStatus    ClubVerificationStatus @default(UNVERIFIED)
+  listingTier           ClubListingTier      @default(STANDARD)
+  takedownReason        ClubTakedownReason?
+  takedownNotes         String?
+  publicDataSource      String?
+  publicDataReviewedAt  DateTime?
+  dataQualityScore      Int?
+  googlePlaceId         String?             @unique
+  googleMapsUrl         String?
+  googleRatingSnapshot  Float?
+  googleReviewCountSnapshot Int?
   isVerified            Boolean             @default(true)
   isActive              Boolean             @default(true)
   allowsPreRegistration Boolean             @default(true)
@@ -65,6 +77,7 @@ model Club {
   membershipApplicationLeads MembershipApplicationLead[]
   membershipApplicationAttempts MembershipApplicationAttempt[]
   clubRegistrationRequests ClubRegistrationRequest[]
+  photos                    ClubPhoto[]
   admins                    Profile[]                    @relation("ClubAdmin")
   reviews                   Review[]
   favorites                 Favorite[]
@@ -74,7 +87,30 @@ model Club {
   @@index([slug])
   @@index([cityId])
   @@index([neighborhood])
+  @@index([district])
+  @@index([verificationStatus, isActive])
+  @@index([listingTier, isActive])
   @@index([isVerified, isActive])
+}
+
+model ClubPhoto {
+  id           String          @id @default(uuid())
+  clubId       String
+  url          String
+  r2Key        String?
+  source       ClubPhotoSource
+  displayOrder Int             @default(0)
+  width        Int?
+  height       Int?
+  altText      String
+  isHero       Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  club         Club            @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@index([clubId, displayOrder])
+  @@index([clubId, isHero])
+  @@index([source])
 }
 
 model Profile {
@@ -576,6 +612,34 @@ enum UserRole {
   USER
   ADMIN
   CLUB_ADMIN
+}
+
+enum ClubVerificationStatus {
+  UNVERIFIED
+  PENDING_REVIEW
+  SCM_VERIFIED
+  FEATURED
+  INACTIVE
+}
+
+enum ClubListingTier {
+  STANDARD
+  FEATURED
+}
+
+enum ClubTakedownReason {
+  OPERATOR_REQUEST
+  DATA_ISSUE
+  DUPLICATE
+  LEGAL_RISK
+  QUALITY_HOLD
+}
+
+enum ClubPhotoSource {
+  SCM_BRANDED
+  CLUB_SUBMITTED
+  LICENSED_STOCK
+  EDITORIAL_GENERATED
 }
 
 enum RequestStatus {

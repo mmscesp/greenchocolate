@@ -94,7 +94,7 @@ That does not mean the club is hostile. It usually means the club understands th
 A stronger process usually looks like:
 
 - clear identity checks
-- a real membership step rather than instant entry theater
+- a real membership step rather than doorway-shortcut theater
 - explanation of house rules
 - some sign that discretion matters
 - no pressure to rush you through confusion
@@ -548,7 +548,7 @@ ${SCM_EDITORIAL_DISCLAIMER}`,
     hero: {
       label: 'Membership hero',
       prompt:
-        'Create a premium editorial hero image for SocialClubsMaps about membership rules in Barcelona clubs. Show a discreet private-association threshold with controlled access, a calm intake desk or membership review gesture, and architecture that feels unmistakably Barcelona without postcard clichés. Tone: precise, respectful, non-transactional. Purpose: explain nuance and process, not access hype. Composition: realistic magazine-style scene with a doorway, subtle paperwork or rules sheet, one human presence implied but not dominant, and clean negative space for a headline. Lighting: warm interior restraint against cooler exterior stone tones. Color direction: charcoal, muted teal, stone, soft amber. Exclude smoking, retail counters, menu boards, cash exchange, nightlife party cues, or anything that feels like instant entry.',
+        'Create a premium editorial hero image for SocialClubsMaps about membership rules in Barcelona clubs. Show a discreet private-association threshold with controlled access, a calm intake desk or membership review gesture, and architecture that feels unmistakably Barcelona without postcard clichés. Tone: precise, respectful, non-transactional. Purpose: explain nuance and process, not access hype. Composition: realistic magazine-style scene with a doorway, subtle paperwork or rules sheet, one human presence implied but not dominant, and clean negative space for a headline. Lighting: warm interior restraint against cooler exterior stone tones. Color direction: charcoal, muted teal, stone, soft amber. Exclude smoking, retail counters, menu boards, cash exchange, nightlife party cues, or anything that feels like a shortcut-at-the-door setup.',
       bestUse: 'Article hero and membership teaser visual.',
       cropNote: 'Keep doorway and intake gesture centered so both square and landscape crops preserve the process signal.',
     },

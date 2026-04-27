@@ -3,6 +3,9 @@
 
 export type UserRole = 'USER' | 'ADMIN' | 'CLUB_ADMIN';
 export type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'SCHEDULED';
+export type ClubVerificationStatus = 'UNVERIFIED' | 'PENDING_REVIEW' | 'SCM_VERIFIED' | 'FEATURED' | 'INACTIVE';
+export type ClubListingTier = 'STANDARD' | 'FEATURED';
+export type ClubTakedownReason = 'OPERATOR_REQUEST' | 'DATA_ISSUE' | 'DUPLICATE' | 'LEGAL_RISK' | 'QUALITY_HOLD';
 
 export interface Club {
   id: string;
@@ -12,6 +15,7 @@ export interface Club {
   shortDescription?: string;
   cityId: string;
   neighborhood: string;
+  district?: string;
   addressDisplay: string;
   address?: string;
   coordinates: any;
@@ -19,6 +23,17 @@ export interface Club {
   phoneNumber?: string;
   website?: string;
   socialMedia?: any;
+  verificationStatus?: ClubVerificationStatus;
+  listingTier?: ClubListingTier;
+  takedownReason?: ClubTakedownReason;
+  takedownNotes?: string;
+  publicDataSource?: string;
+  publicDataReviewedAt?: Date;
+  dataQualityScore?: number;
+  googlePlaceId?: string;
+  googleMapsUrl?: string;
+  googleRatingSnapshot?: number;
+  googleReviewCountSnapshot?: number;
   isVerified: boolean;
   isActive: boolean;
   allowsPreRegistration: boolean;

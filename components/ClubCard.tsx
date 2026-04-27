@@ -14,6 +14,7 @@ import { EditorialHeading } from './landing/editorial-concierge/typography/Edito
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
 import { cn } from '@/lib/utils';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
+import { getClubStatusLabel, isVerifiedClubStatus } from '@/lib/club-verification';
 
 type ClubCardEntity = ClubModel | ClubCardData;
 
@@ -26,11 +27,18 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
   const { t, language } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
   const clubCitySlug = 'citySlug' in club ? club.citySlug : null;
+  const clubDistrict = 'district' in club ? club.district : undefined;
+  const clubVerificationStatus = 'verificationStatus' in club ? club.verificationStatus : undefined;
+  const isVerifiedProfile = club.isVerified || isVerifiedClubStatus(clubVerificationStatus);
   const mediaItems = buildClubMediaItems({
     slug: club.slug,
     name: club.name,
     images: club.images,
     citySlug: clubCitySlug,
+    neighborhood: club.neighborhood,
+    district: clubDistrict,
+    isVerified: club.isVerified,
+    verificationStatus: clubVerificationStatus,
   });
   const primaryImage = getClubPrimaryMediaImage(mediaItems);
 
@@ -67,7 +75,7 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
 
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-2">
-            {club.isVerified && (
+            {isVerifiedProfile ? (
               // [motion]
               <motion.div
                 initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: -10 }}
@@ -78,6 +86,10 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
                 <div className="absolute inset-0 bg-brand/15 rounded-full blur-md animate-pulse" />
                 <TrustBadge type="verified" size="sm" className="relative bg-bg-base/70 backdrop-blur-md border-brand/30 scale-90 sm:scale-100 origin-left" />
               </motion.div>
+            ) : (
+              <div className="inline-flex w-fit items-center rounded-full border border-amber-300/25 bg-bg-base/70 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.15em] text-amber-100 shadow-lg backdrop-blur-sm sm:text-[9px]">
+                {getClubStatusLabel(clubVerificationStatus)}
+              </div>
             )}
             <div className="inline-flex items-center px-2.5 py-1 bg-bg-base/70 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.15em] rounded-full border border-white/10 shadow-lg w-fit">
               {club.priceRange}
@@ -130,20 +142,28 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
           {/* Spacer to push stats and button to bottom */}
           <div className="mt-auto">
             {/* Stats */}
-            <div className="flex items-center gap-6 mb-6 sm:mb-8">
-              <div className="flex items-center gap-2">
-                <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand/60" />
+            {isVerifiedProfile ? (
+              <div className="flex items-center gap-6 mb-6 sm:mb-8">
+                <div className="flex items-center gap-2">
+                  <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand/60" />
+                  <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">
+                    {club.capacity}
+                  </ConciergeLabel>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand/60" />
+                  <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">
+                    {club.foundedYear}
+                  </ConciergeLabel>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-6 sm:mb-8">
                 <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">
-                  {club.capacity}
+                  Public listing / not SCM verified
                 </ConciergeLabel>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand/60" />
-                <ConciergeLabel size="xs" emphasis="low" className="text-[8px] sm:text-[9px]">
-                  {club.foundedYear}
-                </ConciergeLabel>
-              </div>
-            </div>
+            )}
 
             {/* CTA Button */}
             <Link href={`/${language}/clubs/${club.slug}`}>

@@ -155,7 +155,7 @@ SCM's job on the public layer is narrower and more disciplined:
 - help readers separate club marketing from club credibility
 - keep the conversation grounded in the private association model
 
-That is also why SCM avoids "best weed clubs" framing. In Barcelona, that language is not just lazy. It pushes the category toward the exact commercial appearance that has made the city more exposed.
+That is also why SCM avoids shortcut ranking language around clubs. In Barcelona, that framing is not just lazy. It pushes the category toward the exact commercial appearance that has made the city more exposed.
 
 ## Why this matters more in Barcelona
 

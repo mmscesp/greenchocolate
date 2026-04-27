@@ -17,6 +17,9 @@ export interface ClubCard {
   amenities: string[];
   vibeTags: string[];
   isVerified: boolean;
+  verificationStatus?: Club['verificationStatus'];
+  listingTier?: Club['listingTier'];
+  district?: string | null;
   capacity: number;
   foundedYear: number;
   // Extended fields for full club data
@@ -48,6 +51,9 @@ export function clubCardToClub(card: ClubCard): Club {
     website: card.website ?? undefined,
     socialMedia: card.socialMedia ?? null,
     isVerified: card.isVerified,
+    verificationStatus: card.verificationStatus,
+    listingTier: card.listingTier,
+    district: card.district ?? undefined,
     isActive: true,
     allowsPreRegistration: true,
     openingHours: card.openingHours ?? {},

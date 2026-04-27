@@ -31,6 +31,10 @@ const slugSchema = z.string().min(1);
 const limitSchema = z.number().int().min(1).max(100).optional();
 const idSchema = z.string().uuid();
 
+function isMissingMigrationColumnError(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'P2022';
+}
+
 // JSON field validation schemas
 const coordinatesSchema = z.object({
   lat: z.number(),
@@ -229,6 +233,14 @@ interface ClubWithCity {
   amenities: string[];
   vibeTags: string[];
   isVerified: boolean;
+  verificationStatus: string;
+  listingTier: string;
+  district: string | null;
+  googlePlaceId: string | null;
+  googleMapsUrl: string | null;
+  googleRatingSnapshot: number | null;
+  googleReviewCountSnapshot: number | null;
+  publicDataReviewedAt: Date | null;
   description: string;
   addressDisplay: string;
   coordinates: JsonValue;
@@ -258,6 +270,14 @@ export interface ClubCard {
   amenities: string[];
   vibeTags: string[];
   isVerified: boolean;
+  verificationStatus: string;
+  listingTier: string;
+  district: string | null;
+  googlePlaceId: string | null;
+  googleMapsUrl: string | null;
+  googleRatingSnapshot: number | null;
+  googleReviewCountSnapshot: number | null;
+  publicDataReviewedAt: string | null;
   capacity: number;
   foundedYear: number;
 }
@@ -351,10 +371,16 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
   try {
     const validatedFilters = filters ? clubFiltersSchema.parse(filters) : undefined;
 
-    const where: Record<string, unknown> = {
+  const where: Record<string, unknown> = {
       isActive: true,
-      isVerified: validatedFilters?.isVerified ?? true,
+      verificationStatus: { not: 'INACTIVE' },
     };
+
+    if (validatedFilters?.isVerified === true) {
+      where.verificationStatus = { in: ['SCM_VERIFIED', 'FEATURED'] };
+    } else if (validatedFilters?.isVerified === false) {
+      where.verificationStatus = { in: ['UNVERIFIED', 'PENDING_REVIEW'] };
+    }
 
     // City filter
     if (validatedFilters?.citySlug) {
@@ -427,12 +453,24 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
         amenities: club.amenities,
         vibeTags: club.vibeTags,
         isVerified: club.isVerified,
+        verificationStatus: club.verificationStatus,
+        listingTier: club.listingTier,
+        district: club.district,
+        googlePlaceId: club.googlePlaceId,
+        googleMapsUrl: club.googleMapsUrl,
+        googleRatingSnapshot: club.googleRatingSnapshot,
+        googleReviewCountSnapshot: club.googleReviewCountSnapshot,
+        publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
         description: club.description,
         capacity: club.capacity,
         foundedYear: club.foundedYear,
       };
     });
   } catch (error) {
+    if (isMissingMigrationColumnError(error)) {
+      return [];
+    }
+
     console.error('getClubs error:', error);
     return [];
   }
@@ -448,7 +486,7 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
       where: {
         slug: validatedSlug,
         isActive: true,
-        isVerified: true,
+        verificationStatus: { not: 'INACTIVE' },
       },
       include: {
         city: {
@@ -482,6 +520,14 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
       amenities: club.amenities,
       vibeTags: club.vibeTags,
       isVerified: club.isVerified,
+      verificationStatus: club.verificationStatus,
+      listingTier: club.listingTier,
+      district: club.district,
+      googlePlaceId: club.googlePlaceId,
+      googleMapsUrl: club.googleMapsUrl,
+      googleRatingSnapshot: club.googleRatingSnapshot,
+      googleReviewCountSnapshot: club.googleReviewCountSnapshot,
+      publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
       description: club.description,
       addressDisplay: club.addressDisplay,
       coordinates: validatedCoordinates.success ? validatedCoordinates.data : { lat: 0, lng: 0 },
@@ -509,7 +555,7 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
     const clubs = await prisma.club.findMany({
       where: {
         isActive: true,
-        isVerified: true,
+        verificationStatus: { in: ['SCM_VERIFIED', 'FEATURED'] },
       },
       include: {
         city: {
@@ -536,6 +582,14 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
       amenities: club.amenities,
       vibeTags: club.vibeTags,
       isVerified: club.isVerified,
+      verificationStatus: club.verificationStatus,
+      listingTier: club.listingTier,
+      district: club.district,
+      googlePlaceId: club.googlePlaceId,
+      googleMapsUrl: club.googleMapsUrl,
+      googleRatingSnapshot: club.googleRatingSnapshot,
+      googleReviewCountSnapshot: club.googleReviewCountSnapshot,
+      publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
       description: club.description,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
@@ -566,7 +620,7 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
       where: {
         cityId: club.cityId,
         isActive: true,
-        isVerified: true,
+        verificationStatus: { in: ['SCM_VERIFIED', 'FEATURED'] },
         id: { not: validatedId },
       },
       include: {
@@ -594,6 +648,14 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
       amenities: clubItem.amenities,
       vibeTags: clubItem.vibeTags,
       isVerified: clubItem.isVerified,
+      verificationStatus: clubItem.verificationStatus,
+      listingTier: clubItem.listingTier,
+      district: clubItem.district,
+      googlePlaceId: clubItem.googlePlaceId,
+      googleMapsUrl: clubItem.googleMapsUrl,
+      googleRatingSnapshot: clubItem.googleRatingSnapshot,
+      googleReviewCountSnapshot: clubItem.googleReviewCountSnapshot,
+      publicDataReviewedAt: clubItem.publicDataReviewedAt?.toISOString() ?? null,
       description: clubItem.description,
       capacity: clubItem.capacity,
       foundedYear: clubItem.foundedYear,
@@ -612,7 +674,7 @@ export async function getNeighborhoods(citySlug?: string) {
     const validatedCitySlug = citySlugSchema.parse(citySlug);
     const where: Record<string, unknown> = {
       isActive: true,
-      isVerified: true,
+      verificationStatus: { not: 'INACTIVE' },
     };
 
     if (validatedCitySlug) {
@@ -656,7 +718,7 @@ export async function getAllAmenities(citySlug?: string) {
             FROM "Club" c
             JOIN "City" ci ON c."cityId" = ci.id
             WHERE c."isActive" = true
-              AND c."isVerified" = true
+              AND c."verificationStatus" != 'INACTIVE'
               AND ci.slug = ${validatedCitySlug}
             ORDER BY item ASC
           `
@@ -666,7 +728,7 @@ export async function getAllAmenities(citySlug?: string) {
             SELECT DISTINCT unnest("amenities") as item
             FROM "Club"
             WHERE "isActive" = true
-              AND "isVerified" = true
+              AND "verificationStatus" != 'INACTIVE'
             ORDER BY item ASC
           `
         );
@@ -692,7 +754,7 @@ export async function getAllVibes(citySlug?: string) {
             FROM "Club" c
             JOIN "City" ci ON c."cityId" = ci.id
             WHERE c."isActive" = true
-              AND c."isVerified" = true
+              AND c."verificationStatus" != 'INACTIVE'
               AND ci.slug = ${validatedCitySlug}
             ORDER BY item ASC
           `
@@ -702,7 +764,7 @@ export async function getAllVibes(citySlug?: string) {
             SELECT DISTINCT unnest("vibeTags") as item
             FROM "Club"
             WHERE "isActive" = true
-              AND "isVerified" = true
+              AND "verificationStatus" != 'INACTIVE'
             ORDER BY item ASC
           `
         );
@@ -1097,6 +1159,14 @@ export async function getUserFavorites(userId: string) {
       amenities: fav.club.amenities,
       vibeTags: fav.club.vibeTags,
       isVerified: fav.club.isVerified,
+      verificationStatus: fav.club.verificationStatus,
+      listingTier: fav.club.listingTier,
+      district: fav.club.district,
+      googlePlaceId: fav.club.googlePlaceId,
+      googleMapsUrl: fav.club.googleMapsUrl,
+      googleRatingSnapshot: fav.club.googleRatingSnapshot,
+      googleReviewCountSnapshot: fav.club.googleReviewCountSnapshot,
+      publicDataReviewedAt: fav.club.publicDataReviewedAt?.toISOString() ?? null,
       description: fav.club.description,
       capacity: fav.club.capacity,
       foundedYear: fav.club.foundedYear,
@@ -1239,6 +1309,14 @@ export async function getClubForAdmin(authId: string) {
       amenities: club.amenities,
       vibeTags: club.vibeTags,
       isVerified: club.isVerified,
+      verificationStatus: club.verificationStatus,
+      listingTier: club.listingTier,
+      district: club.district,
+      googlePlaceId: club.googlePlaceId,
+      googleMapsUrl: club.googleMapsUrl,
+      googleRatingSnapshot: club.googleRatingSnapshot,
+      googleReviewCountSnapshot: club.googleReviewCountSnapshot,
+      publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
       description: club.description,
       addressDisplay: club.addressDisplay,
       coordinates: club.coordinates,
@@ -1247,6 +1325,7 @@ export async function getClubForAdmin(authId: string) {
       website: club.website,
       socialMedia: club.socialMedia,
       openingHours: club.openingHours,
+      allowsPreRegistration: club.allowsPreRegistration,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
     };
