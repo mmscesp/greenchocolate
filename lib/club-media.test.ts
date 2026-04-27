@@ -14,7 +14,7 @@ describe('club media resolver', () => {
     expect(getClubPrimaryMediaImage(items)).toBe('/images/clubs/club-311/hero.webp');
   });
 
-  it('uses an editorial neighborhood cover for unverified Barcelona listings without images', () => {
+  it('uses a district fallback cover for unverified Barcelona listings without images', () => {
     const items = buildClubMediaItems({
       slug: 'dragon-club-barcelona',
       name: 'Dragon Club',
@@ -28,8 +28,8 @@ describe('club media resolver', () => {
     expect(items).toEqual([
       {
         kind: 'image',
-        src: '/images/editorial/barcelona-gaudi-house.webp',
-        alt: 'Editorial illustration for Eixample Dreta, Barcelona',
+        src: '/images/fallbacks/Districts/Eixample.webp',
+        alt: 'District fallback image for Eixample Dreta, Barcelona',
       },
     ]);
   });

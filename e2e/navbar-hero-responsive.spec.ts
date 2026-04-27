@@ -16,6 +16,8 @@ function isOverlapping(
 
 for (const locale of locales) {
   test(`desktop navbar + hero CTA layout remains stable in ${locale}`, async ({ page }) => {
+    test.skip(page.viewportSize()?.width ? page.viewportSize()!.width < 768 : false, 'Desktop-only hero assertion');
+
     await page.setViewportSize({ width: 1220, height: 860 });
     await page.goto(`/${locale}`);
 
@@ -26,8 +28,13 @@ for (const locale of locales) {
     const navFits = await nav.evaluate((el) => el.scrollWidth <= el.clientWidth + 1);
     expect(navFits).toBeTruthy();
 
+    // Desktop CTA group intentionally fades in during the scroll-driven Act 2 sequence.
+    await page.evaluate(() => {
+      window.scrollTo({ top: Math.round(window.innerHeight * 0.85), behavior: 'instant' });
+    });
+
     const ctaGroup = page.getByTestId('hero-desktop-cta-group');
-    await expect(ctaGroup).toBeVisible();
+    await expect(ctaGroup).toBeVisible({ timeout: 10000 });
 
     const ctaLinks = ctaGroup.locator('a');
     await expect(ctaLinks).toHaveCount(2);
@@ -42,4 +49,3 @@ for (const locale of locales) {
     expect(overlap).toBeFalsy();
   });
 }
-
