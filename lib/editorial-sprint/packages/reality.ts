@@ -78,12 +78,12 @@ export const realityPackage: EditorialSprintPackage = {
     es: [
       {
         href: '/es/editorial/what-are-cannabis-social-clubs-spain',
-        label: 'Que son realmente los clubes sociales de cannabis en Espana',
+        label: 'Que son realmente los clubes sociales de cannabis en España',
         purpose: 'Base del modelo de club',
       },
       {
         href: '/es/editorial/spain-cannabis-laws-tourists',
-        label: 'Leyes del cannabis en Espana',
+        label: 'Leyes del cannabis en España',
         purpose: 'Marco legal y diferencia publico-privado',
       },
       {
@@ -313,7 +313,7 @@ Ese error no es inocente. Cambia la conducta. Empuja a buscar atajos, a usar un 
 
 ## Primero la realidad legal, despues la narrativa
 
-Espana no tiene un sistema publico de venta legal al detalle. Barcelona no es una ciudad donde entras en un local autorizado, compras abiertamente y arrastras esa logica a la calle.
+España no tiene un sistema publico de venta legal al detalle. Barcelona no es una ciudad donde entras en un local autorizado, compras abiertamente y arrastras esa logica a la calle.
 
 La distincion util es otra:
 
@@ -379,7 +379,7 @@ Barcelona si tiene clubes. Tambien tiene presion, contradiccion y un enorme volu
 
 La mentalidad mas segura es simple: no trates la categoria como retail abierto, no confundas visibilidad con legitimidad y no confundas rapidez con seriedad.
 
-Lee [Que son realmente los clubes sociales de cannabis en Espana](/es/editorial/what-are-cannabis-social-clubs-spain), [Leyes del cannabis en Espana](/es/editorial/spain-cannabis-laws-tourists) y [The Safety Kit](/es/editorial/safety-kit-visitors-spain) para completar el contexto.
+Lee [Que son realmente los clubes sociales de cannabis en España](/es/editorial/what-are-cannabis-social-clubs-spain), [Leyes del cannabis en España](/es/editorial/spain-cannabis-laws-tourists) y [The Safety Kit](/es/editorial/safety-kit-visitors-spain) para completar el contexto.
 
 ${SCM_REQUIRED_DISCLAIMER}`,
       faq: [

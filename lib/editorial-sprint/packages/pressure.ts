@@ -86,12 +86,12 @@ export const pressurePackage: EditorialSprintPackage = {
     es: [
       {
         href: '/es/editorial/what-are-cannabis-social-clubs-spain',
-        label: 'Que son realmente los clubes sociales de cannabis en Espana',
+        label: 'Que son realmente los clubes sociales de cannabis en España',
         purpose: 'Modelo base',
       },
       {
         href: '/es/editorial/spain-cannabis-laws-tourists',
-        label: 'Leyes del cannabis en Espana',
+        label: 'Leyes del cannabis en España',
         purpose: 'Marco legal',
       },
       {
@@ -303,7 +303,7 @@ Esa diferencia importa. El analisis flojo produce comportamiento flojo. Hace pen
 
 ## Empezar por la realidad legal, no por el mito
 
-Espana no tiene un sistema publico de retail cannabico. Los clubes viven dentro de una logica estrecha de asociacion privada que siempre ha dependido de discrecion, normas internas y distancia frente a la apariencia comercial abierta.
+España no tiene un sistema publico de retail cannabico. Los clubes viven dentro de una logica estrecha de asociacion privada que siempre ha dependido de discrecion, normas internas y distancia frente a la apariencia comercial abierta.
 
 Por eso el fondo legal pesa tanto. La posesion o el consumo en publico pueden acabar en multas administrativas que suelen citarse en la franja de EUR601 a EUR30000. Ademas, la linea del Supremo entre 2021 y 2023 endurecio la presion sobre comportamientos que parecian demasiado amplios, demasiado publicos o demasiado comerciales. Barcelona convirtio despues esa presion general en senal local cuando en julio de 2024 actuo contra alrededor de 30 clubes.
 
@@ -311,7 +311,7 @@ La idea central no es que todos los clubes vayan a desaparecer. La idea central 
 
 ## Fuente de presion 1: la intensidad turistica cambia la categoria
 
-Barcelona recibe un volumen de visitantes que pocas ciudades espanolas tienen que absorber. Eso cambia incentivos. Cuando los clubes adaptan tono, intake, precios o atmosfera alrededor de demanda visitante constante, la categoria empieza a parecer menos una red de asociaciones privadas y mas una economia de entretenimiento.
+Barcelona recibe un volumen de visitantes que pocas ciudades españolas tienen que absorber. Eso cambia incentivos. Cuando los clubes adaptan tono, intake, precios o atmosfera alrededor de demanda visitante constante, la categoria empieza a parecer menos una red de asociaciones privadas y mas una economia de entretenimiento.
 
 Esto no es un discurso anti visitante. Es una explicacion de lo que ocurre cuando una ciudad con mucho flujo premia la version mas visible y menos contenida del modelo.
 

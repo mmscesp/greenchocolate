@@ -58,7 +58,7 @@ function safetyKitCopy(locale: SupportedLocale) {
   switch (locale) {
     case 'es':
       return {
-        subject: 'Tu Safety Kit de Espana',
+        subject: 'Tu Safety Kit de España',
         heading: 'Tu Safety Kit ya esta listo.',
         intro:
           'Ya tienes acceso inmediato al PDF y a la guia web para entender mejor los limites legales, evitar estafas y prepararte antes de cualquier visita.',
@@ -70,7 +70,7 @@ function safetyKitCopy(locale: SupportedLocale) {
             href: toAbsoluteUrl(`/${locale}/editorial/what-are-cannabis-social-clubs-spain`),
           },
           {
-            label: 'Leyes en Espana para visitantes',
+            label: 'Leyes en España para visitantes',
             href: toAbsoluteUrl(`/${locale}/editorial/spain-cannabis-laws-tourists`),
           },
         ],
@@ -197,11 +197,11 @@ function editorialDigestCopy(locale: SupportedLocale, primaryLabel: string) {
         primaryLabel,
         secondaryLinks: [
           {
-            label: 'Como funcionan realmente los clubs en Espana',
+            label: 'Como funcionan realmente los clubs en España',
             href: toAbsoluteUrl(`/${locale}/editorial/what-are-cannabis-social-clubs-spain`),
           },
           {
-            label: 'Abrir el Safety Kit de Espana',
+            label: 'Abrir el Safety Kit de España',
             href: toAbsoluteUrl(`/${locale}/editorial/safety-kit-visitors-spain`),
           },
         ],

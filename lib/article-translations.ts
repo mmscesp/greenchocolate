@@ -31,9 +31,9 @@ Los coffeeshops de Amsterdam son locales visibles y publicos dentro de un modelo
 
 El turista forma parte normal del sistema.
 
-## Como funciona el modelo de club en Espana
+## Como funciona el modelo de club en España
 
-Los CSC en Espana son asociaciones privadas, no escaparates publicos.
+Los CSC en España son asociaciones privadas, no escaparates publicos.
 
 - no hay walk-in real
 - la membresia suele requerir preparacion previa
@@ -44,7 +44,7 @@ El visitante no es el publico por defecto.
 
 ## Comparacion rapida
 
-| | Amsterdam Coffeeshop | Espana CSC |
+| | Amsterdam Coffeeshop | España CSC |
 |---|---|---|
 | Acceso directo | Si | No |
 | Membresia | No | Si |
@@ -64,9 +64,9 @@ La brecha entre expectativa y realidad es donde aparecen las estafas y los error
       tags: ['Cultura', 'Barcelona', 'Amsterdam'],
     },
     'cannabis-social-club-history-spain': {
-      title: 'Como empezaron los clubes sociales de cannabis en Espana',
+      title: 'Como empezaron los clubes sociales de cannabis en España',
       excerpt: 'Una cronologia practica sobre como las asociaciones privadas de cannabis evolucionaron hasta el modelo de club actual.',
-      content: `Los clubes sociales de cannabis en Espana no nacieron como espacios para turistas ni como experimentos retail. Surgieron desde una logica de asociacion privada, cultivo colectivo y consumo lejos de la calle.
+      content: `Los clubes sociales de cannabis en España no nacieron como espacios para turistas ni como experimentos retail. Surgieron desde una logica de asociacion privada, cultivo colectivo y consumo lejos de la calle.
 
 ## De donde viene el modelo
 
@@ -93,13 +93,13 @@ La historia del modelo no es solo cultural. Tambien es legal. Los clubes han viv
 - la conducta fuera del local afecta a la tolerancia del entorno
 
 Si quieres la version practica para visitantes, lee [What Cannabis Social Clubs in Spain Actually Are](/en/editorial/what-are-cannabis-social-clubs-spain).`,
-      tags: ['Cultura', 'Historia', 'Espana'],
+      tags: ['Cultura', 'Historia', 'España'],
     },
     'what-are-cannabis-social-clubs-spain': {
-      title: 'Que son realmente los clubes sociales de cannabis en Espana y por que importa para tu viaje',
-      excerpt: 'Los CSC en Espana no son coffeeshops ni dispensarios. Esta guia explica que son de verdad y por que entenderlo cambia todo.',
-      metaTitle: 'Que son realmente los clubes sociales de cannabis en Espana y por que importa para tu viaje',
-      metaDescription: 'Guia practica sobre que son realmente los CSC en Espana, como funcionan y por que entender su logica reduce riesgos para cualquier visitante.',
+      title: 'Que son realmente los clubes sociales de cannabis en España y por que importa para tu viaje',
+      excerpt: 'Los CSC en España no son coffeeshops ni dispensarios. Esta guia explica que son de verdad y por que entenderlo cambia todo.',
+      metaTitle: 'Que son realmente los clubes sociales de cannabis en España y por que importa para tu viaje',
+      metaDescription: 'Guia practica sobre que son realmente los CSC en España, como funcionan y por que entender su logica reduce riesgos para cualquier visitante.',
       content: `## La version en una frase
 
 Un club social de cannabis es una asociacion privada, sin animo de lucro y solo para miembros, donde personas registradas organizan acceso y consumo en un entorno cerrado y privado.
@@ -130,7 +130,7 @@ Cada club es distinto, pero hay patrones claros:
 
 No existe una regla universal.
 
-**Los residentes en Espana** suelen tener el camino mas facil.
+**Los residentes en España** suelen tener el camino mas facil.
 
 **Los visitantes internacionales** encuentran mas variacion: algunos clubes aceptan pasaporte y solicitud previa; otros siguen siendo solo para locales.
 
@@ -169,7 +169,7 @@ No es teoria. Es la diferencia entre una visita tranquila y una situacion que te
 - [Your First Time in a Barcelona Cannabis Club](/en/editorial/first-time-barcelona-cannabis-club)
 - [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
 - [the directory](/en/clubs/)`,
-      tags: ['Guia esencial', 'CSC', 'Espana'],
+      tags: ['Guia esencial', 'CSC', 'España'],
     },
     '5-mistakes-tourists-make': {
       title: '5 errores que cometen los turistas en los clubes de cannabis de Barcelona',
@@ -332,7 +332,7 @@ Para una seguridad mas completa, lee [The Safety Kit](/en/editorial/safety-kit-v
 
 ## Si es una emergencia medica
 
-En Espana, el numero general de emergencias es **112**.
+En España, el numero general de emergencias es **112**.
 
 Senales claras de que hay que pedir ayuda:
 
@@ -384,13 +384,13 @@ Una farmacia 24 horas tambien puede ayudar en problemas menores.
 - Canada: +34 91 382 8400
 - Australia: +34 91 353 6600
 
-La embajada puede orientar. No puede borrar sanciones ni saltarse la ley espanola.`,
+La embajada puede orientar. No puede borrar sanciones ni saltarse la ley española.`,
       tags: ['Seguridad', 'Emergencia', 'Recursos'],
     },
     'safety-kit-visitors-spain': {
       title: 'The Safety Kit: lo que todo visitante debe saber antes de entrar en un club',
       excerpt: 'Una guia practica sobre estafas, limites legales, privacidad y comportamiento para moverte con menos riesgo.',
-      metaDescription: 'Guia practica para visitantes de clubes en Espana: estafas, limites legales, privacidad y pasos concretos para moverte con menos riesgo.',
+      metaDescription: 'Guia practica para visitantes de clubes en España: estafas, limites legales, privacidad y pasos concretos para moverte con menos riesgo.',
       content: `## Por que existe esta guia
 
 Hay poca informacion publica clara y ese vacio se llena con consejos viejos, expectativas falsas y estafadores. Esta guia existe para hacerte mas dificil de explotar.
@@ -479,7 +479,7 @@ Despues:
 
 ## La regla central: publico y privado no son lo mismo
 
-Espana no tiene un sistema publico de venta legal al detalle. No puedes entrar en una tienda autorizada, comprar abiertamente y consumir donde quieras.
+España no tiene un sistema publico de venta legal al detalle. No puedes entrar en una tienda autorizada, comprar abiertamente y consumir donde quieras.
 
 ## El espacio publico implica riesgo real
 
@@ -577,9 +577,9 @@ Si te estafan, denuncialo. El cannabis puede vivir en una zona gris, pero el fra
       tags: ['Estafas', 'Seguridad', 'Senales rojas'],
     },
     'spain-cannabis-laws-tourists': {
-      title: 'Leyes del cannabis en Espana: lo que un turista realmente necesita saber',
+      title: 'Leyes del cannabis en España: lo que un turista realmente necesita saber',
       excerpt: 'Una guia breve sobre tolerancia privada, multas publicas y la persistente zona gris de los CSC.',
-      content: `Espana no tiene un sistema publico de venta legal de cannabis para turistas. Ese es el primer punto y cambia por completo la comparacion con los mercados de retail abierto.
+      content: `España no tiene un sistema publico de venta legal de cannabis para turistas. Ese es el primer punto y cambia por completo la comparacion con los mercados de retail abierto.
 
 ## Version corta
 
@@ -607,7 +607,7 @@ No te guies por rumores ni por lo que hizo otro turista el verano pasado.
 - trata cada club como un entorno privado con sus propias reglas
 
 Si quieres la version centrada en Barcelona, lee [Is Weed Legal in Barcelona in 2026?](/en/editorial/is-weed-legal).`,
-      tags: ['Legal', 'Turistas', 'Espana'],
+      tags: ['Legal', 'Turistas', 'España'],
     },
   },
   fr: {

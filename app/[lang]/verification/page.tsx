@@ -17,6 +17,35 @@ interface VerificationPageProps {
   params: Promise<{ lang: string }>;
 }
 
+interface VerificationPillar {
+  title: string;
+  body: string;
+}
+
+interface VerificationLink {
+  href: string;
+  label: string;
+}
+
+interface VerificationCopy {
+  title: string;
+  lead: string;
+  metaTitle: string;
+  metaDescription: string;
+  eyebrow: string;
+  whyTitle: string;
+  whyBody: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  legalTitle: string;
+  legalBody: string;
+  linksTitle: string;
+  breadcrumbHome: string;
+  breadcrumbCurrent: string;
+  pillars: VerificationPillar[];
+  trustLinks: VerificationLink[];
+}
+
 const copy = {
   en: {
     title: 'The SCM Verification Standard',
@@ -34,82 +63,165 @@ const copy = {
     legalBody:
       'SCM does not operate clubs, sell cannabis, guarantee outcomes, or replace legal advice. The goal is better public information, safer expectations, and a clearer way to understand the private association model.',
     linksTitle: 'Use the standard with the rest of the trust stack',
+    breadcrumbHome: 'Home',
+    breadcrumbCurrent: 'Verification Standard',
+    pillars: [
+      {
+        title: 'Association registry status',
+        body: 'Does the association structure look real, current, and documented enough to support public trust?',
+      },
+      {
+        title: 'Statutes and house-rule alignment',
+        body: 'Do the rules and public posture still fit the private association model rather than open retail behavior?',
+      },
+      {
+        title: 'Premises and controlled access',
+        body: 'Does the physical setup communicate discretion, member control, and a non-public access posture?',
+      },
+      {
+        title: 'Safe member onboarding process',
+        body: 'Does the intake process feel responsible, documented, and slow enough to avoid shortcut-driven risk?',
+      },
+    ],
+    trustLinks: [
+      { href: '/clubs', label: 'Verified Clubs' },
+      { href: '/safety-kit', label: 'Safety Kit' },
+      { href: '/editorial/legal', label: 'Legal Guides' },
+      { href: '/mission', label: 'Mission' },
+    ],
   },
   es: {
-    title: 'El estandar de verificacion de SCM',
-    lead: 'Un conjunto pequeno y verificado vale mas que una lista enorme sin revisar. SCM evalua senales publicas de confianza antes de incluir un club en la capa publica verificada.',
-    metaTitle: 'Estandar de verificacion SCM | Como evaluamos Cannabis Social Clubs',
+    title: 'El estándar de verificación de SCM',
+    lead: 'Un conjunto pequeño y verificado vale más que una lista enorme sin revisar. SCM evalúa señales públicas de confianza antes de incluir un club en la capa pública verificada.',
+    metaTitle: 'Estándar de verificación SCM | Cómo evaluamos cannabis social clubs',
     metaDescription:
-      'Consulta como SocialClubsMaps evalua cannabis social clubs en Espana usando senales de registro, normas internas, local y onboarding.',
-    eyebrow: 'Estandar independiente de confianza',
-    whyTitle: 'Que significa verificar aqui',
+      'Consulta cómo SocialClubsMaps evalúa cannabis social clubs en España usando señales de registro, normas internas, local y proceso de admisión.',
+    eyebrow: 'Estándar independiente de confianza',
+    whyTitle: 'Qué significa verificar aquí',
     whyBody:
-      'La verificacion no es una garantia legal, una promesa de entrada ni un respaldo comercial. Es el metodo publico de SCM para separar senales de confianza fuertes de comportamientos debiles, ruidosos o demasiado publicos.',
+      'La verificación no es una garantía legal, una promesa de entrada ni un respaldo comercial. Es el método público de SCM para separar señales de confianza sólidas de comportamientos débiles, ruidosos o demasiado públicos.',
     ctaPrimary: 'Consigue el Safety Kit',
-    ctaSecondary: 'Ver clubs verificados',
+    ctaSecondary: 'Ver clubes verificados',
     legalTitle: 'Lo que SCM no afirma',
     legalBody:
-      'SCM no opera clubs, no vende cannabis, no garantiza resultados y no sustituye asesoramiento legal. El objetivo es mejor informacion publica, expectativas mas seguras y una forma mas clara de entender el modelo de asociacion privada.',
-    linksTitle: 'Usa el estandar con el resto del sistema de confianza',
+      'SCM no opera clubes, no vende cannabis, no garantiza resultados y no sustituye el asesoramiento legal. El objetivo es ofrecer mejor información pública, expectativas más seguras y una forma más clara de entender el modelo de asociación privada.',
+    linksTitle: 'Usa el estándar con el resto del sistema de confianza',
+    breadcrumbHome: 'Inicio',
+    breadcrumbCurrent: 'Estándar de verificación',
+    pillars: [
+      {
+        title: 'Estado del registro de la asociación',
+        body: '¿La estructura de la asociación parece real, vigente y lo bastante documentada para sostener confianza pública?',
+      },
+      {
+        title: 'Alineación de estatutos y normas internas',
+        body: '¿Las reglas y la postura pública siguen encajando con el modelo de asociación privada y no con un comportamiento de venta abierta?',
+      },
+      {
+        title: 'Local y acceso controlado',
+        body: '¿El espacio físico transmite discreción, control de miembros y una postura de acceso no público?',
+      },
+      {
+        title: 'Proceso seguro de admisión de miembros',
+        body: '¿El proceso de admisión se percibe responsable, documentado y lo bastante gradual como para evitar riesgos por atajos?',
+      },
+    ],
+    trustLinks: [
+      { href: '/clubs', label: 'Clubes verificados' },
+      { href: '/safety-kit', label: 'Safety Kit' },
+      { href: '/editorial/legal', label: 'Guías legales' },
+      { href: '/mission', label: 'Misión' },
+    ],
   },
   fr: {
-    title: 'Le standard de verification SCM',
-    lead: 'Un petit ensemble verifie vaut mieux qu une grande liste non controlee. SCM evalue les signaux publics de confiance avant qu un club n entre dans la couche publique verifiee.',
-    metaTitle: 'Standard de verification SCM | Comment nous evaluons les Cannabis Social Clubs',
+    title: 'Le standard de vérification SCM',
+    lead: 'Un petit ensemble vérifié vaut mieux qu\'une grande liste non contrôlée. SCM évalue les signaux publics de confiance avant qu\'un club n\'entre dans la couche publique vérifiée.',
+    metaTitle: 'Standard de vérification SCM | Comment nous évaluons les cannabis social clubs',
     metaDescription:
-      'Découvrez comment SocialClubsMaps evalue les cannabis social clubs en Espagne avec les signaux de registre, regles internes, locaux et onboarding.',
-    eyebrow: 'Standard de confiance independant',
-    whyTitle: 'Ce que verification signifie ici',
+      'Découvrez comment SocialClubsMaps évalue les cannabis social clubs en Espagne à partir des signaux de registre, de règles internes, de locaux et d\'onboarding.',
+    eyebrow: 'Standard de confiance indépendant',
+    whyTitle: 'Ce que la vérification signifie ici',
     whyBody:
-      'La verification n est pas une garantie juridique, une promesse d entree ni une recommandation commerciale. C est la methode publique de SCM pour distinguer les signaux de confiance solides des comportements faibles, bruyants ou trop publics.',
+      'La vérification n\'est ni une garantie juridique, ni une promesse d\'entrée, ni une recommandation commerciale. C\'est la méthode publique de SCM pour distinguer les signaux de confiance solides des comportements faibles, bruyants ou trop publics.',
     ctaPrimary: 'Obtenir le Safety Kit',
-    ctaSecondary: 'Voir les clubs verifies',
-    legalTitle: 'Ce que SCM ne pretend pas',
+    ctaSecondary: 'Voir les clubs vérifiés',
+    legalTitle: 'Ce que SCM ne revendique pas',
     legalBody:
-      'SCM n exploite pas de clubs, ne vend pas de cannabis, ne garantit pas de resultats et ne remplace pas un conseil juridique. L objectif est une meilleure information publique, des attentes plus sures et une comprehension plus claire du modele d association privee.',
-    linksTitle: 'Utilisez le standard avec le reste de la couche de confiance',
+      'SCM n\'exploite pas de clubs, ne vend pas de cannabis, ne garantit pas de résultats et ne remplace pas un conseil juridique. L\'objectif est d\'offrir une meilleure information publique, des attentes plus sûres et une compréhension plus claire du modèle d\'association privée.',
+    linksTitle: 'Utilisez ce standard avec le reste de la base de confiance',
+    breadcrumbHome: 'Accueil',
+    breadcrumbCurrent: 'Standard de vérification',
+    pillars: [
+      {
+        title: 'Statut au registre des associations',
+        body: 'La structure associative semble-t-elle réelle, à jour et suffisamment documentée pour soutenir la confiance publique ?',
+      },
+      {
+        title: 'Alignement des statuts et du règlement interne',
+        body: 'Les règles et la posture publique restent-elles alignées avec le modèle d\'association privée plutôt qu\'avec un comportement de commerce ouvert ?',
+      },
+      {
+        title: 'Locaux et accès contrôlé',
+        body: 'L\'aménagement des lieux communique-t-il discrétion, contrôle des membres et posture d\'accès non public ?',
+      },
+      {
+        title: 'Processus d\'onboarding membre sécurisé',
+        body: 'Le processus d\'entrée paraît-il responsable, documenté et suffisamment progressif pour éviter les risques liés aux raccourcis ?',
+      },
+    ],
+    trustLinks: [
+      { href: '/clubs', label: 'Clubs vérifiés' },
+      { href: '/safety-kit', label: 'Safety Kit' },
+      { href: '/editorial/legal', label: 'Guides juridiques' },
+      { href: '/mission', label: 'Mission' },
+    ],
   },
   de: {
     title: 'Der SCM-Verifizierungsstandard',
-    lead: 'Eine kleine verifizierte Auswahl ist wertvoller als eine riesige ungeprufte Liste. SCM bewertet offentliche Vertrauenssignale, bevor ein Club in die verifizierte offentliche Ebene aufgenommen wird.',
+    lead: 'Eine kleine verifizierte Auswahl ist wertvoller als eine riesige ungeprüfte Liste. SCM bewertet öffentliche Vertrauenssignale, bevor ein Club in die verifizierte öffentliche Ebene aufgenommen wird.',
     metaTitle: 'SCM-Verifizierungsstandard | Wie wir Cannabis Social Clubs bewerten',
     metaDescription:
       'Erfahre, wie SocialClubsMaps Cannabis Social Clubs in Spanien anhand von Register-, Hausregel-, Standort- und Onboarding-Signalen bewertet.',
-    eyebrow: 'Unabhangiger Vertrauensstandard',
+    eyebrow: 'Unabhängiger Vertrauensstandard',
     whyTitle: 'Was Verifizierung hier bedeutet',
     whyBody:
-      'Verifizierung ist keine Rechtsgarantie, kein Eintrittsversprechen und keine kommerzielle Empfehlung. Sie ist die offentliche SCM-Methode, um starke Vertrauenssignale von schwachem, lautem oder zu offentlichem Clubverhalten zu unterscheiden.',
+      'Verifizierung ist keine Rechtsgarantie, kein Eintrittsversprechen und keine kommerzielle Empfehlung. Sie ist die öffentliche SCM-Methode, um starke Vertrauenssignale von schwachem, lautem oder zu öffentlichem Clubverhalten zu unterscheiden.',
     ctaPrimary: 'Safety Kit holen',
     ctaSecondary: 'Verifizierte Clubs ansehen',
     legalTitle: 'Was SCM nicht behauptet',
     legalBody:
-      'SCM betreibt keine Clubs, verkauft kein Cannabis, garantiert keine Ergebnisse und ersetzt keine Rechtsberatung. Ziel sind bessere offentliche Informationen, sicherere Erwartungen und ein klareres Verstandnis des privaten Vereinsmodells.',
+      'SCM betreibt keine Clubs, verkauft kein Cannabis, garantiert keine Ergebnisse und ersetzt keine Rechtsberatung. Ziel sind bessere öffentliche Informationen, sicherere Erwartungen und ein klareres Verständnis des privaten Vereinsmodells.',
     linksTitle: 'Nutze den Standard mit dem restlichen Vertrauenssystem',
+    breadcrumbHome: 'Startseite',
+    breadcrumbCurrent: 'Verifizierungsstandard',
+    pillars: [
+      {
+        title: 'Status im Vereinsregister',
+        body: 'Wirkt die Vereinsstruktur real, aktuell und ausreichend dokumentiert, um öffentliches Vertrauen zu stützen?',
+      },
+      {
+        title: 'Abgleich von Satzung und Hausregeln',
+        body: 'Passen Regeln und öffentlicher Auftritt weiterhin zum Modell einer privaten Vereinigung statt zu offenem Verkaufsverhalten?',
+      },
+      {
+        title: 'Räumlichkeiten und kontrollierter Zugang',
+        body: 'Vermittelt das physische Setup Diskretion, Mitgliederkontrolle und eine nicht öffentliche Zugangshaltung?',
+      },
+      {
+        title: 'Sicherer Prozess für die Mitgliederaufnahme',
+        body: 'Wirkt der Aufnahmeprozess verantwortungsvoll, dokumentiert und langsam genug, um abkürzungsgetriebene Risiken zu vermeiden?',
+      },
+    ],
+    trustLinks: [
+      { href: '/clubs', label: 'Verifizierte Clubs' },
+      { href: '/safety-kit', label: 'Safety Kit' },
+      { href: '/editorial/legal', label: 'Rechtsleitfäden' },
+      { href: '/mission', label: 'Mission' },
+    ],
   },
-} satisfies Record<Locale, Record<string, string>>;
+} satisfies Record<Locale, VerificationCopy>;
 
-const pillars = [
-  {
-    icon: FileSearch,
-    title: 'Association registry status',
-    body: 'Does the association structure look real, current, and documented enough to support public trust?',
-  },
-  {
-    icon: Scale,
-    title: 'Statutes and house-rule alignment',
-    body: 'Do the rules and public posture still fit the private association model rather than open retail behavior?',
-  },
-  {
-    icon: Building2,
-    title: 'Premises and controlled access',
-    body: 'Does the physical setup communicate discretion, member control, and a non-public access posture?',
-  },
-  {
-    icon: LockKey,
-    title: 'Safe member onboarding process',
-    body: 'Does the intake process feel responsible, documented, and slow enough to avoid shortcut-driven risk?',
-  },
-];
+const pillarIcons = [FileSearch, Scale, Building2, LockKey];
 
 export async function generateMetadata({ params }: VerificationPageProps): Promise<Metadata> {
   const { lang } = await params;
@@ -132,8 +244,8 @@ export default async function VerificationPage({ params }: VerificationPageProps
   const basePath = `/${locale}`;
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: 'Home', path: basePath },
-    { name: 'Verification Standard', path: `${basePath}/verification` },
+    { name: c.breadcrumbHome, path: basePath },
+    { name: c.breadcrumbCurrent, path: `${basePath}/verification` },
   ]);
 
   const webPageJsonLd = {
@@ -179,18 +291,21 @@ export default async function VerificationPage({ params }: VerificationPageProps
         </section>
 
         <section className="mt-20 grid gap-6 md:grid-cols-2">
-          {pillars.map((pillar, index) => (
+          {c.pillars.map((pillar, index) => {
+            const Icon = pillarIcons[index] ?? FileSearch;
+            return (
             <article key={pillar.title} className="rounded-3xl border border-white/10 bg-bg-card/80 p-8 backdrop-blur-md">
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-brand/20 bg-brand/10 text-brand">
-                  <pillar.icon className="h-6 w-6" />
+                  <Icon className="h-6 w-6" />
                 </div>
                 <Badge className="border-brand/20 bg-brand/10 text-brand">0{index + 1}</Badge>
               </div>
               <H3 className="mb-3 font-serif text-white">{pillar.title}</H3>
               <Text className="text-zinc-400">{pillar.body}</Text>
             </article>
-          ))}
+            );
+          })}
         </section>
 
         <section className="mt-16 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
@@ -207,12 +322,7 @@ export default async function VerificationPage({ params }: VerificationPageProps
         <section className="mt-16 rounded-3xl border border-white/10 bg-bg-card/70 p-8 md:p-10">
           <H2 className="mb-6 font-serif text-white">{c.linksTitle}</H2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { href: '/clubs', label: 'Verified Clubs' },
-              { href: '/safety-kit', label: 'Safety Kit' },
-              { href: '/editorial/legal', label: 'Legal Guides' },
-              { href: '/mission', label: 'Mission' },
-            ].map((item) => (
+            {c.trustLinks.map((item) => (
               <Link
                 key={item.href}
                 href={`${basePath}${item.href}`}

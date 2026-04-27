@@ -16,9 +16,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   }
   const metadataByLocale: Record<string, { title: string; description: string }> = {
     es: {
-      title: 'El Safety Kit de Espana - Descarga gratis | SocialClubsMaps',
+      title: 'El Safety Kit de España - Descarga gratis | SocialClubsMaps',
       description:
-        'Guia gratuita para viajeros que visitan Cannabis Social Clubs en Espana. Limites legales, senales de estafa, etiqueta de primera visita y numeros de emergencia.',
+        'Guia gratuita para viajeros que visitan Cannabis Social Clubs en España. Limites legales, senales de estafa, etiqueta de primera visita y numeros de emergencia.',
     },
     en: {
       title: 'Free Spain Safety Kit for Cannabis Social Club Visitors | SocialClubsMaps',

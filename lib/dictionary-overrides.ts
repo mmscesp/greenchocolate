@@ -178,8 +178,8 @@ export const dictionaryOverrides: Partial<
     'faq.timestamp': 'Preguntas frecuentes',
     'faq.1.title': 'Que es un Cannabis Social Club?',
     'faq.1.content':
-      'Un Cannabis Social Club es una asociacion privada y sin animo de lucro en Espana donde los miembros pueden consumir cannabis en un entorno social.',
-    'faq.2.title': 'Son legales los CSC en Espana?',
+      'Un Cannabis Social Club es una asociacion privada y sin animo de lucro en España donde los miembros pueden consumir cannabis en un entorno social.',
+    'faq.2.title': 'Son legales los CSC en España?',
     'faq.2.content':
       'Si, pero con limites concretos. Funcionan en una zona gris legal y el consumo en espacios publicos sigue estando prohibido.',
     'faq.3.title': 'Pueden entrar turistas en un CSC?',
@@ -255,7 +255,7 @@ export const dictionaryOverrides: Partial<
     'common.retry': 'Reintentar',
     'common.save_changes': 'Guardar cambios',
     'common.toggle_menu': 'Alternar menu',
-    'footer.new.description': 'La guia independiente de Cannabis Social Clubs en Espana.',
+    'footer.new.description': 'La guia independiente de Cannabis Social Clubs en España.',
     'footer.new.columns.learn': 'Aprender',
     'footer.new.columns.explore': 'Explorar',
     'footer.new.columns.about': 'Acerca de',
@@ -305,13 +305,13 @@ export const dictionaryOverrides: Partial<
     'editorial.badge': 'Archivo de conocimiento',
     'editorial.browse_by_topic': 'Explora por tema',
     'editorial.categories.culture.description':
-      'La historia detras del movimiento de clubs sociales cannabicos en Espana.',
+      'La historia detras del movimiento de clubs sociales cannabicos en España.',
     'editorial.categories.culture.title': 'Cultura e historia',
     'editorial.categories.etiquette.description':
       'Lo que debes y no debes hacer dentro de asociaciones privadas. Se un invitado respetuoso.',
     'editorial.categories.etiquette.title': 'Etiqueta del club',
     'editorial.categories.legal.description':
-      'Entiende las leyes, multas y tus derechos como visitante en Espana.',
+      'Entiende las leyes, multas y tus derechos como visitante en España.',
     'editorial.categories.legal.title': 'Marco legal',
     'editorial.categories.safety.description':
       'Mantente seguro. Riesgos, dosis y protocolos de emergencia.',
@@ -333,7 +333,7 @@ export const dictionaryOverrides: Partial<
       'Priorizamos la seguridad y el consumo responsable por encima de todo',
     'editorial.standards.items.harm_reduction.title': 'Enfoque en reduccion de danos',
     'editorial.standards.items.legal.description':
-      'Revisado por profesionales legales familiarizados con la ley cannabica espanola',
+      'Revisado por profesionales legales familiarizados con la ley cannabica española',
     'editorial.standards.items.legal.title': 'Verificado legalmente',
     'editorial.standards.items.updated.description':
       'Las leyes cambian. Seguimos las actualizaciones y revisamos el contenido',
@@ -344,7 +344,7 @@ export const dictionaryOverrides: Partial<
     'editorial.subtitle':
       'Guias fiables sobre cumplimiento legal, etiqueta de club y reduccion de danos. Creadas por expertos, verificadas por juristas y pensadas para adultos responsables.',
     'editorial.title_highlight': 'Con confianza',
-    'editorial.title_prefix': 'Navega la cultura cannabica de Espana',
+    'editorial.title_prefix': 'Navega la cultura cannabica de España',
     'editorial.view_all': 'Ver todo',
     'events.badge': 'Comunidad',
     'events.empty': 'Todavia no hay eventos publicados proximamente.',
@@ -365,7 +365,7 @@ export const dictionaryOverrides: Partial<
     'spain.stats.support': 'Soporte',
     'spain.subtitle':
       'Explora orientacion ciudad por ciudad, contexto de barrios y listados de clubs verificados. Las paginas publicas siguen siendo educativas; los detalles operativos sensibles siguen protegidos.',
-    'spain.title_highlight': 'Espana',
+    'spain.title_highlight': 'España',
     'profile.account_status': 'Estado de la cuenta',
     'profile.account_status_desc': 'Resumen de la situacion de tu cuenta',
     'profile.account_verified': 'Cuenta verificada',
@@ -441,13 +441,13 @@ export const dictionaryOverrides: Partial<
     'club_profile.video_inside_prefix': 'Dentro de',
     'club_profile.virtual_tour': 'Vive el ambiente',
     'club_profile.website': 'Web',
-    'safety_kit.title': 'El Safety Kit de Espana',
+    'safety_kit.title': 'El Safety Kit de España',
     'safety_kit.subtitle':
-      'Una guia breve y centrada en el cumplimiento para viajeros que navegan la cultura de clubs sociales cannabicos en Espana.',
+      'Una guia breve y centrada en el cumplimiento para viajeros que navegan la cultura de clubs sociales cannabicos en España.',
     'safety_kit.eyebrow': 'Inteligencia para visitantes 2026',
     'safety_kit.body':
       'Pensado para viajeros que quieren entender el contexto legal, los riesgos reales en la calle y la etiqueta basica del club antes de llegar.',
-    'safety_kit.social_proof': 'Confiado por viajeros que se preparan para Espana antes de aterrizar.',
+    'safety_kit.social_proof': 'Confiado por viajeros que se preparan para España antes de aterrizar.',
     'safety_kit.trust_strip':
       'Contexto legal revisado · Senales de estafa · Etiqueta del club · Referencias de emergencia · Privacidad ante todo',
     'safety_kit.inside_title': 'Que incluye',

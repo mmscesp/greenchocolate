@@ -89,12 +89,12 @@ export const redFlagsPackage: EditorialSprintPackage = {
     es: [
       {
         href: '/es/editorial/what-are-cannabis-social-clubs-spain',
-        label: 'Que son realmente los clubes sociales de cannabis en Espana',
+        label: 'Que son realmente los clubes sociales de cannabis en España',
         purpose: 'Base del modelo',
       },
       {
         href: '/es/editorial/spain-cannabis-laws-tourists',
-        label: 'Leyes del cannabis en Espana',
+        label: 'Leyes del cannabis en España',
         purpose: 'Marco legal y diferencia publico-privado',
       },
       {
@@ -295,7 +295,7 @@ ${SCM_REQUIRED_DISCLAIMER}`,
         'Escena urbana discreta en Barcelona que contrasta acceso controlado con visibilidad excesiva',
       body: `Barcelona no recompensa la prisa, el hype ni la mirada retail. Muchos errores empiezan cuando alguien trata un entorno sensible de asociacion privada como si fuera un mercado abierto.
 
-Ese reset legal importa. Espana sigue separando la conducta privada, la conducta publica y la conducta que empieza a parecer comercial. La posesion o el consumo en publico pueden acabar en sanciones administrativas que suelen citarse en la franja de EUR601 a EUR30000. Barcelona tambien trato las ordenes de cierre de julio de 2024, que afectaron a alrededor de 30 clubes, como una senal clara de que visibilidad, controles debiles y apariencia comercial no son detalles menores.
+Ese reset legal importa. España sigue separando la conducta privada, la conducta publica y la conducta que empieza a parecer comercial. La posesion o el consumo en publico pueden acabar en sanciones administrativas que suelen citarse en la franja de EUR601 a EUR30000. Barcelona tambien trato las ordenes de cierre de julio de 2024, que afectaron a alrededor de 30 clubes, como una senal clara de que visibilidad, controles debiles y apariencia comercial no son detalles menores.
 
 Eso no significa que todo club imperfecto sea falso. Significa que conviene leer patrones.
 
