@@ -99,7 +99,7 @@ test.describe('Safety Kit funnel', () => {
     );
 
     await page.getByTestId('safety-kit-reset-final_cta').click();
-    await expect(page.getByTestId('safety-kit-email-final_cta')).toBeVisible();
+    await expect(page.getByTestId('safety-kit-age-yes-final_cta')).toBeVisible();
 
     const resetEvents = await getAnalyticsEvents(page);
     expect(resetEvents).toEqual(
