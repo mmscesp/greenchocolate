@@ -193,6 +193,8 @@ export default function HeroSection() {
     };
   }, [buildAnalyticsPayload]);
 
+  const desktopContentBlockY = language === 'fr' ? '18vh' : HERO_CONFIG.desktop.act2.contentBlock.y;
+
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
@@ -253,7 +255,7 @@ export default function HeroSection() {
 
         if (reduceMotion) {
           gsap.set(contentBlockRef.current, {
-            y: HERO_CONFIG.desktop.act2.contentBlock.y,
+            y: desktopContentBlockY,
             autoAlpha: 1,
             scale: HERO_CONFIG.desktop.act2.contentBlock.scale,
           });
@@ -387,7 +389,7 @@ export default function HeroSection() {
           contentBlockRef.current,
           {
             autoAlpha: 1,
-            y: HERO_CONFIG.desktop.act2.contentBlock.y,
+            y: desktopContentBlockY,
             scale: HERO_CONFIG.desktop.act2.contentBlock.scale,
             ease: 'power2.out',
             duration: 1,
