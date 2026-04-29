@@ -37,6 +37,8 @@ Use for:
 4. Keep independent-directory positioning explicit.
 5. Give real reader value before asking for conversion.
 6. Avoid facilitation-risk language entirely.
+7. Explain Verified Profile vs Public Listing whenever profile status, directories, or recommendations are in scope.
+8. Do not write thin "best clubs" content, product-quality rankings, menu guidance, price guidance, strain recommendations, or acquisition shortcuts.
 
 ## Article Workflow
 
@@ -49,6 +51,13 @@ Use for:
 7. draft with direct, specific language and practical value
 8. run voice and legal preflight checks before publication
 
+For problem-led SEO articles, start from the mistake:
+- what people usually get wrong
+- why that mistake creates risk
+- the safer way to understand the system
+- what SCM can verify and what it cannot
+- what the reader should confirm directly
+
 ## Content Standards
 
 - include at least one concrete legal or enforcement anchor for substantial guides
@@ -59,6 +68,9 @@ Use for:
 - never reduce Barcelona coverage to tourist logistics only
 - when an article package needs IG support, create English-only social copy sized for the existing studio templates instead of long article excerpts
 - hand off IG production to `scm-frontend-slides` and the real studio path: `scm-ig-studio/src/scm-ig-template/content.ts`
+- include a compliance summary near the top when access, legal risk, or profile research is discussed
+- include FAQ sections built from real doubts: tourists, walk-ins, ID, contact-first process, public listings, guaranteed acceptance, public smoking, outdated Google/Reddit/Weedmaps information
+- use education-first CTAs: Safety Kit, verification standard, guide, profile-status comparison
 
 ## Narrative Guardrail for Barcelona
 
@@ -94,6 +106,7 @@ Return:
 ## Reference Assets
 
 - article draft template: `references/article-draft-template.md`
+- SEO editorial system: `../scm-editorial-seo/references/seo-editorial-system.md`
 - default behavior: fill this template for every serious long-form deliverable
 - Barcelona tensions note: `docs/development/barcelona-tourism-club-tensions-reference.md`
 

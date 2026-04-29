@@ -136,6 +136,43 @@ Public-safe default:
 SocialClubsMaps is the independent, legally grounded, verification-first guide to cannabis
 social clubs in Spain for people who want to do this right, not fast.
 
+## Canonical Trust Taxonomy
+
+Use these labels consistently across public copy, product UI, SEO, social, and internal briefs.
+
+### Verified Profile
+
+SCM has completed its current trust checks for the club profile. This is a public trust signal,
+not a legal guarantee, commercial endorsement, promise of entry, promise of availability, or
+claim that a club will accept any reader.
+
+### Public Listing
+
+SCM has not completed an on-site verification review. A public listing is a research starting
+point only. Public source data can change, and the listing must not be treated as a
+recommendation, endorsement, or access promise.
+
+### SCM Trust Pick
+
+Use only for a verified profile with documented editorial reasons for extra prominence. Never use
+this label for public listings or as a substitute for the verification taxonomy.
+
+### Last Checked
+
+Show when the profile was last reviewed and what was reviewed. A bare date is weaker than a
+short "what SCM checked" note.
+
+### Platform-Wide Compliance Baseline
+
+Use this short posture wherever access guidance, public listing context, social captions, or
+profile CTAs create risk:
+
+"SocialClubsMaps provides educational and informational content. It does not sell cannabis,
+broker transactions, provide legal advice, or guarantee club acceptance. Readers must follow
+local law, club rules, and platform guidelines."
+
+Keep the longer legal disclaimer for legal explainers and high-risk access guidance.
+
 ## What SCM Is
 
 - a trust and navigation platform
@@ -151,6 +188,7 @@ social clubs in Spain for people who want to do this right, not fast.
 - not a cannabis brand
 - not legal advice
 - not a public list of every club
+- not a guarantee that every public profile is verified, current, open, legally safe, or accepting members
 
 ## Legal Posture
 
@@ -285,6 +323,13 @@ For Barcelona specifically, write through a legal + civic + cultural lens:
 - explain club commercialization without glamorizing it
 - explain why discretion and restraint matter beyond just personal safety
 
+### Core Audience Emotion
+
+Most high-intent readers are not trying to be reckless. They are trying to avoid looking stupid,
+getting rejected, getting fined, getting scammed, or wasting part of a trip because the
+information ecosystem is noisy. SCM should meet that anxiety with calm, specific, protective
+guidance.
+
 ## Competitive Stance
 
 Compete on:
@@ -349,6 +394,9 @@ Never compete by:
 5. Never make legal guarantees, risk-free claims, or access guarantees.
 6. Always route public access questions toward safe process, sign-up, or education instead of shortcuts.
 7. Every serious guide or risky asset must include at least one concrete legal or enforcement anchor.
+8. Never imply all directory entries are verified when public listings exist.
+9. Never show admin placeholders, unfinished fields, or unknown data as public facts.
+10. Never use product, price, menu, strain, potency, deal, order, delivery, plug, or purchase language in public SCM surfaces.
 
 ## Public Messaging Safety Boundary
 
@@ -358,6 +406,8 @@ Never compete by:
 - verification standard explanation
 - safety guidance
 - process clarity for responsible behavior
+- verified profile vs public listing explanation
+- last-checked and "what SCM checked" transparency
 
 ### Disallowed
 - direct access facilitation
@@ -365,6 +415,31 @@ Never compete by:
 - public pass marketing
 - club-specific transactional language
 - anything implying SCM operates or owns clubs
+- treating public listings as recommendations
+- "best weed", menu, price, product, strain, grams, potency, or deal framing
+
+## Default Safe CTAs
+
+Prefer:
+- Read the safety guide
+- Check profile status
+- Compare verified profiles and public listings
+- Understand the process before contacting any club
+- Request membership information
+- View verified profile
+- View public profile
+- Read how SCM verification works
+
+Avoid:
+- Join now
+- Get access
+- Apply for membership
+- Reserve
+- Book your spot
+- Unlock
+- Buy
+- Order
+- Best deals
 
 ## Required Disclaimer Pattern
 
@@ -399,6 +474,8 @@ Re-check facts before publishing when work depends on:
 - competitor status
 - live pricing or product claims
 - city-level operational changes
+- current platform rules for Instagram, TikTok, YouTube, Meta ads, or search platforms
+- live website claims, club status, profile labels, CTAs, or visible directory data
 
 Stable strategy can rely on this file. Time-sensitive claims require verification.
 

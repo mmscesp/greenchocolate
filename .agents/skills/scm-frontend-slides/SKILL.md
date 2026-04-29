@@ -55,6 +55,8 @@ Use for:
 - use verified, defensible numbers and mark assumptions clearly
 - keep legal framing factual and non-alarmist
 - include disclaimer language in appendix or footer when needed
+- use Verified Profile, Public Listing, SCM Trust Pick, and Last Checked according to the master taxonomy
+- avoid product, menu, price, strain, potency, grams, buy, order, plug, delivery, reserve, unlock, or guaranteed-access language
 
 ## SCM IG Template Production Rules
 
@@ -121,6 +123,7 @@ Final export is blocked unless:
 - colors match the SCM dark editorial system
 - the selected template still visually resembles the original master design
 - there is no cannabis cliché imagery, sourcing cue, or public-access facilitation language
+- there are no product closeups, consumption shots, cash exchange cues, menu boards, jars, bags, extracts, minors, or party-framed visuals
 - output files are actual final JPGs, not browser viewport screenshots
 
 ### Render Manifest Rule
