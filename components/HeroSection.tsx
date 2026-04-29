@@ -193,7 +193,7 @@ export default function HeroSection() {
     };
   }, [buildAnalyticsPayload]);
 
-  const desktopContentBlockY = language === 'fr' ? '18vh' : HERO_CONFIG.desktop.act2.contentBlock.y;
+  const desktopContentBlockY = language === 'fr' ? '8vh' : HERO_CONFIG.desktop.act2.contentBlock.y;
 
   useGSAP(
     () => {
