@@ -44,13 +44,13 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     return buildLocalizedMetadata({
       lang,
       path: `/spain/${citySlug}`,
-      title: 'Cannabis Social Clubs in Barcelona | Verified Guide',
+      title: 'Cannabis Social Clubs in Barcelona | SocialClubsMaps Guide',
       description:
-        'Understand Barcelona cannabis social clubs through legal context, safety guidance, verified club signals, and SCM’s independent verification standard.',
+        'Understand Barcelona cannabis social clubs through legal context, safety guidance, verified profiles, public listings, and SCM’s independent verification standard.',
       keywords: [
         'cannabis social clubs Barcelona',
         'Barcelona cannabis guide',
-        'verified cannabis clubs Barcelona',
+        'cannabis social club profiles Barcelona',
         'cannabis social club legal Spain',
       ],
     });
@@ -58,14 +58,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
   const titles: Record<string, string> = {
     es: `Cannabis Social Clubs en ${cityName} | Directorio Verificado | SocialClubsMaps`,
-    en: `Cannabis Social Clubs in ${cityName} | Verified Directory | SocialClubsMaps`,
+    en: `Cannabis Social Clubs in ${cityName} | Club Directory | SocialClubsMaps`,
     fr: `Clubs Sociaux Cannabis à ${cityName} | Annuaire Vérifié | SocialClubsMaps`,
     de: `Cannabis Social Clubs in ${cityName} | Verifiziertes Verzeichnis | SocialClubsMaps`,
   };
 
   const descriptions: Record<string, string> = {
     es: `Explora cannabis social clubs en ${cityName}. Directorio verificado con clubes verificados, vecindarios y guías locales. Pre-regístrate para membresía.`,
-    en: `Explore cannabis social clubs in ${cityName}. Verified directory with verified clubs, neighborhoods, and local guides. Pre-register for membership.`,
+    en: `Explore cannabis social club profiles in ${cityName}. Compare verified profiles and clearly labeled public listings before you make plans.`,
     fr: `Explorez les clubs sociaux cannabis à ${cityName}. Annuaire vérifié avec clubs, quartiers et guides locaux. Pré-inscription au membership.`,
     de: `Erkunden Sie Cannabis-Social-Clubs in ${cityName}. Verifiziertes Verzeichnis mit Clubs, Vierteln und lokalen Leitfäden. Vorregistrierung für Mitgliedschaft.`,
   };
@@ -109,7 +109,7 @@ export default async function CityPage({ params }: CityPageProps) {
     const collectionJsonLd = buildCollectionPageJsonLd({
       name: 'Cannabis Social Clubs in Barcelona',
       description:
-        'Barcelona cannabis social club guidance with legal context, verified club signals, Safety Kit paths, and SCM verification standards.',
+        'Barcelona cannabis social club guidance with legal context, verified profiles, public listings, Safety Kit paths, and SCM verification standards.',
       path: `/${lang}/spain/barcelona`,
     });
     const breadcrumbJsonLd = buildBreadcrumbJsonLd([

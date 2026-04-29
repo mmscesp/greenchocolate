@@ -59,6 +59,20 @@ const publicListingOpeningHours = {
   note: 'Opening hours have not been verified by SCM.',
 };
 
+const PLACEHOLDER_PATTERN = /^(?:[-–—\s]*)?(?:fill manually|tbd|todo|unknown|null|n\/a|na)(?:[-–—\s]*)?$/i;
+
+function sanitizePublicField(value) {
+  const trimmed = typeof value === 'string' ? value.trim() : '';
+  return trimmed && !PLACEHOLDER_PATTERN.test(trimmed) ? trimmed : null;
+}
+
+function replacePlaceholderCopy(value, fallback = 'Barcelona') {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  return value.replace(/\s*(?:[-–—]\s*)?fill manually\s*/gi, ` ${fallback} `).replace(/\s{2,}/g, ' ').trim();
+}
+
 function buildSocialMedia(row) {
   if (!row.instagram) {
     return null;
@@ -70,14 +84,17 @@ function buildSocialMedia(row) {
 }
 
 function buildClubPayload(row, cityId) {
+  const safeNeighborhood = sanitizePublicField(row.neighborhood) ?? 'Barcelona';
+  const safeDistrict = sanitizePublicField(row.district);
+
   return {
     slug: row.slug,
     name: row.name,
-    description: row.description,
-    shortDescription: row.shortDescription,
+    description: replacePlaceholderCopy(row.description, safeNeighborhood),
+    shortDescription: replacePlaceholderCopy(row.shortDescription, safeNeighborhood),
     cityId,
-    neighborhood: row.neighborhood,
-    district: row.district,
+    neighborhood: safeNeighborhood,
+    district: safeDistrict,
     addressDisplay: row.addressDisplay,
     coordinates: fallbackCoordinates,
     contactEmail: 'listings@socialclubsmaps.com',
@@ -101,14 +118,14 @@ function buildClubPayload(row, cityId) {
     openingHours: publicListingOpeningHours,
     amenities: [],
     vibeTags: ['public listing', 'unverified'],
-    priceRange: 'Not verified',
+    priceRange: '',
     capacity: 1,
     foundedYear: 2026,
     images: [],
     logoUrl: null,
     coverImageUrl: null,
-    metaTitle: row.metaTitle,
-    metaDescription: row.metaDescription,
+    metaTitle: replacePlaceholderCopy(row.metaTitle, safeNeighborhood),
+    metaDescription: replacePlaceholderCopy(row.metaDescription, safeNeighborhood),
   };
 }
 

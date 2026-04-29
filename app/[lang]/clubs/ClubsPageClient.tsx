@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import ClubCard from '@/components/ClubCard';
 import FilterBar from '@/components/FilterBar';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Map, Grid, Search, Zap, ShieldCheck, ArrowRight } from '@/lib/icons';
+import { Map, Grid, Search, Zap, ShieldCheck, ArrowRight, Info } from '@/lib/icons';
 import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
@@ -83,13 +83,10 @@ export default function ClubsPageClient({
       {/* Hero Header */}
       <SectionWrapper dark className="pt-24 pb-16 sm:pt-32 sm:pb-20 relative overflow-hidden bg-bg-base backdrop-blur-none">
         {/* Background Gradients */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] bg-brand/5 rounded-full blur-[100px] sm:blur-[140px] -translate-y-1/2 animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-white/[0.02] rounded-full blur-[80px] sm:blur-[120px] translate-y-1/2" />
-        </div>
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,rgba(0,205,200,0.08),transparent_45%)]" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
-          <motion.div 
+          <motion.div
             variants={STAGGER_CONTAINER}
             initial="initial"
             animate="animate"
@@ -117,6 +114,26 @@ export default function ClubsPageClient({
               <p className="text-zinc-400 text-lg md:text-2xl max-w-3xl mx-auto leading-relaxed font-serif italic px-2 sm:px-0">
                 "{t('clubs.subtitle')}"
               </p>
+            </motion.div>
+
+            <motion.div
+              variants={FADE_UP}
+              className="mx-auto mt-8 grid max-w-4xl gap-3 text-left md:grid-cols-2"
+            >
+              <div className="rounded-2xl border border-brand/20 bg-brand/[0.08] p-4">
+                <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-brand">
+                  <ShieldCheck className="h-4 w-4" />
+                  {t('clubs.status_explainer.verified.title')}
+                </div>
+                <p className="text-sm leading-6 text-zinc-300">{t('clubs.status_explainer.verified.body')}</p>
+              </div>
+              <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] p-4">
+                <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-amber-100">
+                  <Info className="h-4 w-4" />
+                  {t('clubs.status_explainer.public.title')}
+                </div>
+                <p className="text-sm leading-6 text-zinc-300">{t('clubs.status_explainer.public.body')}</p>
+              </div>
             </motion.div>
           </motion.div>
         </div>

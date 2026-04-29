@@ -17,24 +17,24 @@ export async function generateMetadata({ params }: ClubsPageProps): Promise<Meta
   }
   const metadataByLocale: Record<string, { title: string; description: string }> = {
     es: {
-      title: 'Perfiles Verificados de Cannabis Social Clubs | SocialClubsMaps',
+      title: 'Club Directory | SocialClubsMaps',
       description:
-        'Explora la capa pública verificada que SCM publica hoy, empezando por Barcelona y por los detalles de acceso que podemos respaldar.',
+        'Compare verified profiles and clearly labeled public listings before you make plans. Educational only; no cannabis sales, transaction brokering, or guaranteed club acceptance.',
     },
     en: {
-      title: 'Verified Cannabis Social Clubs in Spain | SocialClubsMaps',
+      title: 'Club Directory | SocialClubsMaps',
       description:
-        'Browse SCM’s verified public club profile layer, starting with Barcelona. Learn trust signals, safety context, and what to check before relying on a club.',
+        'Compare verified profiles and clearly labeled public listings before you make plans. Educational only; no cannabis sales, transaction brokering, or guaranteed club acceptance.',
     },
     fr: {
-      title: 'Profils Vérifiés de Cannabis Social Clubs | SocialClubsMaps',
+      title: 'Club Directory | SocialClubsMaps',
       description:
-        'Parcourez la couche publique vérifiée que SCM publie aujourd hui, en commençant par Barcelone et par les signaux de confiance que nous pouvons défendre.',
+        'Compare verified profiles and clearly labeled public listings before you make plans. Educational only; no cannabis sales, transaction brokering, or guaranteed club acceptance.',
     },
     de: {
-      title: 'Verifizierte Cannabis Social Club Profile | SocialClubsMaps',
+      title: 'Club Directory | SocialClubsMaps',
       description:
-        'Sieh dir die verifizierte öffentliche Profilebene an, die SCM heute veröffentlicht, beginnend mit Barcelona und den Vertrauenssignalen, die wir belegen können.',
+        'Compare verified profiles and clearly labeled public listings before you make plans. Educational only; no cannabis sales, transaction brokering, or guaranteed club acceptance.',
     },
   };
   const metadata = metadataByLocale[lang] ?? metadataByLocale.en;
@@ -49,8 +49,8 @@ export async function generateMetadata({ params }: ClubsPageProps): Promise<Meta
       'CSC Spain',
       'Madrid cannabis clubs',
       'Barcelona cannabis clubs',
-      'find cannabis clubs',
-      'marijuana clubs Spain',
+      'cannabis social club profiles',
+      'public club listings Spain',
     ],
   });
 }

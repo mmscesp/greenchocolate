@@ -1,21 +1,24 @@
 import { getClubs } from '@/app/actions/clubs';
 import { JsonLd } from '@/components/JsonLd';
 import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildItemListJsonLd } from '@/lib/seo';
+import { sanitizePublicLocationText } from '@/lib/public-club-safety';
 import ClubsPageClient from './ClubsPageClient';
 
 export default async function ClubsPageWrapper({ lang }: { lang: string }) {
   const clubs = await getClubs();
-  const neighborhoods = Array.from(new Set(clubs.map((club) => club.neighborhood))).sort((a, b) => a.localeCompare(b));
+  const neighborhoods = Array.from(
+    new Set(clubs.map((club) => sanitizePublicLocationText(club.neighborhood)).filter((value): value is string => Boolean(value)))
+  ).sort((a, b) => a.localeCompare(b));
   const amenities = Array.from(new Set(clubs.flatMap((club) => club.amenities))).sort((a, b) => a.localeCompare(b));
   const vibes = Array.from(new Set(clubs.flatMap((club) => club.vibeTags))).sort((a, b) => a.localeCompare(b));
   const collectionJsonLd = buildCollectionPageJsonLd({
-    name: 'Verified Cannabis Social Clubs in Spain',
-    description: 'SCM verified public club profiles with safety context and trust signals.',
+    name: 'Club Directory',
+    description: 'Compare verified profiles and clearly labeled public listings before you make plans.',
     path: `/${lang}/clubs`,
   });
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: 'Home', path: `/${lang}` },
-    { name: 'Verified Clubs', path: `/${lang}/clubs` },
+    { name: 'Club Directory', path: `/${lang}/clubs` },
   ]);
   const itemListJsonLd = buildItemListJsonLd(
     clubs.slice(0, 12).map((club) => ({

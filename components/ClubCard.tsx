@@ -13,7 +13,7 @@ import { EditorialHeading } from './landing/editorial-concierge/typography/Edito
 import { ConciergeLabel } from './landing/editorial-concierge/typography/ConciergeLabel';
 import { cn } from '@/lib/utils';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
-import { isVerifiedClubStatus } from '@/lib/club-verification';
+import { getCardLocationLabel, getClubStatusLabel, sanitizePublicClubCopy } from '@/lib/public-club-safety';
 
 type ClubCardEntity = ClubModel | ClubCardData;
 
@@ -28,11 +28,16 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
   const clubCitySlug = 'citySlug' in club ? club.citySlug : null;
   const clubDistrict = 'district' in club ? club.district : undefined;
   const clubVerificationStatus = 'verificationStatus' in club ? club.verificationStatus : undefined;
-  const isVerifiedProfile = club.isVerified || isVerifiedClubStatus(clubVerificationStatus);
-  const statusBadgeLabel = isVerifiedProfile ? t('clubs.card.status_verified') : t('clubs.card.status_unverified');
+  const isVerifiedProfile = getClubStatusLabel({ isVerified: club.isVerified, verificationStatus: clubVerificationStatus }) === 'Verified Profile';
+  const statusBadgeLabel = getClubStatusLabel({ isVerified: club.isVerified, verificationStatus: clubVerificationStatus });
+  const locationLabel = getCardLocationLabel({
+    neighborhood: club.neighborhood,
+    cityName: 'cityName' in club ? club.cityName : 'Barcelona',
+  });
+  const safeDescription = sanitizePublicClubCopy(club.description, locationLabel ?? 'Barcelona');
   const visibleVibeTags = club.vibeTags.filter((vibe) => {
     const normalized = vibe.toLowerCase();
-    return normalized !== 'public listing' && normalized !== 'unverified';
+    return normalized !== 'public listing' && normalized !== 'unverified' && !normalized.includes('tourist');
   });
   const mediaItems = buildClubMediaItems({
     slug: club.slug,
@@ -111,16 +116,18 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
               </EditorialHeading>
             </Link>
 
-            <div className="flex items-center gap-2">
-              <MapPin className="h-3 w-3 text-brand/70" />
-              <ConciergeLabel size="xs" emphasis="medium" className="text-zinc-400 font-sans tracking-widest text-[10px] sm:text-[11px]">
-                {club.neighborhood}
-              </ConciergeLabel>
-            </div>
+            {locationLabel ? (
+              <div className="flex items-center gap-2">
+                <MapPin className="h-3 w-3 text-brand/70" />
+                <ConciergeLabel size="xs" emphasis="medium" className="text-zinc-400 font-sans tracking-widest text-[10px] sm:text-[11px]">
+                  {locationLabel}
+                </ConciergeLabel>
+              </div>
+            ) : null}
           </div>
 
           {/* Description */}
-          <p className="text-zinc-400 text-xs sm:text-sm mb-6 line-clamp-2 leading-relaxed font-serif italic opacity-80">{club.description}</p>
+          <p className="text-zinc-400 text-xs sm:text-sm mb-6 line-clamp-2 leading-relaxed font-serif italic opacity-80">{safeDescription}</p>
 
           {visibleVibeTags.length > 0 ? (
             <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">

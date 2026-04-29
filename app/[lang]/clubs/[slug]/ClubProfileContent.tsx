@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ImageGallery, type CircularGalleryImage } from '@/components/ui/carousel-circular-image-gallery';
-import VerificationBadge from '@/components/VerificationBadge';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Club } from '@/lib/types';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
@@ -22,7 +21,6 @@ import {
   ArrowLeft,
   Check,
   Shield,
-  Cannabis,
 } from '@/lib/icons';
 
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
@@ -30,6 +28,12 @@ import { ConciergeLabel } from '@/components/landing/editorial-concierge/typogra
 import { FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-concierge/motion/config';
 import MembershipApplicationModal from '@/components/clubs/MembershipApplicationModal';
 import ClubVideoTour from '@/components/clubs/ClubVideoTour';
+import {
+  getClubStatusDescription,
+  getClubStatusLabel,
+  getProfileLocationLabel,
+  sanitizePublicClubCopy,
+} from '@/lib/public-club-safety';
 
 /* ------------------------------------------------------------------ */
 /* MAIN COMPONENT                                                     */
@@ -71,6 +75,14 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const primaryActionLabel = acceptsApplications
     ? t('club_profile.apply_for_membership')
     : t('club_profile.apply_unavailable');
+  const statusLabel = getClubStatusLabel(club);
+  const statusDescription = getClubStatusDescription(club);
+  const profileLocation = getProfileLocationLabel({ neighborhood: club.neighborhood, cityName: 'Barcelona' });
+  const profileDescription = sanitizePublicClubCopy(
+    t(`clubs.${club.slug}.description`) !== `clubs.${club.slug}.description` ? t(`clubs.${club.slug}.description`) : club.description,
+    profileLocation
+  );
+  const safeVibeTags = club.vibeTags.filter((vibe) => !vibe.toLowerCase().includes('tourist'));
   
   // Format images for the new circular GSAP carousel - ONLY IMAGES
   const carouselImages: CircularGalleryImage[] = imagesOnly.map((item, index) => ({
@@ -161,9 +173,11 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                 
                 <div className="relative z-10">
                   <div className="mb-6 flex flex-wrap items-center gap-3">
-                    <VerificationBadge isVerified={club.isVerified} size="lg" />
+                    <span className="rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand">
+                      {statusLabel}
+                    </span>
                     <span className="rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand">
-                      {club.neighborhood}
+                      {profileLocation}
                     </span>
                     {club.rating && (
                       <span className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
@@ -192,6 +206,9 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                       {t('club_profile.membership_application')}
                     </span>
                   </div>
+                  <p className="mt-4 max-w-2xl text-xs leading-6 text-zinc-500">
+                    {statusDescription} {t('club_profile.no_acceptance_guarantee')}
+                  </p>
                 </div>
               </motion.div>
             </motion.div>
@@ -207,11 +224,11 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
               </div>
               
               <p className="text-lg md:text-xl leading-relaxed text-zinc-300 font-serif italic text-pretty whitespace-pre-line">
-                "{t(`clubs.${club.slug}.description`) !== `clubs.${club.slug}.description` ? t(`clubs.${club.slug}.description`) : club.description}"
+                "{profileDescription}"
               </p>
 
               <div className="mt-8 flex flex-wrap gap-2">
-                {club.vibeTags.map((vibe, index) => (
+                {safeVibeTags.map((vibe, index) => (
                   <span
                     key={index}
                     className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -272,7 +289,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
               {/* Box 1: Club Stats */}
               <div className={`${glassCardClass} p-8 overflow-hidden group`}>
                 <div className="absolute -right-6 -top-6 p-8 opacity-5 transition-transform duration-700 group-hover:rotate-12 group-hover:scale-110 pointer-events-none">
-                  <Cannabis className="h-40 w-40" />
+                  <Shield className="h-40 w-40" />
                 </div>
                 <div className="relative z-10">
                   <h3 className="mb-8 text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">
@@ -288,10 +305,6 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                     <div>
                       <div className="mb-1.5 text-[9px] font-bold uppercase tracking-widest text-brand">{t('club_profile.founded')}</div>
                       <div className="text-2xl font-serif text-white">{club.foundedYear}</div>
-                    </div>
-                    <div>
-                      <div className="mb-1.5 text-[9px] font-bold uppercase tracking-widest text-brand">{t('club_profile.price_range')}</div>
-                      <div className="text-xl tracking-[0.2em] text-white font-mono">{club.priceRange}</div>
                     </div>
                   </div>
                 </div>

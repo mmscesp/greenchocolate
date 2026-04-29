@@ -200,7 +200,7 @@ export function buildItemListJsonLd(items: Array<{ name: string; path: string; d
 export function buildSiteNavigationJsonLd(locale: Locale) {
   const navItems = [
     { name: 'Safety Kit', path: `/${locale}/safety-kit` },
-    { name: 'Verified Clubs', path: `/${locale}/clubs` },
+    { name: 'Directory', path: `/${locale}/clubs` },
     { name: 'Barcelona Guide', path: `/${locale}/spain/barcelona` },
     { name: 'Legal Guides', path: `/${locale}/editorial/legal` },
     { name: 'Verification Standard', path: `/${locale}/verification` },

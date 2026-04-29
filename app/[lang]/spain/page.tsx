@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
   const descriptions: Record<string, string> = {
     es: 'Explora cannabis social clubs en las principales ciudades de España. Barcelona, Madrid, Valencia, Sevilla, Málaga. Directorio verificado con información actualizada.',
-    en: 'Explore cannabis social clubs in major Spanish cities. Barcelona, Madrid, Valencia, Seville, Málaga. Verified directory with up-to-date information.',
+    en: 'Explore cannabis social club profiles in major Spanish cities. Compare verified profiles and clearly labeled public listings before you make plans.',
     fr: 'Explorez les clubs sociaux cannabis dans les grandes villes espagnoles. Barcelone, Madrid, Valence, Séville, Málaga. Annuaire vérifié avec informations actualisées.',
     de: 'Erkunden Sie Cannabis-Social-Clubs in großen spanischen Städten. Barcelona, Madrid, Valencia, Sevilla, Málaga. Verifiziertes Verzeichnis mit aktuellen Informationen.',
   };

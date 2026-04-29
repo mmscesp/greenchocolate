@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import type { Club } from '@/lib/types';
 import { getClubPrimaryMediaImage, type ClubMediaItem } from '@/lib/club-media';
 import { getClubStatusDescription, getClubStatusLabel } from '@/lib/club-verification';
+import { getProfileLocationLabel, sanitizePublicClubCopy, sanitizePublicLocationText } from '@/lib/public-club-safety';
 import { Shield, MapPin, AlertTriangle, ClipboardCheck, ArrowRight } from '@/lib/icons';
 
 interface UnverifiedClubProfileContentProps {
@@ -183,6 +184,10 @@ export default function UnverifiedClubProfileContent({
   const heroImage = getClubPrimaryMediaImage(mediaItems);
   const statusLabel = getClubStatusLabel(club.verificationStatus);
   const statusDescription = getClubStatusDescription(club.verificationStatus);
+  const safeNeighborhood = sanitizePublicLocationText(club.neighborhood);
+  const safeDistrict = sanitizePublicLocationText(club.district);
+  const profileLocation = getProfileLocationLabel({ neighborhood: club.neighborhood, cityName: c.cityName });
+  const profileDescription = sanitizePublicClubCopy(club.shortDescription || club.description, safeNeighborhood ?? c.cityName);
   const reviewedAt = club.publicDataReviewedAt
     ? new Intl.DateTimeFormat(localeMap[locale], { month: 'long', year: 'numeric' }).format(club.publicDataReviewedAt)
     : c.pendingReview;
@@ -193,7 +198,7 @@ export default function UnverifiedClubProfileContent({
         <div className="absolute inset-0">
           <Image
             src={heroImage}
-            alt={c.heroAlt.replace('{{neighborhood}}', club.neighborhood)}
+            alt={c.heroAlt.replace('{{neighborhood}}', safeNeighborhood ?? c.cityName)}
             fill
             priority
             sizes="100vw"
@@ -212,15 +217,15 @@ export default function UnverifiedClubProfileContent({
             <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-zinc-300">
               <span className="inline-flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-brand" />
-                {club.neighborhood}, {c.cityName}
+                {profileLocation}
               </span>
-              {club.district ? <span className="text-zinc-500">/ {club.district}</span> : null}
+              {safeDistrict ? <span className="text-zinc-500">/ {safeDistrict}</span> : null}
             </div>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-amber-100/80">
               {statusDescription}
             </p>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-300">
-              {club.shortDescription || club.description}
+              {profileDescription}
             </p>
           </div>
         </div>
@@ -239,7 +244,7 @@ export default function UnverifiedClubProfileContent({
             <dl className="mt-6 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-bg-base/60 p-4">
                 <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">{c.neighborhoodLabel}</dt>
-                <dd className="mt-2 font-medium text-white">{club.neighborhood}</dd>
+                <dd className="mt-2 font-medium text-white">{safeNeighborhood ?? profileLocation}</dd>
               </div>
               <div className="rounded-2xl border border-white/10 bg-bg-base/60 p-4">
                 <dt className="text-xs uppercase tracking-[0.18em] text-zinc-500">{c.publicDataReviewedLabel}</dt>

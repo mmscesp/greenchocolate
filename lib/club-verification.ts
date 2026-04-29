@@ -21,16 +21,15 @@ export function isPublicClubStatus(status?: string | null): boolean {
 export function getClubStatusLabel(status?: string | null): string {
   switch (status) {
     case 'FEATURED':
-      return 'Featured SCM verified';
     case 'SCM_VERIFIED':
-      return 'SCM verified';
+      return 'Verified Profile';
     case 'PENDING_REVIEW':
-      return 'Pending SCM review';
+      return 'Public Listing';
     case 'INACTIVE':
       return 'Inactive listing';
     case 'UNVERIFIED':
     default:
-      return 'Unverified public listing';
+      return 'Public Listing';
   }
 }
 
@@ -38,13 +37,13 @@ export function getClubStatusDescription(status?: string | null): string {
   switch (status) {
     case 'FEATURED':
     case 'SCM_VERIFIED':
-      return 'SCM has reviewed this club against its verification standard.';
+      return 'A profile that has passed SCM’s current trust checks. It is a trust signal, not a legal guarantee, commercial endorsement, or promise of access.';
     case 'PENDING_REVIEW':
-      return 'SCM has a public listing for this club, but the verification review is still in progress.';
+      return 'A public research listing that has not completed SCM’s on-site verification review. It is a starting point, not a recommendation or promise of access.';
     case 'INACTIVE':
       return 'This listing is not currently visible in public discovery surfaces.';
     case 'UNVERIFIED':
     default:
-      return 'This page is based on public information and has not completed the SCM verification review.';
+      return 'A public research listing that has not completed SCM’s on-site verification review. It is a starting point, not a recommendation or promise of access.';
   }
 }

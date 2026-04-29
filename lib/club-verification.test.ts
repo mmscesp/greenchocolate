@@ -25,7 +25,7 @@ describe('club verification helpers', () => {
   });
 
   it('returns safe labels and descriptions for unknown values', () => {
-    expect(getClubStatusLabel('NOT_A_REAL_STATUS')).toBe('Unverified public listing');
-    expect(getClubStatusDescription(undefined)).toContain('public information');
+    expect(getClubStatusLabel('NOT_A_REAL_STATUS')).toBe('Public Listing');
+    expect(getClubStatusDescription(undefined)).toContain('public research listing');
   });
 });

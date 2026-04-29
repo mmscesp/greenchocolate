@@ -36,6 +36,9 @@ export default function Footer() {
               <Logo href={withLocale('/')} size="md" showText={true} />
             </div>
             <p className="text-sm text-zinc-400 leading-relaxed mb-8 font-medium">{t('footer.new.description')}</p>
+            <p className="mb-8 rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-[11px] leading-5 text-zinc-500">
+              {t('footer.new.compliance')}
+            </p>
             <div className="flex items-center gap-4">
               {/* [motion] */}
               <motion.a

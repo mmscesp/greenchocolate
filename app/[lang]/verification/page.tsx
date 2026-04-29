@@ -58,7 +58,7 @@ const copy = {
     whyBody:
       'Verification is not a legal guarantee, a promise of entry, or a commercial endorsement. It is SCM’s public method for separating stronger trust signals from weak, noisy, or public-facing club behavior.',
     ctaPrimary: 'Get the Safety Kit',
-    ctaSecondary: 'Browse Verified Clubs',
+    ctaSecondary: 'Browse Directory',
     legalTitle: 'What SCM does not claim',
     legalBody:
       'SCM does not operate clubs, sell cannabis, guarantee outcomes, or replace legal advice. The goal is better public information, safer expectations, and a clearer way to understand the private association model.',
@@ -84,7 +84,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Verified Clubs' },
+      { href: '/clubs', label: 'Directory' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Legal Guides' },
       { href: '/mission', label: 'Mission' },
@@ -101,7 +101,7 @@ const copy = {
     whyBody:
       'La verificación no es una garantía legal, una promesa de entrada ni un respaldo comercial. Es el método público de SCM para separar señales de confianza sólidas de comportamientos débiles, ruidosos o demasiado públicos.',
     ctaPrimary: 'Consigue el Safety Kit',
-    ctaSecondary: 'Ver clubes verificados',
+    ctaSecondary: 'Ver directorio',
     legalTitle: 'Lo que SCM no afirma',
     legalBody:
       'SCM no opera clubes, no vende cannabis, no garantiza resultados y no sustituye el asesoramiento legal. El objetivo es ofrecer mejor información pública, expectativas más seguras y una forma más clara de entender el modelo de asociación privada.',
@@ -127,7 +127,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Clubes verificados' },
+      { href: '/clubs', label: 'Directorio' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Guías legales' },
       { href: '/mission', label: 'Misión' },
@@ -144,7 +144,7 @@ const copy = {
     whyBody:
       'La vérification n\'est ni une garantie juridique, ni une promesse d\'entrée, ni une recommandation commerciale. C\'est la méthode publique de SCM pour distinguer les signaux de confiance solides des comportements faibles, bruyants ou trop publics.',
     ctaPrimary: 'Obtenir le Safety Kit',
-    ctaSecondary: 'Voir les clubs vérifiés',
+    ctaSecondary: 'Voir le répertoire',
     legalTitle: 'Ce que SCM ne revendique pas',
     legalBody:
       'SCM n\'exploite pas de clubs, ne vend pas de cannabis, ne garantit pas de résultats et ne remplace pas un conseil juridique. L\'objectif est d\'offrir une meilleure information publique, des attentes plus sûres et une compréhension plus claire du modèle d\'association privée.',
@@ -170,7 +170,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Clubs vérifiés' },
+      { href: '/clubs', label: 'Répertoire' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Guides juridiques' },
       { href: '/mission', label: 'Mission' },
@@ -187,7 +187,7 @@ const copy = {
     whyBody:
       'Verifizierung ist keine Rechtsgarantie, kein Eintrittsversprechen und keine kommerzielle Empfehlung. Sie ist die öffentliche SCM-Methode, um starke Vertrauenssignale von schwachem, lautem oder zu öffentlichem Clubverhalten zu unterscheiden.',
     ctaPrimary: 'Safety Kit holen',
-    ctaSecondary: 'Verifizierte Clubs ansehen',
+    ctaSecondary: 'Verzeichnis ansehen',
     legalTitle: 'Was SCM nicht behauptet',
     legalBody:
       'SCM betreibt keine Clubs, verkauft kein Cannabis, garantiert keine Ergebnisse und ersetzt keine Rechtsberatung. Ziel sind bessere öffentliche Informationen, sicherere Erwartungen und ein klareres Verständnis des privaten Vereinsmodells.',
@@ -213,7 +213,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Verifizierte Clubs' },
+      { href: '/clubs', label: 'Verzeichnis' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Rechtsleitfäden' },
       { href: '/mission', label: 'Mission' },

@@ -29,7 +29,6 @@ interface LocalBusinessSchema {
     postalCode: string;
     addressCountry: string;
   };
-  priceRange: string;
   hasMap: string;
 }
 
@@ -81,7 +80,6 @@ export function LocalBusinessStructuredData({ schema }: { schema: LocalBusinessS
     url: schema.url,
     image: schema.image,
     address: schema.address,
-    priceRange: schema.priceRange,
     hasMap: schema.hasMap,
   };
 

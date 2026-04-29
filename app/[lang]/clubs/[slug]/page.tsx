@@ -12,6 +12,12 @@ import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 import { toAbsoluteHttpUrl } from '@/lib/url';
 import { buildLanguageAlternates, isLocale, toAbsoluteUrl } from '@/lib/seo';
+import {
+  getProfileLocationLabel,
+  sanitizePublicClubCopy,
+  getSafeStructuredDataForClub,
+  sanitizePublicLocationText,
+} from '@/lib/public-club-safety';
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -63,19 +69,27 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     verificationStatus: clubDetail.verificationStatus,
   });
   const primaryImage = getClubPrimaryMediaImage(mediaItems);
+  const safeNeighborhood = sanitizePublicLocationText(clubDetail.neighborhood);
+  const profileStatus = clubDetail.isVerified ? 'Verified Profile' : 'Public Listing';
+  const metadataFallbackLocation = safeNeighborhood ?? clubDetail.cityName ?? 'Barcelona';
+  const fallbackDescription = clubDetail.isVerified
+    ? `${clubDetail.name} is a Verified Profile on SocialClubsMaps. Verification is a trust signal, not a guarantee of access.`
+    : `${clubDetail.name} is a Public Listing on SocialClubsMaps. Use it as a research starting point before you make plans.`;
+  const safeDescription = sanitizePublicClubCopy(clubDetail.shortDescription || fallbackDescription, metadataFallbackLocation);
 
   return {
-    title: `${clubDetail.name} | ${clubDetail.neighborhood}`,
-    description: clubDetail.shortDescription || `Discover ${clubDetail.name} in ${clubDetail.neighborhood}`,
+    title: `${clubDetail.name} | ${profileStatus} | SocialClubsMaps`,
+    description: safeDescription,
     keywords: [
       `${clubDetail.name} cannabis social club`,
       `${clubDetail.cityName} cannabis club`,
-      'verified cannabis social club Spain',
-      'cannabis club membership Spain',
+      'cannabis social club profile Spain',
+      'cannabis social club research Spain',
+      ...(safeNeighborhood ? [`${safeNeighborhood} cannabis social club`] : []),
     ],
     openGraph: {
       title: `${clubDetail.name} | SocialClubsMaps`,
-      description: clubDetail.shortDescription || `Discover ${clubDetail.name} in ${clubDetail.neighborhood}`,
+      description: safeDescription,
       url: toAbsoluteUrl(`/${lang}/clubs/${clubDetail.slug}`),
       images: [primaryImage],
       type: 'website',
@@ -89,7 +103,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     twitter: {
       card: 'summary_large_image',
       title: `${clubDetail.name} | SocialClubsMaps`,
-      description: clubDetail.shortDescription || `Discover ${clubDetail.name} in ${clubDetail.neighborhood}`,
+      description: safeDescription,
       images: [primaryImage],
     },
   };
@@ -153,41 +167,26 @@ export default async function ClubPage({ params }: ClubPageProps) {
     capacity: clubDetail.capacity,
     foundedYear: clubDetail.foundedYear,
     cityId: '',
-    addressDisplay: hasFullAccess ? clubDetail.addressDisplay : clubDetail.neighborhood,
+    addressDisplay: hasFullAccess ? clubDetail.addressDisplay : getProfileLocationLabel(clubDetail),
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+  const jsonLd = getSafeStructuredDataForClub({
     name: club.name,
+    slug: club.slug,
     description: club.description,
+    shortDescription: club.shortDescription,
+    isVerified: club.isVerified,
+    verificationStatus: club.verificationStatus,
+    neighborhood: club.neighborhood,
+    cityName: clubDetail.cityName,
     image: primaryImage,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: club.neighborhood,
-      addressCountry: 'ES',
-    },
     url: toAbsoluteUrl(`/${lang}/clubs/${club.slug}`),
-    amenityFeature: club.amenities.map((amenity) => ({
-      '@type': 'LocationFeatureSpecification',
-      name: amenity,
-    })),
-    ...(hasFullAccess && club.coordinates
-      ? {
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: club.coordinates.lat,
-            longitude: club.coordinates.lng,
-          },
-        }
-      : {}),
-    ...(club.isVerified && club.website ? { sameAs: [toAbsoluteHttpUrl(club.website)] } : {}),
-    ...(club.isVerified && hasFullAccess && club.phoneNumber ? { telephone: club.phoneNumber } : {}),
-    ...(club.isVerified && hasFullAccess && club.contactEmail ? { email: club.contactEmail } : {}),
-  };
+    website: club.isVerified && club.website ? toAbsoluteHttpUrl(club.website) : undefined,
+    priceRange: club.priceRange,
+  });
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
