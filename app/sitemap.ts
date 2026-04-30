@@ -18,7 +18,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: number;
   }> = [
     { path: '', changeFrequency: 'daily', priority: 1.0 },
-    { path: '/clubs', changeFrequency: 'daily', priority: 0.9 },
     { path: '/spain', changeFrequency: 'weekly', priority: 0.85 },
     { path: '/spain/barcelona', changeFrequency: 'weekly', priority: 0.9 },
     { path: '/editorial', changeFrequency: 'weekly', priority: 0.85 },
@@ -93,7 +92,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     toLocalizedEntries(`/spain/${city.slug}/clubs`, 'weekly', 0.65)
   );
 
-  const clubRoutes: MetadataRoute.Sitemap = clubs.flatMap((club) => {
+  const indexableClubs = clubs.filter((club) =>
+    club.verificationStatus === 'FEATURED' || club.verificationStatus === 'SCM_VERIFIED' || club.isVerified
+  );
+
+  const clubRoutes: MetadataRoute.Sitemap = indexableClubs.flatMap((club) => {
     const priority = club.verificationStatus === 'FEATURED'
       ? 0.9
       : club.verificationStatus === 'SCM_VERIFIED'
@@ -112,14 +115,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  const eventRoutes: MetadataRoute.Sitemap = events.flatMap((event) =>
-    toLocalizedEntries(
-      `/events/${event.slug}`,
-      'weekly',
-      0.6,
-      event.startDate ? new Date(event.startDate) : now
-    )
-  );
+  const eventRoutes: MetadataRoute.Sitemap = events
+    .filter((event) => {
+      if (!event.endDate) {
+        return true;
+      }
+
+      return new Date(event.endDate).getTime() >= now.getTime();
+    })
+    .flatMap((event) =>
+      toLocalizedEntries(
+        `/events/${event.slug}`,
+        'weekly',
+        0.6,
+        event.startDate ? new Date(event.startDate) : now
+      )
+    );
 
   const allEntries = [
     ...staticRoutes,

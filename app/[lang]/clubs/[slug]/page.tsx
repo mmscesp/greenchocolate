@@ -11,7 +11,7 @@ import { type Locale } from '@/lib/i18n-config';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 import { toAbsoluteHttpUrl } from '@/lib/url';
-import { buildLanguageAlternates, isLocale, toAbsoluteUrl } from '@/lib/seo';
+import { buildLanguageAlternates, buildNoIndexFollowMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 import {
   getProfileLocationLabel,
   sanitizePublicClubCopy,
@@ -106,6 +106,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
       description: safeDescription,
       images: [primaryImage],
     },
+    ...(clubDetail.isVerified ? {} : buildNoIndexFollowMetadata()),
   };
 }
 
