@@ -68,6 +68,7 @@ export async function generateMetadata({
 
 export default async function EditorialPage({ params }: EditorialPageProps) {
   const { lang } = await params;
+  const locale = isLocale(lang) ? lang : 'en';
   const dictionary = await getDictionary(lang as Locale);
   const t = (key: string): string => (typeof dictionary[key] === 'string' ? dictionary[key] : key);
   const [featuredArticles, categories] = await Promise.all([
@@ -161,7 +162,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       <section className="relative min-h-[calc(100svh-2rem)] overflow-hidden border-b border-white/10">
         <div className="absolute inset-0">
           <Image
-            src="/images/editorial/spain-travel-guide.webp"
+            src="/images/cities/barcelona-city.webp"
             alt=""
             fill
             priority
@@ -173,15 +174,23 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-[calc(100svh-2rem)] max-w-7xl items-center px-4 pb-16 pt-28 sm:px-6 lg:px-8">
-          <div className="max-w-[48rem]">
+          <div className="max-w-[56rem]">
             <div className="mb-6 inline-flex items-center gap-3 text-brand">
               <BookOpen className="h-4 w-4" />
               <span className="text-xs font-black uppercase tracking-[0.28em]">{t('editorial.badge')}</span>
             </div>
-            <h1 className="font-serif text-[clamp(3.2rem,7vw,7.4rem)] font-black leading-[0.92] tracking-normal text-white">
-              {t('editorial.title_prefix')}{' '}
-              <span className="block text-brand">{t('editorial.title_highlight')}</span>
-            </h1>
+            {locale === 'en' ? (
+              <h1 className="font-serif text-[clamp(2rem,10vw,6rem)] font-black leading-[0.92] tracking-normal text-white">
+                <span className="block whitespace-nowrap">Navigate Spain&apos;s</span>
+                <span className="block whitespace-nowrap">Cannabis Culture</span>
+                <span className="block text-brand">{t('editorial.title_highlight')}</span>
+              </h1>
+            ) : (
+              <h1 className="max-w-[16ch] text-balance font-serif text-[clamp(2.5rem,6vw,6rem)] font-black leading-[0.92] tracking-normal text-white">
+                <span className="block">{t('editorial.title_prefix')}</span>
+                <span className="block text-brand">{t('editorial.title_highlight')}</span>
+              </h1>
+            )}
             <p className="mt-7 max-w-2xl text-base leading-7 text-white/72 md:text-lg">
               {t('editorial.subtitle')}
             </p>

@@ -282,12 +282,12 @@ export default async function VerificationPage({ params }: VerificationPageProps
         </div>
 
         <div className="relative z-10 mx-auto grid min-h-[calc(100svh-2rem)] max-w-7xl items-center gap-12 px-4 pb-16 pt-28 sm:px-6 lg:grid-cols-[1fr_0.78fr] lg:px-8">
-          <div className="max-w-[47rem]">
+          <div className="max-w-[56rem]">
             <div className="mb-6 inline-flex items-center gap-3 text-brand">
               <Shield className="h-4 w-4" />
               <span className="text-xs font-black uppercase tracking-[0.28em]">{c.eyebrow}</span>
             </div>
-            <h1 className="font-serif text-[clamp(3.15rem,6.6vw,7rem)] font-black leading-[0.92] tracking-normal text-white">
+            <h1 className="max-w-[16ch] text-balance font-serif text-[clamp(2.5rem,6vw,5.8rem)] font-black leading-[0.92] tracking-normal text-white">
               {c.title}
             </h1>
             <p className="mt-7 max-w-2xl text-base leading-7 text-white/72 md:text-lg">{c.lead}</p>
@@ -304,7 +304,7 @@ export default async function VerificationPage({ params }: VerificationPageProps
           </div>
 
           <div className="hidden lg:block">
-            <div className="border border-white/12 bg-bg-base/54 p-7 shadow-2xl shadow-black/30 backdrop-blur-xl">
+            <div className="rounded-3xl border border-white/12 bg-bg-base/54 p-7 shadow-2xl shadow-black/30 backdrop-blur-xl">
               <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-5">
                 <span className="text-xs font-black uppercase tracking-[0.28em] text-brand">SCM Standard</span>
                 <Shield className="h-5 w-5 text-brand" />
@@ -326,7 +326,7 @@ export default async function VerificationPage({ params }: VerificationPageProps
         </section>
 
       <main className="relative z-10 mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <section className="grid gap-px overflow-hidden border-b border-white/10 bg-white/10 md:grid-cols-2">
+        <section className="grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-2">
           {c.pillars.map((pillar, index) => {
             const Icon = pillarIcons[index] ?? FileSearch;
             return (
@@ -344,7 +344,7 @@ export default async function VerificationPage({ params }: VerificationPageProps
           })}
         </section>
 
-        <section className="grid gap-px overflow-hidden border-b border-white/10 bg-white/10 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="mt-10 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="bg-bg-base p-8 md:p-12">
             <H2 className="mb-4 font-serif text-white">{c.whyTitle}</H2>
             <Text className="text-zinc-300">{c.whyBody}</Text>
@@ -360,7 +360,7 @@ export default async function VerificationPage({ params }: VerificationPageProps
 
         <section className="py-16 md:py-24">
           <H2 className="mb-6 font-serif text-white">{c.linksTitle}</H2>
-          <div className="grid gap-px overflow-hidden border-y border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
             {c.trustLinks.map((item) => (
               <Link
                 key={item.href}
