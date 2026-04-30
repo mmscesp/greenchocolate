@@ -224,7 +224,7 @@ export default function Navbar() {
               <Link href={withLocale('/spain/barcelona')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.barcelona')}
               </Link>
-              <Link href={withLocale('/clubs')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+              <Link href={withLocale('/spain/barcelona/clubs')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.clubs_directory')}
               </Link>
               <Link href={withLocale('/editorial')} onClick={closeMobileMenu} className="hover:text-white transition-colors">

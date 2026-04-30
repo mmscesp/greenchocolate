@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -21,23 +22,36 @@ import { PulsingStatusDot } from '@/components/landing/editorial-concierge/inter
 import { FADE_UP, STAGGER_CONTAINER, PREMIUM_SPRING } from '@/components/landing/editorial-concierge/motion/config';
 import { cn } from '@/lib/utils';
 
+const INITIAL_VISIBLE_CLUBS = 6;
+const VISIBLE_CLUB_INCREMENT = 6;
+
 interface ClubsPageClientProps {
   initialClubs: ClubCardType[];
   neighborhoods: string[];
   amenities: string[];
   vibes: string[];
+  cityContext?: {
+    cityName: string;
+    citySlug: string;
+    backHref: string;
+    backLabel: string;
+    title: string;
+    subtitle: string;
+  };
 }
 
 export default function ClubsPageClient({ 
   initialClubs, 
   neighborhoods, 
   amenities, 
-  vibes 
+  vibes,
+  cityContext,
 }: ClubsPageClientProps) {
   const { t, language } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   const [clubs, setClubs] = useState<ClubCardType[]>(initialClubs);
+  const [visibleClubCount, setVisibleClubCount] = useState(INITIAL_VISIBLE_CLUBS);
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState<FilterOptions>({
     neighborhood: '',
@@ -51,9 +65,11 @@ export default function ClubsPageClient({
   // Fetch clubs when filters change
   const handleFiltersChange = useCallback(async (newFilters: FilterOptions) => {
     setFilters(newFilters);
+    setVisibleClubCount(INITIAL_VISIBLE_CLUBS);
     setLoading(true);
     try {
       const result = await getClubs({
+        citySlug: cityContext?.citySlug,
         neighborhood: newFilters.neighborhood || undefined,
         amenities: newFilters.amenities.length > 0 ? newFilters.amenities : undefined,
         vibes: newFilters.vibes.length > 0 ? newFilters.vibes : undefined,
@@ -66,24 +82,52 @@ export default function ClubsPageClient({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [cityContext?.citySlug]);
+
+  const pageSubtitle = cityContext?.subtitle ?? t('clubs.subtitle');
+  const visibleClubs = clubs.slice(0, visibleClubCount);
+  const hasMoreClubs = visibleClubCount < clubs.length;
 
   return (
     <div className="min-h-screen bg-bg-base font-sans selection:bg-brand/30 selection:text-white">
       {/* JSON-LD Structured Data */}
       <CollectionPageStructuredData
         schema={{
-          name: t('clubs.title'),
-          description: t('clubs.subtitle'),
-          url: toAbsoluteUrl(`/${language}/clubs`),
+          name: cityContext?.title ?? t('clubs.title'),
+          description: pageSubtitle,
+          url: toAbsoluteUrl(cityContext ? `/${language}/spain/${cityContext.citySlug}/clubs` : `/${language}/clubs`),
           numberOfItems: clubs.length,
         }}
       />
 
       {/* Hero Header */}
-      <SectionWrapper dark className="pt-24 pb-16 sm:pt-32 sm:pb-20 relative overflow-hidden bg-bg-base backdrop-blur-none">
+      <SectionWrapper
+        dark
+        className={cn(
+          'relative overflow-hidden bg-bg-base backdrop-blur-none',
+          cityContext
+            ? 'flex min-h-[760px] items-center pt-28 pb-24 sm:min-h-[820px] sm:pt-36 sm:pb-28'
+            : 'pt-24 pb-16 sm:pt-32 sm:pb-20'
+        )}
+      >
         {/* Background Gradients */}
-        <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,rgba(0,205,200,0.08),transparent_45%)]" />
+        {cityContext ? (
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/BarcelonaMapBG.webp"
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover opacity-76 saturate-125 contrast-110"
+              style={{ objectPosition: 'center center' }}
+            />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_28%,rgba(0,203,204,0.24),transparent_32%),linear-gradient(180deg,rgba(2,10,14,0.58)_0%,rgba(2,10,14,0.78)_62%,hsl(var(--bg-base))_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,10,14,0.88)_0%,rgba(2,10,14,0.62)_48%,rgba(2,10,14,0.34)_100%)]" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,rgba(0,205,200,0.08),transparent_45%)]" />
+        )}
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
           <motion.div
@@ -97,22 +141,41 @@ export default function ClubsPageClient({
               <div className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-6 sm:py-2.5 bg-brand/10 border border-brand/20 rounded-full backdrop-blur-md">
                 <PulsingStatusDot />
                 <ConciergeLabel size="xs" className="text-brand tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">
-                  {t('clubs.verified_directory')}
+                  {cityContext ? t('city_clubs.label') : t('clubs.verified_directory')}
                 </ConciergeLabel>
               </div>
             </motion.div>
 
+            {cityContext ? (
+              <motion.div variants={FADE_UP} className="mb-6 flex justify-center">
+                <Link
+                  href={cityContext.backHref}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.04] px-5 text-sm font-semibold text-zinc-200 transition-colors hover:border-brand/40 hover:bg-brand/10 hover:text-white"
+                >
+                  {cityContext.backLabel}
+                </Link>
+              </motion.div>
+            ) : null}
+
             {/* Main Title */}
             <motion.div variants={FADE_UP}>
               <EditorialHeading as="h1" size="hero" className="text-white mb-6 sm:mb-10">
-                {t('clubs.hero.title_prefix')} <span className="text-brand italic font-serif">{t('clubs.hero.title_highlight')}</span> {t('clubs.hero.title_suffix')}
+                {cityContext ? (
+                  <>
+                    {cityContext.cityName} <span className="text-brand italic font-serif">{t('city_clubs.hero_highlight')}</span>
+                  </>
+                ) : (
+                  <>
+                    {t('clubs.hero.title_prefix')} <span className="text-brand italic font-serif">{t('clubs.hero.title_highlight')}</span> {t('clubs.hero.title_suffix')}
+                  </>
+                )}
               </EditorialHeading>
             </motion.div>
 
             {/* Subtitle */}
             <motion.div variants={FADE_UP}>
               <p className="text-zinc-400 text-lg md:text-2xl max-w-3xl mx-auto leading-relaxed font-serif italic px-2 sm:px-0">
-                "{t('clubs.subtitle')}"
+                "{pageSubtitle}"
               </p>
             </motion.div>
 
@@ -242,31 +305,61 @@ export default function ClubsPageClient({
                   ))}
                 </div>
               ) : clubs.length > 0 ? (
-                // [motion]
-                <motion.div
-                  variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-                >
-                  {clubs.map((club, index) => (
-                    // [motion]
-                    <motion.div
-                      key={club.id}
-                      variants={{
-                        hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
-                        show: {
-                          opacity: 1,
-                          y: 0,
-                          transition: { duration: 0.45, ease: 'easeOut', delay: (index % 3) * 0.02 },
-                        },
-                      }}
-                    >
-                      <ClubCard club={club} />
-                    </motion.div>
-                  ))}
-                </motion.div>
+                <>
+                  <div className="mb-6 flex flex-col gap-2 px-1 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
+                    <p>
+                      {t('city_clubs.showing_count')
+                        .replaceAll('{{visible}}', String(visibleClubs.length))
+                        .replaceAll('{{total}}', String(clubs.length))}
+                    </p>
+                    {cityContext ? (
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand/80">
+                        {t('city_clubs.scope_note')}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  {/* [motion] */}
+                  <motion.div
+                    variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+                  >
+                    {visibleClubs.map((club, index) => (
+                      // [motion]
+                      <motion.div
+                        key={club.id}
+                        variants={{
+                          hidden: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 },
+                          show: {
+                            opacity: 1,
+                            y: 0,
+                            transition: { duration: 0.45, ease: 'easeOut', delay: (index % 3) * 0.02 },
+                          },
+                        }}
+                      >
+                        <ClubCard club={club} />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+
+                  {hasMoreClubs ? (
+                    <div className="mt-12 flex justify-center">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="lg"
+                        onClick={() => setVisibleClubCount((count) => Math.min(count + VISIBLE_CLUB_INCREMENT, clubs.length))}
+                        className="h-14 rounded-full border border-brand/25 bg-brand/[0.08] px-8 text-sm font-black uppercase tracking-[0.18em] text-brand hover:bg-brand hover:text-black"
+                      >
+                        {t('city_clubs.view_more_profiles')}
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : null}
+                </>
               ) : (
                 <div className="bg-bg-base rounded-[2rem] sm:rounded-[3rem] border border-white/5 p-8 sm:p-20 text-center max-w-4xl mx-auto">
                   <div className="w-16 h-16 sm:w-24 sm:h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 border border-white/5">

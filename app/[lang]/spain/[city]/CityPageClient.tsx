@@ -135,11 +135,11 @@ export default function CityPageClient({
               fill
               priority
               sizes="100vw"
-              className="object-cover opacity-72"
+              className="object-cover opacity-88 saturate-125 contrast-110"
               style={{ objectPosition: 'center center' }}
             />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_32%,rgba(0,203,204,0.2),transparent_28%),linear-gradient(90deg,hsl(var(--bg-base))_0%,rgba(2,10,14,0.92)_38%,rgba(2,10,14,0.62)_100%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,10,14,0.12)_0%,hsl(var(--bg-base))_100%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_32%,rgba(0,203,204,0.28),transparent_30%),linear-gradient(90deg,hsl(var(--bg-base))_0%,rgba(2,10,14,0.84)_36%,rgba(2,10,14,0.42)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,10,14,0.04)_0%,rgba(2,10,14,0.28)_52%,hsl(var(--bg-base))_100%)]" />
           </div>
 
           <div className="relative mx-auto flex min-h-[calc(100svh-7rem)] max-w-7xl items-center px-4 pb-14 sm:px-6 lg:px-8">

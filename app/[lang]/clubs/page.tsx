@@ -1,5 +1,5 @@
-import ClubsPageWrapper from './ClubsPageWrapper';
 import { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { isLocale } from '@/lib/i18n-config';
 
@@ -57,5 +57,5 @@ export async function generateMetadata({ params }: ClubsPageProps): Promise<Meta
 
 export default async function ClubsPage({ params }: ClubsPageProps) {
   const { lang } = await params;
-  return <ClubsPageWrapper lang={lang} />;
+  redirect(`/${lang}/spain/barcelona/clubs`);
 }

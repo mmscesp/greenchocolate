@@ -23,7 +23,7 @@ export const desktopPrimaryItems: DesktopPrimaryItem[] = [
     labelKey: 'nav.barcelona',
   },
   {
-    href: '/clubs',
+    href: '/spain/barcelona/clubs',
     labelKey: 'nav.clubs_directory',
   },
   {
@@ -47,6 +47,9 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
   const withLocale = (path: string) => `/${language}${path}`;
   const isActiveRoute = (path: string) => {
     const localized = withLocale(path);
+    if (path === '/spain/barcelona') {
+      return pathname === localized;
+    }
     return pathname === localized || pathname.startsWith(`${localized}/`);
   };
   const triggerClassName = tone === 'light'
