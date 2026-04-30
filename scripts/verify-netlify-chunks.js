@@ -8,7 +8,7 @@ function readArg(name, fallback) {
   return hit ? hit.slice(prefix.length) : fallback;
 }
 
-const siteUrl = readArg('url', process.env.SITE_URL || 'https://socialclubsmaps.netlify.app').replace(/\/$/, '');
+const siteUrl = readArg('url', process.env.SITE_URL || 'https://socialclubsmaps.com').replace(/\/$/, '');
 const route = readArg('route', process.env.SITE_ROUTE || '/en');
 
 async function requestWithFallback(path) {

@@ -9,12 +9,6 @@ NEXT_TELEMETRY_DISABLED = "1"
 SECRETS_SCAN_OMIT_KEYS = "BREVO_SENDER_NAME,RESEND_SENDER_NAME"
 
 [[redirects]]
-from = "https://socialclubsmaps.netlify.app/*"
-to = "https://www.socialclubsmaps.com/:splat"
-status = 301
-force = true
-
-[[redirects]]
 from = "https://socialclubsmaps.com/*"
 to = "https://www.socialclubsmaps.com/:splat"
 status = 301
