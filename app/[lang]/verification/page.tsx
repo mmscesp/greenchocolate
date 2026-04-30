@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { JsonLd } from '@/components/JsonLd';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { H1, H2, H3, Lead, Text, Eyebrow } from '@/components/typography';
-import { ArrowRight, Building2, CheckCircle2, FileSearch, LockKey, Scale, Shield } from '@/lib/icons';
+import { H2, H3, Text } from '@/components/typography';
+import { ArrowRight, Building2, CheckCircle2, FileSearch, LockKey, Scale, Shield, ShieldAlert } from '@/lib/icons';
 import type { Locale } from '@/lib/i18n-config';
 import {
   buildBreadcrumbJsonLd,
@@ -58,7 +59,7 @@ const copy = {
     whyBody:
       'Verification is not a legal guarantee, a promise of entry, or a commercial endorsement. It is SCM’s public method for separating stronger trust signals from weak, noisy, or public-facing club behavior.',
     ctaPrimary: 'Get the Safety Kit',
-    ctaSecondary: 'Browse Directory',
+    ctaSecondary: 'Compare Barcelona Profiles',
     legalTitle: 'What SCM does not claim',
     legalBody:
       'SCM does not operate clubs, sell cannabis, guarantee outcomes, or replace legal advice. The goal is better public information, safer expectations, and a clearer way to understand the private association model.',
@@ -84,7 +85,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Directory' },
+      { href: '/spain/barcelona/clubs', label: 'Barcelona Directory' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Legal Guides' },
       { href: '/mission', label: 'Mission' },
@@ -127,7 +128,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Directorio' },
+      { href: '/spain/barcelona/clubs', label: 'Directorio Barcelona' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Guías legales' },
       { href: '/mission', label: 'Misión' },
@@ -170,7 +171,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Répertoire' },
+      { href: '/spain/barcelona/clubs', label: 'Répertoire Barcelone' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Guides juridiques' },
       { href: '/mission', label: 'Mission' },
@@ -213,7 +214,7 @@ const copy = {
       },
     ],
     trustLinks: [
-      { href: '/clubs', label: 'Verzeichnis' },
+      { href: '/spain/barcelona/clubs', label: 'Barcelona-Verzeichnis' },
       { href: '/safety-kit', label: 'Safety Kit' },
       { href: '/editorial/legal', label: 'Rechtsleitfäden' },
       { href: '/mission', label: 'Mission' },
@@ -262,44 +263,79 @@ export default async function VerificationPage({ params }: VerificationPageProps
   };
 
   return (
-    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-bg-base text-white">
       <JsonLd data={webPageJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
-      <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/50 via-bg-base to-bg-base pointer-events-none" />
-      <div className="absolute left-[10%] top-0 h-[520px] w-[520px] rounded-full bg-brand/10 blur-[140px]" />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-4 pb-24 pt-28 sm:px-6 lg:px-8 md:pt-36">
-        <section className="mx-auto max-w-4xl text-center">
-          <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-brand">
-            <Shield className="h-4 w-4" />
-            {c.eyebrow}
-          </Eyebrow>
-          <H1 size="xl" className="mb-6 font-serif text-white">
-            {c.title}
-          </H1>
-          <Lead className="mx-auto max-w-3xl text-zinc-300">{c.lead}</Lead>
-          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-            <Button asChild className="rounded-full bg-brand px-8 py-6 font-bold text-bg-base hover:bg-brand-dark">
-              <Link href={`${basePath}/safety-kit`}>
-                {c.ctaPrimary} <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="secondary" className="rounded-full border-white/10 px-8 py-6 text-white hover:bg-white/5">
-              <Link href={`${basePath}/clubs`}>{c.ctaSecondary}</Link>
-            </Button>
+      <section className="relative min-h-[calc(100svh-2rem)] overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/cards/onsitevetting.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-58 saturate-125 contrast-110"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--bg-base))_0%,rgba(2,10,14,0.9)_42%,rgba(2,10,14,0.56)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_30%,rgba(0,203,204,0.24),transparent_30%),linear-gradient(180deg,rgba(2,10,14,0.04)_0%,hsl(var(--bg-base))_100%)]" />
+        </div>
+
+        <div className="relative z-10 mx-auto grid min-h-[calc(100svh-2rem)] max-w-7xl items-center gap-12 px-4 pb-16 pt-28 sm:px-6 lg:grid-cols-[1fr_0.78fr] lg:px-8">
+          <div className="max-w-[47rem]">
+            <div className="mb-6 inline-flex items-center gap-3 text-brand">
+              <Shield className="h-4 w-4" />
+              <span className="text-xs font-black uppercase tracking-[0.28em]">{c.eyebrow}</span>
+            </div>
+            <h1 className="font-serif text-[clamp(3.15rem,6.6vw,7rem)] font-black leading-[0.92] tracking-normal text-white">
+              {c.title}
+            </h1>
+            <p className="mt-7 max-w-2xl text-base leading-7 text-white/72 md:text-lg">{c.lead}</p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg" className="rounded-full bg-brand px-7 text-sm font-black uppercase tracking-[0.14em] text-bg-base hover:bg-brand-dark">
+                <Link href={`${basePath}/safety-kit`}>
+                  {c.ctaPrimary} <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="secondary" className="rounded-full border-white/15 bg-white/5 px-7 text-sm font-bold text-white hover:border-brand/50 hover:bg-white/10">
+                <Link href={`${basePath}/spain/barcelona/clubs`}>{c.ctaSecondary}</Link>
+              </Button>
+            </div>
           </div>
+
+          <div className="hidden lg:block">
+            <div className="border border-white/12 bg-bg-base/54 p-7 shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="mb-8 flex items-center justify-between border-b border-white/10 pb-5">
+                <span className="text-xs font-black uppercase tracking-[0.28em] text-brand">SCM Standard</span>
+                <Shield className="h-5 w-5 text-brand" />
+              </div>
+              <div className="space-y-5">
+                {c.pillars.map((pillar, index) => (
+                  <div key={pillar.title} className="grid grid-cols-[3rem_1fr] gap-4">
+                    <span className="font-serif text-3xl font-black leading-none text-white/20">0{index + 1}</span>
+                    <div>
+                      <p className="font-semibold text-white">{pillar.title}</p>
+                      <p className="mt-1 line-clamp-2 text-sm leading-5 text-zinc-400">{pillar.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
         </section>
 
-        <section className="mt-20 grid gap-6 md:grid-cols-2">
+      <main className="relative z-10 mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        <section className="grid gap-px overflow-hidden border-b border-white/10 bg-white/10 md:grid-cols-2">
           {c.pillars.map((pillar, index) => {
             const Icon = pillarIcons[index] ?? FileSearch;
             return (
-            <article key={pillar.title} className="rounded-3xl border border-white/10 bg-bg-card/80 p-8 backdrop-blur-md">
-              <div className="mb-6 flex items-center justify-between">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-brand/20 bg-brand/10 text-brand">
+            <article key={pillar.title} className="bg-bg-base p-7 md:p-10">
+              <div className="mb-10 flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-brand/30 bg-brand/10 text-brand">
                   <Icon className="h-6 w-6" />
                 </div>
-                <Badge className="border-brand/20 bg-brand/10 text-brand">0{index + 1}</Badge>
+                <Badge className="rounded-full border-brand/20 bg-brand/10 text-brand">0{index + 1}</Badge>
               </div>
               <H3 className="mb-3 font-serif text-white">{pillar.title}</H3>
               <Text className="text-zinc-400">{pillar.body}</Text>
@@ -308,28 +344,34 @@ export default async function VerificationPage({ params }: VerificationPageProps
           })}
         </section>
 
-        <section className="mt-16 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="rounded-3xl border border-white/10 bg-bg-surface/70 p-8 md:p-10">
+        <section className="grid gap-px overflow-hidden border-b border-white/10 bg-white/10 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="bg-bg-base p-8 md:p-12">
             <H2 className="mb-4 font-serif text-white">{c.whyTitle}</H2>
             <Text className="text-zinc-300">{c.whyBody}</Text>
           </div>
-          <div className="rounded-3xl border border-brand/20 bg-brand/5 p-8 md:p-10">
+          <div className="bg-[#06191d] p-8 md:p-12">
+            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-brand/30 bg-brand/10 text-brand">
+              <ShieldAlert className="h-6 w-6" />
+            </div>
             <H2 className="mb-4 font-serif text-white">{c.legalTitle}</H2>
             <Text className="text-zinc-300">{c.legalBody}</Text>
           </div>
         </section>
 
-        <section className="mt-16 rounded-3xl border border-white/10 bg-bg-card/70 p-8 md:p-10">
+        <section className="py-16 md:py-24">
           <H2 className="mb-6 font-serif text-white">{c.linksTitle}</H2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-px overflow-hidden border-y border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
             {c.trustLinks.map((item) => (
               <Link
                 key={item.href}
                 href={`${basePath}${item.href}`}
-                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm font-bold text-zinc-300 transition hover:border-brand/40 hover:text-white"
+                className="group bg-bg-base p-6 text-sm font-bold text-zinc-300 transition hover:bg-white/[0.04] hover:text-white"
               >
                 <CheckCircle2 className="mb-4 h-5 w-5 text-brand" />
-                {item.label}
+                <span className="flex items-center justify-between gap-3">
+                  {item.label}
+                  <ArrowRight className="h-4 w-4 opacity-0 transition group-hover:translate-x-1 group-hover:opacity-100" />
+                </span>
               </Link>
             ))}
           </div>

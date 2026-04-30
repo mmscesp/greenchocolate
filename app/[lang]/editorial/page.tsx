@@ -6,10 +6,9 @@ import { JsonLd } from '@/components/JsonLd';
 import { CommunityRoadmap } from '@/components/landing/editorial-concierge/blocks/CommunityRoadmap';
 import { EditorialFAQ } from '@/components/landing/editorial-concierge/blocks/EditorialFAQ';
 import { Badge } from '@/components/ui/badge';
-import { LinkCard } from '@/components/ui/card-26';
-import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock } from '@/lib/icons';
+import { ArrowRight, BookOpen, Scale, Shield, Heart, History, Clock, CheckCircle2, Map, Search } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
-import { H1, H2, H3, H4, Eyebrow, Text, Lead } from '@/components/typography';
+import { H2, H3, Text } from '@/components/typography';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
@@ -82,7 +81,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.legal.title'),
       description: t('editorial.categories.legal.description'),
       icon: Scale,
-      color: 'bg-brand/10 text-brand border-brand/20',
+      imageUrl: '/images/editorial/spain-legal-flags.webp',
       articleCount: categories.find((c) => c.name === 'Legal')?.count || 0,
     },
     {
@@ -90,7 +89,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.etiquette.title'),
       description: t('editorial.categories.etiquette.description'),
       icon: Heart,
-      color: 'bg-brand/10 text-brand-light border-brand/25',
+      imageUrl: '/images/editorial/barcelona-gaudi-house.webp',
       articleCount: categories.find((c) => c.name === 'Etiquette')?.count || 0,
     },
     {
@@ -98,7 +97,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.safety.title'),
       description: t('editorial.categories.safety.description'),
       icon: Shield,
-      color: 'bg-brand/10 text-brand border-brand/20',
+      imageUrl: '/images/editorial/safety-kit.webp',
       articleCount: categories.find((c) => c.name === 'Harm Reduction')?.count || 0,
     },
     {
@@ -106,7 +105,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       title: t('editorial.categories.culture.title'),
       description: t('editorial.categories.culture.description'),
       icon: History,
-      color: 'bg-brand/15 text-brand-dark border-brand/30',
+      imageUrl: '/images/editorial/barcelona-vs-amsterdam.webp',
       articleCount: categories.find((c) => c.name === 'Culture')?.count || 0,
     },
   ];
@@ -116,19 +115,19 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       key: 'legal',
       title: t('editorial.standards.items.legal.title'),
       description: t('editorial.standards.items.legal.description'),
-      imageUrl: '/images/cards/LegalVerified.webp',
+      icon: Scale,
     },
     {
       key: 'harm_reduction',
       title: t('editorial.standards.items.harm_reduction.title'),
       description: t('editorial.standards.items.harm_reduction.description'),
-      imageUrl: '/images/cards/HarmReduction.webp',
+      icon: Shield,
     },
     {
       key: 'updated',
       title: t('editorial.standards.items.updated.title'),
       description: t('editorial.standards.items.updated.description'),
-      imageUrl: '/images/cards/UpatedRegularly.webp',
+      icon: CheckCircle2,
     },
   ];
   const collectionJsonLd = buildCollectionPageJsonLd({
@@ -154,58 +153,106 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
   ]);
 
   return (
-    <div className="min-h-screen bg-bg-base text-white relative overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-bg-base text-white">
       <JsonLd data={collectionJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
       <JsonLd data={itemListJsonLd} />
-      <div className="absolute inset-0 bg-gradient-to-b from-bg-surface/40 via-bg-base to-bg-base pointer-events-none" />
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-24 left-[12%] h-[500px] w-[500px] rounded-full bg-brand/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-brand/5 blur-[120px]" />
-        <div className="absolute top-[40%] right-[5%] h-[400px] w-[400px] rounded-full bg-brand/5 blur-[120px]" />
-      </div>
 
-      <section className="relative pt-24 md:pt-32 pb-20 md:pb-28 border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <Eyebrow variant="muted" className="mb-6 justify-center flex items-center gap-2 text-brand">
-              <BookOpen className="w-4 h-4" />
-              {t('editorial.badge')}
-            </Eyebrow>
-            <H1 size="xl" className="mb-6 text-white font-serif tracking-tight">
-              {t('editorial.title_prefix')} <span className="text-brand">{t('editorial.title_highlight')}</span>
-            </H1>
-            <Lead className="mb-8 text-zinc-400">{t('editorial.subtitle')}</Lead>
+      <section className="relative min-h-[calc(100svh-2rem)] overflow-hidden border-b border-white/10">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/editorial/spain-travel-guide.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-72 saturate-125 contrast-110"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--bg-base))_0%,rgba(2,10,14,0.88)_38%,rgba(2,10,14,0.46)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_35%,rgba(0,203,204,0.2),transparent_28%),linear-gradient(180deg,rgba(2,10,14,0.06)_0%,hsl(var(--bg-base))_100%)]" />
+        </div>
+
+        <div className="relative z-10 mx-auto flex min-h-[calc(100svh-2rem)] max-w-7xl items-center px-4 pb-16 pt-28 sm:px-6 lg:px-8">
+          <div className="max-w-[48rem]">
+            <div className="mb-6 inline-flex items-center gap-3 text-brand">
+              <BookOpen className="h-4 w-4" />
+              <span className="text-xs font-black uppercase tracking-[0.28em]">{t('editorial.badge')}</span>
+            </div>
+            <h1 className="font-serif text-[clamp(3.2rem,7vw,7.4rem)] font-black leading-[0.92] tracking-normal text-white">
+              {t('editorial.title_prefix')}{' '}
+              <span className="block text-brand">{t('editorial.title_highlight')}</span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-base leading-7 text-white/72 md:text-lg">
+              {t('editorial.subtitle')}
+            </p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Button asChild size="lg" className="rounded-full bg-brand px-7 text-sm font-black uppercase tracking-[0.14em] text-bg-base hover:bg-brand-dark">
+                <Link href={`/${lang}/editorial/legal`}>
+                  {t('editorial.hero.primary_cta')} <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="secondary" className="rounded-full border-white/15 bg-white/5 px-7 text-sm font-bold text-white hover:border-brand/50 hover:bg-white/10">
+                <Link href={`/${lang}/safety-kit`}>{t('editorial.hero.secondary_cta')}</Link>
+              </Button>
+            </div>
+            <div className="mt-10 grid max-w-2xl gap-5 border-t border-white/10 pt-7 sm:grid-cols-3">
+              {[
+                { icon: Scale, value: '4', label: t('editorial.hero.stat_topics') },
+                { icon: Search, value: String(featuredArticles.length), label: t('editorial.hero.stat_featured') },
+                { icon: Map, value: 'BCN', label: t('editorial.hero.stat_city') },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.label} className="flex items-start gap-3 border-white/10 sm:border-r sm:pr-5 last:border-r-0">
+                    <Icon className="mt-1 h-4 w-4 shrink-0 text-brand" />
+                    <div>
+                      <p className="font-serif text-2xl font-black leading-none text-white">{item.value}</p>
+                      <p className="mt-1 text-xs leading-4 text-white/64">{item.label}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 relative z-10">
+      <section className="relative z-10 border-b border-white/10 py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <H2 className="mb-10 text-white font-serif tracking-tight">{t('editorial.browse_by_topic')}</H2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="mb-12 max-w-3xl">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-brand">{t('editorial.topic_label')}</p>
+            <H2 className="text-white font-serif tracking-tight">{t('editorial.browse_by_topic')}</H2>
+          </div>
+          <div className="grid grid-cols-1 gap-px overflow-hidden border-y border-white/10 bg-white/10 md:grid-cols-2">
             {CATEGORIES.map((category) => (
               <Link
                 key={category.slug}
                 href={`/${lang}/editorial/${category.slug}`}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-bg-card/70 backdrop-blur-sm p-6 md:p-8 hover:border-brand/50 transition-all duration-500"
+                className="group relative min-h-[25rem] overflow-hidden bg-bg-base p-6 md:p-8"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative">
-                  <div className={`inline-flex p-3 rounded-xl bg-brand/10 text-brand border border-brand/20 mb-6 transition-transform duration-500 group-hover:scale-110`}>
-                    <category.icon className="w-6 h-6" />
+                <Image
+                  src={category.imageUrl}
+                  alt=""
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  className="object-cover opacity-20 transition duration-700 group-hover:scale-105 group-hover:opacity-34"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/80 to-bg-base/30" />
+                <div className="relative flex h-full min-h-[21rem] flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-[0.22em] text-brand">{String(category.articleCount).padStart(2, '0')}</span>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-brand/30 bg-bg-base/50 text-brand backdrop-blur-md">
+                      <category.icon className="w-5 h-5" />
+                    </div>
                   </div>
-                  <H3 className="mb-3 text-white group-hover:text-brand transition-colors font-serif">{category.title}</H3>
-                  <Text variant="muted" className="mb-6 text-zinc-400 line-clamp-2">
-                    {category.description}
-                  </Text>
-                  <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                    <Text size="sm" variant="muted" className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
-                      {category.articleCount} {category.articleCount === 1 ? t('editorial.article') : t('editorial.articles')}
+                  <div>
+                    <H3 className="mb-4 text-white group-hover:text-brand transition-colors font-serif">{category.title}</H3>
+                    <Text className="max-w-md text-zinc-400">
+                      {category.description}
                     </Text>
-                    <div className="flex items-center gap-2 text-brand font-bold text-sm opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                    <div className="mt-8 flex items-center gap-2 text-sm font-bold text-brand">
                       <span>{t('common.explore')}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
                 </div>
@@ -216,10 +263,13 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       </section>
 
       {featuredArticles.length > 0 && (
-        <section className="py-16 md:py-24 bg-brand/5 border-y border-brand/10 relative z-10">
+        <section className="py-16 md:py-24 border-b border-white/10 relative z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between mb-12">
-              <H2 className="text-white font-serif tracking-tight">{t('editorial.featured_articles')}</H2>
+            <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-brand">{t('editorial.featured_label')}</p>
+                <H2 className="text-white font-serif tracking-tight">{t('editorial.featured_articles')}</H2>
+              </div>
               <Button variant="secondary" asChild className="border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white rounded-full">
                 <Link href={`/${lang}/editorial/legal`}>
                   {t('editorial.view_all')} <ArrowRight className="ml-2 w-4 h-4" />
@@ -238,7 +288,7 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
                   <Link
                     key={article.id}
                     href={`/${lang}/editorial/${article.slug}`}
-                    className="group block bg-bg-card/80 rounded-2xl border border-white/10 overflow-hidden hover:border-brand/50 transition-all duration-500 h-full"
+                    className="group block h-full overflow-hidden border border-white/10 bg-white/[0.03] transition-all duration-500 hover:border-brand/50 hover:bg-white/[0.055]"
                   >
                     <div className="aspect-video bg-bg-surface relative overflow-hidden">
                       <Image
@@ -279,22 +329,27 @@ export default async function EditorialPage({ params }: EditorialPageProps) {
       <section className="py-20 md:py-32 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-brand">{t('editorial.standards.kicker')}</p>
             <H2 className="mb-6 text-white font-serif tracking-tight">{t('editorial.standards.title')}</H2>
             <Text variant="muted" className="mb-10 text-zinc-400">
               {t('editorial.standards.subtitle')}
             </Text>
           </div>
 
-          <div className="mt-2 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:gap-10">
-            {standardsItems.map((item) => (
-              <LinkCard
-                key={item.key}
-                title={item.title}
-                description={item.description}
-                imageUrl={item.imageUrl}
-                className="max-w-none"
-              />
-            ))}
+          <div className="mt-2 grid grid-cols-1 gap-px overflow-hidden border-y border-white/10 bg-white/10 lg:grid-cols-3">
+            {standardsItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.key} className="bg-bg-base p-7 md:p-9">
+                  <div className="mb-10 flex items-center justify-between">
+                    <Icon className="h-6 w-6 text-brand" />
+                    <span className="font-serif text-4xl font-black text-white/10">0{index + 1}</span>
+                  </div>
+                  <H3 className="mb-4 font-serif text-white">{item.title}</H3>
+                  <Text className="text-zinc-400">{item.description}</Text>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
