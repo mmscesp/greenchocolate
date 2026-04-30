@@ -4,6 +4,8 @@ import { getClubs } from '@/app/actions/clubs';
 import { getCityBySlug } from '@/app/actions/cities';
 import { JsonLd } from '@/components/JsonLd';
 import CityPageClient from './CityPageClient';
+import { getDictionary } from '@/lib/dictionary';
+import type { Locale } from '@/lib/i18n-config';
 import {
   buildBreadcrumbJsonLd,
   buildCollectionPageJsonLd,
@@ -23,6 +25,11 @@ const CITY_LABELS: Record<string, string> = {
   malaga: 'Malaga',
 };
 
+function translate(dictionary: Record<string, unknown>, key: string): string {
+  const value = dictionary[key];
+  return typeof value === 'string' ? value : key;
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ lang: string; city: string }> }): Promise<Metadata> {
   const { lang, city } = await params;
   if (!isLocale(lang)) {
@@ -41,12 +48,15 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const cityName = cityNames[citySlug]?.[lang] || cityNames[citySlug]?.en || citySlug;
 
   if (citySlug === LIVE_CITY_SLUG) {
+    const dictionary = await getDictionary(lang);
+    const t = (key: string) => translate(dictionary, key);
+
     return buildLocalizedMetadata({
       lang,
       path: `/spain/${citySlug}`,
-      title: 'Cannabis Social Clubs in Barcelona | SocialClubsMaps Guide',
-      description:
-        'Understand Barcelona cannabis social clubs through legal context, safety guidance, verified profiles, public listings, and SCM’s independent verification standard.',
+      title: t('city.barcelona.meta.title'),
+      description: t('city.barcelona.meta.description'),
+      imagePath: '/images/BarcelonaMapBG.webp',
       keywords: [
         'cannabis social clubs Barcelona',
         'Barcelona cannabis guide',
@@ -95,26 +105,28 @@ interface CityPageProps {
 export default async function CityPage({ params }: CityPageProps) {
   const { lang, city } = await params;
   const citySlug = city.toLowerCase();
+  const locale = isLocale(lang) ? lang : 'en';
 
   if (citySlug === LIVE_CITY_SLUG) {
-    const [cityDetail, clubs] = await Promise.all([
+    const [cityDetail, clubs, dictionary] = await Promise.all([
       getCityBySlug(citySlug),
       getClubs({ citySlug }),
+      getDictionary(locale as Locale),
     ]);
+    const t = (key: string) => translate(dictionary, key);
 
     if (!cityDetail) {
       notFound();
     }
 
     const collectionJsonLd = buildCollectionPageJsonLd({
-      name: 'Cannabis Social Clubs in Barcelona',
-      description:
-        'Barcelona cannabis social club guidance with legal context, verified profiles, public listings, Safety Kit paths, and SCM verification standards.',
+      name: t('city.barcelona.jsonld.collection.name'),
+      description: t('city.barcelona.jsonld.collection.description'),
       path: `/${lang}/spain/barcelona`,
     });
     const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-      { name: 'Home', path: `/${lang}` },
-      { name: 'Spain', path: `/${lang}/spain` },
+      { name: t('city.barcelona.jsonld.breadcrumb.home'), path: `/${lang}` },
+      { name: t('city.barcelona.jsonld.breadcrumb.spain'), path: `/${lang}/spain` },
       { name: 'Barcelona', path: `/${lang}/spain/barcelona` },
     ]);
     const itemListJsonLd = buildItemListJsonLd([
@@ -124,14 +136,14 @@ export default async function CityPage({ params }: CityPageProps) {
         description: club.shortDescription || club.description,
       })),
       {
-        name: 'Barcelona legal guides',
+        name: t('city.barcelona.jsonld.guides.name'),
         path: `/${lang}/editorial/legal`,
-        description: 'Legal context for understanding cannabis social clubs in Spain.',
+        description: t('city.barcelona.jsonld.guides.description'),
       },
       {
         name: 'SCM Verification Standard',
         path: `/${lang}/verification`,
-        description: 'How SCM evaluates public trust signals before listing clubs.',
+        description: t('city.barcelona.jsonld.verification.description'),
       },
     ]);
 
