@@ -5,6 +5,8 @@ import EditorialConciergeShell from '@/components/landing/editorial-concierge/Ed
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { isLocale } from '@/lib/i18n-config';
 
+export const revalidate = 3600;
+
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) {

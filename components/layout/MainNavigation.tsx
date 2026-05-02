@@ -63,6 +63,7 @@ export default function MainNavigation({ tone = 'light' }: MainNavigationProps) 
           <NavigationMenuItem key={href}>
             <Link
               href={withLocale(href)}
+              prefetch={false}
               className={cn(
                 navigationMenuTriggerStyle(),
                 triggerClassName,

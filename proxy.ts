@@ -42,6 +42,7 @@ export async function proxy(request: NextRequest) {
   const isSeoDiscoveryPath =
     pathname === '/robots.txt' ||
     pathname === '/sitemap.xml' ||
+    pathname === '/manifest.webmanifest' ||
     pathname === '/llms.txt' ||
     pathname === '/llms-full.txt' ||
     pathname.startsWith('/.well-known/');
@@ -211,7 +212,7 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|llms.txt|llms-full.txt|\\.well-known(?:/.*)?|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|mov|ogg)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|llms.txt|llms-full.txt|\\.well-known(?:/.*)?|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|mp4|webm|mov|ogg)$).*)',
   ],
 };
 

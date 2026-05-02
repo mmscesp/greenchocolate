@@ -1,9 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';
 import AnalyticsDebugListener from '@/components/dev/AnalyticsDebugListener';
-import { i18n, isLocale } from '@/lib/i18n-config';
+import { i18n } from '@/lib/i18n-config';
 import { JsonLd } from '@/components/JsonLd';
 import { buildLanguageAlternates, buildSiteNavigationJsonLd, getBaseUrl, toAbsoluteUrl } from '@/lib/seo';
 
@@ -78,6 +77,7 @@ export const metadata: Metadata = {
     shortcut: '/icon.svg',
     apple: '/images/SCM_Logo_SVG.svg',
   },
+  manifest: '/manifest.webmanifest',
   alternates: {
     languages: buildLanguageAlternates(''),
   },
@@ -116,21 +116,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const requestHeaders = await headers();
-  const requestLocale = requestHeaders.get('x-scm-locale');
-  const htmlLang = requestLocale && isLocale(requestLocale)
-    ? requestLocale
-    : i18n.defaultLocale;
-
   return (
     <html
-      lang={htmlLang}
+      lang={i18n.defaultLocale}
       className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}
     >
       <body className="font-sans antialiased">
         <JsonLd data={organizationJsonLd} />
         <JsonLd data={websiteJsonLd} />
-        <JsonLd data={buildSiteNavigationJsonLd(htmlLang)} />
+        <JsonLd data={buildSiteNavigationJsonLd(i18n.defaultLocale)} />
         <AnalyticsDebugListener />
         {children}
       </body>

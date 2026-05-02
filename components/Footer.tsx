@@ -85,27 +85,27 @@ export default function Footer() {
             </h3>
             <ul className="space-y-4">
               <li>
-                <Link href={withLocale('/safety-kit')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                <Link href={withLocale('/safety-kit')} prefetch={false} className="text-sm text-zinc-400 hover:text-white transition-colors">
                   {t('footer.new.start.safety_kit')}
                 </Link>
               </li>
               <li>
-                <Link href={withLocale('/clubs')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                <Link href={withLocale('/clubs')} prefetch={false} className="text-sm text-zinc-400 hover:text-white transition-colors">
                   {t('footer.new.start.verified_clubs')}
                 </Link>
               </li>
               <li>
-                <Link href={withLocale('/spain/barcelona')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                <Link href={withLocale('/spain/barcelona')} prefetch={false} className="text-sm text-zinc-400 hover:text-white transition-colors">
                   {t('footer.new.start.barcelona_guide')}
                 </Link>
               </li>
               <li>
-                <Link href={withLocale('/editorial/legal')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                <Link href={withLocale('/editorial/legal')} prefetch={false} className="text-sm text-zinc-400 hover:text-white transition-colors">
                   {t('footer.new.start.legal_guides')}
                 </Link>
               </li>
               <li>
-                <Link href={withLocale('/verification')} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                <Link href={withLocale('/verification')} prefetch={false} className="text-sm text-zinc-400 hover:text-white transition-colors">
                   {t('footer.new.start.verification_standard')}
                 </Link>
               </li>
@@ -121,6 +121,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/editorial')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.learn.all_guides')}
@@ -129,6 +130,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/safety-kit')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.learn.safety_kit')}
@@ -137,6 +139,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/editorial/legal')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.learn.legal_explainer')}
@@ -145,6 +148,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/editorial')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.learn.how_clubs_work')}
@@ -162,6 +166,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/clubs')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.explore.directory')}
@@ -170,6 +175,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/spain/barcelona')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.explore.barcelona')}
@@ -202,6 +208,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/events')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.explore.events')}
@@ -219,6 +226,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/mission')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.our_story')}
@@ -227,6 +235,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/verification')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.verification_standard')}
@@ -235,6 +244,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/contact')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.contact')}
@@ -243,6 +253,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/privacy')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.privacy_policy')}
@@ -251,6 +262,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/terms')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.terms_of_service')}
@@ -259,6 +271,7 @@ export default function Footer() {
               <li>
                 <Link 
                   href={withLocale('/cookies')} 
+                  prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
                   {t('footer.new.about.cookie_policy')}

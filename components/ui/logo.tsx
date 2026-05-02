@@ -57,6 +57,7 @@ export function Logo({
     return (
       <Link 
         href={href} 
+        prefetch={false}
         className={cn('flex items-center gap-2 group', className)}
       >
         {logoContent}

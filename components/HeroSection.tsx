@@ -518,7 +518,7 @@ export default function HeroSection() {
                 className="absolute inset-0 select-none overflow-hidden"
               >
                 <picture>
-                  <source media="(min-width: 768px)" srcSet={HERO_ASSETS.desktop} />
+                  <source media="(min-width: 768px)" srcSet={HERO_ASSETS.desktop} type="image/webp" />
                   <img
                     alt=""
                     src={EMPTY_IMAGE_PLACEHOLDER}
@@ -624,7 +624,7 @@ export default function HeroSection() {
                       size="lg"
                       className="min-h-[3.1rem] min-w-[min(15rem,100%)] flex-1 basis-[15rem] rounded-full bg-brand px-6 py-4 text-center text-[0.95rem] font-bold leading-snug text-bg-base !whitespace-normal !overflow-visible !text-clip transition-all duration-200 hover:scale-[1.03] hover:bg-brand-dark active:scale-[0.98] md:py-4 shadow-[0_4px_20px_hsl(var(--brand)/0.3)]"
                     >
-                      <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
+                      <Link href={`/${language}/safety-kit`} prefetch={false}>{t('hero.section.cta_primary')}</Link>
                     </Button>
                     <Button
                       asChild
@@ -632,7 +632,7 @@ export default function HeroSection() {
                       variant="secondary"
                       className="min-h-[3.1rem] min-w-[min(15rem,100%)] flex-1 basis-[15rem] rounded-full border-white/20 bg-white/5 px-6 py-4 text-center text-[0.95rem] font-bold leading-snug text-white !whitespace-normal !overflow-visible !text-clip transition-all duration-200 hover:scale-[1.03] hover:border-white/40 hover:bg-white/15 active:scale-[0.98] md:py-4 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
                     >
-                      <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`}>{t('hero.section.cta_secondary')}</Link>
+                      <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`} prefetch={false}>{t('hero.section.cta_secondary')}</Link>
                     </Button>
                   </div>
                 </div>
@@ -667,7 +667,7 @@ export default function HeroSection() {
             className="relative w-full h-full will-change-transform overflow-hidden"
           >
             <picture>
-              <source media="(max-width: 767px)" srcSet={HERO_ASSETS.mobile} />
+              <source media="(max-width: 767px)" srcSet={HERO_ASSETS.mobile} type="image/webp" />
               <img
                 alt=""
                 src={EMPTY_IMAGE_PLACEHOLDER}
@@ -727,10 +727,10 @@ export default function HeroSection() {
                   <p className={`text-center text-white/95 text-balance font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] ${mobileHeroTypography.body}`}>{t('hero.section.body')}</p>
                   <div className="w-full flex flex-col gap-3">
                     <Button asChild size="lg" className="w-full py-6 text-[0.95rem] font-bold rounded-full bg-brand text-bg-base hover:bg-brand-dark active:scale-[0.98] transition-all shadow-[0_4px_20px_hsl(var(--brand)/0.25)]">
-                      <Link href={`/${language}/safety-kit`}>{t('hero.section.cta_primary')}</Link>
+                      <Link href={`/${language}/safety-kit`} prefetch={false}>{t('hero.section.cta_primary')}</Link>
                     </Button>
                     <Button asChild size="lg" variant="secondary" className="w-full py-6 text-[0.95rem] font-bold rounded-full border border-white/20 text-white bg-white/5 active:bg-white/10 active:scale-[0.98] transition-all shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
-                      <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`}>{t('hero.section.cta_secondary')}</Link>
+                      <Link href={`/${language}/editorial/what-are-cannabis-social-clubs-spain`} prefetch={false}>{t('hero.section.cta_secondary')}</Link>
                     </Button>
                   </div>
                 </div>

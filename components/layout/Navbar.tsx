@@ -138,7 +138,7 @@ export default function Navbar() {
               imageClassName="drop-shadow-[0_1px_4px_rgba(0,0,0,0.25)]"
               priority
             />
-            <Link href={localizedHomePath} className="ml-0.5 flex min-w-0 items-center sm:ml-1">
+            <Link href={localizedHomePath} prefetch={false} className="ml-0.5 flex min-w-0 items-center sm:ml-1">
               <span className="truncate text-base font-serif font-bold tracking-tight text-[#a8a555] transition-all duration-300 sm:text-lg md:text-xl xl:text-2xl">
                 {t('brand.name')}
               </span>
@@ -165,6 +165,7 @@ export default function Navbar() {
             >
               <Link
                 href={withLocale('/safety-kit')}
+                prefetch={false}
                 className="inline-flex h-10 shrink-0 items-center whitespace-nowrap rounded-full bg-brand px-3 text-xs font-bold text-black shadow-sm transition-colors hover:bg-brand-dark xl:px-4"
               >
                 {t('nav.safety_kit_short')}
@@ -219,25 +220,25 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col gap-4 text-xl font-semibold text-white/90 pt-2 shrink-0">
-              <Link href={withLocale('/safety-kit')} onClick={closeMobileMenu} className="text-brand hover:text-brand-light transition-colors">
+              <Link href={withLocale('/safety-kit')} prefetch={false} onClick={closeMobileMenu} className="text-brand hover:text-brand-light transition-colors">
                 {t('nav.safety_kit_short')}
               </Link>
-              <Link href={withLocale('/spain/barcelona')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+              <Link href={withLocale('/spain/barcelona')} prefetch={false} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.barcelona')}
               </Link>
-              <Link href={withLocale('/spain/barcelona/clubs')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+              <Link href={withLocale('/spain/barcelona/clubs')} prefetch={false} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.clubs_directory')}
               </Link>
-              <Link href={withLocale('/editorial')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+              <Link href={withLocale('/editorial')} prefetch={false} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.guides')}
               </Link>
-              <Link href={withLocale('/verification')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+              <Link href={withLocale('/verification')} prefetch={false} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.verification')}
               </Link>
-              <Link href={withLocale('/mission')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+              <Link href={withLocale('/mission')} prefetch={false} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.mission')}
               </Link>
-              <Link href={withLocale('/contact')} onClick={closeMobileMenu} className="hover:text-white transition-colors">
+              <Link href={withLocale('/contact')} prefetch={false} onClick={closeMobileMenu} className="hover:text-white transition-colors">
                 {t('nav.contact')}
               </Link>
             </div>
@@ -251,6 +252,7 @@ export default function Navbar() {
               >
                 <Link
                   href={withLocale('/safety-kit')}
+                  prefetch={false}
                   onClick={closeMobileMenu}
                   className="block w-full text-center py-3 text-base font-bold bg-brand text-black rounded-full hover:bg-brand-dark transition-colors shadow-sm"
                 >

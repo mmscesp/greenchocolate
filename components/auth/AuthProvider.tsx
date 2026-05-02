@@ -143,14 +143,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const syncProfileFromServer = useCallback(async () => {
-    const userProfile = await fetchProfile();
-
-    if (userProfile) {
-      setProfile(userProfile);
-      setUser((currentUser) => currentUser ?? buildFallbackUser(userProfile));
-      return;
-    }
-
     const {
       data: { session: refreshedSession },
     } = await supabase.auth.getSession();
@@ -160,7 +152,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!refreshedSession?.user) {
       setProfile(null);
+      return;
     }
+
+    const userProfile = await fetchProfile();
+
+    if (userProfile) {
+      setProfile(userProfile);
+      setUser((currentUser) => currentUser ?? buildFallbackUser(userProfile));
+      return;
+    }
+
+    setProfile(null);
   }, [supabase]);
 
   // Initialize auth state
