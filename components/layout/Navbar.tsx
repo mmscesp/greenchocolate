@@ -120,7 +120,8 @@ export default function Navbar() {
             : { type: 'spring', stiffness: 300, damping: 30 }
         }
         className={cn(
-          'fixed inset-x-0 mx-auto z-50 transition-all duration-500',
+          'fixed inset-x-0 mx-auto transition-all duration-500',
+          mobileMenuOpen ? 'z-[100]' : 'z-50',
           isScrolled
             ? 'top-4 glass-liquid rounded-full px-4 py-2 md:px-5'
             : 'top-0 w-full px-4 md:px-8 py-2 md:py-4 bg-transparent border-transparent'
@@ -205,7 +206,7 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label={t('nav.mobile.open_menu')}
-            className="fixed inset-x-0 top-0 z-40 flex h-[100dvh] flex-col gap-4 overflow-y-auto overscroll-contain glass-liquid px-6 pb-[env(safe-area-inset-bottom,24px)] pt-[calc(env(safe-area-inset-top,0px)+6rem)] md:hidden"
+            className="fixed inset-x-0 top-0 z-[90] flex h-[100dvh] flex-col gap-4 overflow-y-auto overscroll-contain glass-liquid px-6 pb-[env(safe-area-inset-bottom,24px)] pt-[calc(env(safe-area-inset-top,0px)+6rem)] md:hidden"
           >
             {/* Rich Profile Header & Actions inside Mobile Menu */}
             <div className="pb-4 border-b border-white/10 shrink-0 flex items-center justify-between gap-4">
