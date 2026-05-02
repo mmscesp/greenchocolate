@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Club } from '@/lib/types';
 import { getClubPrimaryMediaImage, type ClubMediaItem } from '@/lib/club-media';
-import { getClubStatusDescription, getClubStatusLabel } from '@/lib/club-verification';
 import { getProfileLocationLabel, sanitizePublicClubCopy, sanitizePublicLocationText } from '@/lib/public-club-safety';
 import { Shield, MapPin, AlertTriangle, ClipboardCheck, ArrowRight } from '@/lib/icons';
 
@@ -20,6 +19,9 @@ interface UnverifiedClubCopy {
   pendingReview: string;
   heroAlt: string;
   cityName: string;
+  publicListingLabel: string;
+  publicListingDescription: string;
+  heroIntro: string;
   whatScmKnowsTitle: string;
   whatScmKnowsBody: string;
   neighborhoodLabel: string;
@@ -53,9 +55,14 @@ const copy: Record<SupportedLocale, UnverifiedClubCopy> = {
     pendingReview: 'Pending editorial review',
     heroAlt: 'Editorial illustration for {{neighborhood}}, Barcelona',
     cityName: 'Barcelona',
+    publicListingLabel: 'Public Listing',
+    publicListingDescription:
+      'A public research listing that has not completed SCM’s on-site verification review. Use it as a starting point, not as a recommendation or promise of access.',
+    heroIntro:
+      '{{clubName}} appears in SCM as a public profile for {{location}}. This page helps you understand what is publicly known, what remains unchecked, and which safety context to read before you rely on any club listing.',
     whatScmKnowsTitle: 'What SCM knows',
     whatScmKnowsBody:
-      'SCM has identified this as a public Barcelona club listing from public source data. The known public signals include its name, Barcelona neighborhood, and public map reference where available. This is not the same as SCM verification.',
+      'Use this profile to separate basic public signals from verified trust signals. SCM may know the club name, the Barcelona area, and a public map reference when one is available. That helps orientation, but it does not confirm association status, current operations, or member onboarding quality.',
     neighborhoodLabel: 'Neighborhood',
     publicDataReviewedLabel: 'Public data reviewed',
     whatScmHasNotVerifiedTitle: 'What SCM has not verified',
@@ -82,9 +89,14 @@ const copy: Record<SupportedLocale, UnverifiedClubCopy> = {
     pendingReview: 'Revisión editorial pendiente',
     heroAlt: 'Ilustración editorial de {{neighborhood}}, Barcelona',
     cityName: 'Barcelona',
+    publicListingLabel: 'Listado público',
+    publicListingDescription:
+      'Un listado público de investigación que aún no ha completado la revisión presencial de SCM. Úsalo como punto de partida, no como recomendación ni promesa de acceso.',
+    heroIntro:
+      '{{clubName}} aparece en SCM como perfil público de {{location}}. Esta página te ayuda a distinguir qué se sabe públicamente, qué queda sin comprobar y qué contexto de seguridad conviene leer antes de confiar en cualquier listado.',
     whatScmKnowsTitle: 'Lo que SCM sabe',
     whatScmKnowsBody:
-      'SCM ha identificado este perfil como un listado público de club en Barcelona a partir de fuentes públicas. Las señales públicas conocidas incluyen su nombre, barrio de Barcelona y referencia de mapa pública cuando está disponible. Esto no equivale a verificación SCM.',
+      'Usa este perfil para separar señales públicas básicas de señales de confianza verificadas. SCM puede conocer el nombre del club, la zona de Barcelona y una referencia pública de mapa cuando existe. Eso orienta, pero no confirma el estado asociativo, la actividad actual ni la calidad del proceso de admisión.',
     neighborhoodLabel: 'Barrio',
     publicDataReviewedLabel: 'Datos públicos revisados',
     whatScmHasNotVerifiedTitle: 'Lo que SCM no ha verificado',
@@ -111,9 +123,14 @@ const copy: Record<SupportedLocale, UnverifiedClubCopy> = {
     pendingReview: 'Revue éditoriale en attente',
     heroAlt: 'Illustration éditoriale pour {{neighborhood}}, Barcelone',
     cityName: 'Barcelone',
+    publicListingLabel: 'Listing public',
+    publicListingDescription:
+      'Un listing public de recherche qui n’a pas encore terminé la vérification sur site de SCM. Utilisez-le comme point de départ, pas comme recommandation ni promesse d’accès.',
+    heroIntro:
+      '{{clubName}} apparaît sur SCM comme profil public pour {{location}}. Cette page vous aide à distinguer les informations publiques connues, les points non vérifiés et le contexte de sécurité à lire avant de vous fier à un listing.',
     whatScmKnowsTitle: 'Ce que SCM sait',
     whatScmKnowsBody:
-      'SCM a identifié cette fiche comme un listing public de club à Barcelone à partir de sources publiques. Les signaux publics connus incluent son nom, son quartier à Barcelone et sa référence cartographique publique lorsqu\'elle existe. Ce n\'est pas une vérification SCM.',
+      'Utilisez ce profil pour séparer les signaux publics de base des vrais signaux de confiance vérifiés. SCM peut connaître le nom du club, la zone de Barcelone et une référence cartographique publique lorsqu’elle existe. Cela aide à s’orienter, mais ne confirme ni le statut associatif, ni l’activité actuelle, ni la qualité du processus d’admission.',
     neighborhoodLabel: 'Quartier',
     publicDataReviewedLabel: 'Données publiques vérifiées',
     whatScmHasNotVerifiedTitle: 'Ce que SCM n\'a pas vérifié',
@@ -140,9 +157,14 @@ const copy: Record<SupportedLocale, UnverifiedClubCopy> = {
     pendingReview: 'Redaktionelle Prüfung ausstehend',
     heroAlt: 'Redaktionelle Illustration für {{neighborhood}}, Barcelona',
     cityName: 'Barcelona',
+    publicListingLabel: 'Öffentliches Listing',
+    publicListingDescription:
+      'Ein öffentliches Recherche-Listing ohne abgeschlossene SCM-Prüfung vor Ort. Nutze es als Ausgangspunkt, nicht als Empfehlung oder Zugangsversprechen.',
+    heroIntro:
+      '{{clubName}} erscheint bei SCM als öffentliches Profil für {{location}}. Diese Seite hilft dir zu verstehen, was öffentlich bekannt ist, was ungeprüft bleibt und welchen Sicherheitskontext du lesen solltest, bevor du dich auf ein Listing verlässt.',
     whatScmKnowsTitle: 'Was SCM weiß',
     whatScmKnowsBody:
-      'SCM hat diesen Eintrag anhand öffentlicher Quellen als öffentliches Clubprofil in Barcelona identifiziert. Zu den bekannten öffentlichen Signalen zählen Name, Barcelona-Viertel und - sofern verfügbar - ein öffentlicher Kartenverweis. Das ist nicht dasselbe wie eine SCM-Verifizierung.',
+      'Nutze dieses Profil, um einfache öffentliche Signale von verifizierten Vertrauenssignalen zu trennen. SCM kennt möglicherweise den Clubnamen, den Bereich in Barcelona und - falls vorhanden - einen öffentlichen Kartenverweis. Das hilft bei der Orientierung, bestätigt aber weder Vereinsstatus, aktuellen Betrieb noch Qualität des Aufnahmeprozesses.',
     neighborhoodLabel: 'Viertel',
     publicDataReviewedLabel: 'Öffentliche Daten geprüft',
     whatScmHasNotVerifiedTitle: 'Was SCM nicht verifiziert hat',
@@ -182,12 +204,17 @@ export default function UnverifiedClubProfileContent({
   const locale = resolveLocale(lang);
   const c = copy[locale];
   const heroImage = getClubPrimaryMediaImage(mediaItems);
-  const statusLabel = getClubStatusLabel(club.verificationStatus);
-  const statusDescription = getClubStatusDescription(club.verificationStatus);
+  const statusLabel = c.publicListingLabel;
+  const statusDescription = c.publicListingDescription;
   const safeNeighborhood = sanitizePublicLocationText(club.neighborhood);
   const safeDistrict = sanitizePublicLocationText(club.district);
   const profileLocation = getProfileLocationLabel({ neighborhood: club.neighborhood, cityName: c.cityName });
-  const profileDescription = sanitizePublicClubCopy(club.shortDescription || club.description, safeNeighborhood ?? c.cityName);
+  const profileDescription = sanitizePublicClubCopy(
+    c.heroIntro
+      .replace('{{clubName}}', club.name)
+      .replace('{{location}}', profileLocation),
+    safeNeighborhood ?? c.cityName
+  );
   const reviewedAt = club.publicDataReviewedAt
     ? new Intl.DateTimeFormat(localeMap[locale], { month: 'long', year: 'numeric' }).format(club.publicDataReviewedAt)
     : c.pendingReview;

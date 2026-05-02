@@ -29,8 +29,6 @@ import { FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-conci
 import MembershipApplicationModal from '@/components/clubs/MembershipApplicationModal';
 import ClubVideoTour from '@/components/clubs/ClubVideoTour';
 import {
-  getClubStatusDescription,
-  getClubStatusLabel,
   getProfileLocationLabel,
   sanitizePublicClubCopy,
 } from '@/lib/public-club-safety';
@@ -75,8 +73,8 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const primaryActionLabel = acceptsApplications
     ? t('club_profile.apply_for_membership')
     : t('club_profile.apply_unavailable');
-  const statusLabel = getClubStatusLabel(club);
-  const statusDescription = getClubStatusDescription(club);
+  const statusLabel = t('clubs.status_explainer.verified.title');
+  const statusDescription = t('clubs.status_explainer.verified.body');
   const profileLocation = getProfileLocationLabel({ neighborhood: club.neighborhood, cityName: 'Barcelona' });
   const profileDescription = sanitizePublicClubCopy(
     t(`clubs.${club.slug}.description`) !== `clubs.${club.slug}.description` ? t(`clubs.${club.slug}.description`) : club.description,

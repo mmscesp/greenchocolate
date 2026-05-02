@@ -1262,6 +1262,7 @@
   "club_profile.email_hidden": "Email hidden",
   "club_profile.ready_to_join": "Ready to join?",
   "club_profile.apply_for_membership": "Request Membership Information",
+  "club_profile.apply_unavailable": "Information unavailable",
   "club_profile.start_application": "Request Information",
   "club_profile.membership_application": "SCM does not guarantee acceptance. Clubs control their own membership process and rules.",
   "club_profile.modal.title": "Request Membership Information",
