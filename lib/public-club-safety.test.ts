@@ -3,6 +3,7 @@ import {
   COMPACT_COMPLIANCE_COPY,
   canShowTrustPick,
   getClubPublicStatus,
+  getSafeClubSeoMetadata,
   getClubStatusLabel,
   getSafeStructuredDataForClub,
   sanitizePublicClubCopy,
@@ -43,6 +44,66 @@ describe('public club safety helpers', () => {
         'Barcelona'
       )
     ).toBe('Cali Weed Barcelona is listed as a public Barcelona club profile in Barcelona. visitor-aware membership experience.');
+  });
+
+  it('uses safe stored club SEO metadata before generated fallbacks', () => {
+    const metadata = getSafeClubSeoMetadata({
+      name: 'Club 311 Barcelona',
+      metaTitle: 'Club 311 Barcelona: Tourist-Friendly Cannabis Club',
+      metaDescription:
+        'Club 311 is a tourist-friendly profile in — fill manually. Check membership expectations before making plans.',
+      shortDescription: 'Generic fallback copy.',
+      isVerified: true,
+      verificationStatus: 'SCM_VERIFIED',
+      cityName: 'Barcelona',
+      neighborhood: 'Sagrada Familia',
+    });
+
+    expect(metadata).toEqual({
+      title: 'Club 311 Barcelona: visitor-aware Cannabis Club',
+      description:
+        'Club 311 is a visitor-aware profile in Sagrada Familia. Check membership expectations before making plans.',
+    });
+  });
+
+  it('generates safe club SEO metadata when stored fields are empty', () => {
+    const verified = getSafeClubSeoMetadata({
+      name: 'Club 311 Barcelona',
+      shortDescription: null,
+      isVerified: true,
+      verificationStatus: 'SCM_VERIFIED',
+      cityName: 'Barcelona',
+    });
+
+    expect(verified.title).toBe('Club 311 Barcelona: Verified Cannabis Club Profile');
+    expect(verified.description).toContain('Verified Profile on SocialClubsMaps');
+    expect(verified.description).toContain('not a guarantee of access');
+
+    const publicListing = getSafeClubSeoMetadata({
+      name: 'Diagonal Social Club Barcelona',
+      shortDescription: null,
+      isVerified: false,
+      verificationStatus: 'UNVERIFIED',
+      cityName: 'Barcelona',
+    });
+
+    expect(publicListing.title).toBe('Diagonal Social Club Barcelona: Public Cannabis Club Listing');
+    expect(publicListing.description).toContain('Public Listing on SocialClubsMaps');
+    expect(publicListing.description).toContain('research starting point');
+  });
+
+  it('adds status and planning context when only a short club description exists', () => {
+    const metadata = getSafeClubSeoMetadata({
+      name: 'Club 311 Barcelona',
+      shortDescription: 'Indoor-only premium members club near Sagrada Familia.',
+      isVerified: true,
+      verificationStatus: 'SCM_VERIFIED',
+      cityName: 'Barcelona',
+    });
+
+    expect(metadata.description).toBe(
+      'Indoor-only premium members club near Sagrada Familia. Check SCM profile status, member expectations, and safety notes before making plans.'
+    );
   });
 
   it('returns lighter structured data for public listings and never exposes price range', () => {

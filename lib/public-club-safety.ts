@@ -33,6 +33,15 @@ export interface SafeStructuredDataClub extends StatusLikeClub {
   priceRange?: string | null;
 }
 
+export interface SafeClubSeoMetadataInput extends StatusLikeClub {
+  name: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  shortDescription?: string | null;
+  cityName?: string | null;
+  neighborhood?: string | null;
+}
+
 export function getClubPublicStatus(club: StatusLikeClub): ClubPublicStatus {
   return club.isVerified || isVerifiedClubStatus(club.verificationStatus) ? 'verified-profile' : 'public-listing';
 }
@@ -78,6 +87,27 @@ export function sanitizePublicClubCopy(value?: string | null, fallbackLocation =
     .replace(/\s+\./g, '.')
     .replace(/\s{2,}/g, ' ')
     .trim();
+}
+
+export function getSafeClubSeoMetadata(club: SafeClubSeoMetadataInput): { title: string; description: string } {
+  const fallbackLocation =
+    sanitizePublicLocationText(club.neighborhood) ?? sanitizePublicLocationText(club.cityName) ?? 'Barcelona';
+  const isVerifiedProfile = getClubPublicStatus(club) === 'verified-profile';
+  const fallbackTitle = isVerifiedProfile
+    ? `${club.name}: Verified Cannabis Club Profile`
+    : `${club.name}: Public Cannabis Club Listing`;
+  const fallbackDescription =
+    isVerifiedProfile
+      ? `${club.name} is a Verified Profile on SocialClubsMaps. Verification is a trust signal, not a guarantee of access.`
+      : `${club.name} is a Public Listing on SocialClubsMaps. Use it as a research starting point before you make plans.`;
+  const shortDescriptionSeo = club.shortDescription?.trim()
+    ? `${club.shortDescription.trim()} Check SCM profile status, member expectations, and safety notes before making plans.`
+    : null;
+
+  return {
+    title: sanitizePublicClubCopy(club.metaTitle || fallbackTitle, fallbackLocation),
+    description: sanitizePublicClubCopy(club.metaDescription || shortDescriptionSeo || fallbackDescription, fallbackLocation),
+  };
 }
 
 export function getCardLocationLabel(club: { neighborhood?: string | null; cityName?: string | null }): string | null {

@@ -222,7 +222,8 @@ Para una guia completa, lee [Your First Time in a Barcelona Cannabis Club](/en/e
     'first-time-barcelona-cannabis-club': {
       title: 'Tu primera vez en un club de cannabis de Barcelona: la forma respetuosa de entrar',
       excerpt: 'Una guia realista para preparar tu primera visita a un CSC en Barcelona con mejores expectativas y menos errores.',
-      metaDescription: 'Una guia realista para preparar tu primera visita a un CSC en Barcelona con expectativas correctas y un enfoque respetuoso.',
+      metaTitle: 'Primera vez en un club de cannabis de Barcelona',
+      metaDescription: 'Guia para tu primera vez en un club de cannabis de Barcelona: membresia, privacidad, errores comunes y como evitar atajos inseguros.',
       content: `## Ajusta primero las expectativas
 
 La primera visita no es un paseo improvisado. Puede requerir tiempo, espera y algo de humildad. El acceso no esta garantizado.
@@ -281,6 +282,8 @@ Antes de intentarlo, lee [Barcelona vs. Amsterdam](/en/editorial/barcelona-vs-am
     'edibles-safety-guide': {
       title: 'Guia de seguridad de comestibles: dosis, tiempos y riesgos',
       excerpt: 'Como dosificar con mas criterio y evitar el error clasico de redosificar demasiado pronto.',
+      metaTitle: 'Guia de seguridad de edibles: dosis, tiempos y riesgos',
+      metaDescription: 'Antes de probar edibles, entiende el inicio lento, el riesgo de redosificar, el alcohol, las etiquetas dudosas y que hacer si te pasas.',
       content: `Los comestibles se sienten distintos a fumar o vapear porque el cuerpo los procesa de otra manera. El efecto suele llegar mas tarde, durar mas y pegar mas fuerte de lo que mucha gente espera.
 
 ## Por que sorprenden
@@ -390,7 +393,8 @@ La embajada puede orientar. No puede borrar sanciones ni saltarse la ley españo
     'safety-kit-visitors-spain': {
       title: 'The Safety Kit: lo que todo visitante debe saber antes de entrar en un club',
       excerpt: 'Una guia practica sobre estafas, limites legales, privacidad y comportamiento para moverte con menos riesgo.',
-      metaDescription: 'Guia practica para visitantes de clubes en España: estafas, limites legales, privacidad y pasos concretos para moverte con menos riesgo.',
+      metaTitle: 'Safety Kit para visitantes de clubes en España',
+      metaDescription: 'Safety Kit para visitantes en España: estafas, reglas de club, riesgos de consumo publico, privacidad y pasos de emergencia.',
       content: `## Por que existe esta guia
 
 Hay poca informacion publica clara y ese vacio se llena con consejos viejos, expectativas falsas y estafadores. Esta guia existe para hacerte mas dificil de explotar.
@@ -475,6 +479,8 @@ Despues:
     'is-weed-legal': {
       title: 'Es legal la hierba en Barcelona en 2026? Reglas reales, multas y zonas grises',
       excerpt: 'Barcelona no es Amsterdam. Quien confunde tolerancia privada con libertad publica eleva su riesgo de forma innecesaria.',
+      metaTitle: 'Es legal la hierba en Barcelona en 2026? Multas y reglas',
+      metaDescription: 'Es legal la hierba en Barcelona? Conoce la realidad 2026: multas publicas, limites de clubes privados y errores frecuentes de turistas.',
       content: `No, la hierba no es simplemente "legal" en Barcelona. La forma correcta de entenderlo es otra: la conducta privada se trata de manera distinta a la conducta publica, y los turistas se meten en problemas cuando borran esa diferencia.
 
 ## La regla central: publico y privado no son lo mismo
@@ -527,6 +533,8 @@ Si quieres mas contexto, lee [Spain's Cannabis Laws for Tourists](/en/editorial/
     'scams-red-flags': {
       title: 'Estafas de cannabis en Barcelona: DMs, promotores y senales rojas',
       excerpt: 'Como detectar lo falso y protegerte de las trampas mas comunes dirigidas a turistas.',
+      metaTitle: 'Estafas de cannabis en Barcelona: DMs y senales rojas',
+      metaDescription: 'Evita estafas de cannabis en Barcelona: DMs, promotores callejeros, falsos clubes, delivery y pagos urgentes dirigidos a visitantes.',
       content: `La mayoria de las ofertas no solicitadas no son atajos. Son trampas. Si alguien te contacta primero, te promete acceso facil, te pide dinero por adelantado o habla de delivery, parte de la base de que puede ser una estafa.
 
 ## La estafa del DM
@@ -579,6 +587,8 @@ Si te estafan, denuncialo. El cannabis puede vivir en una zona gris, pero el fra
     'spain-cannabis-laws-tourists': {
       title: 'Leyes del cannabis en España: lo que un turista realmente necesita saber',
       excerpt: 'Una guia breve sobre tolerancia privada, multas publicas y la persistente zona gris de los CSC.',
+      metaTitle: 'Weed en España para turistas: guia legal 2026',
+      metaDescription: 'Pueden los turistas consumir weed en España? Entiende la realidad 2026: clubes privados, multas publicas, riesgos y que revisar antes de hacer planes.',
       content: `España no tiene un sistema publico de venta legal de cannabis para turistas. Ese es el primer punto y cambia por completo la comparacion con los mercados de retail abierto.
 
 ## Version corta
@@ -1582,7 +1592,8 @@ Die Botschaft kann orientieren, aber keine spanischen Sanktionen aufheben.`,
     'safety-kit-visitors-spain': {
       title: 'The Safety Kit: was jeder Besucher wissen sollte, bevor er einen Club betritt',
       excerpt: 'Ein praktischer Sicherheitsleitfaden zu Betrug, rechtlichen Grenzen, Privatsphare und risikoarmerem Verhalten.',
-      metaDescription: 'Praktischer Sicherheitsleitfaden fur Club-Besucher in Spanien: Betrug, rechtliche Grenzen, Privatsphare und konkrete Schritte zur Risikoreduktion.',
+      metaTitle: 'Safety Kit fur Besucher von Clubs in Spanien',
+      metaDescription: 'Safety Kit fur Besucher in Spanien: Betrug, Clubregeln, Risiken im offentlichen Raum, Privatsphare und Notfallschritte.',
       content: `## Warum dieser Guide existiert
 
 Es gibt wenig klare offentliche Information. Diese Lucke wird mit alten Tipps, falschen Erwartungen und Betrug gefullt. Der Guide soll Besucher schwerer angreifbar machen.
@@ -1667,6 +1678,8 @@ Danach:
     'is-weed-legal': {
       title: 'Ist Weed in Barcelona 2026 legal? Reale Regeln, Bussgelder und Grauzonen',
       excerpt: 'Barcelona ist nicht Amsterdam. Wer private Toleranz mit offentlicher Freiheit verwechselt, erhoht sein Risiko unnötig.',
+      metaTitle: 'Ist Weed in Barcelona 2026 legal? Regeln und Bussgelder',
+      metaDescription: 'Ist Weed in Barcelona legal? Die Realitat 2026: offentliche Bussgelder, private Club-Grenzen, Touristenfehler und Amsterdam-Mythen.',
       content: `Nein, Weed ist in Barcelona nicht einfach "legal". Die brauchbare Erklarung lautet: Privates Verhalten und offentliches Verhalten werden unterschiedlich behandelt, und genau dort machen Besucher ihre Fehler.
 
 ## Die zentrale Regel: Offentlich und privat sind nicht dasselbe
@@ -1719,6 +1732,8 @@ Fur den grosseren Kontext lies [Spain's Cannabis Laws for Tourists](/en/editoria
     'scams-red-flags': {
       title: 'Cannabis-Betrug in Barcelona: DMs, Promoter und Warnzeichen',
       excerpt: 'Wie du falsche Angebote erkennst und dich vor den haufigsten Touristenfallen schutzt.',
+      metaTitle: 'Cannabis-Betrug in Barcelona: DMs und Warnzeichen',
+      metaDescription: 'Vermeide Cannabis-Betrug in Barcelona: DM-Angebote, Strassenpromoter, falsche Clubs, Delivery-Versprechen und schnelle Zahlungsforderungen.',
       content: `Die meisten unaufgeforderten Angebote sind keine Abkurzungen, sondern Fallen. Wenn dich jemand zuerst kontaktiert, einfachen Zugang verspricht, Vorkasse will oder von Delivery spricht, solltest du von Risiko ausgehen.
 
 ## Die DM-Masche
@@ -1771,6 +1786,8 @@ Wenn du betrogen wirst, melde es. Cannabis mag in einer Grauzone liegen. Betrug 
     'spain-cannabis-laws-tourists': {
       title: 'Cannabis-Gesetze in Spanien: was Touristen wirklich wissen mussen',
       excerpt: 'Eine praktische Einordnung von privater Toleranz, offentlichen Bussgeldern und der anhaltenden Grauzone der CSC.',
+      metaTitle: 'Weed in Spanien fur Touristen: Rechtslage 2026',
+      metaDescription: 'Ist Weed in Spanien fur Touristen legal? Verstehe 2026 private Clubs, offentliche Bussgelder, Risiken und was du vor Reiseplanen prufen solltest.',
       content: `Spanien hat kein offentliches legales Cannabis-Retail-System fur Touristen. Das ist der erste Punkt und verandert jede Vergleichsbasis mit offenen Markten.
 
 ## Kurzfassung

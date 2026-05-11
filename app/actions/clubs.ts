@@ -272,6 +272,8 @@ interface ClubWithCity {
   googleRatingSnapshot: number | null;
   googleReviewCountSnapshot: number | null;
   publicDataReviewedAt: Date | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
   description: string;
   addressDisplay: string;
   coordinates: JsonValue;
@@ -309,6 +311,8 @@ export interface ClubCard {
   googleRatingSnapshot: number | null;
   googleReviewCountSnapshot: number | null;
   publicDataReviewedAt: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
   capacity: number;
   foundedYear: number;
 }
@@ -492,6 +496,8 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
         googleRatingSnapshot: club.googleRatingSnapshot,
         googleReviewCountSnapshot: club.googleReviewCountSnapshot,
         publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
+        metaTitle: club.metaTitle,
+        metaDescription: club.metaDescription,
         description: club.description,
         capacity: club.capacity,
         foundedYear: club.foundedYear,
@@ -559,6 +565,8 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
       googleRatingSnapshot: club.googleRatingSnapshot,
       googleReviewCountSnapshot: club.googleReviewCountSnapshot,
       publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
+      metaTitle: club.metaTitle,
+      metaDescription: club.metaDescription,
       description: club.description,
       addressDisplay: club.addressDisplay,
       coordinates: validatedCoordinates.success ? validatedCoordinates.data : { lat: 0, lng: 0 },
@@ -621,6 +629,8 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
       googleRatingSnapshot: club.googleRatingSnapshot,
       googleReviewCountSnapshot: club.googleReviewCountSnapshot,
       publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
+      metaTitle: club.metaTitle,
+      metaDescription: club.metaDescription,
       description: club.description,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
@@ -687,6 +697,8 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
       googleRatingSnapshot: clubItem.googleRatingSnapshot,
       googleReviewCountSnapshot: clubItem.googleReviewCountSnapshot,
       publicDataReviewedAt: clubItem.publicDataReviewedAt?.toISOString() ?? null,
+      metaTitle: clubItem.metaTitle,
+      metaDescription: clubItem.metaDescription,
       description: clubItem.description,
       capacity: clubItem.capacity,
       foundedYear: clubItem.foundedYear,
@@ -1198,6 +1210,8 @@ export async function getUserFavorites(userId: string) {
       googleRatingSnapshot: fav.club.googleRatingSnapshot,
       googleReviewCountSnapshot: fav.club.googleReviewCountSnapshot,
       publicDataReviewedAt: fav.club.publicDataReviewedAt?.toISOString() ?? null,
+      metaTitle: fav.club.metaTitle,
+      metaDescription: fav.club.metaDescription,
       description: fav.club.description,
       capacity: fav.club.capacity,
       foundedYear: fav.club.foundedYear,
@@ -1348,6 +1362,8 @@ export async function getClubForAdmin(authId: string) {
       googleRatingSnapshot: club.googleRatingSnapshot,
       googleReviewCountSnapshot: club.googleReviewCountSnapshot,
       publicDataReviewedAt: club.publicDataReviewedAt?.toISOString() ?? null,
+      metaTitle: club.metaTitle,
+      metaDescription: club.metaDescription,
       description: club.description,
       addressDisplay: club.addressDisplay,
       coordinates: club.coordinates,

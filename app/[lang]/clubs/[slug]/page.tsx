@@ -14,7 +14,7 @@ import { toAbsoluteHttpUrl } from '@/lib/url';
 import { buildLanguageAlternates, buildNoIndexFollowMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 import {
   getProfileLocationLabel,
-  sanitizePublicClubCopy,
+  getSafeClubSeoMetadata,
   getSafeStructuredDataForClub,
   sanitizePublicLocationText,
 } from '@/lib/public-club-safety';
@@ -70,16 +70,20 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
   });
   const primaryImage = getClubPrimaryMediaImage(mediaItems);
   const safeNeighborhood = sanitizePublicLocationText(clubDetail.neighborhood);
-  const profileStatus = clubDetail.isVerified ? 'Verified Profile' : 'Public Listing';
-  const metadataFallbackLocation = safeNeighborhood ?? clubDetail.cityName ?? 'Barcelona';
-  const fallbackDescription = clubDetail.isVerified
-    ? `${clubDetail.name} is a Verified Profile on SocialClubsMaps. Verification is a trust signal, not a guarantee of access.`
-    : `${clubDetail.name} is a Public Listing on SocialClubsMaps. Use it as a research starting point before you make plans.`;
-  const safeDescription = sanitizePublicClubCopy(clubDetail.shortDescription || fallbackDescription, metadataFallbackLocation);
+  const seoMetadata = getSafeClubSeoMetadata({
+    name: clubDetail.name,
+    metaTitle: clubDetail.metaTitle,
+    metaDescription: clubDetail.metaDescription,
+    shortDescription: clubDetail.shortDescription,
+    isVerified: clubDetail.isVerified,
+    verificationStatus: clubDetail.verificationStatus,
+    neighborhood: safeNeighborhood,
+    cityName: clubDetail.cityName,
+  });
 
   return {
-    title: `${clubDetail.name} | ${profileStatus} | SocialClubsMaps`,
-    description: safeDescription,
+    title: seoMetadata.title,
+    description: seoMetadata.description,
     keywords: [
       `${clubDetail.name} cannabis social club`,
       `${clubDetail.cityName} cannabis club`,
@@ -89,7 +93,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     ],
     openGraph: {
       title: `${clubDetail.name} | SocialClubsMaps`,
-      description: safeDescription,
+      description: seoMetadata.description,
       url: toAbsoluteUrl(`/${lang}/clubs/${clubDetail.slug}`),
       images: [primaryImage],
       type: 'website',
@@ -102,8 +106,8 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${clubDetail.name} | SocialClubsMaps`,
-      description: safeDescription,
+      title: seoMetadata.title,
+      description: seoMetadata.description,
       images: [primaryImage],
     },
     ...(clubDetail.isVerified ? {} : buildNoIndexFollowMetadata()),

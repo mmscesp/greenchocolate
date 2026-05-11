@@ -58,6 +58,8 @@ const clubs = [
     slug: 'club-311-barcelona',
     description: 'Club 311 Barcelona is a private members-only cannabis social club near Sagrada Familia, open daily from 10:30 to 00:00 with indoor premium lounges, recurring member events, and a tourist-friendly membership experience.',
     shortDescription: 'Indoor-only premium members club near Sagrada Familia with private lounges, member events, and daily hours until midnight.',
+    metaTitle: 'Club 311 Barcelona: Verified Cannabis Club Profile',
+    metaDescription: 'Club 311 Barcelona is an SCM Verified Profile near Sagrada Familia. Check status, member expectations, hours, and safety notes before making plans.',
     citySlug: 'barcelona',
     neighborhood: 'Eixample',
     addressDisplay: "Carrer de Lepant, 311, L'Eixample, 08025 Barcelona",
