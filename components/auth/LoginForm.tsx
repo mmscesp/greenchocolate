@@ -47,22 +47,23 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+    <div className="mx-auto w-full max-w-[28rem]">
+      <div className="mb-6 text-center">
+        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-brand/20 bg-brand/10">
           <LogoIcon size="lg" />
         </div>
-        <h1 className="text-3xl font-bold text-foreground">{t('auth.login.title')}</h1>
-        <p className="text-muted-foreground mt-2">{t('auth.login.subtitle')}</p>
+        <h1 className="text-3xl font-bold text-white">{t('auth.login.title')}</h1>
+        <p className="mt-2 text-zinc-400">{t('auth.login.subtitle')}</p>
       </div>
 
+      <div className="rounded-[1.75rem] border border-white/10 bg-bg-surface/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:p-6">
       {/* OAuth Buttons */}
       <div className="space-y-3 mb-6">
         <Button
           type="button"
           variant="secondary"
           size="lg"
-          className="w-full"
+          className="h-12 w-full rounded-full border-white/10 bg-white/[0.04]"
           onClick={() => handleOAuthSignIn('google')}
           disabled={isGoogleLoading}
         >
@@ -80,7 +81,7 @@ export default function LoginForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+          <span className="bg-bg-surface px-2 text-muted-foreground">
             {t('auth.login.continue_email')}
           </span>
         </div>
@@ -116,7 +117,7 @@ export default function LoginForm() {
               name="email"
               type="email"
               placeholder={t('auth.placeholders.email')}
-              className="pl-10"
+              className="h-12 rounded-xl border-white/10 bg-bg-base/70 pl-10"
               required
               disabled={isPending}
             />
@@ -143,7 +144,7 @@ export default function LoginForm() {
               name="password"
               type={showPassword ? 'text' : 'password'}
               placeholder={t('auth.placeholders.password')}
-              className="pl-10 pr-10"
+              className="h-12 rounded-xl border-white/10 bg-bg-base/70 pl-10 pr-10"
               required
               disabled={isPending}
             />
@@ -167,7 +168,7 @@ export default function LoginForm() {
           type="submit"
           variant="primary"
           size="lg"
-          className="w-full"
+          className="h-12 w-full rounded-full font-bold"
           disabled={isPending}
         >
           {isPending ? (
@@ -187,6 +188,7 @@ export default function LoginForm() {
           </Link>
         </div>
       </form>
+      </div>
     </div>
   );
 }

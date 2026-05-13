@@ -92,8 +92,8 @@ export default function RegisterForm() {
   // Show success state when signup is successful (message indicates email confirmation)
   if (state?.success && state?.message?.includes('email')) {
     return (
-      <div className="w-full max-w-md mx-auto text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 mb-4">
+      <div className="mx-auto w-full max-w-[28rem] rounded-[1.75rem] border border-white/10 bg-bg-surface/80 p-6 text-center shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-green-400/20 bg-green-400/10">
           {/* [motion] */}
           <motion.svg viewBox="0 0 24 24" className="h-8 w-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <motion.path
@@ -119,22 +119,23 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+    <div className="mx-auto w-full max-w-[30rem]">
+      <div className="mb-6 text-center">
+        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-brand/20 bg-brand/10">
           <LogoIcon size="lg" />
         </div>
-        <h1 className="text-3xl font-bold text-foreground">{t('auth.register.title')}</h1>
-        <p className="text-muted-foreground mt-2">{t('auth.register.subtitle')}</p>
+        <h1 className="text-3xl font-bold text-white">{t('auth.register.title')}</h1>
+        <p className="mt-2 text-zinc-400">{t('auth.register.subtitle')}</p>
       </div>
 
+      <div className="rounded-[1.75rem] border border-white/10 bg-bg-surface/80 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:p-6">
       {/* OAuth Buttons */}
       <div className="space-y-3 mb-6">
         <Button
           type="button"
           variant="secondary"
           size="lg"
-          className="w-full"
+          className="h-12 w-full rounded-full border-white/10 bg-white/[0.04]"
           onClick={() => handleOAuthSignIn('google')}
           disabled={isGoogleLoading}
         >
@@ -152,7 +153,7 @@ export default function RegisterForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+          <span className="bg-bg-surface px-2 text-muted-foreground">
             {t('auth.register.continue_email')}
           </span>
         </div>
@@ -186,7 +187,7 @@ export default function RegisterForm() {
               name="fullName"
               type="text"
               placeholder={t('auth.placeholders.full_name')}
-              className="pl-10"
+              className="h-12 rounded-xl border-white/10 bg-bg-base/70 pl-10"
               required
               disabled={isPending}
             />
@@ -205,7 +206,7 @@ export default function RegisterForm() {
               name="email"
               type="email"
               placeholder={t('auth.placeholders.email')}
-              className="pl-10"
+              className="h-12 rounded-xl border-white/10 bg-bg-base/70 pl-10"
               required
               disabled={isPending}
             />
@@ -226,7 +227,7 @@ export default function RegisterForm() {
               placeholder={t('auth.placeholders.create_password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 pr-10"
+              className="h-12 rounded-xl border-white/10 bg-bg-base/70 pl-10 pr-10"
               required
               disabled={isPending}
               minLength={8}
@@ -266,7 +267,7 @@ export default function RegisterForm() {
               placeholder={t('auth.placeholders.confirm_password')}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="pl-10"
+              className="h-12 rounded-xl border-white/10 bg-bg-base/70 pl-10"
               required
               disabled={isPending}
             />
@@ -283,6 +284,7 @@ export default function RegisterForm() {
             name="phone"
             type="tel"
             placeholder={t('auth.placeholders.phone')}
+            className="h-12 rounded-xl border-white/10 bg-bg-base/70"
             disabled={isPending}
           />
         </div>
@@ -312,7 +314,7 @@ export default function RegisterForm() {
           type="submit"
           variant="primary"
           size="lg"
-          className="w-full"
+          className="h-12 w-full rounded-full font-bold"
           disabled={isPending || !allRequirementsMet || !passwordsMatch || !consent}
         >
           {isPending ? (
@@ -332,6 +334,7 @@ export default function RegisterForm() {
           </Link>
         </div>
       </form>
+      </div>
     </div>
   );
 }
