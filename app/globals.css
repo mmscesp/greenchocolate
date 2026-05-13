@@ -64,6 +64,38 @@
   --ring: 180 100% 40%;
 
   --radius: 0.5rem;
+
+  /*
+   * UI polish foundation tokens.
+   * These are intentionally additive in Wave 1 so later layout waves can
+   * replace hard-coded sticky/fixed offsets without changing current visuals.
+   */
+  --site-header-height: 5rem;
+  --site-header-height-mobile: 4.5rem;
+  --site-header-floating-offset: 1rem;
+  --site-sticky-top: calc(var(--site-header-height) + var(--site-header-floating-offset));
+  --site-sticky-top-mobile: calc(var(--site-header-height-mobile) + var(--site-header-floating-offset));
+  --site-bottom-action-offset: calc(1rem + env(safe-area-inset-bottom, 0px));
+  --site-consent-offset: 0px;
+
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 30;
+  --z-nav: 50;
+  --z-bottom-action: 60;
+  --z-drawer: 90;
+  --z-modal: 100;
+  --z-consent: 9998;
+
+  --container-public: 80rem;
+  --container-reading: 48rem;
+  --container-legal: 56rem;
+  --container-dashboard: 105rem;
+
+  --radius-control: 0.75rem;
+  --radius-card: 1.5rem;
+  --radius-panel: 2rem;
+  --radius-media: 2rem;
 }
 
 .light {
@@ -183,6 +215,34 @@
   .surface-elevated { background-color: hsl(var(--bg-surface)); }
   .surface-card { background-color: hsl(var(--bg-card)); }
   .surface-modal { background-color: hsl(var(--bg-elevated)); }
+
+  .container-public {
+    width: min(100% - 2rem, var(--container-public));
+    margin-inline: auto;
+  }
+
+  .container-reading {
+    width: min(100% - 2rem, var(--container-reading));
+    margin-inline: auto;
+  }
+
+  .container-legal {
+    width: min(100% - 2rem, var(--container-legal));
+    margin-inline: auto;
+  }
+
+  .container-dashboard {
+    width: min(100% - 1.5rem, var(--container-dashboard));
+    margin-inline: auto;
+  }
+
+  .sticky-below-site-header {
+    top: var(--site-sticky-top);
+  }
+
+  .bottom-action-safe {
+    bottom: calc(var(--site-bottom-action-offset) + var(--site-consent-offset));
+  }
 }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
