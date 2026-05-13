@@ -173,11 +173,13 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
                 
                 <div className="relative z-10">
-                  <div className="mb-6 flex flex-wrap items-center gap-3">
-                    <span className="rounded-full border border-brand/40 bg-brand/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand">
-                      {statusLabel}
+                  <div className="mb-6 flex min-w-0 items-center gap-2 sm:flex-wrap sm:gap-3">
+                    <span className="relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full border border-brand/50 bg-brand px-2.5 py-1.5 text-[8px] font-black uppercase tracking-[0.12em] text-black shadow-[0_0_28px_-8px_hsl(var(--brand)/0.9)] backdrop-blur-sm sm:px-3.5 sm:text-[10px] sm:tracking-[0.16em]">
+                      <span className="absolute inset-y-0 left-0 w-8 bg-white/35 blur-xl" />
+                      <Shield className="relative h-3.5 w-3.5" />
+                      <span className="relative">{statusLabel}</span>
                     </span>
-                    <span className="rounded-full border border-brand/30 bg-brand/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-brand">
+                    <span className="inline-flex min-w-0 items-center truncate rounded-full border border-white/10 bg-white/[0.045] px-2.5 py-1.5 text-[8px] font-bold uppercase tracking-[0.12em] text-zinc-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:px-3.5 sm:text-[10px] sm:tracking-[0.16em]">
                       {profileLocation}
                     </span>
                     {club.rating && (
