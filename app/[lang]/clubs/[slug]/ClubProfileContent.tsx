@@ -192,23 +192,23 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                     {club.name}
                   </EditorialHeading>
 
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-t border-white/10 pt-8">
+                  <div className="flex flex-col items-stretch gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center">
                     <Button
                       type="button"
                       variant="primary"
                       size="xl"
                       onClick={openMembershipFlow}
                       disabled={!acceptsApplications}
-                      className="w-full rounded-full bg-brand px-10 py-6 text-base font-bold text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.25)] transition-all hover:scale-[1.02] hover:bg-brand-dark active:scale-[0.98] sm:w-auto"
+                      className="min-h-14 w-full whitespace-normal rounded-full bg-brand px-5 py-4 text-center text-sm font-bold leading-tight text-bg-base shadow-[0_4px_20px_hsl(var(--brand)/0.25)] transition-all hover:scale-[1.02] hover:bg-brand-dark active:scale-[0.98] sm:w-auto sm:px-10 sm:text-base"
                     >
                       {primaryActionLabel}
                     </Button>
-                    <span className="text-zinc-400 uppercase tracking-[0.15em] text-[11px] font-medium max-w-[200px] text-center sm:text-left">
+                    <span className="max-w-none text-left text-xs font-medium leading-5 text-zinc-400 sm:max-w-[17rem]">
                       {t('club_profile.membership_application')}
                     </span>
                   </div>
                   <p className="mt-4 max-w-2xl text-xs leading-6 text-zinc-500">
-                    {statusDescription} {t('club_profile.no_acceptance_guarantee')}
+                    {statusDescription}
                   </p>
 
                   <section className="mt-8 border-y border-white/10 py-5">
