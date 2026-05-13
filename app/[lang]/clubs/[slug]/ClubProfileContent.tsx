@@ -301,8 +301,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
 
           {/* RIGHT COLUMN: Sticky Dossier */}
           <div className="lg:col-span-4 relative">
-            {/* Sticks exactly below the Navbar */}
-            <div className="sticky top-[72px] md:top-[80px] space-y-6 flex flex-col pb-10">
+            <div className="sticky sticky-below-site-header space-y-6 flex flex-col pb-10">
 
               {/* Box 1: Club Stats */}
               <div className={`${glassCardClass} p-8 overflow-hidden group`}>

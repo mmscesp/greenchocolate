@@ -86,7 +86,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
             : { y: showStickyCTA ? 0 : 100, opacity: showStickyCTA ? 1 : 0 }
         }
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-        className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-bg-base/90 backdrop-blur-md border-t border-white/10"
+        className="fixed inset-x-0 bottom-action-safe z-[var(--z-bottom-action)] p-4 bg-bg-base/90 backdrop-blur-md border border-white/10 sm:border-x-0 sm:border-b-0"
       >
         <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-white font-bold hidden sm:block">{t('article.sticky_cta.desktop')}</p>
@@ -237,7 +237,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
           {/* Sidebar */}
           <aside className="space-y-12">
             {/* Safety Kit Widget */}
-            <div className="sticky top-24 space-y-12">
+            <div className="sticky sticky-below-site-header space-y-12">
               <div className="rounded-3xl border border-white/10 bg-bg-card/80 p-4 backdrop-blur-sm shadow-xl">
                 <EligibilityFlow />
                 <div className="mt-6 flex justify-center">

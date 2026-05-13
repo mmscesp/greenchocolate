@@ -397,7 +397,7 @@ function DesktopFilterBar({
 
   return (
     <div className="hidden md:block">
-      <div className="sticky top-24 z-30 overflow-hidden rounded-[1.75rem] border border-white/12 bg-[#061017]/90 shadow-[0_24px_70px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
+      <div className="sticky sticky-below-site-header z-[var(--z-sticky)] overflow-hidden rounded-[1.75rem] border border-white/12 bg-[#061017]/90 shadow-[0_24px_70px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/60 to-transparent" />
         <div className="flex flex-col gap-4 p-4 lg:p-5">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -623,7 +623,7 @@ export default function FilterBar({
     <>
       <div
         className={cn(
-          'fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 transition-all duration-200 md:hidden',
+          'fixed inset-x-4 bottom-action-safe z-[var(--z-bottom-action)] transition-all duration-200 md:hidden',
           (hideMobileTrigger && !isMobileOpen) ? 'pointer-events-none translate-y-6 opacity-0' : 'opacity-100'
         )}
       >
