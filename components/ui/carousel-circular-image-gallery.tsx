@@ -2,21 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import Image from "next/image"
+import gsap from "gsap"
+import { MotionPathPlugin } from "gsap/MotionPathPlugin"
 import { useLanguage } from '@/hooks/useLanguage';
-
-type MotionPathWindow = Window &
-  typeof globalThis & {
-    gsap?: {
-      registerPlugin: (plugin: unknown) => void
-      timeline: (config?: Record<string, unknown>) => {
-        set: (target: SVGCircleElement, vars: Record<string, unknown>) => {
-          to: (target: SVGCircleElement, vars: Record<string, unknown>) => unknown
-        }
-        to: (target: SVGCircleElement, vars: Record<string, unknown>) => unknown
-      }
-    }
-    MotionPathPlugin?: unknown
-  }
 
 const GALLERY_GAP = 10
 const GALLERY_CIRCLE_RADIUS = 7
@@ -27,6 +15,8 @@ const GALLERY_HEIGHT = 400
 const GALLERY_SCALE = 700
 const GALLERY_BIG_SIZE = GALLERY_CIRCLE_RADIUS * GALLERY_SCALE
 const GALLERY_OVERLAP = 0
+
+gsap.registerPlugin(MotionPathPlugin)
 
 function getPosSmall(id: number, total: number) {
   return {
@@ -76,35 +66,8 @@ export function ImageGallery({ images }: ImageGalleryProps) {
   const [opened, setOpened] = useState(0)
   const [inPlace, setInPlace] = useState(0)
   const [disabled, setDisabled] = useState(false)
-  const [gsapReady, setGsapReady] = useState(false)
+  const [gsapReady] = useState(true)
   const autoplayTimer = useRef<number | null>(null)
-
-  useEffect(() => {
-    const motionWindow = window as MotionPathWindow
-
-    const loadScripts = () => {
-      if (motionWindow.gsap && motionWindow.MotionPathPlugin) {
-        motionWindow.gsap.registerPlugin(motionWindow.MotionPathPlugin)
-        setGsapReady(true)
-        return
-      }
-      const gsapScript = document.createElement("script")
-      gsapScript.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
-      gsapScript.onload = () => {
-        const motionPathScript = document.createElement("script")
-        motionPathScript.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"
-        motionPathScript.onload = () => {
-          if (motionWindow.gsap && motionWindow.MotionPathPlugin) {
-            motionWindow.gsap.registerPlugin(motionWindow.MotionPathPlugin)
-            setGsapReady(true)
-          }
-        }
-        document.body.appendChild(motionPathScript)
-      }
-      document.body.appendChild(gsapScript)
-    }
-    loadScripts()
-  }, [])
 
   const onClick = (index: number) => {
     if (!disabled && index !== opened) {
@@ -217,8 +180,6 @@ function GalleryImage({ url, title, open, inPlace, id, onInPlace, total }: Galle
   const clip = useRef<SVGCircleElement>(null)
 
   useEffect(() => {
-    const motionWindow = window as MotionPathWindow
-    const gsap = motionWindow.gsap
     if (!gsap || !clip.current) return
     const isFirstLoad = firstLoadRef.current
     const flipDuration = isFirstLoad ? 0 : GALLERY_DURATION

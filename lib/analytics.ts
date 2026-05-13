@@ -1,7 +1,8 @@
+import { ANALYTICS_SESSION_STORAGE_KEY, canUseMeasurement } from '@/lib/consent';
+
 export type AnalyticsValue = string | number | boolean | null | undefined;
 export type AnalyticsPayload = Record<string, AnalyticsValue>;
 
-const SESSION_STORAGE_KEY = 'scm.analytics.session_id';
 let analyticsContext: AnalyticsPayload = {};
 
 declare global {
@@ -12,8 +13,10 @@ declare global {
 
 export function trackEvent(event: string, payload: AnalyticsPayload = {}): void {
   if (typeof window === 'undefined') return;
+  if (!canUseMeasurement()) return;
 
   const sessionId = getAnalyticsSessionId();
+  if (!sessionId) return;
   const pagePath = window.location.pathname;
 
   const eventPayload: Record<string, unknown> = {
@@ -54,13 +57,14 @@ export function clearAnalyticsContext(keys?: string[]): void {
   }
 }
 
-export function getAnalyticsSessionId(): string {
-  if (typeof window === 'undefined') return 'server';
+export function getAnalyticsSessionId(): string | null {
+  if (typeof window === 'undefined') return null;
+  if (!canUseMeasurement()) return null;
 
-  const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
+  const existing = window.localStorage.getItem(ANALYTICS_SESSION_STORAGE_KEY);
   if (existing) return existing;
 
   const created = `sess_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-  window.localStorage.setItem(SESSION_STORAGE_KEY, created);
+  window.localStorage.setItem(ANALYTICS_SESSION_STORAGE_KEY, created);
   return created;
 }

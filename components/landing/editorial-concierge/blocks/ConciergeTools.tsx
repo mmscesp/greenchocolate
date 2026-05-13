@@ -14,6 +14,7 @@ import {
 } from '@/lib/icons';
 import { useLanguage } from '@/hooks/useLanguage';
 import { trackEvent } from '@/lib/analytics';
+import { CONCIERGE_RESULT_STORAGE_KEY, canUseFunctionalStorage } from '@/lib/consent';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { deliverConciergePlan } from '@/app/actions/lead-capture';
@@ -33,7 +34,7 @@ import {
   type TimelineOptionId,
 } from './concierge-tools-plan';
 
-const RESULT_STORAGE_KEY = 'scm.concierge_tools.result';
+const RESULT_STORAGE_KEY = CONCIERGE_RESULT_STORAGE_KEY;
 const TIMELINE_OPTION_IDS: TimelineOptionId[] = ['this_weekend', 'within_month', 'few_months', 'already_here'];
 const EXPERIENCE_OPTION_IDS: ExperienceOptionId[] = ['beginner', 'coffeeshops', 'been_before', 'member_somewhere'];
 const CITY_OPTION_IDS: CityOptionId[] = ['barcelona', 'madrid', 'valencia', 'tenerife', 'not_sure'];
@@ -490,6 +491,7 @@ function getStepTranslationKey(
 
 function readPersistedResultState(): PersistedResultState | null {
   if (typeof window === 'undefined') return null;
+  if (!canUseFunctionalStorage()) return null;
   try {
     const raw = window.sessionStorage.getItem(RESULT_STORAGE_KEY);
     if (!raw) return null;
@@ -510,6 +512,7 @@ function readPersistedResultState(): PersistedResultState | null {
 
 function persistResultState(state: PersistedResultStateInput) {
   if (typeof window === 'undefined') return;
+  if (!canUseFunctionalStorage()) return;
   window.sessionStorage.setItem(
     RESULT_STORAGE_KEY,
     JSON.stringify({

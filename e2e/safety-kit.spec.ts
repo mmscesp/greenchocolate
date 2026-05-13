@@ -6,7 +6,7 @@ async function installAnalyticsCollector(page: Page) {
 
     window.addEventListener('scm:analytics', ((event: Event) => {
       const customEvent = event as CustomEvent<Record<string, unknown>>;
-      const analyticsWindow = window as Window & {
+      const analyticsWindow = window as unknown as Window & {
         __scmAnalyticsEvents: Array<Record<string, unknown>>;
       };
 
@@ -18,6 +18,19 @@ async function installAnalyticsCollector(page: Page) {
 async function primeLegalConsent(page: Page) {
   await page.addInitScript(() => {
     window.localStorage.setItem('legal_consent_v1', 'true');
+    window.localStorage.setItem(
+      'scm.cookie_consent.v1',
+      JSON.stringify({
+        version: '2026-05-12',
+        updatedAt: '2026-05-12T00:00:00.000Z',
+        categories: {
+          necessary: true,
+          functional: false,
+          measurement: true,
+          marketing: false,
+        },
+      })
+    );
   });
 }
 

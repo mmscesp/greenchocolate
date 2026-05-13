@@ -77,9 +77,30 @@ export default async function CookiesPage({ params }: CookiesPageProps) {
           </section>
 
           <section>
+            <h2 className="text-xl font-semibold text-foreground mb-2">{t('legal.cookies.functional.title')}</h2>
+            <p>
+              {t('legal.cookies.functional.body')}
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-foreground mb-2">{t('legal.cookies.marketing.title')}</h2>
+            <p>
+              {t('legal.cookies.marketing.body')}
+            </p>
+          </section>
+
+          <section>
             <h2 className="text-xl font-semibold text-foreground mb-2">{t('legal.cookies.preferences.title')}</h2>
             <p>
               {t('legal.cookies.preferences.body')}
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-foreground mb-2">{t('legal.cookies.audit.title')}</h2>
+            <p>
+              {t('legal.cookies.audit.body')}
             </p>
           </section>
         </div>

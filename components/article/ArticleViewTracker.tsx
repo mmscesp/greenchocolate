@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { getAnalyticsSessionId, trackEvent } from '@/lib/analytics';
+import { canUseMeasurement } from '@/lib/consent';
 
 interface ArticleViewTrackerProps {
   articleSlug: string;
@@ -11,7 +12,10 @@ interface ArticleViewTrackerProps {
 
 export function ArticleViewTracker({ articleSlug, locale, category }: ArticleViewTrackerProps) {
   useEffect(() => {
+    if (!canUseMeasurement()) return;
+
     const sessionId = getAnalyticsSessionId();
+    if (!sessionId) return;
 
     trackEvent('editorial_article_view', {
       article_slug: articleSlug,

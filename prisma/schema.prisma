@@ -350,6 +350,27 @@ model ConsentRecord {
   @@index([userId, purpose])
 }
 
+model CookieConsentAudit {
+  id            String   @id @default(uuid())
+  subjectId     String
+  action        String
+  policyVersion String
+  necessary     Boolean  @default(true)
+  functional    Boolean  @default(false)
+  measurement   Boolean  @default(false)
+  marketing     Boolean  @default(false)
+  locale        String?
+  countryCode   String?
+  userAgentHash String?
+  ipHash        String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([subjectId, createdAt])
+  @@index([policyVersion, createdAt])
+  @@index([createdAt])
+}
+
 model Review {
   id        String   @id @default(uuid())
   rating    Int

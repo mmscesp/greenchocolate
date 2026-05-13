@@ -12,6 +12,7 @@ import PlatformBackground from '@/components/layout/PlatformBackground';
 import LegalDisclaimerModal from '@/components/trust/LegalDisclaimerModal';
 import PendingApplicationProcessor from '@/components/clubs/PendingApplicationProcessor';
 import LanguageUpdater from '@/components/LanguageUpdater';
+import CookieConsentManager from '@/components/consent/CookieConsentManager';
 
 export async function generateStaticParams() {
   return i18n.locales.map((lang) => ({ lang }));
@@ -47,6 +48,7 @@ export default async function LocaleLayout({
               <RouteTransition>{children}</RouteTransition>
             </main>
             <ConditionalFooter />
+            <CookieConsentManager />
           </div>
         </MotionProvider>
       </AuthProvider>

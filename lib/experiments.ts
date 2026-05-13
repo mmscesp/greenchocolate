@@ -1,3 +1,5 @@
+import { EXPERIMENT_STORAGE_PREFIX, canUseMeasurement } from '@/lib/consent';
+
 export interface ExperimentAssignment {
   arm: string;
   source: 'query' | 'storage' | 'random';
@@ -18,21 +20,28 @@ export function resolveExperimentArm({
     return { arm: allowedArms[0], source: 'random' };
   }
 
-  const storageKey = `scm.exp.${experimentId}.arm`;
+  const storageKey = `${EXPERIMENT_STORAGE_PREFIX}${experimentId}.arm`;
   const queryArm = readQueryArm(experimentId, allowedArms, searchParams ?? new URLSearchParams(window.location.search));
+  const canPersistAssignment = canUseMeasurement();
 
   if (queryArm) {
-    window.localStorage.setItem(storageKey, queryArm);
+    if (canPersistAssignment) {
+      window.localStorage.setItem(storageKey, queryArm);
+    }
     return { arm: queryArm, source: 'query' };
   }
 
-  const existing = window.localStorage.getItem(storageKey);
-  if (existing && allowedArms.includes(existing)) {
-    return { arm: existing, source: 'storage' };
+  if (canPersistAssignment) {
+    const existing = window.localStorage.getItem(storageKey);
+    if (existing && allowedArms.includes(existing)) {
+      return { arm: existing, source: 'storage' };
+    }
   }
 
   const fallback = allowedArms[Math.floor(Math.random() * allowedArms.length)] ?? allowedArms[0];
-  window.localStorage.setItem(storageKey, fallback);
+  if (canPersistAssignment) {
+    window.localStorage.setItem(storageKey, fallback);
+  }
   return { arm: fallback, source: 'random' };
 }
 

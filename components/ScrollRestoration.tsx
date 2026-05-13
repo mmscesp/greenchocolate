@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-
-const STORAGE_PREFIX = 'scm:scroll:';
+import { SCROLL_STORAGE_PREFIX, canUseFunctionalStorage } from '@/lib/consent';
 
 export default function ScrollRestoration() {
   const pathname = usePathname();
@@ -29,9 +28,11 @@ export default function ScrollRestoration() {
 
   useEffect(() => {
     const query = typeof window !== 'undefined' ? window.location.search : '';
-    const storageKey = `${STORAGE_PREFIX}${routeKey}${query}`;
+    const storageKey = `${SCROLL_STORAGE_PREFIX}${routeKey}${query}`;
+    const canPersistScroll = canUseFunctionalStorage();
 
     const savePosition = () => {
+      if (!canPersistScroll) return;
       window.sessionStorage.setItem(storageKey, String(window.scrollY));
     };
 
@@ -59,7 +60,7 @@ export default function ScrollRestoration() {
     const shouldRestore = restoreOnNextRouteRef.current;
     restoreOnNextRouteRef.current = false;
 
-    if (shouldRestore && !window.location.hash) {
+    if (canPersistScroll && shouldRestore && !window.location.hash) {
       const savedValue = window.sessionStorage.getItem(storageKey);
       const savedY = Number(savedValue);
 
