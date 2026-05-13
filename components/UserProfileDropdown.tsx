@@ -218,6 +218,18 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
             )}
           </div>
         )}
+        {isClubAdmin && (
+          <div className="px-3 md:px-2 py-3 md:py-2 border-b border-white/5 space-y-1">
+            <Link
+              href={withLocale('/club-panel/dashboard')}
+              onClick={handleLinkClick}
+              className="flex items-center gap-3 px-4 md:px-3 py-3 md:py-2 rounded-xl md:rounded-lg bg-brand/10 text-brand-light hover:bg-brand/20 transition-colors"
+            >
+              <PanelTop className="h-5 w-5 md:h-4 md:w-4" />
+              <span className="text-base md:text-sm font-medium">{t('nav.dashboard')}</span>
+            </Link>
+          </div>
+        )}
 
         {/* Main Menu Items */}
         <div className="px-3 md:px-2 py-3 md:py-2 space-y-1">
@@ -354,7 +366,8 @@ export default function UserProfileDropdown({ className = '', variant = 'dropdow
           <DrawerPanelContent
             title={t('profile.nav.title')}
             description={t('profile.subtitle')}
-            className="glass-dropdown max-h-[90vh] rounded-t-[32px] border-t border-white/10 bg-[#07111b]/95 pb-8"
+            overlayClassName="z-[110]"
+            className="z-[120] glass-dropdown max-h-[90vh] rounded-t-[32px] border-t border-white/10 bg-[#07111b]/95 pb-8"
           >
             <div className="flex-1 overflow-y-auto custom-scrollbar">
               {renderProfileMenuContent()}
