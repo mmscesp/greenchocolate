@@ -119,7 +119,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
       {/* ========================================================= */}
       {/* CINEMATIC HERO                                            */}
       {/* ========================================================= */}
-      <section className="relative h-[60vh] min-h-[500px] w-full lg:h-[75vh]">
+      <section className="relative h-[46vh] min-h-[360px] w-full sm:h-[56vh] sm:min-h-[460px] lg:h-[72vh]">
         <div className="absolute inset-0">
           {videoItem ? (
             <video
@@ -148,11 +148,11 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
         </div>
 
         {/* Back Button pushed down to clear top navbar completely */}
-        <div className="absolute left-4 top-24 sm:left-8 z-20">
+        <div className="absolute left-4 top-[calc(var(--site-header-height-mobile)+1rem)] z-20 sm:left-8 md:top-[calc(var(--site-header-height)+1rem)]">
           <Button asChild variant="ghost" className="rounded-full border border-white/10 bg-bg-base/40 text-white/90 backdrop-blur-md transition-all hover:bg-bg-surface hover:text-white">
-            <Link href={`/${language}/spain/barcelona/clubs`}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('nav.back_to_clubs')}
+            <Link href={`/${language}/spain/barcelona/clubs`} className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span className="[word-spacing:0.16rem]">{t('nav.back_to_clubs')}</span>
             </Link>
           </Button>
         </div>
@@ -161,7 +161,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
       {/* ========================================================= */}
       {/* ASYMMETRICAL CONTENT LAYOUT                               */}
       {/* ========================================================= */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-8 -mt-32 lg:-mt-48">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 -mt-24 sm:px-8 lg:-mt-44">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           
           {/* LEFT COLUMN: The Story, Gallery, & Deep Dive */}
@@ -169,7 +169,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
             
             {/* 1. The Liquid Glass Hero Title Card */}
             <motion.div variants={STAGGER_CONTAINER} initial="initial" animate="animate">
-              <motion.div variants={FADE_UP} className={`${glassCardClass} p-8 lg:p-12`}>
+              <motion.div variants={FADE_UP} className={`${glassCardClass} p-6 sm:p-8 lg:p-12`}>
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none" />
                 
                 <div className="relative z-10">
@@ -188,7 +188,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                     )}
                   </div>
 
-                  <EditorialHeading as="h1" size="hero" className="mb-8 text-white drop-shadow-lg leading-tight">
+                  <EditorialHeading as="h1" size="2xl" className="mb-8 text-white drop-shadow-lg leading-tight">
                     {club.name}
                   </EditorialHeading>
 
