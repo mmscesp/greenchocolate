@@ -109,7 +109,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
       </div>
 
       {/* Back to Editorial link */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-32 pb-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-28 pb-4 relative z-10">
         <Link href={`/${language}/editorial`}>
           <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -119,7 +119,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
       </div>
 
       {/* Hero Section */}
-      <div className="relative h-[450px] lg:h-[650px] overflow-hidden bg-bg-surface relative z-10">
+      <div className="relative h-[420px] overflow-hidden bg-bg-surface z-10 sm:h-[500px] lg:h-[620px]">
         <Image
           src={articleHeroImage}
           alt={article.heroImageAlt || article.title}
@@ -129,18 +129,18 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
         />
         <div className="absolute inset-0 bg-gradient-to-t from-bg-base via-bg-base/40 to-transparent" />
         
-        <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-20">
+        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-20">
           <div className="max-w-4xl mx-auto">
-            <div className="flex gap-2 mb-8">
+            <div className="mb-5 flex flex-wrap gap-2 sm:mb-8">
               <TrustBadge type="legal" size="sm" className="bg-brand/10 border-brand/20 text-brand" />
               <Badge variant="secondary" className="bg-white/10 text-white border-white/20 uppercase tracking-widest text-[10px] font-bold">
                 {localizedCategory}
               </Badge>
             </div>
-            <h1 className="text-4xl lg:text-7xl font-black text-white mb-8 leading-[0.95] tracking-tight font-serif">
+            <h1 className="mb-6 text-[clamp(2.45rem,12vw,4.65rem)] font-black leading-[0.98] tracking-normal text-white font-serif lg:mb-8 lg:text-7xl">
               {article.title}
             </h1>
-            <div className="flex items-center gap-8 text-zinc-400 font-bold text-[10px] uppercase tracking-widest">
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-zinc-400 font-bold text-[10px] uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-brand" />
                 <span>{article.readTime} {t('article.min_read')}</span>
