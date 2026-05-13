@@ -168,8 +168,8 @@ export default function ClubCard({ club, className = '' }: ClubCardProps) {
             {/* CTA Button */}
             <Link href={`/${language}/clubs/${club.slug}`}>
               <Button className="w-full bg-brand hover:bg-brand-dark text-black font-black rounded-full transition-all duration-500 border-none group/btn h-12 sm:h-14 shadow-[0_8px_20px_-10px_hsl(var(--brand)/0.4)]">
-                <span className="uppercase tracking-[0.2em] text-[10px]">{t('clubs.card.explore_this_club')}</span>
-                <ArrowRight className="h-3.5 w-3.5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                <span className="uppercase tracking-[0.16em] text-[10px]">{t('clubs.card.explore_this_club')}</span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0 group-hover/btn:translate-x-1 transition-transform" />
               </Button>
             </Link>
           </div>

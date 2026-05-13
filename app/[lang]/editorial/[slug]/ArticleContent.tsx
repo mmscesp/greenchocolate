@@ -93,8 +93,9 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
           <p className="text-white font-bold sm:hidden">{t('article.sticky_cta.mobile')}</p>
           <div className="flex items-center gap-3">
             <Link href={`/${language}/spain/barcelona/clubs`}>
-              <Button className="bg-brand hover:bg-brand-dark text-bg-base font-bold rounded-full">
-                {t('article.sticky_cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
+              <Button className="rounded-full bg-brand font-bold text-bg-base hover:bg-brand-dark">
+                <span>{t('article.sticky_cta.button')}</span>
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Button>
             </Link>
           </div>
@@ -242,8 +243,9 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                 <EligibilityFlow />
                 <div className="mt-6 flex justify-center">
                   <Link href={`/${language}/safety-kit`}>
-                    <Button className="rounded-full bg-brand hover:bg-brand-dark text-bg-base font-bold uppercase tracking-widest text-[10px] px-8 py-6">
-                      {t('article.open_safety_guide')} <ArrowRight className="ml-2 h-4 w-4" />
+                    <Button className="min-h-12 whitespace-normal rounded-full bg-brand px-6 py-3 text-center text-[10px] font-bold uppercase tracking-[0.14em] text-bg-base hover:bg-brand-dark sm:px-8">
+                      <span>{t('article.open_safety_guide')}</span>
+                      <ArrowRight className="h-4 w-4 shrink-0" />
                     </Button>
                   </Link>
                 </div>

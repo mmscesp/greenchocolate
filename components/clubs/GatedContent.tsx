@@ -53,10 +53,10 @@ export default function GatedContent({
               </p>
               
               <div className="grid gap-4">
-                <Button className="w-full py-7 bg-brand text-bg-base font-black rounded-full uppercase tracking-[0.2em] text-[10px] group/btn shadow-[0_8px_20px_-10px_hsl(var(--brand)/0.4)] hover:bg-brand-dark transition-all" asChild>
-                  <Link href={withLocale('/account/register')}>
+                <Button className="w-full min-h-14 whitespace-normal py-4 bg-brand text-bg-base font-black rounded-full uppercase tracking-[0.14em] text-[10px] group/btn shadow-[0_8px_20px_-10px_hsl(var(--brand)/0.4)] hover:bg-brand-dark transition-all" asChild>
+                  <Link href={withLocale('/account/register')} className="gap-2">
                     <span>{t('clubs.gated.initiate_verification')}</span>
-                    <ArrowRight className="h-3.5 w-3.5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                    <ArrowRight className="h-3.5 w-3.5 shrink-0 group-hover/btn:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
                 
