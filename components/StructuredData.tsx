@@ -102,7 +102,7 @@ export function WebSiteStructuredData({ name, url }: { name: string; url: string
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${url}/clubs?search={search_term_string}`,
+        urlTemplate: `${url}/spain/barcelona/clubs?search={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

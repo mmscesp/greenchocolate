@@ -284,7 +284,7 @@ export default function SafetyPage({ params }: SafetyPageProps) {
             </div>
             <div className="flex w-full sm:w-auto">
               <Button asChild className="w-full sm:w-auto min-h-14 px-10 bg-brand hover:bg-brand-dark text-bg-base font-bold rounded-full text-sm uppercase tracking-widest">
-                <Link href={`/${lang}/clubs`}>
+                <Link href={`/${lang}/spain/barcelona/clubs`}>
                   {t('safety.cta.button')} <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>

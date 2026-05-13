@@ -7,7 +7,8 @@ import { JsonLd } from '@/components/JsonLd';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { sanitizePublicLocationText } from '@/lib/public-club-safety';
-import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildItemListJsonLd, buildLocalizedMetadata, isLocale } from '@/lib/seo';
+import { getCityIndexPolicy } from '@/lib/seo-policy';
+import { buildBreadcrumbJsonLd, buildCollectionPageJsonLd, buildItemListJsonLd, buildLocalizedMetadata, buildNoIndexFollowMetadata, isLocale } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
@@ -21,6 +22,7 @@ export async function generateMetadata({
     return {};
   }
 
+  const cityPolicy = getCityIndexPolicy(city);
   const cityDetail = await getCityBySlug(city);
   const cityName = cityDetail?.name || city;
   const dictionary = await getDictionary(lang);
@@ -33,20 +35,25 @@ export async function generateMetadata({
     );
   };
 
-  return buildLocalizedMetadata({
-    lang,
-    path: `/spain/${city}/clubs`,
-    title: format('city_clubs.meta_title', { city: cityName }),
-    description: format('city_clubs.meta_description', { city: cityName }),
-    keywords: [
-      `${cityName} cannabis social clubs`,
-      `${cityName} club directory`,
-      'verified cannabis club profiles',
-      'public club listings Spain',
-      'SCM verification standard',
-    ],
-    imagePath: '/images/BarcelonaMapBG.webp',
-  });
+  return {
+    ...buildLocalizedMetadata({
+      lang,
+      path: `/spain/${city}/clubs`,
+      title: format('city_clubs.meta_title', { city: cityName }),
+      description: cityPolicy.index
+        ? format('city_clubs.meta_description', { city: cityName })
+        : 'City club archive for future cannabis social club research. This page is not indexed until SCM has verified city depth.',
+      keywords: [
+        `${cityName} cannabis social clubs`,
+        `${cityName} cannabis social club profiles`,
+        'verified cannabis club profiles',
+        'public club listings Spain',
+        'SCM verification standard',
+      ],
+      imagePath: '/images/BarcelonaMapBG.webp',
+    }),
+    ...(cityPolicy.index ? {} : buildNoIndexFollowMetadata()),
+  };
 }
 
 export default async function CityClubsPage({ params }: PageProps) {

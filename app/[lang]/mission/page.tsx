@@ -186,7 +186,7 @@ export default async function MissionPage({ params }: MissionPageProps) {
                 {t('mission.cta.subtitle')}
               </Text>
               <Button asChild className="min-h-14 px-10 bg-brand hover:bg-brand-dark text-black font-bold rounded-full text-sm uppercase tracking-widest shadow-xl shadow-brand/20">
-                <Link href={`/${lang}/clubs`}>
+                <Link href={`/${lang}/spain/barcelona/clubs`}>
                   {t('mission.cta.button')} <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>

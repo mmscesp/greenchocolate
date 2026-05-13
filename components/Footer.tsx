@@ -6,6 +6,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { i18n, type Locale } from '@/lib/i18n-config';
 import { Logo } from '@/components/ui/logo';
 import { Instagram, Twitter, TikTok } from '@/lib/icons';
+import CookieSettingsButton from '@/components/consent/CookieSettingsButton';
 
 export default function Footer() {
   const { language, setLanguage, t } = useLanguage();
@@ -90,7 +91,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={withLocale('/clubs')} prefetch={false} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                <Link href={withLocale('/spain/barcelona/clubs')} prefetch={false} className="text-sm text-zinc-400 hover:text-white transition-colors">
                   {t('footer.new.start.verified_clubs')}
                 </Link>
               </li>
@@ -165,7 +166,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <Link 
-                  href={withLocale('/clubs')} 
+                  href={withLocale('/spain/barcelona/clubs')} 
                   prefetch={false}
                   className="text-sm text-zinc-400 hover:text-white transition-colors"
                 >
@@ -276,6 +277,11 @@ export default function Footer() {
                 >
                   {t('footer.new.about.cookie_policy')}
                 </Link>
+              </li>
+              <li>
+                <CookieSettingsButton className="text-sm text-zinc-400 hover:text-white transition-colors">
+                  {t('footer.new.about.cookie_settings')}
+                </CookieSettingsButton>
               </li>
             </ul>
           </div>

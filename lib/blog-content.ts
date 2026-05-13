@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { normalizeArticleContent } from '@/lib/article-content';
 import { ARTICLE_TRANSLATIONS } from '@/lib/article-translations';
+import { getArticleLocaleState, type ArticleLocaleState } from '@/lib/article-localization';
 import {
   EDITORIAL_SPRINT_PACKAGES,
   getEditorialSprintLocaleFields,
@@ -36,6 +37,9 @@ export interface BlogArticleRecord {
   authorAvatar: string | null;
   authorBio: string | null;
   publishedAt: string | null;
+  lastVerified: string | null;
+  lastReviewed: string | null;
+  updatedAt: string | null;
   readTime: number;
   isPublished: boolean;
   metaTitle: string | null;
@@ -47,6 +51,7 @@ export interface BlogArticleRecord {
   eventEndDate: string | null;
   eventLocation: string | null;
   eventUrl: string | null;
+  localeState: ArticleLocaleState;
 }
 
 function parseFrontmatter(source: string): { frontmatter: ParsedFrontmatter; body: string } {
@@ -231,6 +236,9 @@ async function loadArticleFromFile(filePath: string): Promise<BlogArticleRecord>
     authorAvatar: asString(frontmatter.authorAvatar),
     authorBio: asString(frontmatter.authorBio),
     publishedAt,
+    lastVerified: asIsoDateOrNull(asString(frontmatter.lastVerified)),
+    lastReviewed: asIsoDateOrNull(asString(frontmatter.lastReviewed)),
+    updatedAt: asIsoDateOrNull(asString(frontmatter.updatedAt)),
     readTime: asNumber(frontmatter.readTime, wordsToReadTime(normalizedBody)),
     isPublished: asBoolean(frontmatter.isPublished, true),
     metaTitle: asString(frontmatter.metaTitle),
@@ -244,6 +252,7 @@ async function loadArticleFromFile(filePath: string): Promise<BlogArticleRecord>
       asIsoDateOrNull(asString(frontmatter.eventStartDate)),
     eventLocation: asString(frontmatter.eventLocation),
     eventUrl: asString(frontmatter.eventUrl),
+    localeState: getArticleLocaleState(slug, 'en'),
   };
 }
 
@@ -256,6 +265,7 @@ function localizeArticle(article: BlogArticleRecord, locale: Locale): BlogArticl
     return {
       ...article,
       content: localizeInternalLinks(article.content, locale),
+      localeState: getArticleLocaleState(article.slug, locale),
     };
   }
 
@@ -265,6 +275,7 @@ function localizeArticle(article: BlogArticleRecord, locale: Locale): BlogArticl
     return {
       ...article,
       content: localizeInternalLinks(article.content, locale),
+      localeState: getArticleLocaleState(article.slug, locale),
     };
   }
 
@@ -276,6 +287,7 @@ function localizeArticle(article: BlogArticleRecord, locale: Locale): BlogArticl
     metaTitle: translation.metaTitle ?? article.metaTitle,
     metaDescription: translation.metaDescription ?? article.metaDescription,
     tags: translation.tags ?? article.tags,
+    localeState: getArticleLocaleState(article.slug, locale),
   };
 }
 
@@ -312,6 +324,9 @@ export async function getAllBlogArticles(locale: Locale = 'en'): Promise<BlogArt
       authorAvatar: null,
       authorBio: pkg.authorBio,
       publishedAt: pkg.publishedAt,
+      lastVerified: pkg.publishedAt,
+      lastReviewed: pkg.publishedAt,
+      updatedAt: pkg.publishedAt,
       readTime: pkg.readTime,
       isPublished: true,
       metaTitle: fields.metaTitle,
@@ -323,6 +338,7 @@ export async function getAllBlogArticles(locale: Locale = 'en'): Promise<BlogArt
       eventEndDate: null,
       eventLocation: null,
       eventUrl: null,
+      localeState: getArticleLocaleState(pkg.slug, locale),
     };
   });
 

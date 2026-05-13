@@ -1,8 +1,9 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';
 import AnalyticsDebugListener from '@/components/dev/AnalyticsDebugListener';
-import { i18n } from '@/lib/i18n-config';
+import { i18n, isLocale } from '@/lib/i18n-config';
 import { JsonLd } from '@/components/JsonLd';
 import { buildLanguageAlternates, buildSiteNavigationJsonLd, getBaseUrl, toAbsoluteUrl } from '@/lib/seo';
 
@@ -27,11 +28,19 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
   title: {
-    default: 'SocialClubsMaps - Cannabis Social Clubs Directory Spain',
+    default: 'SocialClubsMaps | Spain Cannabis Social Club Guidance',
     template: '%s | SocialClubsMaps',
   },
-  description: 'Discover and connect with verified cannabis social clubs in Spain. Browse directories in Barcelona, Madrid, Valencia, and more. Expert guides on legal compliance and safety.',
-  keywords: ['cannabis social clubs', 'CSC Spain', 'Barcelona cannabis clubs', 'Madrid marijuana clubs', 'cannabis directory', 'Spain cannabis guide', 'cannabis tourism Spain', 'legal cannabis Spain'],
+  description:
+    'Independent, legally grounded guidance for cannabis social clubs in Spain, starting with Barcelona safety, verification standards, and visitor education.',
+  keywords: [
+    'cannabis social clubs Spain',
+    'Barcelona cannabis social club guide',
+    'Spain cannabis legal guide',
+    'verified cannabis social club profiles',
+    'SCM verification standard',
+    'visitor safety guide Spain',
+  ],
   authors: [{ name: 'SocialClubsMaps' }],
   creator: 'SocialClubsMaps',
   publisher: 'SocialClubsMaps',
@@ -56,20 +65,22 @@ export const metadata: Metadata = {
     locale: 'es_ES',
     url: getBaseUrl(),
     siteName: 'SocialClubsMaps',
-    title: 'SocialClubsMaps - Cannabis Social Clubs Directory Spain',
-    description: 'Discover and connect with verified cannabis social clubs in Spain. Browse directories in Barcelona, Madrid, Valencia, and more.',
+    title: 'SocialClubsMaps | Spain Cannabis Social Club Guidance',
+    description:
+      'Independent, legally grounded guidance for cannabis social clubs in Spain, starting with Barcelona safety, verification standards, and visitor education.',
     images: [
       {
-        url: '/images/SCM_Logo_SVG.svg',
-        alt: 'SocialClubsMaps - Cannabis Social Clubs Directory',
+        url: '/images/SCM_Logo_OG.png',
+        alt: 'SocialClubsMaps independent cannabis social club guidance for Spain',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SocialClubsMaps - Cannabis Social Clubs Directory Spain',
-    description: 'Discover and connect with verified cannabis social clubs in Spain.',
-    images: ['/images/SCM_Logo_SVG.svg'],
+    title: 'SocialClubsMaps | Spain Cannabis Social Club Guidance',
+    description:
+      'Independent, legally grounded guidance for cannabis social clubs in Spain, starting with Barcelona safety, verification standards, and visitor education.',
+    images: ['/images/SCM_Logo_OG.png'],
     creator: '@socialclubsmaps',
   },
   icons: {
@@ -82,7 +93,7 @@ export const metadata: Metadata = {
     languages: buildLanguageAlternates(''),
   },
   category: 'reference',
-  classification: 'Cannabis Social Club Directory',
+  classification: 'Cannabis social club education and verification guide',
 };
 
 const organizationJsonLd = {
@@ -106,7 +117,7 @@ const websiteJsonLd = {
   inLanguage: i18n.locales,
   potentialAction: {
     '@type': 'SearchAction',
-    target: `${getBaseUrl()}/${i18n.defaultLocale}/clubs?search={search_term_string}`,
+    target: `${getBaseUrl()}/${i18n.defaultLocale}/spain/barcelona/clubs?search={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
 };
@@ -116,15 +127,19 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const requestHeaders = await headers();
+  const localeHeader = requestHeaders.get('x-scm-locale');
+  const htmlLang = localeHeader && isLocale(localeHeader) ? localeHeader : i18n.defaultLocale;
+
   return (
     <html
-      lang={i18n.defaultLocale}
+      lang={htmlLang}
       className={`${plusJakarta.variable} ${playfair.variable} ${jetbrainsMono.variable}`}
     >
       <body className="font-sans antialiased">
         <JsonLd data={organizationJsonLd} />
         <JsonLd data={websiteJsonLd} />
-        <JsonLd data={buildSiteNavigationJsonLd(i18n.defaultLocale)} />
+        <JsonLd data={buildSiteNavigationJsonLd(htmlLang)} />
         <AnalyticsDebugListener />
         {children}
       </body>

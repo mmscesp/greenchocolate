@@ -322,7 +322,7 @@ export function SafetyKitFunnel({ placement = 'hero' }: SafetyKitFunnelProps) {
             </div>
             
             <div className="space-y-3">
-              <Link href={`/${language}/clubs`} className="block w-full p-3 rounded-lg border border-white/5 bg-bg-base/40 hover:bg-bg-surface/60 hover:border-brand/30 transition-all text-left group">
+              <Link href={`/${language}/spain/barcelona/clubs`} className="block w-full p-3 rounded-lg border border-white/5 bg-bg-base/40 hover:bg-bg-surface/60 hover:border-brand/30 transition-all text-left group">
                 <span className="block text-[10px] uppercase tracking-widest text-zinc-500 font-medium mb-1">{t('safety_kit.dl_cta1')}</span>
                 <span className="flex items-center text-sm text-brand group-hover:text-brand-light">
                   {t('safety_kit.dl_cta1_btn')}

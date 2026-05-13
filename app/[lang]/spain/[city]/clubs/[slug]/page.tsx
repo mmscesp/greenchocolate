@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
-import { buildNoIndexMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
+import { buildNoIndexFollowMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string; slug: string }>;
@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!club) {
     return {
       title: 'Club Not Found | SocialClubsMaps',
-      ...buildNoIndexMetadata(),
+      ...buildNoIndexFollowMetadata(),
     };
   }
 
@@ -39,7 +39,7 @@ export async function generateMetadata({
     alternates: {
       canonical: toAbsoluteUrl(`/${lang}/clubs/${club.slug}`),
     },
-    ...buildNoIndexMetadata(),
+    ...buildNoIndexFollowMetadata(),
   };
 }
 
@@ -71,7 +71,6 @@ export default async function CityClubDetailPage({ params }: PageProps) {
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <h1 className="text-3xl md:text-4xl font-bold">{club.name}</h1>
           {club.isVerified && <Badge>{t('city_club_detail.verified')}</Badge>}
-          <Badge variant="secondary">{club.priceRange}</Badge>
         </div>
         <p className="text-muted-foreground mb-4">{club.shortDescription || club.description}</p>
         <div className="flex flex-wrap gap-2">

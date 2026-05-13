@@ -14,6 +14,7 @@ export default function robots(): MetadataRoute.Robots {
     `/${locale}/reset-password`,
     `/${locale}/account/requests`,
     `/${locale}/profile`,
+    `/${locale}/profile/*`,
     `/${locale}/club-panel`,
     `/${locale}/club-panel/*`,
     `/${locale}/dashboard`,

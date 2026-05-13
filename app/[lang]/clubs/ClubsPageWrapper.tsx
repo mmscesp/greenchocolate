@@ -14,11 +14,11 @@ export default async function ClubsPageWrapper({ lang }: { lang: string }) {
   const collectionJsonLd = buildCollectionPageJsonLd({
     name: 'Club Directory',
     description: 'Compare verified profiles and clearly labeled public listings before you make plans.',
-    path: `/${lang}/clubs`,
+    path: `/${lang}/spain/barcelona/clubs`,
   });
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: 'Home', path: `/${lang}` },
-    { name: 'Club Directory', path: `/${lang}/clubs` },
+    { name: 'Barcelona Club Directory', path: `/${lang}/spain/barcelona/clubs` },
   ]);
   const itemListJsonLd = buildItemListJsonLd(
     clubs.slice(0, 12).map((club) => ({

@@ -6,7 +6,7 @@ import ArticleContentRenderer from '@/components/article/ArticleContentRenderer'
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
-import { buildNoIndexMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
+import { buildNoIndexFollowMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string; slug: string }>;
@@ -24,7 +24,7 @@ export async function generateMetadata({
   if (!guide) {
     return {
       title: 'Guide Not Found | SocialClubsMaps',
-      ...buildNoIndexMetadata(),
+      ...buildNoIndexFollowMetadata(),
     };
   }
 
@@ -34,7 +34,7 @@ export async function generateMetadata({
     alternates: {
       canonical: toAbsoluteUrl(`/${lang}/editorial/${guide.slug}`),
     },
-    ...buildNoIndexMetadata(),
+    ...buildNoIndexFollowMetadata(),
   };
 }
 

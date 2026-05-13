@@ -158,7 +158,7 @@ export default function SpainPageClient({ cities, popularCities, lang }: SpainPa
               asChild
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-6 rounded-xl shadow-lg shadow-primary/25 transition-all duration-300"
             >
-              <Link href={`/${lang}/clubs`} className="flex items-center gap-2">
+              <Link href={`/${lang}/spain/barcelona/clubs`} className="flex items-center gap-2">
                 {t('spain.cta.button')} <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

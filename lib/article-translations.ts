@@ -60,7 +60,7 @@ La brecha entre expectativa y realidad es donde aparecen las estafas y los error
 
 - Lee [The Safety Kit](/en/editorial/safety-kit-visitors-spain)
 - Lee [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
-- Usa [the directory](/en/clubs/) antes de viajar`,
+- Usa [the directory](/en/spain/barcelona/clubs) antes de viajar`,
       tags: ['Cultura', 'Barcelona', 'Amsterdam'],
     },
     'cannabis-social-club-history-spain': {
@@ -168,7 +168,7 @@ No es teoria. Es la diferencia entre una visita tranquila y una situacion que te
 - [Barcelona vs. Amsterdam](/en/editorial/barcelona-vs-amsterdam-cannabis)
 - [Your First Time in a Barcelona Cannabis Club](/en/editorial/first-time-barcelona-cannabis-club)
 - [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
-- [the directory](/en/clubs/)`,
+- [the directory](/en/spain/barcelona/clubs)`,
       tags: ['Guia esencial', 'CSC', 'España'],
     },
     '5-mistakes-tourists-make': {
@@ -235,7 +235,7 @@ La primera visita no es un paseo improvisado. Puede requerir tiempo, espera y al
 - confirma idioma y soporte
 - ten alternativas
 
-Empieza por [the directory](/en/clubs/).
+Empieza por [the directory](/en/spain/barcelona/clubs).
 
 ## Paso 2: aplica por canales verificados
 
@@ -406,7 +406,7 @@ Hay poca informacion publica clara y ese vacio se llena con consejos viejos, exp
 - revisa que identificacion piden
 - guarda los datos offline
 
-Nuestro [directory](/en/clubs/) es el mejor punto de partida.
+Nuestro [directory](/en/spain/barcelona/clubs) es el mejor punto de partida.
 
 ## Como llegar
 
@@ -668,7 +668,7 @@ L ecart entre attente et realite est l endroit ou naissent les arnaques et les m
 
 - Lire [The Safety Kit](/en/editorial/safety-kit-visitors-spain)
 - Lire [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
-- Utiliser [the directory](/en/clubs/) avant le voyage`,
+- Utiliser [the directory](/en/spain/barcelona/clubs) avant le voyage`,
       tags: ['Culture', 'Barcelone', 'Amsterdam'],
     },
     'cannabis-social-club-history-spain': {
@@ -776,7 +776,7 @@ Ce n est pas de la theorie. C est la difference entre une visite paisible et une
 - [Barcelona vs. Amsterdam](/en/editorial/barcelona-vs-amsterdam-cannabis)
 - [Your First Time in a Barcelona Cannabis Club](/en/editorial/first-time-barcelona-cannabis-club)
 - [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
-- [the directory](/en/clubs/)`,
+- [the directory](/en/spain/barcelona/clubs)`,
       tags: ['Guide essentiel', 'CSC', 'Espagne'],
     },
     '5-mistakes-tourists-make': {
@@ -842,7 +842,7 @@ Une premiere visite n est pas une simple course improvisee. Elle peut demander d
 - confirmer la langue et le support
 - garder des alternatives
 
-Commencez avec [the directory](/en/clubs/).
+Commencez avec [the directory](/en/spain/barcelona/clubs).
 
 ## Etape 2 : passer par des canaux verifies
 
@@ -1008,7 +1008,7 @@ Il y a tres peu d information publique claire, et ce vide se remplit d anciens c
 - controler la piece d identite demandee
 - garder les informations hors ligne
 
-Le [directory](/en/clubs/) est le bon point de depart.
+Le [directory](/en/spain/barcelona/clubs) est le bon point de depart.
 
 ## Comment s y rendre
 
@@ -1264,7 +1264,7 @@ Die Lucke zwischen Erwartung und Realitat ist genau der Raum, in dem Betrug und 
 
 - [The Safety Kit](/en/editorial/safety-kit-visitors-spain) lesen
 - [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists) lesen
-- vor der Reise [the directory](/en/clubs/) nutzen`,
+- vor der Reise [the directory](/en/spain/barcelona/clubs) nutzen`,
       tags: ['Kultur', 'Barcelona', 'Amsterdam'],
     },
     'cannabis-social-club-history-spain': {
@@ -1372,7 +1372,7 @@ Das ist keine Theorie. Es ist der Unterschied zwischen einer ruhigen Erfahrung u
 - [Barcelona vs. Amsterdam](/en/editorial/barcelona-vs-amsterdam-cannabis)
 - [Your First Time in a Barcelona Cannabis Club](/en/editorial/first-time-barcelona-cannabis-club)
 - [Spain's Cannabis Laws](/en/editorial/spain-cannabis-laws-tourists)
-- [the directory](/en/clubs/)`,
+- [the directory](/en/spain/barcelona/clubs)`,
       tags: ['Essenzieller Guide', 'CSC', 'Spanien'],
     },
     '5-mistakes-tourists-make': {
@@ -1438,7 +1438,7 @@ Der erste Besuch ist kein spontaner Erledigungsgang. Er kann Zeit, Warten und et
 - Sprachsupport bestatigen
 - Alternativen bereithalten
 
-Beginne mit [the directory](/en/clubs/).
+Beginne mit [the directory](/en/spain/barcelona/clubs).
 
 ## Schritt 2: uber verifizierte Kanale gehen
 
@@ -1605,7 +1605,7 @@ Es gibt wenig klare offentliche Information. Diese Lucke wird mit alten Tipps, f
 - richtige Ausweisdokumente klarmachen
 - Details offline speichern
 
-Das [directory](/en/clubs/) ist der beste Startpunkt.
+Das [directory](/en/spain/barcelona/clubs) ist der beste Startpunkt.
 
 ## Der Weg zum Club
 

@@ -95,7 +95,7 @@ export default function ClubsPageClient({
         schema={{
           name: cityContext?.title ?? t('clubs.title'),
           description: pageSubtitle,
-          url: toAbsoluteUrl(cityContext ? `/${language}/spain/${cityContext.citySlug}/clubs` : `/${language}/clubs`),
+          url: toAbsoluteUrl(cityContext ? `/${language}/spain/${cityContext.citySlug}/clubs` : `/${language}/spain/barcelona/clubs`),
           numberOfItems: clubs.length,
         }}
       />

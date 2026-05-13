@@ -165,7 +165,7 @@ export default function BookingsPage() {
             {t('bookings.subtitle')}
           </p>
         </div>
-        <Link href={`/${language}/clubs`}>
+        <Link href={`/${language}/spain/barcelona/clubs`}>
           <Button className="self-start gap-2 bg-brand text-bg-base hover:bg-brand-dark rounded-full px-6 py-5 font-black uppercase tracking-widest text-[10px]">
             <CalendarDays className="h-4 w-4" />
             {t('bookings.book_new_visit')}
@@ -337,7 +337,7 @@ export default function BookingsPage() {
                 : t('bookings.empty.all')
               }
             </p>
-            <Link href={`/${language}/clubs`}>
+            <Link href={`/${language}/spain/barcelona/clubs`}>
               <Button className="gap-2 bg-gold text-black hover:bg-gold-dark rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                 <Search className="h-4 w-4" />
                 {t('bookings.explore_clubs')}

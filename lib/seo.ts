@@ -83,6 +83,18 @@ export function buildLanguageAlternates(path: string): Record<string, string> {
   };
 }
 
+export function buildAvailableLanguageAlternates(path: string, availableLocales: Locale[]): Record<string, string> {
+  const uniqueLocales = i18n.locales.filter((locale) => availableLocales.includes(locale));
+  const localizedAlternates = Object.fromEntries(
+    uniqueLocales.map((locale) => [locale, toAbsoluteUrl(buildLocalizedPath(locale, path))])
+  );
+
+  return {
+    ...localizedAlternates,
+    'x-default': toAbsoluteUrl(buildLocalizedPath(i18n.defaultLocale, path)),
+  };
+}
+
 export function buildNoIndexMetadata(): Metadata {
   return {
     robots: {
@@ -216,7 +228,7 @@ export function buildItemListJsonLd(items: Array<{ name: string; path: string; d
 export function buildSiteNavigationJsonLd(locale: Locale) {
   const navItems = [
     { name: 'Safety Kit', path: `/${locale}/safety-kit` },
-    { name: 'Directory', path: `/${locale}/clubs` },
+    { name: 'Barcelona Directory', path: `/${locale}/spain/barcelona/clubs` },
     { name: 'Barcelona Guide', path: `/${locale}/spain/barcelona` },
     { name: 'Legal Guides', path: `/${locale}/editorial/legal` },
     { name: 'Verification Standard', path: `/${locale}/verification` },

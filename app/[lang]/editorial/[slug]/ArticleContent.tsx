@@ -38,6 +38,11 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
   const locale = language === 'es' ? 'es-ES' : language === 'fr' ? 'fr-FR' : language === 'de' ? 'de-DE' : 'en-US';
   const localizedCategory = getLocalizedArticleCategory(article.category, t);
   const categoryPath = getArticleCategoryPath(article.category);
+  const isSensitiveCategory = ['Legal', 'Harm Reduction', 'Etiquette'].includes(article.category);
+  const reviewedAt = article.lastReviewed || article.lastVerified || article.updatedAt;
+  const reviewDate = reviewedAt
+    ? new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(reviewedAt))
+    : null;
 
   useEffect(() => {
     let frameId = 0;
@@ -87,7 +92,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
           <p className="text-white font-bold hidden sm:block">{t('article.sticky_cta.desktop')}</p>
           <p className="text-white font-bold sm:hidden">{t('article.sticky_cta.mobile')}</p>
           <div className="flex items-center gap-3">
-            <Link href={`/${language}/clubs`}>
+            <Link href={`/${language}/spain/barcelona/clubs`}>
               <Button className="bg-brand hover:bg-brand-dark text-bg-base font-bold rounded-full">
                 {t('article.sticky_cta.button')} <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -162,6 +167,29 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                 date={new Date(article.publishedAt || '').toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })}
               />
 
+              <aside className="my-8 border-y border-white/10 py-5">
+                <div className="grid gap-5 text-sm text-zinc-300 md:grid-cols-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-brand">Status</p>
+                    <p className="mt-2">Educational guide</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-brand">Review</p>
+                    <p className="mt-2">{reviewDate ? `Last reviewed ${reviewDate}` : 'Review date pending'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-brand">Boundary</p>
+                    <p className="mt-2">No sales, no brokering, no guaranteed club acceptance.</p>
+                  </div>
+                </div>
+              </aside>
+
+              {isSensitiveCategory ? (
+                <aside className="mb-10 border-l-2 border-brand bg-white/[0.03] px-5 py-4 text-sm leading-6 text-zinc-300">
+                  SCM provides information, not legal advice. The legal landscape for cannabis social clubs in Spain is complex and evolving. Always verify club status independently and consult local legal resources if in doubt.
+                </aside>
+              ) : null}
+
               {/* [motion] */}
               <motion.div
                 initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
@@ -213,7 +241,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
               <div className="rounded-3xl border border-white/10 bg-bg-card/80 p-4 backdrop-blur-sm shadow-xl">
                 <EligibilityFlow />
                 <div className="mt-6 flex justify-center">
-                  <Link href={`/${language}/safety`}>
+                  <Link href={`/${language}/safety-kit`}>
                     <Button className="rounded-full bg-brand hover:bg-brand-dark text-bg-base font-bold uppercase tracking-widest text-[10px] px-8 py-6">
                       {t('article.open_safety_guide')} <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -257,6 +285,7 @@ export default function ArticleContent({ article, relatedArticles = [] }: Articl
                     { href: categoryPath, label: localizedCategory },
                     { href: '/safety-kit', label: t('footer.new.start.safety_kit') },
                     { href: '/verification', label: t('footer.new.start.verification_standard') },
+                    { href: '/spain/barcelona/clubs', label: 'Barcelona Directory' },
                     ...(article.citySlug === 'barcelona'
                       ? [{ href: '/spain/barcelona', label: t('footer.new.start.barcelona_guide') }]
                       : []),

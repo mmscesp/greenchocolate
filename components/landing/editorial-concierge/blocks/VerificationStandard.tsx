@@ -79,7 +79,7 @@ export function VerificationStandard() {
 
             <div className="mt-12 md:mt-16 pt-8 border-t border-white/5">
               <Link
-                href={`/${language}/clubs`}
+                href={`/${language}/spain/barcelona/clubs`}
                 className="group/link inline-flex items-center gap-4 text-xs font-bold text-white uppercase tracking-[0.2em] transition-all hover:text-brand"
               >
                 <span>{t('landing.verification_standard.view_full_directory')}</span>

@@ -10,17 +10,17 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   }
 
   const titles: Record<string, string> = {
-    es: 'Cannabis Social Clubs en España | Barcelona, Madrid, Valencia | SocialClubsMaps',
-    en: 'Cannabis Social Clubs in Spain | Barcelona, Madrid, Valencia | SocialClubsMaps',
-    fr: 'Clubs Sociaux Cannabis en Espagne | Barcelone, Madrid, Valence | SocialClubsMaps',
-    de: 'Cannabis Social Clubs in Spanien | Barcelona, Madrid, Valencia | SocialClubsMaps',
+    es: 'Cannabis Social Clubs en España: guía legal y de seguridad | SocialClubsMaps',
+    en: 'Cannabis Social Clubs in Spain: Legal and Safety Guide | SocialClubsMaps',
+    fr: 'Cannabis Social Clubs en Espagne : guide légal et sécurité | SocialClubsMaps',
+    de: 'Cannabis Social Clubs in Spanien: Rechts- und Sicherheitsguide | SocialClubsMaps',
   };
 
   const descriptions: Record<string, string> = {
-    es: 'Explora cannabis social clubs en las principales ciudades de España. Barcelona, Madrid, Valencia, Sevilla, Málaga. Directorio verificado con información actualizada.',
-    en: 'Explore cannabis social club profiles in major Spanish cities. Compare verified profiles and clearly labeled public listings before you make plans.',
-    fr: 'Explorez les clubs sociaux cannabis dans les grandes villes espagnoles. Barcelone, Madrid, Valence, Séville, Málaga. Annuaire vérifié avec informations actualisées.',
-    de: 'Erkunden Sie Cannabis-Social-Clubs in großen spanischen Städten. Barcelona, Madrid, Valencia, Sevilla, Málaga. Verifiziertes Verzeichnis mit aktuellen Informationen.',
+    es: 'Entiende cómo funcionan los cannabis social clubs en España antes de hacer planes. Barcelona es la ciudad activa de SCM, con guías legales, Safety Kit y perfiles verificados.',
+    en: 'Understand how cannabis social clubs in Spain work before you make plans. Barcelona is SCM’s active city layer, with legal guides, Safety Kit, and verified profile signals.',
+    fr: 'Comprenez le fonctionnement des cannabis social clubs en Espagne avant de faire des plans. Barcelone est la couche ville active de SCM, avec guides légaux, Safety Kit et signaux de profils vérifiés.',
+    de: 'Verstehe, wie Cannabis Social Clubs in Spanien funktionieren, bevor du Pläne machst. Barcelona ist SCMs aktive Stadtebene mit Rechtsguides, Safety Kit und verifizierten Profilsignalen.',
   };
 
   return buildLocalizedMetadata({
@@ -31,10 +31,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     keywords: [
       'cannabis social clubs Spain',
       'Barcelona cannabis clubs',
-      'Madrid marijuana clubs',
-      'Valencia cannabis',
-      'Spain cannabis directory',
-      'cannabis tourism Spain',
+      'Spain cannabis social club legal guide',
+      'private association model Spain',
+      'SCM verification standard',
+      'visitor safety guide Spain',
     ],
   });
 }

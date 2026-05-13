@@ -11,6 +11,7 @@ import { type Locale } from '@/lib/i18n-config';
 import { getClubImageGallery } from '@/lib/image-fallbacks';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 import { toAbsoluteHttpUrl } from '@/lib/url';
+import { toSchemaImageUrl } from '@/lib/structured-data';
 import { buildLanguageAlternates, buildNoIndexFollowMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 import {
   getProfileLocationLabel,
@@ -69,6 +70,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
     verificationStatus: clubDetail.verificationStatus,
   });
   const primaryImage = getClubPrimaryMediaImage(mediaItems);
+  const absolutePrimaryImage = toSchemaImageUrl(primaryImage) ?? toAbsoluteUrl('/images/SCM_Logo_OG.png');
   const safeNeighborhood = sanitizePublicLocationText(clubDetail.neighborhood);
   const seoMetadata = getSafeClubSeoMetadata({
     name: clubDetail.name,
@@ -95,7 +97,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
       title: `${clubDetail.name} | SocialClubsMaps`,
       description: seoMetadata.description,
       url: toAbsoluteUrl(`/${lang}/clubs/${clubDetail.slug}`),
-      images: [primaryImage],
+      images: [absolutePrimaryImage],
       type: 'website',
       siteName: 'SocialClubsMaps',
       locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : lang === 'fr' ? 'fr_FR' : 'de_DE',
@@ -108,7 +110,7 @@ export async function generateMetadata({ params }: ClubPageProps): Promise<Metad
       card: 'summary_large_image',
       title: seoMetadata.title,
       description: seoMetadata.description,
-      images: [primaryImage],
+      images: [absolutePrimaryImage],
     },
     ...(clubDetail.isVerified ? {} : buildNoIndexFollowMetadata()),
   };
@@ -136,6 +138,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     verificationStatus: clubDetail.verificationStatus,
   });
   const primaryImage = getClubPrimaryMediaImage(mediaItems);
+  const absolutePrimaryImage = toSchemaImageUrl(primaryImage) ?? toAbsoluteUrl('/images/SCM_Logo_OG.png');
   const gatedClub = clubDetail.isVerified ? await getClubDetailsWithAccess(clubDetail.id) : null;
   const hasFullAccess = gatedClub?.accessLevel === 'FULL';
 
@@ -187,7 +190,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     verificationStatus: club.verificationStatus,
     neighborhood: club.neighborhood,
     cityName: clubDetail.cityName,
-    image: primaryImage,
+    image: absolutePrimaryImage,
     url: toAbsoluteUrl(`/${lang}/clubs/${club.slug}`),
     website: club.isVerified && club.website ? toAbsoluteHttpUrl(club.website) : undefined,
     priceRange: club.priceRange,
@@ -207,7 +210,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
         '@type': 'ListItem',
         position: 2,
         name: t('clubs.title'),
-        item: toAbsoluteUrl(`/${lang}/clubs`),
+        item: toAbsoluteUrl(`/${lang}/spain/barcelona/clubs`),
       },
       {
         '@type': 'ListItem',

@@ -324,7 +324,7 @@ export default function FavoritesPage() {
               }
             </p>
             {!searchQuery && (
-              <Link href={`/${language}/clubs`}>
+              <Link href={`/${language}/spain/barcelona/clubs`}>
                 <Button variant="primary" className="gap-2 rounded-full px-8 py-6 text-[10px]">
                   <ExternalLink className="h-4 w-4" />
                   {t('nav.explore')}

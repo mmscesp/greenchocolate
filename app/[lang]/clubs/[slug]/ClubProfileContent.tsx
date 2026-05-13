@@ -76,6 +76,9 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
   const statusLabel = t('clubs.status_explainer.verified.title');
   const statusDescription = t('clubs.status_explainer.verified.body');
   const profileLocation = getProfileLocationLabel({ neighborhood: club.neighborhood, cityName: 'Barcelona' });
+  const lastChecked = club.publicDataReviewedAt
+    ? new Intl.DateTimeFormat(language, { dateStyle: 'medium' }).format(club.publicDataReviewedAt)
+    : null;
   const profileDescription = sanitizePublicClubCopy(
     t(`clubs.${club.slug}.description`) !== `clubs.${club.slug}.description` ? t(`clubs.${club.slug}.description`) : club.description,
     profileLocation
@@ -147,7 +150,7 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
         {/* Back Button pushed down to clear top navbar completely */}
         <div className="absolute left-4 top-24 sm:left-8 z-20">
           <Button asChild variant="ghost" className="rounded-full border border-white/10 bg-bg-base/40 text-white/90 backdrop-blur-md transition-all hover:bg-bg-surface hover:text-white">
-            <Link href={`/${language}/clubs`}>
+            <Link href={`/${language}/spain/barcelona/clubs`}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               {t('nav.back_to_clubs')}
             </Link>
@@ -207,6 +210,23 @@ export default function ClubProfileContent({ club, mediaItems }: ClubProfileCont
                   <p className="mt-4 max-w-2xl text-xs leading-6 text-zinc-500">
                     {statusDescription} {t('club_profile.no_acceptance_guarantee')}
                   </p>
+
+                  <section className="mt-8 border-y border-white/10 py-5">
+                    <div className="grid gap-5 text-sm text-zinc-300 md:grid-cols-3">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-brand">Profile status</p>
+                        <p className="mt-2">Verified Profile</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-brand">Last checked</p>
+                        <p className="mt-2">{lastChecked ?? 'Review date pending'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.18em] text-brand">What this means</p>
+                        <p className="mt-2">A trust signal, not a legal guarantee or acceptance promise.</p>
+                      </div>
+                    </div>
+                  </section>
                 </div>
               </motion.div>
             </motion.div>

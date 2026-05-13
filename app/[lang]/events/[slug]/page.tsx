@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Clock, ArrowLeft, ExternalLink } from '@/lib/icons';
 import { JsonLd } from '@/components/JsonLd';
-import { buildLanguageAlternates, isLocale, toAbsoluteUrl } from '@/lib/seo';
+import { toSchemaImageUrl } from '@/lib/structured-data';
+import { buildLanguageAlternates, buildNoIndexFollowMetadata, isLocale, toAbsoluteUrl } from '@/lib/seo';
 import Image from 'next/image';
 import ArticleContentRenderer from '@/components/article/ArticleContentRenderer';
 
@@ -47,7 +48,8 @@ export async function generateMetadata({
           category: event.articleCategory,
           citySlug: event.citySlug,
         })
-      : getEventImage(event.imageUrl, event.citySlug)) || '/images/SCM_Logo_SVG.svg';
+      : getEventImage(event.imageUrl, event.citySlug)) || '/images/SCM_Logo_OG.png';
+  const absoluteEventImage = toSchemaImageUrl(eventImage) ?? toAbsoluteUrl('/images/SCM_Logo_OG.png');
 
   return {
     title,
@@ -65,7 +67,7 @@ export async function generateMetadata({
       locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : lang === 'fr' ? 'fr_FR' : 'de_DE',
       images: [
         {
-          url: eventImage,
+          url: absoluteEventImage,
           alt: displayTitle,
         },
       ],
@@ -74,8 +76,9 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title,
       description,
-      images: [eventImage],
+      images: [absoluteEventImage],
     },
+    ...buildNoIndexFollowMetadata(),
   };
 }
 
@@ -99,6 +102,7 @@ export default async function EventPage({ params }: EventPageProps) {
         citySlug: event.citySlug,
       })
     : getEventImage(event.imageUrl, event.citySlug);
+  const absoluteEventHeroImage = toSchemaImageUrl(eventHeroImage) ?? toAbsoluteUrl('/images/SCM_Logo_OG.png');
 
   const eventJsonLd = {
     '@context': 'https://schema.org',
@@ -109,7 +113,7 @@ export default async function EventPage({ params }: EventPageProps) {
     endDate: event.endDate,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     eventStatus: 'https://schema.org/EventScheduled',
-    image: event.imageUrl || toAbsoluteUrl('/images/SCM_Logo_SVG.svg'),
+    image: absoluteEventHeroImage,
     location: {
       '@type': 'Place',
       name: event.location,

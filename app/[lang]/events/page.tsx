@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getEvents } from '@/app/actions/events';
 import EventsPageClient from './EventsPageClient';
-import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
+import { buildLocalizedMetadata, buildNoIndexFollowMetadata, isLocale } from '@/lib/seo';
 
 interface EventsPageProps {
   params: Promise<{ lang: string }>;
@@ -39,12 +39,15 @@ export async function generateMetadata({
   };
 
   const localized = byLocale[lang] ?? byLocale.en;
-  return buildLocalizedMetadata({
-    lang,
-    path: '/events',
-    title: localized.title,
-    description: localized.description,
-  });
+  return {
+    ...buildLocalizedMetadata({
+      lang,
+      path: '/events',
+      title: localized.title,
+      description: localized.description,
+    }),
+    ...buildNoIndexFollowMetadata(),
+  };
 }
 
 export default async function EventsPage({ params }: EventsPageProps) {

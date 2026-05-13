@@ -31,7 +31,7 @@ export function WhoWeAre() {
       when: t('landing.who_we_are.pillars.verify.when'),
       body: t('landing.who_we_are.pillars.verify.body'),
       cta: t('landing.who_we_are.pillars.verify.cta'),
-      href: `/${language}/clubs`
+      href: `/${language}/spain/barcelona/clubs`
     },
     {
       label: t('landing.who_we_are.pillars.protect.label'),

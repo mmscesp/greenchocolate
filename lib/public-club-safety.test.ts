@@ -106,6 +106,23 @@ describe('public club safety helpers', () => {
     );
   });
 
+  it('describes verified profiles as trust signals without access guarantees', () => {
+    const metadata = getSafeClubSeoMetadata({
+      name: 'Example Club',
+      metaTitle: null,
+      metaDescription: null,
+      shortDescription: null,
+      isVerified: true,
+      verificationStatus: 'SCM_VERIFIED',
+      neighborhood: 'Eixample',
+      cityName: 'Barcelona',
+    });
+
+    expect(metadata.description).toContain('Verified Profile');
+    expect(metadata.description).toContain('trust signal');
+    expect(metadata.description).not.toMatch(/guaranteed|instant|buy|order|menu/i);
+  });
+
   it('returns lighter structured data for public listings and never exposes price range', () => {
     const publicListing = getSafeStructuredDataForClub({
       name: 'Haze Social Club',

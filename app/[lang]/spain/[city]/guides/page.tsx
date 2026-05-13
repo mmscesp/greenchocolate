@@ -9,7 +9,8 @@ import { H1, H3, Text, Lead } from '@/components/typography';
 import { getDictionary } from '@/lib/dictionary';
 import type { Locale } from '@/lib/i18n-config';
 import { getLocalizedArticleCategory } from '@/lib/article-taxonomy';
-import { buildLocalizedMetadata, isLocale } from '@/lib/seo';
+import { getCityIndexPolicy } from '@/lib/seo-policy';
+import { buildLocalizedMetadata, buildNoIndexFollowMetadata, isLocale } from '@/lib/seo';
 
 interface PageProps {
   params: Promise<{ lang: string; city: string }>;
@@ -25,12 +26,18 @@ export async function generateMetadata({
 
   const cityDetail = await getCityBySlug(city);
   const cityName = cityDetail?.name || city;
-  return buildLocalizedMetadata({
-    lang,
-    path: `/spain/${city}/guides`,
-    title: `${cityName} Cannabis Guides | SocialClubsMaps`,
-    description: `Local cannabis social club guides for ${cityName}: legal basics, etiquette, safety tips, and practical first-visit guidance.`,
-  });
+  const cityPolicy = getCityIndexPolicy(city);
+  return {
+    ...buildLocalizedMetadata({
+      lang,
+      path: `/spain/${city}/guides`,
+      title: `${cityName} Cannabis Guides | SocialClubsMaps`,
+      description: cityPolicy.index
+        ? `Local cannabis social club guides for ${cityName}: legal basics, etiquette, safety tips, and practical first-visit guidance.`
+        : 'City guide archive for future cannabis social club research. This page is not indexed until SCM has verified city depth.',
+    }),
+    ...(cityPolicy.index ? {} : buildNoIndexFollowMetadata()),
+  };
 }
 
 export default async function CityGuidesPage({ params }: PageProps) {

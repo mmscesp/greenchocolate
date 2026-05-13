@@ -245,7 +245,7 @@ export default function UserRequestsPage() {
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-2">{t('requests.empty_title')}</h3>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">{t('requests.empty_description')}</p>
-            <Link href={`/${language}/clubs`}>
+            <Link href={`/${language}/spain/barcelona/clubs`}>
               <Button>{t('requests.explore_clubs')}</Button>
             </Link>
           </CardContent>

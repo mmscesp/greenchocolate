@@ -6,7 +6,9 @@ import ArticleContent from '@/app/[lang]/editorial/[slug]/ArticleContent';
 import { getArticleCardImage } from '@/lib/image-fallbacks';
 import { getArticleCategoryPath } from '@/lib/article-taxonomy';
 import { isLocale } from '@/lib/i18n-config';
-import { buildLanguageAlternates, toAbsoluteUrl } from '@/lib/seo';
+import { getArticleAvailableLocales } from '@/lib/article-localization';
+import { toSchemaImageUrl } from '@/lib/structured-data';
+import { buildAvailableLanguageAlternates, buildNoIndexFollowMetadata, toAbsoluteUrl } from '@/lib/seo';
 
 export const revalidate = 3600;
 
@@ -52,21 +54,25 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     category: article.category,
     citySlug: article.citySlug,
   });
+  const absoluteArticleImage = toSchemaImageUrl(articleImage) ?? toAbsoluteUrl('/images/SCM_Logo_OG.png');
+  const availableLocales = getArticleAvailableLocales(article.slug);
+  const modifiedDate = article.updatedAt || article.lastReviewed || article.lastVerified || article.publishedAt || undefined;
 
   return {
     title: article.metaTitle || article.title,
     description: article.metaDescription || article.excerpt,
     alternates: {
       canonical: canonicalUrl,
-      languages: buildLanguageAlternates(`/editorial/${article.slug}`),
+      languages: buildAvailableLanguageAlternates(`/editorial/${article.slug}`, availableLocales),
     },
     openGraph: {
       title: article.title,
       description: article.excerpt,
       url: canonicalUrl,
-      images: [articleImage],
+      images: [absoluteArticleImage],
       type: 'article',
       publishedTime: article.publishedAt || undefined,
+      modifiedTime: modifiedDate,
       authors: [article.authorName],
       siteName: 'SocialClubsMaps',
       locale: lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : lang === 'fr' ? 'fr_FR' : 'de_DE',
@@ -75,9 +81,10 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       card: 'summary_large_image',
       title: article.metaTitle || article.title,
       description: article.metaDescription || article.excerpt,
-      images: [articleImage],
+      images: [absoluteArticleImage],
       creator: '@socialclubsmaps',
     },
+    ...(article.shouldIndex ? {} : buildNoIndexFollowMetadata()),
   };
 }
 
@@ -94,6 +101,8 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     category: article.category,
     citySlug: article.citySlug,
   });
+  const absoluteArticleImage = toSchemaImageUrl(articleImage) ?? toAbsoluteUrl('/images/SCM_Logo_OG.png');
+  const modifiedDate = article.updatedAt || article.lastReviewed || article.lastVerified || article.publishedAt;
 
   const relatedArticles = await getRelatedArticles(article.id, 3, lang as 'es' | 'en' | 'fr' | 'de');
 
@@ -102,9 +111,9 @@ export default async function EditorialArticlePage({ params }: ArticlePageProps)
     '@type': 'Article',
     headline: article.title,
     description: article.excerpt,
-    image: articleImage,
+    image: absoluteArticleImage,
     datePublished: article.publishedAt,
-    dateModified: article.publishedAt,
+    dateModified: modifiedDate,
     mainEntityOfPage: toAbsoluteUrl(`/${lang}/editorial/${article.slug}`),
     author: {
       '@type': 'Person',

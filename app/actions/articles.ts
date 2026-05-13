@@ -32,9 +32,13 @@ export interface ArticleCard {
   authorName: string;
   authorAvatar: string | null;
   publishedAt: string | null;
+  lastVerified: string | null;
+  lastReviewed: string | null;
+  updatedAt: string | null;
   readTime: number;
   cityName: string | null;
   citySlug: string | null;
+  shouldIndex: boolean;
 }
 
 export interface ArticleDetail extends ArticleCard {
@@ -58,9 +62,13 @@ function toArticleCard(article: BlogArticleRecord): ArticleCard {
     authorName: article.authorName,
     authorAvatar: article.authorAvatar,
     publishedAt: article.publishedAt,
+    lastVerified: article.lastVerified,
+    lastReviewed: article.lastReviewed,
+    updatedAt: article.updatedAt,
     readTime: article.readTime,
     cityName: article.cityName,
     citySlug: article.citySlug,
+    shouldIndex: article.localeState.shouldIndex,
   };
 }
 

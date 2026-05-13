@@ -1,0 +1,20 @@
+# SCM First 12 SEO Cluster Briefs
+
+## Cluster Rule
+
+Every page opens with legal/process context before practical guidance. Every page links to Safety Kit, Verification, one related guide, and the Barcelona guide or directory when relevant.
+
+| Priority | Brief | Target Query | Page Type | Legal Anchor | Internal Links | CTA | Publish Status |
+|---:|---|---|---|---|---|---|---|
+| 1 | How Cannabis Social Clubs in Barcelona Actually Work | how cannabis social clubs in Barcelona work | Trust-anchor guide | Private association model versus public/commercial behavior | `/en/safety-kit`, `/en/verification`, `/en/editorial/spain-cannabis-laws-tourists` | Read the Safety Kit | Write next |
+| 2 | Can Tourists Join Cannabis Social Clubs in Barcelona? | can tourists join cannabis clubs Barcelona | Nuanced membership-process guide | Club policy versus formal legal prohibition | `/en/editorial/first-time-barcelona-cannabis-club`, `/en/safety-kit`, `/en/spain/barcelona` | Understand the process before contacting any club | Write next |
+| 3 | Why Barcelona Cannabis Clubs Reject Walk-Ins | Barcelona cannabis club walk-ins rejected | Visitor mistake prevention | Controlled-access posture and private association model | `/en/editorial/barcelona-vs-amsterdam-cannabis`, `/en/verification`, `/en/safety-kit` | Check profile status before you move | Write next |
+| 4 | Barcelona Cannabis Club Red Flags | Barcelona cannabis club scams | Red flag checklist | Public-space and street-promoter risk | `/en/editorial/scams-red-flags`, `/en/safety-kit`, `/en/editorial/emergency-resources` | Save the Safety Kit | Refresh support content |
+| 5 | Public vs Private: Cannabis Rules Visitors Misunderstand | public vs private cannabis Spain | Legal explainer | Public possession/consumption fine context | `/en/editorial/spain-cannabis-laws-tourists`, `/en/editorial/is-weed-legal`, `/en/safety-kit` | Read the legal guide | Write next |
+| 6 | Verified Profile vs Public Listing | verified cannabis clubs Barcelona | Trust taxonomy guide | Verification is not a legal guarantee | `/en/verification`, `/en/spain/barcelona/clubs`, `/en/safety-kit` | Learn how SCM verification works | Write next |
+| 7 | Are Google Maps Cannabis Club Listings Reliable in Barcelona? | Google Maps cannabis club listings Barcelona | Source reliability comparison | Public listing data can be stale and not verified | `/en/editorial/scams-red-flags`, `/en/verification`, `/en/spain/barcelona/clubs` | Compare profile status | Write next |
+| 8 | Reddit, Weedmaps, and Old Blog Posts: What To Trust | Weedmaps Barcelona cannabis clubs reliable | Source-quality guide | Old listings and shortcut advice increase risk | `/en/editorial/scams-red-flags`, `/en/safety-kit`, `/en/verification` | Start with verified status | Write next |
+| 9 | Cannabis Social Clubs in Eixample | cannabis social clubs Eixample | Neighborhood research guide | Public-space discretion and profile status | `/en/spain/barcelona`, `/en/spain/barcelona/clubs`, `/en/verification` | Check profile status | Index only when unique depth exists |
+| 10 | Cannabis Social Clubs in Gracia | cannabis social clubs Gracia | Neighborhood research guide | Neighborhood sensitivity and private association expectations | `/en/spain/barcelona`, `/en/spain/barcelona/clubs`, `/en/safety-kit` | Read the Safety Kit | Index only when unique depth exists |
+| 11 | Cannabis Social Clubs near Sagrada Familia | cannabis clubs near Sagrada Familia | Neighborhood/landmark research guide | Tourist-zone shortcut risk | `/en/editorial/scams-red-flags`, `/en/spain/barcelona/clubs`, `/en/safety-kit` | Avoid shortcuts | Index only when unique depth exists |
+| 12 | What To Check Before Contacting a Barcelona Club | what to check before joining cannabis club Barcelona | Practical checklist | SCM does not guarantee acceptance or provide legal advice | `/en/verification`, `/en/safety-kit`, `/en/editorial/first-time-barcelona-cannabis-club` | Understand the process before contacting any club | Write next |

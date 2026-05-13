@@ -2,7 +2,6 @@ import { MetadataRoute } from 'next';
 import { getCities } from '@/app/actions/cities';
 import { getClubs } from '@/app/actions/clubs';
 import { getArticles } from '@/app/actions/articles';
-import { getEvents } from '@/app/actions/events';
 import { i18n } from '@/lib/i18n-config';
 import { getBaseUrl } from '@/lib/seo';
 
@@ -18,19 +17,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: number;
   }> = [
     { path: '', changeFrequency: 'daily', priority: 1.0 },
-    { path: '/spain', changeFrequency: 'weekly', priority: 0.85 },
-    { path: '/spain/barcelona', changeFrequency: 'weekly', priority: 0.9 },
+    { path: '/spain', changeFrequency: 'weekly', priority: 0.75 },
+    { path: '/spain/barcelona', changeFrequency: 'weekly', priority: 0.95 },
+    { path: '/spain/barcelona/clubs', changeFrequency: 'weekly', priority: 0.9 },
     { path: '/editorial', changeFrequency: 'weekly', priority: 0.85 },
-    { path: '/editorial/legal', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/editorial/legal', changeFrequency: 'weekly', priority: 0.85 },
     { path: '/editorial/etiquette', changeFrequency: 'weekly', priority: 0.75 },
-    { path: '/editorial/culture', changeFrequency: 'weekly', priority: 0.75 },
-    { path: '/editorial/safety', changeFrequency: 'weekly', priority: 0.78 },
-    { path: '/safety-kit', changeFrequency: 'weekly', priority: 0.95 },
-    { path: '/verification', changeFrequency: 'monthly', priority: 0.85 },
-    { path: '/safety', changeFrequency: 'monthly', priority: 0.7 },
-    { path: '/events', changeFrequency: 'weekly', priority: 0.45 },
-    { path: '/mission', changeFrequency: 'monthly', priority: 0.7 },
-    { path: '/contact', changeFrequency: 'monthly', priority: 0.5 },
+    { path: '/editorial/culture', changeFrequency: 'weekly', priority: 0.65 },
+    { path: '/editorial/safety', changeFrequency: 'weekly', priority: 0.82 },
+    { path: '/safety-kit', changeFrequency: 'weekly', priority: 0.98 },
+    { path: '/verification', changeFrequency: 'monthly', priority: 0.9 },
+    { path: '/mission', changeFrequency: 'monthly', priority: 0.72 },
+    { path: '/contact', changeFrequency: 'monthly', priority: 0.45 },
     { path: '/privacy', changeFrequency: 'yearly', priority: 0.2 },
     { path: '/terms', changeFrequency: 'yearly', priority: 0.2 },
     { path: '/cookies', changeFrequency: 'yearly', priority: 0.2 },
@@ -47,26 +45,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified,
       changeFrequency,
       priority,
+      alternates: {
+        languages: Object.fromEntries(
+          i18n.locales.map((alternateLocale) => [
+            alternateLocale,
+            `${baseUrl}/${alternateLocale}${path}`,
+          ])
+        ),
+      },
     }));
 
   // Fetch dynamic data with error handling
   let cities: Awaited<ReturnType<typeof getCities>> = [];
   let clubs: Awaited<ReturnType<typeof getClubs>> = [];
-  let events: Awaited<ReturnType<typeof getEvents>> = [];
   const articlesByLocale: Record<string, Awaited<ReturnType<typeof getArticles>>> = Object.fromEntries(
     i18n.locales.map((locale) => [locale, []])
   );
 
   try {
-    const [resolvedCities, resolvedClubs, resolvedEvents, ...localizedArticles] = await Promise.all([
+    const [resolvedCities, resolvedClubs, ...localizedArticles] = await Promise.all([
       getCities(),
       getClubs(),
-      getEvents(500),
       ...i18n.locales.map((locale) => getArticles({ locale })),
     ]);
     cities = resolvedCities;
     clubs = resolvedClubs;
-    events = resolvedEvents;
     i18n.locales.forEach((locale, index) => {
       articlesByLocale[locale] = localizedArticles[index] || [];
     });
@@ -107,30 +110,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   const articleRoutes: MetadataRoute.Sitemap = i18n.locales.flatMap((locale) =>
-    (articlesByLocale[locale] || []).map((article) => ({
-      url: `${baseUrl}/${locale}/editorial/${article.slug}`,
-      lastModified: article.publishedAt ? new Date(article.publishedAt) : now,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    }))
+    (articlesByLocale[locale] || [])
+      .filter((article) => article.shouldIndex)
+      .map((article) => {
+        const lastModified = article.updatedAt || article.lastReviewed || article.lastVerified || article.publishedAt;
+
+        return {
+          url: `${baseUrl}/${locale}/editorial/${article.slug}`,
+          lastModified: lastModified ? new Date(lastModified) : now,
+          changeFrequency: 'monthly' as const,
+          priority: 0.65,
+        };
+      })
   );
 
-  const eventRoutes: MetadataRoute.Sitemap = events
-    .filter((event) => {
-      if (!event.endDate) {
-        return true;
-      }
-
-      return new Date(event.endDate).getTime() >= now.getTime();
-    })
-    .flatMap((event) =>
-      toLocalizedEntries(
-        `/events/${event.slug}`,
-        'weekly',
-        0.6,
-        event.startDate ? new Date(event.startDate) : now
-      )
-    );
+  const eventRoutes: MetadataRoute.Sitemap = [];
 
   const allEntries = [
     ...staticRoutes,

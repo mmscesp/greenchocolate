@@ -11,7 +11,7 @@ import {
   buildCollectionPageJsonLd,
   buildItemListJsonLd,
   buildLocalizedMetadata,
-  buildNoIndexMetadata,
+  buildNoIndexFollowMetadata,
   isLocale,
 } from '@/lib/seo';
 
@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       'cannabis directory',
     ],
     }),
-    ...buildNoIndexMetadata(),
+    ...buildNoIndexFollowMetadata(),
   };
 }
 

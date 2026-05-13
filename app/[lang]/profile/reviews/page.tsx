@@ -420,7 +420,7 @@ export default function ReviewsPage() {
               }
             </p>
             {!searchQuery && !ratingFilter && (
-              <Link href={`/${language}/clubs`}>
+              <Link href={`/${language}/spain/barcelona/clubs`}>
                 <Button className="bg-gold text-black hover:bg-gold-dark rounded-full px-8 py-6 font-black uppercase tracking-widest text-[10px]">
                   {t('nav.explore')}
                 </Button>
