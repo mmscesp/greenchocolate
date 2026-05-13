@@ -106,7 +106,7 @@ export default function ClubsPageClient({
         className={cn(
           'relative overflow-hidden bg-bg-base backdrop-blur-none',
           cityContext
-            ? 'flex min-h-[760px] items-center pt-28 pb-24 sm:min-h-[820px] sm:pt-36 sm:pb-28'
+            ? 'flex min-h-[620px] items-center pt-24 pb-16 sm:min-h-[680px] sm:pt-32 sm:pb-20'
             : 'pt-24 pb-16 sm:pt-32 sm:pb-20'
         )}
       >
@@ -159,7 +159,7 @@ export default function ClubsPageClient({
 
             {/* Main Title */}
             <motion.div variants={FADE_UP}>
-              <EditorialHeading as="h1" size="hero" className="text-white mb-6 sm:mb-10">
+              <EditorialHeading as="h1" size="hero" className="text-white mb-5 sm:mb-8">
                 {cityContext ? (
                   <>
                     {cityContext.cityName} <span className="text-brand italic font-serif">{t('city_clubs.hero_highlight')}</span>
@@ -174,23 +174,23 @@ export default function ClubsPageClient({
 
             {/* Subtitle */}
             <motion.div variants={FADE_UP}>
-              <p className="text-zinc-400 text-lg md:text-2xl max-w-3xl mx-auto leading-relaxed font-serif italic px-2 sm:px-0">
+              <p className="text-zinc-400 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-serif italic px-2 sm:px-0">
                 "{pageSubtitle}"
               </p>
             </motion.div>
 
             <motion.div
               variants={FADE_UP}
-              className="mx-auto mt-8 grid max-w-4xl gap-3 text-left md:grid-cols-2"
+              className="mx-auto mt-7 grid max-w-4xl gap-3 text-left md:grid-cols-2"
             >
-              <div className="rounded-2xl border border-brand/20 bg-brand/[0.08] p-4">
+              <div className="rounded-2xl border border-brand/20 bg-brand/[0.08] p-3.5 sm:p-4">
                 <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-brand">
                   <ShieldCheck className="h-4 w-4" />
                   {t('clubs.status_explainer.verified.title')}
                 </div>
                 <p className="text-sm leading-6 text-zinc-300">{t('clubs.status_explainer.verified.body')}</p>
               </div>
-              <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] p-4">
+              <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.06] p-3.5 sm:p-4">
                 <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-amber-100">
                   <Info className="h-4 w-4" />
                   {t('clubs.status_explainer.public.title')}
