@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { i18n } from '@/lib/i18n-config';
+import { getPublicClubMapPoint, type PublicClubMapPoint } from '@/lib/club-map';
 import { z } from 'zod';
 
 // Use any for JSON fields to avoid Prisma 7 type issues
@@ -315,6 +316,7 @@ export interface ClubCard {
   metaDescription: string | null;
   capacity: number;
   foundedYear: number;
+  mapPoint: PublicClubMapPoint | null;
 }
 
 export interface ClubDetail extends ClubCard {
@@ -501,6 +503,7 @@ export async function getClubs(filters?: ClubFilters): Promise<ClubCard[]> {
         description: club.description,
         capacity: club.capacity,
         foundedYear: club.foundedYear,
+        mapPoint: getPublicClubMapPoint(club.coordinates),
       };
     }));
   } catch (error) {
@@ -578,6 +581,7 @@ export async function getClubBySlug(slug: string): Promise<ClubDetail | null> {
       allowsPreRegistration: club.allowsPreRegistration,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
+      mapPoint: getPublicClubMapPoint(club.coordinates),
     };
   } catch (error) {
     console.error('getClubBySlug error:', error);
@@ -634,6 +638,7 @@ export async function getFeaturedClubs(limit = 6): Promise<ClubCard[]> {
       description: club.description,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
+      mapPoint: getPublicClubMapPoint(club.coordinates),
     }))).slice(0, validatedLimit);
   } catch (error) {
     console.error('getFeaturedClubs error:', error);
@@ -702,6 +707,7 @@ export async function getCityNeighbors(clubId: string, limit = 4): Promise<ClubC
       description: clubItem.description,
       capacity: clubItem.capacity,
       foundedYear: clubItem.foundedYear,
+      mapPoint: getPublicClubMapPoint(clubItem.coordinates),
     })));
   } catch (error) {
     console.error('getCityNeighbors error:', error);
@@ -1215,6 +1221,7 @@ export async function getUserFavorites(userId: string) {
       description: fav.club.description,
       capacity: fav.club.capacity,
       foundedYear: fav.club.foundedYear,
+      mapPoint: getPublicClubMapPoint(fav.club.coordinates),
     }));
   } catch (error) {
     console.error('getUserFavorites error:', error);
@@ -1375,6 +1382,7 @@ export async function getClubForAdmin(authId: string) {
       allowsPreRegistration: club.allowsPreRegistration,
       capacity: club.capacity,
       foundedYear: club.foundedYear,
+      mapPoint: getPublicClubMapPoint(club.coordinates),
     };
   } catch (error) {
     console.error('getClubForAdmin error:', error);

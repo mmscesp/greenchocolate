@@ -54,12 +54,12 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content ref={ref} asChild {...props}>
         <motion.div
           className={cn(
-            'fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-h-[85dvh] max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 overflow-y-auto border bg-background p-4 shadow-lg sm:rounded-lg sm:p-6',
+            'fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-h-[85dvh] max-w-lg gap-4 overflow-y-auto border bg-background p-4 shadow-lg sm:rounded-lg sm:p-6',
             className
           )}
-          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
-          animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
-          exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
+          initial={shouldReduceMotion ? { opacity: 0, x: '-50%', y: '-50%' } : { opacity: 0, scale: 0.95, x: '-50%', y: '-50%' }}
+          animate={shouldReduceMotion ? { opacity: 1, x: '-50%', y: '-50%' } : { opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
+          exit={shouldReduceMotion ? { opacity: 0, x: '-50%', y: '-50%' } : { opacity: 0, scale: 0.95, x: '-50%', y: '-50%' }}
           transition={{ duration: 0.24, ease: [0.25, 0.1, 0.25, 1] }}
         >
           {children}

@@ -8,6 +8,7 @@ a JSON preview that can be reviewed before a real Prisma import exists.
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 from datetime import datetime, timezone
@@ -42,6 +43,15 @@ EXPECTED_COLUMNS = {
     "Meta Title",
     "Meta Description",
     "⚠ Suspicious?",
+}
+
+LATITUDE_COLUMNS = ("Latitude", "latitude", "Lat", "lat")
+LONGITUDE_COLUMNS = ("Longitude", "longitude", "Lng", "lng", "Lon", "lon")
+BARCELONA_BOUNDS = {
+    "north": 41.47,
+    "south": 41.32,
+    "east": 2.25,
+    "west": 2.05,
 }
 
 PROHIBITED_PATTERNS = [
@@ -81,6 +91,85 @@ def clean_text(value: Any) -> str:
     if text.lower() in {"nan", "none", "null"}:
         return ""
     return re.sub(r"\s+", " ", text)
+
+
+def clean_number(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, float) and math.isnan(value):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+
+    text = clean_text(value).replace(",", ".")
+    if not text:
+        return None
+
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def first_number(row: dict[str, Any], candidates: tuple[str, ...]) -> float | None:
+    for key in candidates:
+        if key in row:
+            number = clean_number(row.get(key))
+            if number is not None:
+                return number
+    return None
+
+
+def is_valid_coordinate(latitude: float | None, longitude: float | None) -> bool:
+    return (
+        latitude is not None
+        and longitude is not None
+        and -90 <= latitude <= 90
+        and -180 <= longitude <= 180
+    )
+
+
+def is_within_barcelona(latitude: float, longitude: float) -> bool:
+    return (
+        BARCELONA_BOUNDS["south"] <= latitude <= BARCELONA_BOUNDS["north"]
+        and BARCELONA_BOUNDS["west"] <= longitude <= BARCELONA_BOUNDS["east"]
+    )
+
+
+def resolve_coordinate_metadata(row: dict[str, Any]) -> dict[str, Any]:
+    latitude = first_number(row, LATITUDE_COLUMNS)
+    longitude = first_number(row, LONGITUDE_COLUMNS)
+
+    if latitude is None and longitude is None:
+        return {
+            "latitude": None,
+            "longitude": None,
+            "coordinateSource": None,
+            "coordinateStatus": "missing",
+        }
+
+    if not is_valid_coordinate(latitude, longitude):
+        return {
+            "latitude": latitude,
+            "longitude": longitude,
+            "coordinateSource": "xlsx",
+            "coordinateStatus": "needs_review",
+        }
+
+    if not is_within_barcelona(latitude, longitude):
+        return {
+            "latitude": latitude,
+            "longitude": longitude,
+            "coordinateSource": "xlsx",
+            "coordinateStatus": "needs_review",
+        }
+
+    return {
+        "latitude": latitude,
+        "longitude": longitude,
+        "coordinateSource": "xlsx",
+        "coordinateStatus": "accepted",
+    }
 
 
 def normalize_slug(value: str, fallback_name: str) -> str:
@@ -162,6 +251,7 @@ def build_preview_row(row: dict[str, Any]) -> dict[str, Any]:
     source_meta_title = clean_text(row.get("Meta Title"))
     source_meta_description = clean_text(row.get("Meta Description"))
     unsafe_matches = contains_prohibited_language(source_meta_title, source_meta_description)
+    coordinate_metadata = resolve_coordinate_metadata(row)
 
     quality_score = 0
     quality_score += 20 if name else 0
@@ -191,6 +281,7 @@ def build_preview_row(row: dict[str, Any]) -> dict[str, Any]:
         "addressDisplay": clean_text(row.get("Address")),
         "googlePlaceId": clean_text(row.get("Google Place ID")),
         "googleMapsUrl": clean_text(row.get("Google Maps URL")),
+        **coordinate_metadata,
         "website": clean_text(row.get("Website")) or None,
         "instagram": clean_text(row.get("Instagram Handle")) or None,
         "googleRatingSnapshot": float(rating) if str(rating).replace(".", "", 1).isdigit() else None,

@@ -1,4 +1,5 @@
 import './globals.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from 'next/font/google';

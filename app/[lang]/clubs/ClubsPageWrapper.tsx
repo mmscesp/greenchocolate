@@ -38,6 +38,7 @@ export default async function ClubsPageWrapper({ lang }: { lang: string }) {
         neighborhoods={neighborhoods}
         amenities={amenities}
         vibes={vibes}
+        cityCenter={{ lat: 41.3851, lng: 2.1734 }}
       />
     </>
   );

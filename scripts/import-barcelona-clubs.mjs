@@ -4,11 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
+import { coordinatesForPrisma, getReviewedCoordinateFromRow } from './club-coordinate-utils.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, '..');
 const previewPath = path.join(root, 'output', 'barcelona-clubs-import-preview.json');
+const geocodeReviewPath = path.join(root, 'output', 'barcelona-club-geocodes-review.json');
 
 function loadEnvFile(fileName) {
   const envPath = path.join(root, fileName);
@@ -50,11 +52,6 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg(new Pool({ connectionString: process.env.DATABASE_URL })),
 });
 
-const fallbackCoordinates = {
-  lat: 41.3874,
-  lng: 2.1686,
-};
-
 const publicListingOpeningHours = {
   note: 'Opening hours have not been verified by SCM.',
 };
@@ -83,6 +80,36 @@ function buildSocialMedia(row) {
   };
 }
 
+function loadGeocodeReviewBySlug() {
+  if (!fs.existsSync(geocodeReviewPath)) {
+    return new Map();
+  }
+
+  const payload = JSON.parse(fs.readFileSync(geocodeReviewPath, 'utf8'));
+  const rows = Array.isArray(payload.results) ? payload.results : [];
+
+  return new Map(rows.map((row) => [row.slug, {
+    ...row,
+    coordinateReviewedAt: payload.generatedAt,
+  }]));
+}
+
+function mergeCoordinateReview(row, geocodeReviewBySlug) {
+  const reviewed = geocodeReviewBySlug.get(row.slug);
+  if (!reviewed || reviewed.coordinateStatus !== 'accepted') {
+    return row;
+  }
+
+  return {
+    ...row,
+    latitude: reviewed.latitude,
+    longitude: reviewed.longitude,
+    coordinateSource: reviewed.coordinateSource,
+    coordinateStatus: reviewed.coordinateStatus,
+    coordinateReviewedAt: reviewed.coordinateReviewedAt,
+  };
+}
+
 function buildClubPayload(row, cityId) {
   const safeNeighborhood = sanitizePublicField(row.neighborhood) ?? 'Barcelona';
   const safeDistrict = sanitizePublicField(row.district);
@@ -96,7 +123,7 @@ function buildClubPayload(row, cityId) {
     neighborhood: safeNeighborhood,
     district: safeDistrict,
     addressDisplay: row.addressDisplay,
-    coordinates: fallbackCoordinates,
+    coordinates: coordinatesForPrisma(row),
     contactEmail: 'listings@socialclubsmaps.com',
     phoneNumber: null,
     website: row.website,
@@ -132,6 +159,7 @@ function buildClubPayload(row, cityId) {
 async function main() {
   const preview = JSON.parse(fs.readFileSync(previewPath, 'utf8'));
   const selectedRows = Array.isArray(preview.selected) ? preview.selected : [];
+  const geocodeReviewBySlug = loadGeocodeReviewBySlug();
   if (selectedRows.length === 0) {
     throw new Error('Preview file does not contain selected rows to import.');
   }
@@ -148,6 +176,8 @@ async function main() {
   const result = {
     created: 0,
     updated: 0,
+    deactivatedMissingCoordinates: 0,
+    skippedMissingCoordinates: 0,
     skippedVerified: 0,
   };
 
@@ -166,7 +196,27 @@ async function main() {
       continue;
     }
 
-    const payload = buildClubPayload(row, city.id);
+    const mergedRow = mergeCoordinateReview(row, geocodeReviewBySlug);
+    if (!getReviewedCoordinateFromRow(mergedRow)) {
+      if (existing) {
+        await prisma.club.update({
+          where: { id: existing.id },
+          data: {
+            isActive: false,
+            verificationStatus: 'INACTIVE',
+            takedownReason: 'QUALITY_HOLD',
+            takedownNotes: 'Held from public Barcelona directory: no accepted reviewed address-level map coordinate.',
+            coordinates: {},
+          },
+        });
+        result.deactivatedMissingCoordinates += 1;
+      } else {
+        result.skippedMissingCoordinates += 1;
+      }
+      continue;
+    }
+
+    const payload = buildClubPayload(mergedRow, city.id);
     await prisma.club.upsert({
       where: { slug: row.slug },
       create: payload,
