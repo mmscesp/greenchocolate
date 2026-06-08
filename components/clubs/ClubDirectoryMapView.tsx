@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
+import { motion, useDragControls, useReducedMotion } from 'framer-motion';
 import type { ClubCard } from '@/app/actions/clubs';
 import ClubDirectoryMap from '@/components/clubs/ClubDirectoryMap';
 import ClubMapListCard from '@/components/clubs/ClubMapListCard';
@@ -29,6 +30,8 @@ interface ClubDirectoryMapViewProps {
   vibes: string[];
   loading?: boolean;
 }
+
+type MobileSheetState = 'collapsed' | 'mid' | 'expanded';
 
 const EMPTY_FILTERS: FilterOptions = {
   neighborhood: '',
@@ -80,6 +83,7 @@ function MapModeControls({
   totalResults,
   visibleResults,
   mappableResults,
+  hideHeader = false,
 }: {
   query: string;
   onQueryChange: (query: string) => void;
@@ -91,6 +95,7 @@ function MapModeControls({
   totalResults: number;
   visibleResults: number;
   mappableResults: number;
+  hideHeader?: boolean;
 }) {
   const { t } = useLanguage();
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -155,6 +160,7 @@ function MapModeControls({
 
   return (
     <div className="space-y-3">
+      {hideHeader ? null : (
       <div>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -187,6 +193,7 @@ function MapModeControls({
           </span>
         </div>
       </div>
+      )}
 
       <div className="relative">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
@@ -357,6 +364,126 @@ function MapModeControls({
   );
 }
 
+function MobileMapSheet({
+  query,
+  onQueryChange,
+  filters,
+  onFiltersChange,
+  neighborhoods,
+  amenities,
+  vibes,
+  totalResults,
+  visibleResults,
+  mappableResults,
+  list,
+  sheetState,
+  onSheetStateChange,
+}: {
+  query: string;
+  onQueryChange: (query: string) => void;
+  filters: FilterOptions;
+  onFiltersChange: (filters: FilterOptions) => void;
+  neighborhoods: string[];
+  amenities: string[];
+  vibes: string[];
+  totalResults: number;
+  visibleResults: number;
+  mappableResults: number;
+  list: ReactNode;
+  sheetState: MobileSheetState;
+  onSheetStateChange: (state: MobileSheetState) => void;
+}) {
+  const { t } = useLanguage();
+  const shouldReduceMotion = useReducedMotion();
+  const dragControls = useDragControls();
+  const dragStartedRef = useRef(false);
+  const sheetHeights: Record<MobileSheetState, string> = {
+    collapsed: '6.75rem',
+    mid: '44svh',
+    expanded: '78svh',
+  };
+
+  const snapByDrag = (offsetY: number) => {
+    if (offsetY < -42) {
+      onSheetStateChange(sheetState === 'collapsed' ? 'mid' : 'expanded');
+      return;
+    }
+
+    if (offsetY > 42) {
+      onSheetStateChange(sheetState === 'expanded' ? 'mid' : 'collapsed');
+    }
+  };
+
+  return (
+    <motion.div
+      className="absolute inset-x-0 bottom-0 z-30 flex overflow-hidden rounded-t-[1.65rem] border border-white/12 bg-[#080a0f] text-white shadow-[0_-24px_70px_rgba(0,0,0,0.55)] lg:hidden"
+      initial={false}
+      animate={{ height: sheetHeights[sheetState] }}
+      transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 42, mass: 0.9 }}
+      drag="y"
+      dragControls={dragControls}
+      dragListener={false}
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={0.06}
+      onDragStart={() => {
+        dragStartedRef.current = true;
+      }}
+      onDragEnd={(_, info) => {
+        snapByDrag(info.offset.y);
+        window.setTimeout(() => {
+          dragStartedRef.current = false;
+        }, 250);
+      }}
+    >
+      <div className="flex min-h-0 w-full flex-col">
+        <button
+          type="button"
+          aria-label={t('clubs.map.workspace_title')}
+          onClick={() => {
+            if (dragStartedRef.current) {
+              dragStartedRef.current = false;
+              return;
+            }
+            onSheetStateChange(sheetState === 'collapsed' ? 'mid' : 'collapsed');
+          }}
+          onPointerDown={(event) => {
+            dragControls.start(event);
+          }}
+          className="shrink-0 px-5 pb-3 pt-2 text-left"
+        >
+          <span className="mx-auto mb-4 block h-1.5 w-12 rounded-full bg-white/18" />
+          <span className="block text-[10px] font-black uppercase tracking-[0.22em] text-brand">
+            {t('clubs.map.workspace_label')}
+          </span>
+        </button>
+
+        {sheetState === 'collapsed' ? null : (
+          <>
+            <div className="shrink-0 border-b border-white/10 px-5 pb-4">
+              <MapModeControls
+                query={query}
+                onQueryChange={onQueryChange}
+                filters={filters}
+                onFiltersChange={onFiltersChange}
+                neighborhoods={neighborhoods}
+                amenities={amenities}
+                vibes={vibes}
+                totalResults={totalResults}
+                visibleResults={visibleResults}
+                mappableResults={mappableResults}
+                hideHeader
+              />
+            </div>
+            <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-3">
+              {list}
+            </div>
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function ClubDirectoryMapView({
   clubs,
   cityCenter,
@@ -370,31 +497,45 @@ export default function ClubDirectoryMapView({
   const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [selectedClubId, setSelectedClubId] = useState<string | null>(null);
+  const [mobileSheetState, setMobileSheetState] = useState<MobileSheetState>('mid');
+  const [mobilePreviewOpen, setMobilePreviewOpen] = useState(false);
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const searchedAndSortedClubs = useMemo(() => {
     return clubs.filter((club) => matchesSearch(club, query));
   }, [clubs, query]);
 
+  const totalMappableClubs = useMemo(
+    () => clubs.filter((club) => club.mapPoint !== null),
+    [clubs]
+  );
   const mappableClubs = useMemo(
     () => searchedAndSortedClubs.filter((club) => club.mapPoint !== null),
     [searchedAndSortedClubs]
   );
-  const visibleSelectedClubId = selectedClubId && searchedAndSortedClubs.some((club) => club.id === selectedClubId)
+  const visibleSelectedClubId = selectedClubId && mappableClubs.some((club) => club.id === selectedClubId)
     ? selectedClubId
     : null;
 
   const handleSelectClub = (clubId: string) => {
     setSelectedClubId(clubId);
+    setMobileSheetState('mid');
     window.requestAnimationFrame(() => {
       cardRefs.current[clubId]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
   };
 
+  const handleMapPreviewOpenChange = useCallback((isOpen: boolean) => {
+    setMobilePreviewOpen(isOpen);
+    if (!isOpen) {
+      setMobileSheetState('mid');
+    }
+  }, []);
+
   const list = (
     <div className="space-y-3">
-      {searchedAndSortedClubs.length > 0 ? (
-        searchedAndSortedClubs.map((club) => (
+      {mappableClubs.length > 0 ? (
+        mappableClubs.map((club) => (
           <div
             key={club.id}
             ref={(node) => {
@@ -421,9 +562,9 @@ export default function ClubDirectoryMapView({
   return (
     <section
       data-testid="club-directory-map-view"
-      className="relative -mx-4 overflow-hidden rounded-[2rem] border border-white/10 bg-[#05090d] shadow-[0_30px_90px_rgba(0,0,0,0.45)] sm:-mx-6 lg:mx-0 lg:h-[clamp(36rem,calc(100svh-9.25rem),47.5rem)] lg:min-h-0"
+      className="relative -mx-4 h-[calc(100svh-7.75rem)] min-h-0 overflow-hidden rounded-[2rem] border border-white/10 bg-[#05090d] shadow-[0_30px_90px_rgba(0,0,0,0.45)] sm:-mx-6 lg:mx-0 lg:h-[clamp(36rem,calc(100svh-9.25rem),47.5rem)] lg:min-h-0"
     >
-      <div className="grid min-h-[calc(100svh-5.5rem)] lg:h-full lg:min-h-0 lg:grid-cols-[minmax(22.5rem,26.25rem)_1fr]">
+      <div className="grid h-full min-h-0 lg:grid-cols-[minmax(22.5rem,26.25rem)_1fr]">
         <aside className="hidden h-full min-h-0 flex-col border-r border-white/10 bg-[#080a0f]/96 lg:flex">
           <div className="border-b border-white/10 p-4">
             <MapModeControls
@@ -434,8 +575,8 @@ export default function ClubDirectoryMapView({
               neighborhoods={neighborhoods}
               amenities={amenities}
               vibes={vibes}
-              totalResults={clubs.length}
-              visibleResults={searchedAndSortedClubs.length}
+              totalResults={totalMappableClubs.length}
+              visibleResults={mappableClubs.length}
               mappableResults={mappableClubs.length}
             />
             {loading ? (
@@ -450,45 +591,34 @@ export default function ClubDirectoryMapView({
           </div>
         </aside>
 
-        <div className="relative min-h-[calc(100svh-5.5rem)] lg:h-full lg:min-h-0">
+        <div className="relative h-full min-h-0">
           <ClubDirectoryMap
-            clubs={searchedAndSortedClubs}
+            clubs={mappableClubs}
             cityCenter={cityCenter}
             selectedClubId={visibleSelectedClubId}
             onSelectClub={handleSelectClub}
-            className="h-full min-h-[calc(100svh-5.5rem)] rounded-none border-0 shadow-none lg:min-h-0"
-            mapClassName="min-h-[calc(100svh-5.5rem)] lg:min-h-0"
+            onPreviewOpenChange={handleMapPreviewOpenChange}
+            className="h-full min-h-0 rounded-none border-0 shadow-none"
+            mapClassName="min-h-0"
           />
 
-          <div className="absolute inset-x-3 bottom-3 z-30 max-h-[55svh] overflow-hidden rounded-[1.5rem] border border-white/12 bg-[#080a0f]/94 shadow-[0_-24px_70px_rgba(0,0,0,0.5)] backdrop-blur-2xl lg:hidden">
-            <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-white/20" />
-            <div className="border-b border-white/8 p-4">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand">{t('clubs.map.workspace_label')}</p>
-                  <p className="mt-1 text-sm font-semibold text-white">
-                    {searchedAndSortedClubs.length} {t('clubs.map.results')} / {mappableClubs.length} {t('clubs.map.pins')}
-                  </p>
-                </div>
-                <SlidersHorizontal className="h-5 w-5 text-zinc-500" />
-              </div>
-              <MapModeControls
-                query={query}
-                onQueryChange={setQuery}
-                filters={filters}
-                onFiltersChange={onFiltersChange}
-                neighborhoods={neighborhoods}
-                amenities={amenities}
-                vibes={vibes}
-                totalResults={clubs.length}
-                visibleResults={searchedAndSortedClubs.length}
-                mappableResults={mappableClubs.length}
-              />
-            </div>
-            <div className="no-scrollbar max-h-[24svh] overflow-y-auto p-3">
-              {list}
-            </div>
-          </div>
+          {mobilePreviewOpen ? null : (
+            <MobileMapSheet
+              query={query}
+              onQueryChange={setQuery}
+              filters={filters}
+              onFiltersChange={onFiltersChange}
+              neighborhoods={neighborhoods}
+              amenities={amenities}
+              vibes={vibes}
+              totalResults={totalMappableClubs.length}
+              visibleResults={mappableClubs.length}
+              mappableResults={mappableClubs.length}
+              list={list}
+              sheetState={mobileSheetState}
+              onSheetStateChange={setMobileSheetState}
+            />
+          )}
 
           <div className={cn('pointer-events-none absolute inset-0 z-20 transition-opacity', loading ? 'opacity-100' : 'opacity-0')}>
             <div className="absolute right-5 top-20 inline-flex items-center gap-2 rounded-full border border-brand/25 bg-bg-base/85 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-brand shadow-2xl backdrop-blur-xl">

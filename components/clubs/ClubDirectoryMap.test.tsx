@@ -4,7 +4,9 @@ import type { ClubCard } from '@/app/actions/clubs';
 import ClubDirectoryMap from './ClubDirectoryMap';
 
 const mockFlyTo = vi.fn();
+const mockEaseTo = vi.fn();
 const mockFitBounds = vi.fn();
+const mockStop = vi.fn();
 const mockRemoveMap = vi.fn();
 const mockAddControl = vi.fn();
 const mockMarkerRemove = vi.fn();
@@ -24,7 +26,9 @@ vi.mock('maplibre-gl', () => {
     }
 
     flyTo = mockFlyTo;
+    easeTo = mockEaseTo;
     fitBounds = mockFitBounds;
+    stop = mockStop;
     remove = mockRemoveMap;
     addControl = mockAddControl;
     resize = mockResize;
@@ -130,18 +134,19 @@ const baseClub: ClubCard = {
 describe('ClubDirectoryMap', () => {
   beforeEach(() => {
     mockFlyTo.mockClear();
+    mockEaseTo.mockClear();
     mockFitBounds.mockClear();
+    mockStop.mockClear();
     mockRemoveMap.mockClear();
     mockAddControl.mockClear();
     mockMarkerRemove.mockClear();
     mockResize.mockClear();
   });
 
-  it('renders visible OpenStreetMap attribution and approximate-location notice', async () => {
+  it('renders visible OpenStreetMap attribution', async () => {
     render(<ClubDirectoryMap clubs={[baseClub]} cityCenter={{ lat: 41.3851, lng: 2.1734 }} />);
 
     expect(screen.getByText('© OpenStreetMap contributors')).toBeInTheDocument();
-    expect(screen.getByText('Pins show reviewed address-level locations for active club profiles.')).toBeInTheDocument();
     await waitFor(() => expect(mockAddControl).toHaveBeenCalled());
   });
 
@@ -153,10 +158,12 @@ describe('ClubDirectoryMap', () => {
     await userEvent.click(marker);
 
     expect(handleSelectClub).toHaveBeenCalledWith('club-1');
-    expect(await screen.findByRole('article', { name: /Club 311 Barcelona Verified Profile/i })).toBeInTheDocument();
-    await waitFor(() => expect(mockFlyTo).toHaveBeenCalledWith(expect.objectContaining({
+    const previews = await screen.findAllByRole('article', { name: /Club 311 Barcelona Verified Profile/i });
+    expect(previews.length).toBeGreaterThan(0);
+    await waitFor(() => expect(mockEaseTo).toHaveBeenCalledWith(expect.objectContaining({
       center: [2.1736872, 41.4065678],
     })));
+    expect(mockStop).toHaveBeenCalled();
   });
 
   it('does not print exact source coordinates in marker UI', async () => {

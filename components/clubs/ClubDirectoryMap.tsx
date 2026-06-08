@@ -10,7 +10,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { getBoundsForMapPoints, type GeoCoordinate } from '@/lib/club-map';
 import { buildClubMediaItems, getClubPrimaryMediaImage } from '@/lib/club-media';
 import { getCardLocationLabel, getClubStatusLabel } from '@/lib/public-club-safety';
-import { ArrowRight, ChevronLeft, ChevronRight, Heart, Info, Star, X } from '@/lib/icons';
+import { ArrowRight, ChevronLeft, ChevronRight, Info, Star, X } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 const OSM_TILE_URL = process.env.NEXT_PUBLIC_OSM_TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -40,6 +40,7 @@ interface ClubDirectoryMapProps {
   cityCenter: GeoCoordinate;
   selectedClubId?: string | null;
   onSelectClub?: (clubId: string) => void;
+  onPreviewOpenChange?: (isOpen: boolean) => void;
   className?: string;
   mapClassName?: string;
 }
@@ -152,7 +153,7 @@ function ClubMapPreviewCard({
     alt: club.name,
   };
   const hasCarousel = images.length > 1;
-  const mapPreviewControlClassName = 'inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/18 bg-black/72 text-white shadow-[0_12px_28px_rgba(0,0,0,0.42)] backdrop-blur-md transition hover:bg-black/88 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand';
+  const mapPreviewControlClassName = 'inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/18 bg-black/80 text-white shadow-[0_12px_28px_rgba(0,0,0,0.46)] backdrop-blur-md transition hover:bg-black/92 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand';
 
   const showPreviousImage = () => {
     setCarouselState((current) => {
@@ -174,12 +175,8 @@ function ClubMapPreviewCard({
     });
   };
 
-  return (
-    <article
-      className="absolute z-30 hidden w-[22rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#080a0f] text-white shadow-[0_30px_90px_rgba(0,0,0,0.55)] animate-in fade-in zoom-in-95 duration-200 lg:block"
-      style={{ left: position.x, top: position.y }}
-      aria-label={`${club.name} ${statusLabel}`}
-    >
+  const cardContent = (
+    <>
       <div className="relative h-52 bg-bg-surface">
         <Image
           src={activeImage.src}
@@ -204,13 +201,6 @@ function ClubMapPreviewCard({
         </div>
 
         <div className="absolute right-3 top-3 flex items-center gap-2">
-          <button
-            type="button"
-            aria-label={translate('favorites.add', 'Save')}
-            className={mapPreviewControlClassName}
-          >
-            <Heart className="h-5 w-5" />
-          </button>
           <button
             type="button"
             aria-label={translate('clubs.map.close_preview', 'Close preview')}
@@ -257,7 +247,7 @@ function ClubMapPreviewCard({
         ) : null}
       </div>
 
-      <div className="space-y-3 p-4">
+      <div className="space-y-3 p-4 max-lg:pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h3 className="line-clamp-1 text-base font-black leading-6 text-white">{club.name}</h3>
@@ -300,7 +290,26 @@ function ClubMapPreviewCard({
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
       </div>
-    </article>
+    </>
+  );
+
+  return (
+    <>
+      <article
+        className="absolute z-30 hidden w-[22rem] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[1.35rem] border border-white/12 bg-[#080a0f] text-white shadow-[0_30px_90px_rgba(0,0,0,0.55)] animate-in fade-in zoom-in-95 duration-200 lg:block"
+        style={{ left: position.x, top: position.y }}
+        aria-label={`${club.name} ${statusLabel}`}
+      >
+        {cardContent}
+      </article>
+
+      <article
+        className="absolute inset-x-0 bottom-0 z-40 overflow-hidden rounded-t-[1.65rem] border border-white/12 bg-[#080a0f] text-white shadow-[0_-24px_70px_rgba(0,0,0,0.55)] animate-in slide-in-from-bottom-5 fade-in duration-200 lg:hidden"
+        aria-label={`${club.name} ${statusLabel}`}
+      >
+        {cardContent}
+      </article>
+    </>
   );
 }
 
@@ -309,6 +318,7 @@ export default function ClubDirectoryMap({
   cityCenter,
   selectedClubId: controlledSelectedClubId,
   onSelectClub,
+  onPreviewOpenChange,
   className,
   mapClassName,
 }: ClubDirectoryMapProps) {
@@ -347,6 +357,10 @@ export default function ClubDirectoryMap({
     setDismissedPreviewClubId(selectedClubId ?? null);
     setPreviewPosition(null);
   };
+
+  useEffect(() => {
+    onPreviewOpenChange?.(Boolean(previewOpenClubId));
+  }, [onPreviewOpenChange, previewOpenClubId]);
 
   useEffect(() => {
     if (selectedClubId) {
@@ -474,33 +488,18 @@ export default function ClubDirectoryMap({
       }
 
       animationFrame = window.requestAnimationFrame(() => {
-        const point = map.project([selectedClub.mapPoint!.lng, selectedClub.mapPoint!.lat]);
-        const boundsRect = container.getBoundingClientRect();
-        const halfWidth = PREVIEW_CARD_WIDTH / 2;
-        const halfHeight = PREVIEW_CARD_HEIGHT / 2;
-        const minX = halfWidth + PREVIEW_CARD_MARGIN;
-        const maxX = Math.max(minX, boundsRect.width - halfWidth - PREVIEW_CARD_MARGIN);
-        const minY = halfHeight + PREVIEW_CARD_MARGIN;
-        const maxY = Math.max(minY, boundsRect.height - halfHeight - PREVIEW_CARD_MARGIN);
-        const x = clampPreviewPosition(point.x, minX, maxX);
-        const y = clampPreviewPosition(point.y, minY, maxY);
-
-        setPreviewPosition({ x, y });
+        setPreviewPosition(getPreviewAnchor(container));
         animationFrame = null;
       });
     };
 
     updatePreviewPosition();
-    map.on('move', updatePreviewPosition);
-    map.on('zoom', updatePreviewPosition);
     map.on('resize', updatePreviewPosition);
 
     return () => {
       if (animationFrame !== null) {
         window.cancelAnimationFrame(animationFrame);
       }
-      map.off('move', updatePreviewPosition);
-      map.off('zoom', updatePreviewPosition);
       map.off('resize', updatePreviewPosition);
     };
   }, [isMapReady, selectedClub]);
