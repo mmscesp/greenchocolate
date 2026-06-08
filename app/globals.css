@@ -216,6 +216,135 @@
   .surface-card { background-color: hsl(var(--bg-card)); }
   .surface-modal { background-color: hsl(var(--bg-elevated)); }
 
+  .scm-map-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-width: 2.15rem;
+    min-height: 2.85rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #07131c;
+    line-height: 1;
+    cursor: pointer;
+    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.48));
+    transform-origin: 50% 100%;
+    transition: transform 180ms ease, filter 180ms ease;
+    white-space: nowrap;
+  }
+
+  .scm-map-marker-pin {
+    position: relative;
+    display: inline-flex;
+    width: 2.15rem;
+    height: 2.85rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scm-map-marker-pin::after {
+    position: absolute;
+    right: 0.35rem;
+    bottom: -0.08rem;
+    left: 0.35rem;
+    height: 0.28rem;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.42);
+    content: '';
+    filter: blur(3px);
+  }
+
+  .scm-map-marker-icon {
+    position: relative;
+    z-index: 1;
+    width: 2.15rem;
+    height: 2.85rem;
+    overflow: visible;
+  }
+
+  .scm-map-marker-shape {
+    stroke-width: 1.7;
+  }
+
+  .scm-map-marker-symbol {
+    transform-origin: 50% 33%;
+  }
+
+  .scm-map-marker-label {
+    max-width: 11rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(7, 13, 20, 0.92);
+    padding: 0 0.75rem;
+    color: #f8fafc;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .scm-map-marker:hover,
+  .scm-map-marker:focus-visible,
+  .scm-map-marker-selected {
+    transform: translateY(-0.22rem) scale(1.08);
+    filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.54));
+    outline: none;
+  }
+
+  .scm-map-marker:focus-visible .scm-map-marker-icon,
+  .scm-map-marker-selected .scm-map-marker-icon {
+    filter: drop-shadow(0 0 0.55rem rgba(255, 255, 255, 0.4));
+  }
+
+  .scm-map-marker-selected {
+    z-index: 2;
+  }
+
+  .scm-map-marker-verified {
+    color: #041016;
+  }
+
+  .scm-map-marker-verified .scm-map-marker-shape {
+    fill: hsl(var(--brand));
+    stroke: rgba(1, 28, 35, 0.95);
+  }
+
+  .scm-map-marker-verified .scm-map-marker-symbol {
+    color: #041016;
+  }
+
+  .scm-map-marker-public {
+    color: #201406;
+  }
+
+  .scm-map-marker-public .scm-map-marker-shape {
+    fill: #06080b;
+    stroke: hsl(var(--gold));
+  }
+
+  .scm-map-marker-public .scm-map-marker-symbol {
+    color: hsl(var(--gold));
+    fill: hsl(var(--gold));
+    stroke: hsl(var(--gold));
+  }
+
+  .scm-map-marker-verified.scm-map-marker-selected .scm-map-marker-shape {
+    fill: hsl(var(--brand-light));
+    stroke: #021014;
+  }
+
+  .scm-map-marker-public.scm-map-marker-selected .scm-map-marker-shape {
+    fill: #020304;
+    stroke: hsl(var(--gold-light));
+  }
+
   .container-public {
     width: min(100% - 2rem, var(--container-public));
     margin-inline: auto;

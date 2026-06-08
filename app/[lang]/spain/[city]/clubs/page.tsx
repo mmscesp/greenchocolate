@@ -120,6 +120,10 @@ export default async function CityClubsPage({ params }: PageProps) {
           title: format('city_clubs.title', { city: cityDetail.name }),
           subtitle: format('city_clubs.lead', { city: cityDetail.name }),
         }}
+        cityCenter={{
+          lat: cityDetail.latitude ?? 41.3851,
+          lng: cityDetail.longitude ?? 2.1734,
+        }}
       />
     </>
   );

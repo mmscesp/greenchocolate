@@ -57,8 +57,25 @@ class ResizeObserverMock {
   disconnect() {}
 }
 
+class IntersectionObserverMock {
+  readonly root = null;
+  readonly rootMargin = '';
+  readonly thresholds = [];
+
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+}
+
 if (!globalThis.ResizeObserver) {
   globalThis.ResizeObserver = ResizeObserverMock as typeof ResizeObserver;
+}
+
+if (!globalThis.IntersectionObserver) {
+  globalThis.IntersectionObserver = IntersectionObserverMock as unknown as typeof IntersectionObserver;
 }
 
 if (!Element.prototype.hasPointerCapture) {

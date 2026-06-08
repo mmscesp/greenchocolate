@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import ClubCard from '@/components/ClubCard';
+import ClubDirectoryMapView from '@/components/clubs/ClubDirectoryMapView';
 import FilterBar from '@/components/FilterBar';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Map, Grid, Search, Zap, ShieldCheck, ArrowRight, Info } from '@/lib/icons';
@@ -13,13 +14,15 @@ import { getClubs, ClubCard as ClubCardType } from '@/app/actions/clubs';
 import { FilterOptions } from '@/lib/types';
 import { CollectionPageStructuredData } from '@/components/StructuredData';
 import { toAbsoluteUrl } from '@/lib/seo';
+import { trackEvent } from '@/lib/analytics';
+import { DEFAULT_CITY_MAP_CENTER, type GeoCoordinate } from '@/lib/club-map';
 
 // Editorial Concierge Components
 import { EditorialHeading } from '@/components/landing/editorial-concierge/typography/EditorialHeading';
 import { ConciergeLabel } from '@/components/landing/editorial-concierge/typography/ConciergeLabel';
 import { SectionWrapper } from '@/components/landing/editorial-concierge/layout/SectionWrapper';
 import { PulsingStatusDot } from '@/components/landing/editorial-concierge/interactive/PulsingStatusDot';
-import { FADE_UP, STAGGER_CONTAINER, PREMIUM_SPRING } from '@/components/landing/editorial-concierge/motion/config';
+import { FADE_UP, STAGGER_CONTAINER } from '@/components/landing/editorial-concierge/motion/config';
 import { cn } from '@/lib/utils';
 
 const INITIAL_VISIBLE_CLUBS = 6;
@@ -38,6 +41,7 @@ interface ClubsPageClientProps {
     title: string;
     subtitle: string;
   };
+  cityCenter?: GeoCoordinate;
 }
 
 export default function ClubsPageClient({ 
@@ -46,10 +50,11 @@ export default function ClubsPageClient({
   amenities, 
   vibes,
   cityContext,
+  cityCenter = DEFAULT_CITY_MAP_CENTER,
 }: ClubsPageClientProps) {
   const { t, language } = useLanguage();
   const shouldReduceMotion = useReducedMotion();
-  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('map');
   const [clubs, setClubs] = useState<ClubCardType[]>(initialClubs);
   const [visibleClubCount, setVisibleClubCount] = useState(INITIAL_VISIBLE_CLUBS);
   const [loading, setLoading] = useState(false);
@@ -87,6 +92,16 @@ export default function ClubsPageClient({
   const pageSubtitle = cityContext?.subtitle ?? t('clubs.subtitle');
   const visibleClubs = clubs.slice(0, visibleClubCount);
   const hasMoreClubs = visibleClubCount < clubs.length;
+  const citySlug = cityContext?.citySlug ?? 'barcelona';
+
+  const handleViewModeChange = (mode: 'grid' | 'map') => {
+    setViewMode(mode);
+    trackEvent('clubs_directory_view_mode_change', {
+      view_mode: mode,
+      city_slug: citySlug,
+      result_count: clubs.length,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-bg-base font-sans selection:bg-brand/30 selection:text-white">
@@ -205,69 +220,72 @@ export default function ClubsPageClient({
       <section className="relative bg-bg-base pb-32 sm:pb-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           
-          {/* Filter Bar - Sticky on Desktop */}
-          <div className="mb-10 sm:mb-16">
-            <FilterBar 
-              filters={filters} 
-              onFiltersChange={handleFiltersChange}
-              totalResults={clubs.length}
-              neighborhoods={neighborhoods}
-              amenities={amenities}
-              vibes={vibes}
-            />
-          </div>
+          {viewMode === 'grid' ? (
+            <div className="mb-10 sm:mb-16">
+              <FilterBar
+                filters={filters}
+                onFiltersChange={handleFiltersChange}
+                totalResults={clubs.length}
+                neighborhoods={neighborhoods}
+                amenities={amenities}
+                vibes={vibes}
+              />
+            </div>
+          ) : null}
 
           {/* Concierge Tip Banner */}
-          <motion.div 
-            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
-            whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className="mb-12 sm:mb-20 glass-liquid rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10 relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-brand/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-            <div className="flex items-center gap-6 sm:gap-10 relative z-10">
-              <div className="hidden md:flex w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] bg-brand/10 items-center justify-center border border-brand/20 text-brand transform rotate-6 group-hover:rotate-0 transition-all duration-700 shadow-2xl shadow-brand/10">
-                <ShieldCheck className="h-8 w-8 sm:h-10 sm:w-10" />
-              </div>
-              <div>
-                <div className="flex items-center gap-3 mb-2 sm:mb-4">
-                  <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-brand animate-pulse shadow-[0_0_10px_hsl(var(--brand))]" />
-                  <ConciergeLabel size="xs" className="text-brand tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
-                </div>
-                <p className="text-zinc-200 text-base sm:text-xl leading-relaxed font-serif italic max-w-2xl">
-                  "{t('clubs.sidebar.concierge_quote')}"
-                </p>
-              </div>
-            </div>
-            <Link 
-              href={`/${language}/mission#verification-standard`} 
-              className="relative z-10 flex w-full items-center justify-center gap-3 bg-white/5 px-6 py-4 text-center text-[11px] font-black uppercase tracking-[0.2em] text-white transition-all hover:border-brand hover:bg-brand hover:text-black sm:gap-4 sm:px-10 sm:py-5 sm:text-[12px] sm:tracking-[0.3em] sm:whitespace-nowrap lg:w-auto rounded-full border border-white/10 shadow-2xl"
+          {viewMode === 'grid' ? (
+            <motion.div 
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+              whileInView={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+              className="mb-12 sm:mb-20 glass-liquid rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10 relative overflow-hidden group"
             >
-              {t('clubs.sidebar.learn_standard')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-2" />
-            </Link>
-          </motion.div>
+              <div className="absolute inset-0 bg-gradient-to-r from-brand/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+              <div className="flex items-center gap-6 sm:gap-10 relative z-10">
+                <div className="hidden md:flex w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] sm:rounded-[2rem] bg-brand/10 items-center justify-center border border-brand/20 text-brand transform rotate-6 group-hover:rotate-0 transition-all duration-700 shadow-2xl shadow-brand/10">
+                  <ShieldCheck className="h-8 w-8 sm:h-10 sm:w-10" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-3 mb-2 sm:mb-4">
+                    <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-brand animate-pulse shadow-[0_0_10px_hsl(var(--brand))]" />
+                    <ConciergeLabel size="xs" className="text-brand tracking-[0.2em] sm:tracking-[0.3em] sm:text-sm">{t('clubs.sidebar.concierge_tip')}</ConciergeLabel>
+                  </div>
+                  <p className="text-zinc-200 text-base sm:text-xl leading-relaxed font-serif italic max-w-2xl">
+                    "{t('clubs.sidebar.concierge_quote')}"
+                  </p>
+                </div>
+              </div>
+              <Link 
+                href={`/${language}/mission#verification-standard`} 
+                className="relative z-10 flex w-full items-center justify-center gap-3 bg-white/5 px-6 py-4 text-center text-[11px] font-black uppercase tracking-[0.2em] text-white transition-all hover:border-brand hover:bg-brand hover:text-black sm:gap-4 sm:px-10 sm:py-5 sm:text-[12px] sm:tracking-[0.3em] sm:whitespace-nowrap lg:w-auto rounded-full border border-white/10 shadow-2xl"
+              >
+                {t('clubs.sidebar.learn_standard')} <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-2" />
+              </Link>
+            </motion.div>
+          ) : null}
 
           {/* View Toggle & Status */}
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-10 sm:mb-16 px-2">
+          <div className={cn('flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between px-2', viewMode === 'map' ? 'mb-6' : 'mb-10 sm:mb-16')}>
             <div className="flex items-center p-1.5 glass-liquid rounded-full w-full sm:w-fit border-white/5 overflow-hidden">
               <Button
                 type="button"
                 variant={viewMode === 'grid' ? 'primary' : 'secondary'}
                 size="sm"
-                onClick={() => setViewMode('grid')}
+                onClick={() => handleViewModeChange('grid')}
                 className="h-10 flex-1 rounded-full px-6 sm:h-12 sm:flex-none sm:px-10"
               >
                 <Grid className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('clubs.view_mode.grid')}
               </Button>
               <Button
                 type="button"
-                variant="secondary"
+                variant={viewMode === 'map' ? 'primary' : 'secondary'}
                 size="sm"
-                disabled
+                onClick={() => handleViewModeChange('map')}
                 className="h-10 flex-1 rounded-full px-6 sm:h-12 sm:flex-none sm:px-10"
               >
-                <Map className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('clubs.view_mode.map_soon')}
+                <Map className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t('clubs.view_mode.map')}
               </Button>
             </div>
             
@@ -388,6 +406,19 @@ export default function ClubsPageClient({
                 </div>
               )}
             </div>
+          ) : null}
+
+          {viewMode === 'map' ? (
+            <ClubDirectoryMapView
+              clubs={clubs}
+              cityCenter={cityCenter}
+              filters={filters}
+              onFiltersChange={handleFiltersChange}
+              neighborhoods={neighborhoods}
+              amenities={amenities}
+              vibes={vibes}
+              loading={loading}
+            />
           ) : null}
         </div>
       </section>

@@ -1,56 +1,17 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import gsap from "gsap"
-import { MotionPathPlugin } from "gsap/MotionPathPlugin"
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useLanguage } from '@/hooks/useLanguage';
-
-const GALLERY_GAP = 10
-const GALLERY_CIRCLE_RADIUS = 7
-const GALLERY_DEFAULTS = { transformOrigin: "center center" }
-const GALLERY_DURATION = 0.4
-const GALLERY_WIDTH = 400
-const GALLERY_HEIGHT = 400
-const GALLERY_SCALE = 700
-const GALLERY_BIG_SIZE = GALLERY_CIRCLE_RADIUS * GALLERY_SCALE
-const GALLERY_OVERLAP = 0
-
-gsap.registerPlugin(MotionPathPlugin)
-
-function getPosSmall(id: number, total: number) {
-  return {
-    cx:
-      GALLERY_WIDTH / 2 -
-      (total * (GALLERY_CIRCLE_RADIUS * 2 + GALLERY_GAP) - GALLERY_GAP) / 2 +
-      id * (GALLERY_CIRCLE_RADIUS * 2 + GALLERY_GAP),
-    cy: GALLERY_HEIGHT - 30,
-    r: GALLERY_CIRCLE_RADIUS,
-  }
-}
-
-function getPosSmallAbove(id: number, total: number) {
-  return {
-    cx:
-      GALLERY_WIDTH / 2 -
-      (total * (GALLERY_CIRCLE_RADIUS * 2 + GALLERY_GAP) - GALLERY_GAP) / 2 +
-      id * (GALLERY_CIRCLE_RADIUS * 2 + GALLERY_GAP),
-    cy: GALLERY_HEIGHT / 2,
-    r: GALLERY_CIRCLE_RADIUS * 2,
-  }
-}
-
-function getPosCenter() {
-  return { cx: GALLERY_WIDTH / 2, cy: GALLERY_HEIGHT / 2, r: GALLERY_CIRCLE_RADIUS * 7 }
-}
-
-function getPosEnd() {
-  return { cx: GALLERY_WIDTH / 2 - GALLERY_BIG_SIZE + GALLERY_OVERLAP, cy: GALLERY_HEIGHT / 2, r: GALLERY_BIG_SIZE }
-}
-
-function getPosStart() {
-  return { cx: GALLERY_WIDTH / 2 + GALLERY_BIG_SIZE - GALLERY_OVERLAP, cy: GALLERY_HEIGHT / 2, r: GALLERY_BIG_SIZE }
-}
+import { ChevronLeft, ChevronRight, Maximize } from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 export interface CircularGalleryImage {
   title: string
@@ -63,166 +24,191 @@ interface ImageGalleryProps {
 
 export function ImageGallery({ images }: ImageGalleryProps) {
   const { t } = useLanguage()
-  const [opened, setOpened] = useState(0)
-  const [inPlace, setInPlace] = useState(0)
-  const [disabled, setDisabled] = useState(false)
-  const [gsapReady] = useState(true)
+  const shouldReduceMotion = useReducedMotion()
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [fullscreenOpen, setFullscreenOpen] = useState(false)
   const autoplayTimer = useRef<number | null>(null)
-
-  const onClick = (index: number) => {
-    if (!disabled && index !== opened) {
-      setDisabled(gsapReady)
-      setOpened(index)
-    }
+  const hasMultipleImages = images.length > 1
+  const translate = (key: string, fallback: string) => {
+    const value = t(key)
+    return value === key ? fallback : value
   }
 
-  const onInPlace = (index: number) => {
-    setInPlace(index)
-    setDisabled(false)
-  }
+  const goTo = useCallback((index: number) => {
+    setActiveIndex(index)
+  }, [])
 
   const next = useCallback(() => {
-    if (images.length <= 1) return
-    setDisabled(gsapReady)
-    setOpened((currentOpened) => {
-      let nextIndex = currentOpened + 1
-      if (nextIndex >= images.length) nextIndex = 0
-      return nextIndex
-    })
-  }, [gsapReady, images.length])
+    if (!hasMultipleImages) return
+    setActiveIndex((currentIndex) => (currentIndex + 1) % images.length)
+  }, [hasMultipleImages, images.length])
 
   const prev = useCallback(() => {
-    if (images.length <= 1) return
-    setDisabled(gsapReady)
-    setOpened((currentOpened) => {
-      let prevIndex = currentOpened - 1
-      if (prevIndex < 0) prevIndex = images.length - 1
-      return prevIndex
-    })
-  }, [gsapReady, images.length])
+    if (!hasMultipleImages) return
+    setActiveIndex((currentIndex) => (currentIndex - 1 + images.length) % images.length)
+  }, [hasMultipleImages, images.length])
 
   useEffect(() => {
-    if (!gsapReady || images.length <= 1) return
+    if (!hasMultipleImages) return
     if (autoplayTimer.current) clearInterval(autoplayTimer.current)
-    autoplayTimer.current = window.setInterval(next, 4500)
+    autoplayTimer.current = window.setInterval(next, 5500)
     return () => {
       if (autoplayTimer.current) clearInterval(autoplayTimer.current)
     }
-  }, [opened, gsapReady, next, images.length])
+  }, [activeIndex, hasMultipleImages, next])
 
-  if (!images || images.length === 0) return null;
+  if (!images || images.length === 0) return null
+
+  const activeImage = images[activeIndex] ?? images[0]
 
   return (
     <div className="relative flex w-full items-center justify-center py-6 sm:py-8">
-      <div className="relative aspect-square w-full max-w-[min(88vw,640px)] overflow-hidden rounded-[2rem] border border-white/5 bg-bg-surface/70 shadow-2xl sm:max-w-[min(82vw,720px)]">
-        {!gsapReady && (
-          <Image
-            src={images[opened]?.url ?? images[0]?.url}
-            alt={images[opened]?.title ?? images[0]?.title ?? 'Club gallery image'}
-            fill
-            sizes="(max-width: 768px) 88vw, 720px"
-            className="absolute inset-0 object-cover"
-          />
-        )}
-        {gsapReady &&
-          images.map((image, i) => (
-            <div
-              key={image.url + i}
-              className="absolute left-0 top-0 h-full w-full"
-              style={{ zIndex: inPlace === i ? i : images.length + 1 }}
+      <div className="relative aspect-[4/3] w-full max-w-[min(92vw,760px)] overflow-hidden rounded-[1.5rem] border border-white/8 bg-bg-surface/70 shadow-2xl sm:aspect-[16/11] sm:rounded-[2rem]">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeImage.url}
+            className="absolute inset-0"
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 1.015 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.99 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.28, ease: [0.25, 0.1, 0.25, 1] }}
+          >
+            <Image
+              src={activeImage.url}
+              alt={activeImage.title}
+              fill
+              sizes="(max-width: 768px) 92vw, 760px"
+              className="object-cover"
+              priority={activeIndex === 0}
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent" />
+
+        <button
+          type="button"
+          onClick={() => setFullscreenOpen(true)}
+          aria-label={translate('gallery.open_fullscreen', 'Open fullscreen gallery')}
+          className="absolute right-3 top-3 z-20 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/14 bg-black/70 text-white shadow-xl backdrop-blur-md transition hover:border-brand/45 hover:bg-black/85 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        >
+          <Maximize className="h-5 w-5" />
+        </button>
+
+        {hasMultipleImages ? (
+          <>
+            <button
+              type="button"
+              className="absolute left-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/14 bg-black/70 text-white shadow-xl backdrop-blur-md transition hover:border-brand/45 hover:bg-black/85 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:h-12 sm:w-12"
+              onClick={prev}
+              aria-label={translate('gallery.previous_image', 'Previous image')}
             >
-              <GalleryImage
-                total={images.length}
-                id={i}
-                url={image.url}
-                title={image.title}
-                open={opened === i}
-                inPlace={inPlace === i}
-                onInPlace={onInPlace}
-              />
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/14 bg-black/70 text-white shadow-xl backdrop-blur-md transition hover:border-brand/45 hover:bg-black/85 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:h-12 sm:w-12"
+              onClick={next}
+              aria-label={translate('gallery.next_image', 'Next image')}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+
+            <div className="absolute inset-x-4 bottom-4 z-20 flex items-center justify-center gap-2">
+              {images.map((image, index) => (
+                <button
+                  key={`${image.url}-${index}`}
+                  type="button"
+                  aria-label={`${translate('gallery.image', 'Image')} ${index + 1}`}
+                  onClick={() => goTo(index)}
+                  className={cn(
+                    'h-1.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+                    index === activeIndex ? 'w-8 bg-brand' : 'w-2.5 bg-white/55 hover:bg-white/80'
+                  )}
+                />
+              ))}
             </div>
-          ))}
-        <div className="absolute left-0 top-0 z-[100] h-full w-full pointer-events-none">
-          <Tabs images={images} onSelect={onClick} />
-        </div>
+          </>
+        ) : null}
       </div>
 
-      {images.length > 1 && (
-        <>
-          <button
-            className="absolute left-2 top-1/2 z-[101] flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-bg-base/75 text-white shadow-xl backdrop-blur-md transition-all hover:scale-110 hover:border-brand/40 hover:bg-bg-surface disabled:opacity-40 sm:left-3 sm:h-14 sm:w-14 lg:-left-3"
-            onClick={prev}
-            disabled={disabled}
-            aria-label={t('gallery.previous_image')}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-          </button>
-          <button
-            className="absolute right-2 top-1/2 z-[101] flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-bg-base/75 text-white shadow-xl backdrop-blur-md transition-all hover:scale-110 hover:border-brand/40 hover:bg-bg-surface disabled:opacity-40 sm:right-3 sm:h-14 sm:w-14 lg:-right-3"
-            onClick={next}
-            disabled={disabled}
-            aria-label={t('gallery.next_image')}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-          </button>
-        </>
-      )}
+      <Dialog open={fullscreenOpen} onOpenChange={setFullscreenOpen}>
+        <DialogContent
+          closeLabel={translate('common.close', 'Close')}
+          className="h-[calc(100dvh-1rem)] max-h-none w-[calc(100vw-1rem)] max-w-none overflow-hidden rounded-[1.5rem] border-white/10 bg-[#05070b] p-0 text-white shadow-[0_30px_100px_rgba(0,0,0,0.82)] sm:h-[calc(100dvh-2rem)] sm:w-[calc(100vw-2rem)] sm:rounded-[2rem] [&>button]:right-4 [&>button]:top-4 [&>button]:z-[80] [&>button]:inline-flex [&>button]:h-11 [&>button]:w-11 [&>button]:items-center [&>button]:justify-center [&>button]:rounded-full [&>button]:border [&>button]:border-white/14 [&>button]:bg-black/72 [&>button]:text-white [&>button]:opacity-100 [&>button]:shadow-xl [&>button]:backdrop-blur-md [&>button]:hover:border-brand/45 [&>button]:hover:bg-black/88 [&>button]:hover:text-brand [&>button]:focus:ring-brand [&>button_svg]:h-5 [&>button_svg]:w-5 sm:[&>button]:right-6 sm:[&>button]:top-6"
+        >
+          <DialogTitle className="sr-only">
+            {translate('gallery.fullscreen_title', 'Image gallery')}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            {activeImage.title}
+          </DialogDescription>
+
+          <div className="relative h-full w-full overflow-hidden bg-black">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={`fullscreen-${activeImage.url}`}
+                className="absolute inset-0"
+                initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 1.01 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.995 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.24, ease: [0.25, 0.1, 0.25, 1] }}
+              >
+                <Image
+                  src={activeImage.url}
+                  alt={activeImage.title}
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/70 to-transparent" />
+
+            {hasMultipleImages ? (
+              <>
+                <button
+                  type="button"
+                  className="absolute left-4 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/14 bg-black/70 text-white shadow-xl backdrop-blur-md transition hover:border-brand/45 hover:bg-black/85 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:left-6 sm:h-14 sm:w-14"
+                  onClick={prev}
+                  aria-label={translate('gallery.previous_image', 'Previous image')}
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  type="button"
+                  className="absolute right-4 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/14 bg-black/70 text-white shadow-xl backdrop-blur-md transition hover:border-brand/45 hover:bg-black/85 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:right-6 sm:h-14 sm:w-14"
+                  onClick={next}
+                  aria-label={translate('gallery.next_image', 'Next image')}
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            ) : null}
+
+            <div className="absolute inset-x-4 bottom-5 z-20 flex flex-col items-center gap-3">
+              {hasMultipleImages ? (
+                <div className="flex items-center justify-center gap-2">
+                  {images.map((image, index) => (
+                    <button
+                      key={`fullscreen-${image.url}-${index}`}
+                      type="button"
+                      aria-label={`${translate('gallery.image', 'Image')} ${index + 1}`}
+                      onClick={() => goTo(index)}
+                      className={cn(
+                        'h-1.5 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+                        index === activeIndex ? 'w-10 bg-brand' : 'w-3 bg-white/45 hover:bg-white/80'
+                      )}
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
-  )
-}
-
-interface GalleryImageProps {
-  url: string; title: string; open: boolean; inPlace: boolean; id: number; onInPlace: (id: number) => void; total: number;
-}
-
-function GalleryImage({ url, title, open, inPlace, id, onInPlace, total }: GalleryImageProps) {
-  const firstLoadRef = useRef(true)
-  const clip = useRef<SVGCircleElement>(null)
-
-  useEffect(() => {
-    if (!gsap || !clip.current) return
-    const isFirstLoad = firstLoadRef.current
-    const flipDuration = isFirstLoad ? 0 : GALLERY_DURATION
-    const upDuration = isFirstLoad ? 0 : 0.2
-    const bounceDuration = isFirstLoad ? 0.01 : 1
-    const delay = isFirstLoad ? 0 : flipDuration + upDuration
-
-    if (open) {
-      gsap.timeline().set(clip.current, { ...GALLERY_DEFAULTS, ...getPosSmall(id, total) })
-        .to(clip.current, { ...GALLERY_DEFAULTS, ...getPosCenter(), duration: upDuration, ease: "power3.inOut" })
-        .to(clip.current, { ...GALLERY_DEFAULTS, ...getPosEnd(), duration: flipDuration, ease: "power4.in", onComplete: () => onInPlace(id) })
-    } else {
-      gsap.timeline({ overwrite: true }).set(clip.current, { ...GALLERY_DEFAULTS, ...getPosStart() })
-        .to(clip.current, { ...GALLERY_DEFAULTS, ...getPosCenter(), delay: delay, duration: flipDuration, ease: "power4.out" })
-        .to(clip.current, { ...GALLERY_DEFAULTS, motionPath: { path: [getPosSmallAbove(id, total), getPosSmall(id, total)], curviness: 1 }, duration: bounceDuration, ease: "bounce.out" })
-    }
-
-    firstLoadRef.current = false
-  }, [open, id, onInPlace, total])
-
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox={`0 0 ${GALLERY_WIDTH} ${GALLERY_HEIGHT}`} preserveAspectRatio="xMidYMid meet" className="h-full w-full">
-      <defs>
-        <clipPath id={`${id}_circleClip`}><circle className="clip" cx="0" cy="0" r={GALLERY_CIRCLE_RADIUS} ref={clip}></circle></clipPath>
-        <clipPath id={`${id}_squareClip`}><rect className="clip" width={GALLERY_WIDTH} height={GALLERY_HEIGHT}></rect></clipPath>
-      </defs>
-      <g clipPath={`url(#${id}${inPlace ? "_squareClip" : "_circleClip"})`}><image width={GALLERY_WIDTH} height={GALLERY_HEIGHT} href={url} className="pointer-events-none object-cover" preserveAspectRatio="xMidYMid meet"></image></g>
-    </svg>
-  )
-}
-
-function Tabs({ images, onSelect }: { images: CircularGalleryImage[], onSelect: (index: number) => void }) {
-  const getPosX = (i: number) => GALLERY_WIDTH / 2 - (images.length * (GALLERY_CIRCLE_RADIUS * 2 + GALLERY_GAP) - GALLERY_GAP) / 2 + i * (GALLERY_CIRCLE_RADIUS * 2 + GALLERY_GAP)
-  const getPosY = () => GALLERY_HEIGHT - 30
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox={`0 0 ${GALLERY_WIDTH} ${GALLERY_HEIGHT}`} preserveAspectRatio="xMidYMid meet" className="h-full w-full">
-      {images.map((image, i) => (
-        <g key={image.url + i} className="pointer-events-auto">
-          <defs><clipPath id={`tab_${i}_clip`}><circle cx={getPosX(i)} cy={getPosY()} r={GALLERY_CIRCLE_RADIUS} /></clipPath></defs>
-          <image x={getPosX(i) - GALLERY_CIRCLE_RADIUS} y={getPosY() - GALLERY_CIRCLE_RADIUS} width={GALLERY_CIRCLE_RADIUS * 2} height={GALLERY_CIRCLE_RADIUS * 2} href={image.url} clipPath={`url(#tab_${i}_clip)`} className="pointer-events-none object-cover" preserveAspectRatio="xMidYMid meet" />
-          <circle onClick={() => onSelect(i)} className="cursor-pointer fill-white/0 stroke-white/70 hover:stroke-white/100 transition-all" strokeWidth="2" cx={getPosX(i)} cy={getPosY()} r={GALLERY_CIRCLE_RADIUS + 2} />
-        </g>
-      ))}
-    </svg>
   )
 }
